@@ -2,6 +2,52 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const hasValidCoords = (lat, lon) =>
+  Number.isFinite(Number(lat)) && Number.isFinite(Number(lon));
+
+const buildGeocodeQueries = (f) => {
+  const adresse = (f.adresse || '').toString().trim();
+  const codePostal = (f.codePostal || f.code_postal || '').toString().trim();
+  const ville = (f.ville || '').toString().trim();
+
+  const queries = [
+    [adresse, codePostal, ville, 'France'],
+    [codePostal, ville, 'France'],
+    [ville, codePostal, 'France'],
+    [ville, 'France'],
+  ]
+    .map((parts) => parts.map((v) => (v || '').toString().trim()).filter(Boolean).join(', '))
+    .filter(Boolean);
+
+  return [...new Set(queries)];
+};
+
+async function geocodeQuery(query) {
+  if (!query.trim()) return null;
+  const url = `https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=fr&q=${encodeURIComponent(query)}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('Géocodage impossible');
+  const data = await res.json();
+  if (!Array.isArray(data) || data.length === 0) return null;
+  return { latitude: Number(data[0].lat), longitude: Number(data[0].lon) };
+}
+
+async function geocodeTrainer(f) {
+  const queries = buildGeocodeQueries(f);
+
+  for (const query of queries) {
+    const coords = await geocodeQuery(query);
+    if (coords && hasValidCoords(coords.latitude, coords.longitude)) {
+      return coords;
+    }
+    await sleep(1100);
+  }
+
+  return null;
+}
+
 export default function Listing() {
   const navigate = useNavigate();
 
@@ -23,6 +69,8 @@ export default function Listing() {
 
   // Distances
   const [distances, setDistances] = useState(new Map());
+  const [gpsStatus, setGpsStatus] = useState('');
+  const [gpsLoading, setGpsLoading] = useState(false);
 
   // ---------- CHARGEMENT DEPUIS SUPABASE ----------
   useEffect(() => {
@@ -44,6 +92,7 @@ export default function Listing() {
         nom: r.nom ?? '',
         ville: r.ville ?? '',
         codePostal: r.code_postal ?? '',
+        adresse: r.adresse ?? '',
         competences: Array.isArray(r.competences) ? r.competences : (r.competences ?? []),
         materiel: Array.isArray(r.materiel) ? r.materiel : (r.materiel ?? []),
         statut: r.statut ?? 'Inactif',
@@ -138,28 +187,36 @@ export default function Listing() {
   };
 
   // ---------- PROXIMITÉ ----------
+  const distanceKm = (lat1, lon1, lat2, lon2) => {
+    const R = 6371;
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLon = ((lon2 - lon1) * Math.PI) / 180;
+    const a =
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLon / 2) ** 2;
+    return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
+  };
+
   const computeDistances = async (city) => {
     if (!city) { setDistances(new Map()); return; }
-    const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(city)}`);
-    const data = await res.json();
-    if (!Array.isArray(data) || data.length === 0) return;
 
-    const lat = parseFloat(data[0].lat);
-    const lon = parseFloat(data[0].lon);
-    const R = 6371;
+    const target = await geocodeQuery(`${city}, France`);
+    if (!target || !hasValidCoords(target.latitude, target.longitude)) {
+      alert("Lieu de formation introuvable. Essaie avec 'Ville + code postal'.");
+      return;
+    }
 
     const newMap = new Map();
     for (const f of formateurs) {
-      if (f.latitude && f.longitude) {
-        const dLat = ((f.latitude - lat) * Math.PI) / 180;
-        const dLon = ((f.longitude - lon) * Math.PI) / 180;
-        const a =
-          Math.sin(dLat / 2) ** 2 +
-          Math.cos((lat * Math.PI) / 180) *
-          Math.cos((f.latitude * Math.PI) / 180) *
-          Math.sin(dLon / 2) ** 2;
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        const d = R * c;
+      if (hasValidCoords(f.latitude, f.longitude)) {
+        const d = distanceKm(
+          Number(target.latitude),
+          Number(target.longitude),
+          Number(f.latitude),
+          Number(f.longitude)
+        );
         newMap.set(f, Number(d.toFixed(2)));
       } else {
         newMap.set(f, '-');
@@ -171,6 +228,84 @@ export default function Listing() {
   const handleRechercheProximite = async () => {
     await computeDistances(lieu);
     if (sort.key === 'distance') setSort((prev) => ({ ...prev }));
+  };
+
+  const handleCompleteGps = async () => {
+    const missing = formateurs.filter((f) => !hasValidCoords(f.latitude, f.longitude));
+
+    if (missing.length === 0) {
+      alert('Tous les formateurs ont déjà des coordonnées GPS.');
+      setGpsStatus('Tous les formateurs ont déjà des coordonnées GPS.');
+      return;
+    }
+
+    const ok = window.confirm(
+      `Compléter les coordonnées GPS de ${missing.length} formateur(s) ?\n\n` +
+      `Le logiciel va utiliser l’adresse, le code postal et/ou la ville.\n` +
+      `L’opération peut prendre quelques minutes.`
+    );
+
+    if (!ok) return;
+
+    setGpsLoading(true);
+    setGpsStatus(`Géocodage en cours : 0 / ${missing.length}`);
+
+    let updatedCount = 0;
+    let notFoundCount = 0;
+    const notFound = [];
+
+    for (let i = 0; i < missing.length; i += 1) {
+      const f = missing[i];
+      setGpsStatus(`Géocodage en cours : ${i + 1} / ${missing.length} — ${f.prenom || ''} ${f.nom || ''}`);
+
+      try {
+        const coords = await geocodeTrainer(f);
+
+        if (!coords || !hasValidCoords(coords.latitude, coords.longitude)) {
+          notFoundCount += 1;
+          notFound.push(`${f.prenom || ''} ${f.nom || ''}`.trim());
+        } else {
+          const { error } = await supabase
+            .from('trainers')
+            .update({
+              latitude: coords.latitude,
+              longitude: coords.longitude,
+            })
+            .eq('id', f.id);
+
+          if (error) {
+            console.error('Erreur MAJ GPS Supabase:', f, error);
+            notFoundCount += 1;
+            notFound.push(`${f.prenom || ''} ${f.nom || ''}`.trim());
+          } else {
+            updatedCount += 1;
+
+            setFormateurs((prev) => prev.map((x) => (
+              x.id === f.id
+                ? { ...x, latitude: coords.latitude, longitude: coords.longitude }
+                : x
+            )));
+          }
+        }
+      } catch (error) {
+        console.error('Erreur géocodage:', f, error);
+        notFoundCount += 1;
+        notFound.push(`${f.prenom || ''} ${f.nom || ''}`.trim());
+      }
+
+      await sleep(1100);
+    }
+
+    setGpsLoading(false);
+    setGpsStatus(`Terminé : ${updatedCount} coordonnée(s) ajoutée(s), ${notFoundCount} introuvable(s).`);
+
+    let message = `Coordonnées GPS ajoutées : ${updatedCount}\nIntrouvables : ${notFoundCount}`;
+
+    if (notFound.length > 0) {
+      message += `\n\nÀ vérifier manuellement :\n- ${notFound.join('\n- ')}`;
+    }
+
+    alert(message);
   };
 
   useEffect(() => { if (lieu) computeDistances(lieu); }, [formateurs]); // eslint-disable-line
@@ -222,7 +357,19 @@ export default function Listing() {
           onChange={(e) => setLieu(e.target.value)}
         />
         <button onClick={handleRechercheProximite}>Recherche proximité</button>
-      </div>
+        <button
+  type="button"
+  onClick={handleCompleteGps}
+  disabled={gpsLoading}
+>
+  {gpsLoading ? "Géolocalisation..." : "🔄 Compléter les coordonnées GPS manquantes"}
+</button>
+</div>
+      {gpsStatus && (
+        <div style={{ marginBottom: 12 }}>
+          {gpsStatus}
+        </div>
+      )}
 
       {/* Filtres texte */}
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>

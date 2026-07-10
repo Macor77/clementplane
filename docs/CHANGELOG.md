@@ -1,3 +1,38 @@
+# 2026-07-09
+
+## Refactoring complet du module Listing
+
+### Architecture
+- Création du dossier `hooks/`
+- Création des hooks :
+  - `useFormateurs`
+  - `useSort`
+  - `useListingFilters`
+  - `useDistances`
+- Réorganisation des composants :
+  - `components/listing`
+  - `components/formateur`
+
+### Services
+Création de nouveaux services spécialisés :
+- `geocodingService`
+- `distanceService`
+- `gpsService`
+
+### Refactoring
+- Extraction de toute la logique de géocodage hors de `Listing.jsx`
+- Extraction du calcul des distances
+- Extraction du chargement des formateurs
+- Extraction du tri
+- Extraction des filtres
+- Extraction de la gestion GPS
+- Simplification de la suppression des formateurs
+
+### Résultat
+- `Listing.jsx` devient une page d'orchestration.
+- Les responsabilités sont réparties entre Hooks, Services et Composants.
+- Architecture prête pour les futurs modules.
+
 # CHANGELOG - TimeForma
 
 Toutes les évolutions importantes du projet sont consignées ici.

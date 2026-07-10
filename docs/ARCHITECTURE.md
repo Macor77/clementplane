@@ -1,17 +1,26 @@
 # ARCHITECTURE - TimeForma
 
-Version : 1.0
-Dernière mise à jour : 03/07/2026
+Version : 1.1  
+Dernière mise à jour : 09/07/2026
 
 ---
 
 # Architecture générale
 
-TimeForma est une application web développée avec React.
+TimeForma est une application web développée avec React et Vite.
 
 L'application est hébergée sur Vercel et son code source est versionné sur GitHub.
 
-Les données sont progressivement migrées vers Supabase.
+Les données sont stockées progressivement dans Supabase.
+
+L'architecture actuelle repose sur une séparation claire entre :
+
+- les pages ;
+- les composants ;
+- les hooks ;
+- les services ;
+- les utilitaires ;
+- la configuration externe.
 
 ---
 
@@ -31,6 +40,7 @@ Les données sont progressivement migrées vers Supabase.
 ## Cartographie
 
 - Leaflet
+- Nominatim / OpenStreetMap pour le géocodage
 
 ## Hébergement
 
@@ -43,155 +53,49 @@ Les données sont progressivement migrées vers Supabase.
 
 ---
 
-# Arborescence
+# Arborescence actuelle
 
-```
+```txt
 src/
-
-components/
-pages/
-services/
-utils/
-hooks/
-assets/
-```
-
----
-
-# Pages principales
-
-## Listing
-
-Affichage de tous les formateurs.
-
-Fonctions :
-
-- recherche
-- filtres
-- tri
-- distance
-- carte
-
----
-
-## Fiche Formateur
-
-Permet :
-
-- création
-- modification
-- consultation
-
----
-
-## Calendrier
-
-Gestion des disponibilités.
-
----
-
-# Composants
-
-Les composants réutilisables sont placés dans :
-
-```
-src/components
-```
-
-Exemples :
-
-- SearchBar
-- Filters
-- FormateurCard
-- DistanceBadge
-- Calendar
-- Map
-
----
-
-# Services
-
-Tous les accès aux données doivent être regroupés dans :
-
-```
-src/services
-```
-
-Exemple :
-
-```
-formateursService.js
-```
-
-Le reste de l'application ne devra jamais communiquer directement avec Supabase.
-
-Cette séparation facilitera les évolutions futures.
-
----
-
-# Base de données
-
-Les données sont stockées dans Supabase.
-
-Chaque table possède son propre service.
-
-Exemple :
-
-```
-formateursService.js
-missionsService.js
-disponibilitesService.js
-```
-
----
-
-# Principe de développement
-
-Chaque fonctionnalité doit respecter les règles suivantes :
-
-- une responsabilité par composant
-- code lisible
-- composants réutilisables
-- éviter les duplications
-- privilégier la simplicité
-
----
-
-# Convention de nommage
-
-Composants :
-
-```
-FormateurCard.jsx
-```
-
-Pages :
-
-```
-Listing.jsx
-```
-
-Services :
-
-```
-formateursService.js
-```
-
-Hooks :
-
-```
-useFormateurs.js
-```
-
----
-
-# Objectif
-
-L'application doit rester :
-
-- rapide
-- modulaire
-- maintenable
-- évolutive
-
-Chaque nouvelle fonctionnalité devra pouvoir être ajoutée sans casser l'existant.
+│
+├── assets/
+│
+├── components/
+│   ├── listing/
+│   │   ├── ListingFilters.jsx
+│   │   ├── ListingHeader.jsx
+│   │   ├── ListingTable.jsx
+│   │   └── SortHeader.jsx
+│   │
+│   └── formateur/
+│       └── AvailabilityCalendar.jsx
+│
+├── hooks/
+│   ├── useFormateurs.js
+│   ├── useSort.js
+│   ├── useListingFilters.js
+│   └── useDistances.js
+│
+├── pages/
+│   ├── Listing.jsx
+│   ├── FormateurForm.jsx
+│   ├── FormateurView.jsx
+│   ├── EnvCheck.jsx
+│   └── MigrateLocal.jsx
+│
+├── services/
+│   ├── formateursService.js
+│   ├── geocodingService.js
+│   ├── distanceService.js
+│   └── gpsService.js
+│
+├── utils/
+│
+├── lib/
+│   └── supabaseClient.js
+│
+├── App.jsx
+├── main.jsx
+├── ErrorBoundary.jsx
+├── App.css
+└── index.css

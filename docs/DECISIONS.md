@@ -1,3 +1,35 @@
+# Décision
+
+## Refactoring de Listing
+
+Date : 09/07/2026
+
+### Contexte
+
+Le composant `Listing.jsx` concentrait la majorité de la logique métier de l'application.
+
+Cette situation compliquait :
+
+- la maintenance
+- les tests
+- l'évolution du logiciel
+
+### Décision
+
+Le composant `Listing.jsx` devient une page d'orchestration.
+
+Les responsabilités sont réparties entre :
+
+- Hooks
+- Services
+- Composants
+
+### Conséquence
+
+Les futurs développements devront respecter cette architecture.
+
+Aucune logique métier importante ne devra être ajoutée directement dans une page React.
+
 # DECISIONS - TimeForma
 
 Version : 1.0

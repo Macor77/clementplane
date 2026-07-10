@@ -1,7 +1,9 @@
+La roadmap est un document vivant. Elle évolue en fonction de l'utilisation réelle de TimeForma et des besoins métier identifiés au cours du développement.
+
 # ROADMAP - TimeForma
 
-Version : 1.0
-Dernière mise à jour : 03/07/2026
+Version : 1.1
+Dernière mise à jour : 09/07/2026
 
 ---
 
@@ -9,9 +11,15 @@ Dernière mise à jour : 03/07/2026
 
 TimeForma a vocation à devenir la plateforme de référence pour la gestion des formateurs indépendants et des organismes de formation.
 
+Le développement suit une approche pragmatique :
+
+- développer les fonctionnalités apportant une valeur immédiate à Alter Prévention ;
+- construire progressivement les fondations nécessaires à une future version SaaS ;
+- faire évoluer la roadmap au fil des retours d'expérience.
+
 ---
 
-# Sprint 1 — MVP (Terminé)
+# Sprint 1 — MVP ✅ Terminé
 
 ## Gestion des formateurs
 
@@ -48,60 +56,101 @@ TimeForma a vocation à devenir la plateforme de référence pour la gestion des
 
 ---
 
-# Sprint 2 — Base de données (En cours)
+# Sprint 2 — Migration Supabase & Architecture ✅ Terminé
 
-Objectif :
+## Base de données
 
-Remplacer totalement le stockage local par Supabase.
+- [x] Table Formateurs
+- [x] Lecture des données
+- [x] Création
+- [x] Modification
+- [x] Suppression
+- [x] Synchronisation en ligne
+- [x] Sauvegarde cloud
 
-Fonctionnalités :
+## Architecture
 
-- [ ] Table Formateurs
-- [ ] Lecture des données
-- [ ] Création
-- [ ] Modification
-- [ ] Suppression
-- [ ] Synchronisation en ligne
-- [ ] Sauvegarde cloud
+- [x] Réorganisation des dossiers
+- [x] Création des Hooks
+- [x] Création des Services
+- [x] Refactoring complet de Listing
+- [x] Documentation technique
 
 ---
 
-# Sprint 3 — Comptes utilisateurs
+# Sprint 3 — Agenda & Disponibilités
 
-- [ ] Authentification
-- [ ] Connexion
-- [ ] Déconnexion
-- [ ] Gestion des profils
-- [ ] Gestion des rôles
+Objectif :
+
+Construire le véritable modèle de disponibilité d'un formateur.
+
+## Fonctionnel
+
+- [ ] Agenda du formateur
+- [ ] Disponibilités personnelles
+- [ ] Vacances
+- [ ] Indisponibilités
+- [ ] Modèle de propriété des données
+- [ ] Confidentialité entre organismes
+
+## Technique
+
+- [ ] Refonte du calendrier actuel
+- [ ] Nouvelle structure des événements
+- [ ] Préparation du module Missions
 
 ---
 
 # Sprint 4 — Gestion des missions
+
+Objectif :
+
+Permettre à un organisme de planifier ses interventions.
 
 - [ ] Création d'une mission
 - [ ] Affectation d'un formateur
 - [ ] Historique
 - [ ] Documents
 - [ ] Contrats
+- [ ] Vue planning
+- [ ] Gestion des conflits de planning
 
 ---
 
-# Sprint 5 — Organisation
+# Sprint 5 — Comptes utilisateurs
+
+Objectif :
+
+Permettre aux formateurs de gérer eux-mêmes leur profil.
+
+- [ ] Authentification
+- [ ] Connexion
+- [ ] Déconnexion
+- [ ] Revendiquer sa fiche
+- [ ] Gestion des profils
+- [ ] Gestion des rôles
+- [ ] Gestion des droits
+
+---
+
+# Sprint 6 — Organisation
 
 - [ ] Calendrier global
 - [ ] Notifications
 - [ ] Emails automatiques
 - [ ] Alertes
+- [ ] Tableau de bord
 
 ---
 
-# Sprint 6 — Version SaaS
+# Sprint 7 — Version SaaS
 
 - [ ] Multi-organismes
 - [ ] Facturation
 - [ ] Paiements
 - [ ] Abonnements
 - [ ] Administration
+- [ ] Paramétrage des organismes
 
 ---
 
@@ -112,4 +161,4 @@ Fonctionnalités :
 - Application mobile
 - Signature électronique
 - API publique
-- Tableau de bord statistique
+- Tableau de bord avancé

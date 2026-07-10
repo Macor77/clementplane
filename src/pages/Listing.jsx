@@ -113,9 +113,11 @@ export default function Listing() {
 };
 
   useEffect(() => {
-    if (lieu) computeDistances(lieu);
-  }, [formateurs]); // eslint-disable-line
+  if (!lieu) return;
 
+  computeDistances(lieu);
+}, [formateurs]); 
+  
   const renderList = (value) => (Array.isArray(value) ? value.join(', ') : value || '');
 
   return (

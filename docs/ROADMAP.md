@@ -1,355 +1,324 @@
 La roadmap est un document vivant. Elle évolue en fonction de l'utilisation réelle de TimeForma et des besoins métier identifiés au cours du développement.
-
-# ROADMAP - TimeForma
-
-Version : 1.2  
-Dernière mise à jour : 10/07/2026
-
+ROADMAP - TimeForma
+Version : 2.0  
+Dernière mise à jour : 12/07/2026
 ---
-
-# Vision
-
+Vision
 TimeForma a vocation à devenir la plateforme de référence pour la gestion des formateurs indépendants et des organismes de formation.
-
 Le développement suit une approche pragmatique :
-
-- développer les fonctionnalités apportant une valeur immédiate à Alter Prévention ;
-- construire progressivement les fondations nécessaires à une future version SaaS ;
-- faire évoluer la roadmap au fil des retours d'expérience.
-
+développer les fonctionnalités apportant une valeur immédiate à Alter Prévention ;
+construire progressivement les fondations nécessaires à une future version SaaS ;
+faire évoluer la roadmap au fil des retours d'expérience.
 ---
-
-# Sprint 1 — MVP ✅ Terminé
-
-## Gestion des formateurs
-
-- [x] Création d'un formateur
-- [x] Modification
-- [x] Suppression
-- [x] Consultation
-
-## Recherche
-
-- [x] Recherche par nom
-- [x] Recherche par ville
-- [x] Recherche par département
-- [x] Recherche par compétences
-- [x] Recherche par matériel
-
-## Cartographie
-
-- [x] Carte Leaflet
-- [x] Géolocalisation automatique
-- [x] Calcul des distances
-
-## Disponibilités
-
-- [x] Calendrier
-- [x] Disponible
-- [x] Indisponible
-- [x] Mission Alter Prévention
-
-## Déploiement
-
-- [x] GitHub
-- [x] Vercel
-
+Sprint 1 — MVP ✅ Terminé
+Gestion des formateurs
+[x] Création d'un formateur
+[x] Modification d'un formateur
+[x] Suppression d'un formateur
+[x] Consultation d'une fiche formateur
+Recherche
+[x] Recherche par nom
+[x] Recherche par ville
+[x] Recherche par département
+[x] Recherche par compétences
+[x] Recherche par matériel
+Cartographie
+[x] Carte Leaflet
+[x] Géolocalisation automatique
+[x] Calcul des distances
+Disponibilités
+[x] Calendrier
+[x] Statut Disponible
+[x] Statut Indisponible
+[x] Statut Mission Alter Prévention
+Déploiement
+[x] Hébergement du code sur GitHub
+[x] Déploiement sur Vercel
 ---
-
-# Sprint 2 — Migration Supabase & Architecture ✅ Terminé
-
-## Base de données
-
-- [x] Table Formateurs
-- [x] Lecture des données
-- [x] Création
-- [x] Modification
-- [x] Suppression
-- [x] Synchronisation en ligne
-- [x] Sauvegarde cloud
-
-## Architecture
-
-- [x] Réorganisation des dossiers
-- [x] Création des Hooks
-- [x] Création des Services
-- [x] Refactoring complet de Listing
-- [x] Documentation technique
-
+Sprint 2 — Migration Supabase & Architecture ✅ Terminé
+Base de données
+[x] Création de la table Formateurs
+[x] Lecture des données
+[x] Création des données
+[x] Modification des données
+[x] Suppression des données
+[x] Synchronisation en ligne
+[x] Sauvegarde cloud
+Architecture
+[x] Réorganisation des dossiers
+[x] Création des hooks
+[x] Création des services
+[x] Refactoring complet de Listing
+[x] Documentation technique
 ---
-
-# Sprint 3 — Agenda & Disponibilités 🟡 En cours
-
-## Objectif
-
+Sprint 3 — Agenda & Disponibilités ✅ Terminé
+Objectif
 Construire un agenda simple et rapide à utiliser pour permettre au formateur de déclarer ses disponibilités journalières, tout en préparant l'arrivée future des missions.
-
-## Fonctionnel
-
-- [x] Refonte du calendrier des disponibilités
-- [x] Gestion des disponibilités par journée
-- [x] Statut Disponible
-- [x] Statut Indisponible
-- [x] Gestion simplifiée par clic successif
-- [x] Suppression de la saisie manuelle du statut Mission
-- [x] Ajout d'une note sur une journée
-- [x] Ajout de plusieurs notes sur une même journée
-- [x] Modification des notes
-- [x] Suppression d'une note existante
-- [x] Suppression de toutes les notes d'une journée
-- [x] Affichage des notes directement dans le calendrier
-- [x] Bouton Note intelligent
-- [x] Affichage du nombre de notes
-- [x] Fenêtre dédiée à la gestion des notes
-- [x] Aide contextuelle avec exemples
-- [x] Mise à jour de la légende du calendrier
-- [x] Affichage de la dernière mise à jour du planning
-
-## Modèle de disponibilité retenu
-
-Le planning repose principalement sur une logique journalière :
-
-- un formateur ;
-- une date ;
-- un statut déclaré ;
-- une ou plusieurs notes éventuelles.
-
+Fonctionnel
+[x] Refonte du calendrier des disponibilités
+[x] Gestion des disponibilités par journée
+[x] Statut Disponible
+[x] Statut Indisponible
+[x] Statut Non renseigné
+[x] Gestion simplifiée par clic successif
+[x] Suppression de la saisie manuelle du statut Mission
+[x] Ajout d'une note sur une journée
+[x] Ajout de plusieurs notes sur une même journée
+[x] Modification des notes
+[x] Suppression d'une note existante
+[x] Suppression de toutes les notes d'une journée
+[x] Affichage des notes dans le calendrier
+[x] Bouton Note intelligent
+[x] Affichage du nombre de notes
+[x] Fenêtre dédiée à la gestion des notes
+[x] Aide contextuelle avec exemples
+[x] Mise à jour de la légende du calendrier
+[x] Affichage de la dernière mise à jour du planning
+[x] Déploiement en production
+[x] Validation du fonctionnement en production
+Modèle de disponibilité retenu
+Le planning repose sur une logique journalière :
+un formateur ;
+une date ;
+un statut déclaré ;
+une ou plusieurs notes éventuelles.
 Le formateur déclare uniquement :
-
-- Disponible ;
-- Indisponible ;
-- Non renseigné.
-
+Disponible ;
+Indisponible ;
+Non renseigné.
 Une note permet d'apporter une précision sans complexifier le planning.
-
 Exemples :
-
-- Disponible uniquement à partir de 14 h ;
-- Disponible en distanciel ;
-- Préférer les missions en Île-de-France.
-
-## Décisions préparant les missions
-
-- [x] Le statut Mission n'est pas choisi manuellement par le formateur
-- [x] Une future mission modifiera automatiquement l'affichage du planning
-- [x] L'organisme propriétaire de la mission pourra voir les informations détaillées
-- [x] Les autres organismes verront uniquement une indisponibilité
-
-## À terminer
-
-- [ ] Pousser la version validée en ligne
-- [ ] Tester le calendrier en production
-- [ ] Vérifier la persistance des disponibilités après actualisation
-- [ ] Vérifier l'ajout, la modification et la suppression des notes en production
-- [ ] Mettre à jour la documentation technique si nécessaire
-
+Disponible uniquement à partir de 14 h ;
+Disponible en distanciel ;
+Préférer les missions en Île-de-France.
+Préparation du module Missions
+[x] Le statut Mission n'est pas choisi manuellement par le formateur
+[x] Une future mission modifiera automatiquement l'affichage du planning
+[x] L'organisme propriétaire de la mission pourra voir les informations détaillées
+[x] Les autres organismes verront uniquement une indisponibilité
 ---
-
-# Sprint 4 — Refonte du Listing & Vision globale des disponibilités
-
-## Objectif
-
-Refondre l'affichage du listing des formateurs afin d'améliorer la lisibilité générale et permettre à un organisme de formation de comparer immédiatement les disponibilités de plusieurs formateurs.
-
-## Refonte générale du listing
-
-- [ ] Repenser l'organisation visuelle du listing
-- [ ] Moderniser l'affichage des lignes formateurs
-- [ ] Clarifier la hiérarchie des informations
-- [ ] Définir les informations essentielles visibles immédiatement
-- [ ] Optimiser la largeur et l'ordre des colonnes
-- [ ] Réduire les informations secondaires ou les déplacer dans la fiche détaillée
-- [ ] Améliorer la lisibilité sur les écrans de taille moyenne
-- [ ] Préserver les filtres existants
-- [ ] Préserver le tri des colonnes
-- [ ] Préserver le calcul des distances
-- [ ] Préserver l'accès rapide à la fiche du formateur
-
-## Colonne Planning / Disponibilités
-
-Une nouvelle colonne permet d'afficher le planning mensuel de chaque formateur directement dans le listing.
-
-Le principe retenu n'est pas un mini-calendrier classique répété dans chaque ligne, mais une frise horizontale commune permettant de comparer les formateurs date par date.
-
-### En-tête commun du planning
-
-- [ ] Ajouter une navigation de mois commune à tout le listing
-- [ ] Bouton Mois précédent
-- [ ] Affichage du mois et de l'année sélectionnés
-- [ ] Bouton Mois suivant
-- [ ] Bouton de retour au mois en cours si nécessaire
-- [ ] Le changement de mois met à jour simultanément toutes les lignes
-
-Exemple :
-
-```text
-◀  Septembre 2026  ▶
-```
-
-### Organisation des colonnes de jours
-
-Chaque jour du mois correspond à une colonne verticale commune à tous les formateurs.
-
-Exemple :
-
-```text
-                 1  2  3  4  5  6  7  8  9  10 ...
-Pierre Dupont    🟩 🟩 🟥 ⬜ 🟩 🟩 🟩 🟥 🟩 🟩 ...
-Paul Martin      🟥 ⬜ 🟩 🟩 🟩 🟥 🟩 🟩 🟥 🟩 ...
-Sophie Durand    🟩 🟩 🟩 🟩 ⬜ 🟩 🟥 🟩 🟩 🟩 ...
-```
-
-Cette présentation doit permettre de rechercher visuellement une date précise puis de descendre dans la colonne correspondante pour identifier les formateurs disponibles.
-
-### Contenu de chaque case journalière
-
-- [ ] Numéro du jour visible dans l'en-tête
-- [ ] Couleur verte pour Disponible
-- [ ] Couleur rouge pour Indisponible
-- [ ] Couleur grise pour Non renseigné
-- [ ] Couleur spécifique future pour Mission
-- [ ] Indicateur discret lorsqu'une ou plusieurs notes existent
-- [ ] Mise en évidence éventuelle du jour actuel
-- [ ] Différenciation visuelle des week-ends si cela améliore la lecture
-
-### Notes et détails
-
-- [ ] Afficher les informations détaillées au survol d'une case
-- [ ] Afficher le statut de la journée
-- [ ] Afficher les notes de disponibilité
-- [ ] Ne pas afficher en permanence le texte des notes dans le listing
-- [ ] Éviter de surcharger visuellement les lignes
-
-Exemple au survol :
-
-```text
-Disponible
-
-Notes :
-- Disponible uniquement après 14 h
-- Préférer les missions à Paris
-```
-
-### Comparaison entre formateurs
-
-- [ ] Aligner strictement les jours pour toutes les lignes
-- [ ] Permettre la comparaison verticale sur une date précise
-- [ ] Conserver le même mois pour tous les formateurs
-- [ ] Rendre le planning lisible même avec plusieurs dizaines de formateurs
-- [ ] Prévoir un défilement horizontal propre si nécessaire
-- [ ] Étudier la possibilité de figer les informations principales du formateur pendant le défilement
-- [ ] Étudier la possibilité de figer l'en-tête des jours pendant le défilement vertical
-
-### Chargement des données
-
-- [ ] Charger les disponibilités de tous les formateurs en une seule requête Supabase par période
-- [ ] Éviter une requête distincte pour chaque formateur
-- [ ] Limiter les ralentissements lorsque le listing contient de nombreux formateurs
-- [ ] Mettre à jour la frise lors du changement de mois
-- [ ] Gérer les erreurs de chargement sans bloquer le reste du listing
-
-### Évolutions prévues
-
-- [ ] Ajouter ultérieurement un filtre par date précise
-- [ ] Afficher uniquement les formateurs disponibles à une date donnée
-- [ ] Ajouter ultérieurement un filtre Aujourd'hui
-- [ ] Ajouter ultérieurement un filtre Cette semaine
-- [ ] Ajouter ultérieurement un filtre Ce mois
-- [ ] Intégrer automatiquement les missions lorsque le module Missions sera disponible
-
+Sprint 4 — Refonte du Listing & Vision globale des disponibilités ✅ Terminé
+Objectif
+Transformer le listing des formateurs en véritable outil de pilotage des disponibilités.
+Refonte visuelle
+[x] Réorganisation complète du listing
+[x] Regroupement du prénom et du nom dans une colonne Formateur
+[x] Regroupement de la ville et du code postal dans une colonne Localisation
+[x] Déplacement des actions sous le nom du formateur
+[x] Suppression de la colonne Actions dédiée
+[x] Optimisation des largeurs de colonnes
+[x] Nouvelle hiérarchie visuelle
+[x] Amélioration de la lisibilité générale
+[x] Préservation des filtres existants
+[x] Préservation du tri des colonnes
+[x] Préservation du calcul des distances
+[x] Préservation de l'accès rapide à la fiche du formateur
+Planning intégré au listing
+[x] Création d'une colonne Planning
+[x] Affichage d'une frise horizontale mensuelle
+[x] Navigation vers le mois précédent
+[x] Navigation vers le mois suivant
+[x] Retour au mois courant
+[x] Changement de mois commun à tous les formateurs
+[x] Alignement vertical strict des jours
+[x] Affichage des numéros de jours dans l'en-tête
+[x] Couleur verte pour Disponible
+[x] Couleur rouge pour Indisponible
+[x] Couleur grise pour Non renseigné
+[x] Couleur spécifique pour Mission
+[x] Mise en évidence du jour actuel
+[x] Indicateur visuel lorsqu'une note est présente
+[x] Affichage du statut et des notes au survol
+[x] Légende des couleurs
+[x] En-tête fixe pendant le défilement vertical
+[x] Maintien visible du mois et de l'alignement des jours
+[x] Adaptation de la largeur du planning à l'écran
+Chargement des données
+[x] Chargement des disponibilités de tous les formateurs en une seule requête Supabase
+[x] Évitement d'une requête distincte par formateur
+[x] Mise à jour automatique lors du changement de mois
+[x] Gestion de l'état de chargement
+[x] Gestion des erreurs de chargement
+[x] Déploiement en production
+[x] Validation du fonctionnement en production
 ---
-
-# Sprint 5 — Gestion des missions
-
-## Objectif
-
+Sprint 4.5 — Refactoring du Listing ✅ Terminé
+Objectif
+Découper `ListingTable.jsx` afin d'améliorer la lisibilité, la maintenance et l'évolutivité du code, sans modifier le comportement actuel.
+Découpage cible
+[x] Réduire la taille de `ListingTable.jsx`
+[x] Créer `PlanningHeader.jsx`
+[x] Créer `PlanningRow.jsx`
+[x] Créer `PlanningCell.jsx`
+[x] Créer `PlanningLegend.jsx`
+[x] Créer `planningUtils.js`
+Répartition attendue
+`ListingTable.jsx`
+structure générale du tableau ;
+boucle sur les formateurs ;
+assemblage des sous-composants.
+`PlanningHeader.jsx`
+affichage du mois ;
+boutons de navigation ;
+retour au mois courant ;
+numéros des jours ;
+état de chargement ;
+message d'erreur.
+`PlanningRow.jsx`
+affichage de la frise mensuelle d'un formateur ;
+récupération des disponibilités du formateur ;
+création des cellules journalières.
+`PlanningCell.jsx`
+affichage de la couleur ;
+affichage de l'indicateur de note ;
+mise en évidence du jour actuel ;
+info-bulle au survol.
+`PlanningLegend.jsx`
+légende des statuts ;
+indicateur de note.
+`planningUtils.js`
+calcul des jours du mois ;
+formatage des dates ;
+gestion des statuts ;
+gestion des couleurs ;
+gestion des notes ;
+construction des info-bulles.
+Contraintes
+[x] Aucun changement visuel
+[x] Aucun changement fonctionnel
+[ ] Même rendu
+[ ] Même performance
+[ ] Aucun changement de données
+[ ] Aucun changement Supabase
+[ ] Tests après chaque extraction
+[ ] Validation complète avant déploiement
+[ ] Déploiement en production après validation
+---
+Sprint 5 — Recherche & Ergonomie ⚪ À venir
+Objectif
+Exploiter le planning intégré au listing pour accélérer la recherche de formateurs et améliorer le confort d'utilisation.
+Recherche
+[ ] Filtre Disponible le
+[ ] Filtre Disponible aujourd'hui
+[ ] Filtre Disponible cette semaine
+[ ] Filtre Disponible ce mois
+[ ] Filtre par période
+[ ] Recherche multicritères
+[ ] Combinaison compétence, lieu, distance et disponibilité
+[ ] Affichage uniquement des formateurs disponibles à une date donnée
+Ergonomie
+[ ] Modernisation de la barre de filtres
+[ ] Réorganisation visuelle des filtres
+[ ] Réinitialisation rapide des filtres
+[ ] Colonnes masquables
+[ ] Sauvegarde des préférences d'affichage
+[ ] Mise en valeur des formateurs Premium
+[ ] Optimisation pour les écrans larges
+[ ] Amélioration de l'affichage sur les écrans de taille moyenne
+[ ] Conservation d'une lecture rapide du planning
+---
+Sprint 6 — Gestion des missions ⚪ À venir
+Objectif
 Permettre à un organisme de formation de créer et planifier ses interventions, puis mettre à jour automatiquement le planning des formateurs.
-
-- [ ] Création d'une mission
-- [ ] Modification d'une mission
-- [ ] Suppression ou annulation d'une mission
-- [ ] Affectation d'un formateur
-- [ ] Dates et horaires de la mission
-- [ ] Lieu de la mission
-- [ ] Client concerné
-- [ ] Type de formation
-- [ ] Statut de la mission
-- [ ] Passage automatique du planning en Mission
-- [ ] Affichage détaillé pour l'organisme propriétaire
-- [ ] Affichage Indisponible pour les autres organismes
-- [ ] Historique des missions
-- [ ] Documents liés à la mission
-- [ ] Contrats
-- [ ] Vue planning
-- [ ] Détection des conflits de planning
-- [ ] Prévention des doubles affectations
-
+Gestion des missions
+[ ] Création d'une mission
+[ ] Modification d'une mission
+[ ] Suppression d'une mission
+[ ] Annulation d'une mission
+[ ] Affectation d'un formateur
+[ ] Dates de la mission
+[ ] Horaires de la mission
+[ ] Lieu de la mission
+[ ] Client concerné
+[ ] Type de formation
+[ ] Statut de la mission
+Planning
+[ ] Passage automatique du planning en Mission
+[ ] Affichage détaillé pour l'organisme propriétaire
+[ ] Affichage Indisponible pour les autres organismes
+[ ] Détection des conflits de planning
+[ ] Prévention des doubles affectations
+[ ] Vue planning globale
+[ ] Mise à jour automatique du listing
+Suivi
+[ ] Historique des missions
+[ ] Documents liés à la mission
+[ ] Contrats
+[ ] Archivage des missions terminées
 ---
-
-# Sprint 6 — Comptes utilisateurs
-
-## Objectif
-
+Sprint 7 — Comptes utilisateurs ⚪ À venir
+Objectif
 Permettre aux formateurs de gérer eux-mêmes leur profil et leurs disponibilités.
-
-- [ ] Authentification
-- [ ] Connexion
-- [ ] Déconnexion
-- [ ] Réinitialisation du mot de passe
-- [ ] Revendiquer sa fiche
-- [ ] Gestion du profil formateur
-- [ ] Gestion du planning personnel
-- [ ] Gestion des rôles
-- [ ] Gestion des droits
-- [ ] Sécurisation des accès
-
+Authentification
+[ ] Création de compte
+[ ] Connexion
+[ ] Déconnexion
+[ ] Réinitialisation du mot de passe
+[ ] Sécurisation des accès
+Profil formateur
+[ ] Revendiquer sa fiche
+[ ] Gestion du profil formateur
+[ ] Modification des informations autorisées
+[ ] Gestion du planning personnel
+[ ] Gestion des disponibilités
+[ ] Gestion des notes de disponibilité
+Rôles et droits
+[ ] Gestion des rôles
+[ ] Gestion des droits
+[ ] Distinction organisme / formateur / administrateur
+[ ] Limitation des accès selon le rôle
 ---
-
-# Sprint 7 — Organisation
-
-## Objectif
-
+Sprint 8 — Organisation ⚪ À venir
+Objectif
 Ajouter les outils nécessaires au pilotage quotidien de l'activité.
-
-- [ ] Calendrier global
-- [ ] Tableau de bord
-- [ ] Notifications
-- [ ] Emails automatiques
-- [ ] Alertes
-- [ ] Rappels
-- [ ] Suivi des actions importantes
-
+[ ] Calendrier global
+[ ] Tableau de bord
+[ ] Notifications
+[ ] Emails automatiques
+[ ] Alertes
+[ ] Rappels
+[ ] Suivi des actions importantes
+[ ] Synthèse des missions à venir
+[ ] Synthèse des disponibilités
+[ ] Indicateurs d'activité
 ---
-
-# Sprint 8 — Version SaaS
-
-## Objectif
-
+Sprint 9 — Version SaaS ⚪ À venir
+Objectif
 Ouvrir TimeForma à plusieurs organismes de formation tout en garantissant l'isolation et la confidentialité des données.
-
-- [ ] Multi-organismes
-- [ ] Isolation des données
-- [ ] Confidentialité entre organismes
-- [ ] Administration
-- [ ] Paramétrage des organismes
-- [ ] Gestion des abonnements
-- [ ] Facturation
-- [ ] Paiements
-- [ ] Gestion des offres commerciales
-
+Multi-organismes
+[ ] Gestion de plusieurs organismes
+[ ] Isolation des données
+[ ] Confidentialité entre organismes
+[ ] Gestion des utilisateurs par organisme
+[ ] Paramétrage des organismes
+Administration
+[ ] Interface d'administration
+[ ] Gestion des comptes
+[ ] Gestion des droits
+[ ] Gestion des offres commerciales
+[ ] Gestion des paramètres globaux
+Commercialisation
+[ ] Gestion des abonnements
+[ ] Facturation
+[ ] Paiements
+[ ] Gestion des offres
+[ ] Gestion des essais
+[ ] Gestion des résiliations
 ---
-
-# Idées futures
-
-- IA de planification
-- IA d'affectation des formateurs
-- Recherche automatique du meilleur formateur selon la date, la distance, les compétences et le tarif
-- Application mobile
-- Signature électronique
-- API publique
-- Tableau de bord avancé
-- Statistiques d'activité
-- Messagerie entre organismes et formateurs
-- Notifications mobiles
-- Evaluation des formateurs par les apprenants
-- Gamification des foramteurs avec un suivi statistique du nombre de session, de jours, d'heures, d'apprenants etc...
+Idées futures
+IA de planification
+IA d'affectation des formateurs
+Recherche automatique du meilleur formateur selon la date, la distance, les compétences et le tarif
+Application mobile
+Signature électronique
+API publique
+Tableau de bord avancé
+Statistiques d'activité
+Messagerie entre organismes et formateurs
+Notifications mobiles
+Évaluation des formateurs par les apprenants
+Gamification des formateurs
+Suivi du nombre de sessions
+Suivi du nombre de jours de formation
+Suivi du nombre d'heures réalisées
+Suivi du nombre d'apprenants formés

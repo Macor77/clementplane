@@ -1,59 +1,151 @@
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const sleep = (ms) =>
+  new Promise((resolve) => setTimeout(resolve, ms));
 
 export const hasValidCoords = (lat, lon) =>
-  Number.isFinite(Number(lat)) && Number.isFinite(Number(lon));
+  Number.isFinite(Number(lat)) &&
+  Number.isFinite(Number(lon));
 
-const buildGeocodeQueries = (f) => {
-  const adresse = (f.adresse || "").toString().trim();
-  const codePostal = (f.codePostal || f.code_postal || "").toString().trim();
-  const ville = (f.ville || "").toString().trim();
+const buildGeocodeQueries = (formateur) => {
+  const adresse = String(
+    formateur.adresse ?? ''
+  ).trim();
+
+  const codePostal = String(
+    formateur.codePostal ??
+      formateur.code_postal ??
+      ''
+  ).trim();
+
+  const ville = String(
+    formateur.ville ?? ''
+  ).trim();
 
   const queries = [
-    [adresse, codePostal, ville, "France"],
-    [codePostal, ville, "France"],
-    [ville, codePostal, "France"],
-    [ville, "France"],
+    [adresse, codePostal, ville, 'France'],
+    [codePostal, ville, 'France'],
+    [ville, codePostal, 'France'],
+    [ville, 'France'],
   ]
     .map((parts) =>
-      parts.map((v) => (v || "").toString().trim()).filter(Boolean).join(", ")
+      parts
+        .map((value) => String(value ?? '').trim())
+        .filter(Boolean)
+        .join(', ')
     )
     .filter(Boolean);
 
   return [...new Set(queries)];
 };
 
-export async function geocodeQuery(query) {
-  if (!query.trim()) return null;
+const getSupabaseConfiguration = () => {
+  const supabaseUrl =
+    import.meta.env.VITE_SUPABASE_URL;
 
-  const url = `https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=fr&q=${encodeURIComponent(
-    query
-  )}`;
+  const supabaseKey =
+    import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-  const res = await fetch(url);
-
-  if (!res.ok) throw new Error("Géocodage impossible");
-
-  const data = await res.json();
-
-  if (!Array.isArray(data) || data.length === 0) return null;
+  if (!supabaseUrl || !supabaseKey) {
+    throw new Error(
+      'Configuration Supabase manquante.'
+    );
+  }
 
   return {
-    latitude: Number(data[0].lat),
-    longitude: Number(data[0].lon),
+    supabaseUrl: supabaseUrl.replace(/\/$/, ''),
+    supabaseKey,
+  };
+};
+
+export async function geocodeQuery(query) {
+  const normalizedQuery = String(
+    query ?? ''
+  ).trim();
+
+  if (!normalizedQuery) return null;
+
+  const {
+    supabaseUrl,
+    supabaseKey,
+  } = getSupabaseConfiguration();
+
+  const response = await fetch(
+    `${supabaseUrl}/functions/v1/geocode`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        apikey: supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`,
+      },
+      body: JSON.stringify({
+        query: normalizedQuery,
+      }),
+    }
+  );
+
+  let data = null;
+
+  try {
+    data = await response.json();
+  } catch {
+    data = null;
+  }
+
+  if (response.status === 404) {
+    return null;
+  }
+
+  if (!response.ok) {
+    throw new Error(
+      data?.error ||
+        'Le service de géocodage est indisponible.'
+    );
+  }
+
+  if (
+    !data ||
+    !hasValidCoords(
+      data.latitude,
+      data.longitude
+    )
+  ) {
+    return null;
+  }
+
+  return {
+    latitude: Number(data.latitude),
+    longitude: Number(data.longitude),
+    displayName: String(
+      data.displayName ?? ''
+    ).trim(),
+    city: String(data.city ?? '').trim(),
+    postcode: String(
+      data.postcode ?? ''
+    ).trim(),
+    department: String(
+      data.department ?? ''
+    ).trim(),
   };
 }
 
 export async function geocodeTrainer(formateur) {
-  const queries = buildGeocodeQueries(formateur);
+  const queries =
+    buildGeocodeQueries(formateur);
 
   for (const query of queries) {
-    const coords = await geocodeQuery(query);
+    const result = await geocodeQuery(query);
 
-    if (coords && hasValidCoords(coords.latitude, coords.longitude)) {
-      return coords;
+    if (
+      result &&
+      hasValidCoords(
+        result.latitude,
+        result.longitude
+      )
+    ) {
+      return result;
     }
 
-    await sleep(1100);
+    await sleep(250);
   }
 
   return null;

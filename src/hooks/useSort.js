@@ -1,44 +1,89 @@
-import { useCallback, useState } from "react";
+import {
+  useCallback,
+  useRef,
+  useState,
+} from 'react';
 
 export default function useSort({ distances }) {
-  const [sort, setSort] = useState({ key: null, dir: "asc" });
+  const [sort, setSort] = useState({
+    key: null,
+    dir: 'asc',
+  });
+
+  const previousSortRef = useRef({
+    key: null,
+    dir: 'asc',
+  });
 
   const compareValues = useCallback(
     (a, b, key) => {
       const read = (obj) => {
         switch (key) {
-          case "codePostal":
-            return obj.codePostal ?? "";
-          case "prenom":
-            return (obj.prenom ?? "").toLowerCase();
-          case "nom":
-            return (obj.nom ?? "").toLowerCase();
-          case "ville":
-            return (obj.ville ?? "").toLowerCase();
-          case "statut":
-            return (obj.statut ?? "").toLowerCase();
-          case "distance": {
-            const d = distances.get(obj);
-            return d === "-" || d === undefined ? null : Number(d);
+          case 'codePostal':
+            return obj.codePostal ?? '';
+
+          case 'prenom':
+            return (obj.prenom ?? '').toLowerCase();
+
+          case 'nom':
+            return (obj.nom ?? '').toLowerCase();
+
+          case 'ville':
+            return (obj.ville ?? '').toLowerCase();
+
+          case 'statut':
+            return (obj.statut ?? '').toLowerCase();
+
+          case 'distance': {
+            const distance = distances.get(obj);
+
+            return distance === '-' ||
+              distance === undefined
+              ? null
+              : Number(distance);
           }
+
           default:
-            return (obj[key] ?? "").toString().toLowerCase();
+            return (obj[key] ?? '')
+              .toString()
+              .toLowerCase();
         }
       };
 
-      const va = read(a);
-      const vb = read(b);
+      const valueA = read(a);
+      const valueB = read(b);
 
-      const empty = (v) => v === null || v === undefined || v === "";
+      const isEmpty = (value) =>
+        value === null ||
+        value === undefined ||
+        value === '';
 
-      if (empty(va) && !empty(vb)) return 1;
-      if (!empty(va) && empty(vb)) return -1;
-      if (empty(va) && empty(vb)) return 0;
-      if (typeof va === "number" && typeof vb === "number") return va - vb;
+      if (isEmpty(valueA) && !isEmpty(valueB)) {
+        return 1;
+      }
 
-      return String(va).localeCompare(String(vb), "fr", {
-        sensitivity: "base",
-      });
+      if (!isEmpty(valueA) && isEmpty(valueB)) {
+        return -1;
+      }
+
+      if (isEmpty(valueA) && isEmpty(valueB)) {
+        return 0;
+      }
+
+      if (
+        typeof valueA === 'number' &&
+        typeof valueB === 'number'
+      ) {
+        return valueA - valueB;
+      }
+
+      return String(valueA).localeCompare(
+        String(valueB),
+        'fr',
+        {
+          sensitivity: 'base',
+        }
+      );
     },
     [distances]
   );
@@ -47,28 +92,63 @@ export default function useSort({ distances }) {
     (list) => {
       if (!sort.key) return list;
 
-      const arr = [...list].sort((a, b) => compareValues(a, b, sort.key));
+      const sortedList = [...list].sort((a, b) =>
+        compareValues(a, b, sort.key)
+      );
 
-      return sort.dir === "asc" ? arr : arr.reverse();
+      return sort.dir === 'asc'
+        ? sortedList
+        : sortedList.reverse();
     },
     [sort, compareValues]
   );
 
   const toggleSort = (key) => {
-    setSort((prev) => ({
+    setSort((previousSort) => ({
       key,
-      dir: prev.key === key && prev.dir === "asc" ? "desc" : "asc",
+      dir:
+        previousSort.key === key &&
+        previousSort.dir === 'asc'
+          ? 'desc'
+          : 'asc',
     }));
   };
 
+  const activateDistanceSort = () => {
+    setSort((previousSort) => {
+      if (previousSort.key !== 'distance') {
+        previousSortRef.current = previousSort;
+      }
+
+      return {
+        key: 'distance',
+        dir: 'asc',
+      };
+    });
+  };
+
+  const deactivateDistanceSort = () => {
+    setSort((previousSort) => {
+      if (previousSort.key !== 'distance') {
+        return previousSort;
+      }
+
+      return previousSortRef.current;
+    });
+  };
+
   const refreshSort = () => {
-    setSort((prev) => ({ ...prev }));
+    setSort((previousSort) => ({
+      ...previousSort,
+    }));
   };
 
   return {
     sort,
     sortList,
     toggleSort,
+    activateDistanceSort,
+    deactivateDistanceSort,
     refreshSort,
   };
 }

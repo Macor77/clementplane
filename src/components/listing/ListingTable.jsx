@@ -75,10 +75,10 @@ export default function ListingTable({
               <th
                 style={{
                   ...headerStyle,
-                  minWidth: 190,
+                  minWidth: 220,
                 }}
               >
-                Compétences
+                Compétences / Matériel
               </th>
 
               <th
@@ -243,12 +243,31 @@ export default function ListingTable({
                     <td
                       style={{
                         ...cellStyle,
-                        minWidth: 190,
-                        maxWidth: 240,
+                        minWidth: 220,
+                        maxWidth: 280,
                       }}
                     >
-                      {renderList(formateur.competences) ||
-                        '—'}
+                      <div
+                        style={{
+                          display: 'grid',
+                          gap: 6,
+                        }}
+                      >
+                        <div>
+                          {renderList(formateur.competences) || '—'}
+                        </div>
+
+                        <div
+                          style={{
+                            fontSize: 12,
+                            color: '#4b5563',
+                            lineHeight: 1.35,
+                          }}
+                        >
+                          <strong>Matériel :</strong>{' '}
+                          {renderList(formateur.materiel) || '—'}
+                        </div>
+                      </div>
                     </td>
 
                     <td

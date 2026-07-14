@@ -1,165 +1,238 @@
-DATABASE - TimeForma
-Version : 2.0  
-Dernière mise à jour : 12/07/2026
+# FONCTIONNEL - TimeForma
+
+Version : 4.0  
+Dernière mise à jour : 14/07/2026  
+Correspond au Sprint 5 terminé.
+
 ---
-Objectif
-Les données actuelles de TimeForma sont stockées dans Supabase.
-Ce document distingue :
-les tables actuellement utilisées ;
-les tables prévues pour les futurs sprints.
+
+# Objectif
+
+Ce document décrit le comportement fonctionnel attendu de TimeForma.
+
+Il définit **ce que doit faire le logiciel**, indépendamment de son implémentation technique.
+
+La référence technique est décrite dans `ARCHITECTURE.md`.
+
 ---
-Table actuelle : `trainers`
-Cette table contient les informations des formateurs.
-Colonnes principales
-`id`
-`created_at`
-`updated_at`
-Identité et coordonnées
-`prenom`
-`nom`
-`email`
-`telephone`
-Adresse et géolocalisation
-`adresse`
-`code_postal`
-`ville`
-`latitude`
-`longitude`
-Informations métier
-`competences`
-`materiel`
-`tarif`
-`statut`
-Informations diverses
-`notes`
+
+# Vision
+
+TimeForma permet à un organisme de formation de retrouver rapidement le formateur le plus adapté à une mission.
+
+Le logiciel centralise :
+
+- les informations des formateurs ;
+- leurs disponibilités ;
+- leur localisation ;
+- leurs compétences ;
+- leurs futurs engagements.
+
 ---
-Table actuelle : `trainer_availability`
-Une ligne représente l'état d'un formateur pour une journée donnée.
-Colonnes
-`id`
-`trainer_id`
-`day`
-`status`
-`note`
-`updated_at`
-Selon la structure réelle de la table, une colonne `created_at` peut également être présente.
-Contrainte d'unicité
-La combinaison suivante doit être unique :
-```text
-trainer_id + day
+
+# Gestion des formateurs
+
+Chaque formateur possède une fiche contenant notamment :
+
+- prénom
+- nom
+- email
+- téléphone
+- adresse
+- code postal
+- ville
+- coordonnées GPS
+- compétences
+- matériel
+- tarif
+- statut
+- notes internes
+
+L'utilisateur peut :
+
+- créer
+- consulter
+- modifier
+- supprimer
+
+une fiche.
+
+---
+
+# Recherche
+
+Le listing constitue l'écran principal du logiciel.
+
+Il permet :
+
+- la recherche multicritères ;
+- le tri des colonnes ;
+- le calcul des distances ;
+- la consultation du planning ;
+- l'accès rapide aux fiches.
+
+---
+
+# Recherche géographique
+
+L'utilisateur saisit :
+
 ```
-Cette contrainte permet l'utilisation de l'upsert Supabase avec :
-```text
-onConflict: trainer_id,day
+Chelles
 ```
-Statuts
-Valeurs actuellement prises en charge :
-`dispo`
-`indispo`
-chaîne vide ou absence de statut pour Non renseigné
-`mission` pour les anciennes données ou le futur affichage automatique
-Règle métier
-Le statut `mission` ne doit pas être choisi manuellement par le formateur.
-Il sera généré automatiquement par le futur module Missions.
-Notes
-Le champ `note` est un texte libre.
-Plusieurs informations sont stockées sous forme de lignes séparées.
+
+Puis clique sur :
+
+```
+Calculer les distances
+```
+
+Le logiciel :
+
+- géocode le lieu ;
+- calcule les distances ;
+- trie automatiquement les résultats.
+
+Le lieu reconnu est affiché.
+
 Exemple :
-```text
-Disponible uniquement à partir de 14 h
-Disponible en distanciel
-Préférer les missions en Île-de-France
+
 ```
----
-Chargement du planning mensuel
-Le listing charge les disponibilités d'une période avec une seule requête Supabase.
-La requête filtre :
-une liste d'identifiants de formateurs ;
-une date de début ;
-une date de fin.
-Les données sont ensuite organisées côté application sous la forme :
-```text
-formateur_id
-  └── date
-      ├── status
-      ├── note
-      └── updated_at
+📍 Lieu reconnu
+
+Chelles, Seine-et-Marne (77500)
 ```
+
+Cette information permet de vérifier immédiatement que le bon lieu a été utilisé.
+
 ---
-Tables prévues
-Les tables suivantes correspondent aux futurs modules. Elles ne doivent pas être considérées comme entièrement implémentées tant que leur sprint n'est pas terminé.
+
+# Coordonnées GPS
+
+Chaque formateur possède :
+
+- latitude
+- longitude
+
+Lorsqu'elles sont absentes, TimeForma peut les compléter automatiquement.
+
+Le logiciel utilise successivement :
+
+- adresse complète ;
+- code postal + ville ;
+- ville seule.
+
 ---
-Table prévue : `missions`
-Objectif
-Stocker les missions de formation créées par les organismes.
-Colonnes envisagées
-`id`
-`organisme_id`
-`formateur_id`
-`titre`
-`client`
-`adresse`
-`code_postal`
-`ville`
-`date_debut`
-`date_fin`
-`heure_debut`
-`heure_fin`
-`type_formation`
-`statut`
-`created_at`
-`updated_at`
-Règle métier
-Une mission affectée doit modifier automatiquement l'affichage du planning.
+
+# Disponibilités
+
+Les disponibilités sont gérées **à la journée**.
+
+Chaque journée possède :
+
+- un statut ;
+- plusieurs notes éventuelles.
+
 ---
-Table prévue : `utilisateurs`
-Objectif
-Gérer les comptes utilisateurs.
-Colonnes envisagées
-`id`
-`email`
-`prenom`
-`nom`
-`role`
-`organisme_id`
-`formateur_id`
-`created_at`
-`updated_at`
+
+# Statuts
+
+Les statuts disponibles sont :
+
+- Disponible
+- Indisponible
+- Non renseigné
+
+Le statut **Mission** est réservé au système.
+
+Il ne peut jamais être sélectionné manuellement.
+
 ---
-Table prévue : `organismes`
-Objectif
-Préparer la version multi-organismes.
-Colonnes envisagées
-`id`
-`nom`
-`adresse`
-`code_postal`
-`ville`
-`email`
-`telephone`
-`created_at`
-`updated_at`
+
+# Notes
+
+Une journée peut contenir plusieurs notes.
+
+Chaque ligne représente une information indépendante.
+
+Exemples :
+
+- Disponible uniquement après 14 h
+- Disponible en distanciel
+- Préférer les missions en Île-de-France
+
 ---
-Relations prévues
-un organisme possède plusieurs utilisateurs ;
-un organisme crée plusieurs missions ;
-un formateur possède plusieurs disponibilités journalières ;
-un formateur peut réaliser plusieurs missions ;
-un utilisateur peut être rattaché à un organisme ou à un formateur.
+
+# Planning
+
+Le planning est affiché directement dans le listing.
+
+Tous les formateurs utilisent la même période.
+
+Les jours sont parfaitement alignés.
+
+Le changement de mois est global.
+
 ---
-Confidentialité future
-Dans la version SaaS :
-chaque organisme accède uniquement à ses données privées ;
-les détails d'une mission sont visibles uniquement par l'organisme propriétaire et le formateur concerné ;
-les autres organismes voient uniquement une indisponibilité ;
-les règles d'accès devront être protégées par les politiques RLS de Supabase.
+
+# Affichage du planning
+
+Chaque cellule peut afficher :
+
+- la couleur du statut ;
+- un point noir lorsqu'une note existe.
+
+Au survol :
+
+- statut ;
+- notes ;
+- date.
+
 ---
-Évolutions prévues
-documents ;
-contrats ;
-factures ;
-notifications ;
-historique ;
-statistiques ;
-abonnements ;
-paiements.
+
+# Distances
+
+Les distances sont calculées uniquement après une action volontaire de l'utilisateur.
+
+Aucun calcul automatique n'est lancé pendant la saisie.
+
+Le tri par distance devient alors disponible.
+
+---
+
+# Missions (Sprint 6)
+
+Le prochain module permettra :
+
+- créer une mission ;
+- affecter un formateur ;
+- réserver automatiquement les dates ;
+- éviter les doubles affectations.
+
+Lorsqu'une mission est créée :
+
+- le planning du formateur est mis à jour ;
+- le statut Mission apparaît automatiquement.
+
+---
+
+# Confidentialité
+
+Chaque organisme ne doit accéder qu'à ses propres données.
+
+Les informations confidentielles (missions, clients, notes internes...) ne seront jamais visibles par un autre organisme.
+
+Cette règle sera renforcée lors du passage en SaaS.
+
+---
+
+# Philosophie
+
+TimeForma privilégie toujours :
+
+- la simplicité ;
+- la rapidité ;
+- la lisibilité ;
+- l'efficacité.
+
+Chaque nouvelle fonctionnalité doit permettre à un organisme de préparer plus rapidement une mission, sans complexifier inutilement l'interface.

@@ -1,187 +1,184 @@
-FONCTIONNEL - TimeForma
-Version : 2.0  
-Dernière mise à jour : 12/07/2026
+# PRD - TimeForma
+
+Version : 4.0  
+Dernière mise à jour : 14/07/2026  
+Correspond au Sprint 5 terminé.
+
 ---
-Objectif
-Ce document décrit le fonctionnement métier de TimeForma.
-Il précise ce que le logiciel doit permettre aux utilisateurs de faire, indépendamment de la manière dont il est développé techniquement.
+
+# Présentation
+
+TimeForma est une plateforme de gestion des formateurs destinée aux organismes de formation.
+
+Son objectif est de réduire drastiquement le temps nécessaire pour :
+
+- trouver un formateur ;
+- vérifier ses disponibilités ;
+- connaître ses compétences ;
+- calculer sa proximité avec une mission ;
+- affecter le bon formateur.
+
+Le logiciel est développé en priorité pour Alter Prévention, avec une architecture pensée dès aujourd'hui pour une future commercialisation en SaaS.
+
 ---
-Vision
-TimeForma est une plateforme de gestion des formateurs indépendants.
-Le logiciel doit permettre :
-aux organismes de formation de trouver rapidement un formateur adapté et disponible ;
-aux formateurs de gérer leurs informations et leurs disponibilités ;
-à chaque organisme de protéger ses informations confidentielles ;
-de réduire le temps consacré à la recherche, à la planification et au suivi des formateurs.
+
+# Le problème
+
+Aujourd'hui, la majorité des organismes gèrent leurs formateurs avec :
+
+- Excel ;
+- Outlook ;
+- des agendas papier ;
+- des fichiers dispersés ;
+- leur mémoire.
+
+Les principales difficultés sont :
+
+- retrouver un formateur compétent ;
+- savoir s'il est disponible ;
+- connaître sa localisation ;
+- éviter les doubles affectations ;
+- conserver un historique.
+
 ---
-Acteurs
-Formateur
-Le formateur est destiné à devenir propriétaire de sa fiche et de ses disponibilités.
-À terme, il pourra notamment :
-gérer ses informations personnelles autorisées ;
-gérer ses disponibilités ;
-ajouter des précisions sur ses disponibilités ;
-consulter ses missions ;
-travailler avec plusieurs organismes.
-Organisme de formation
-Un organisme peut :
-créer et gérer des fiches formateurs ;
-rechercher un formateur ;
-filtrer et trier le listing ;
-calculer la distance entre un lieu de formation et les formateurs ;
-consulter les disponibilités mensuelles des formateurs ;
-proposer et gérer des missions à terme.
-Un organisme ne peut jamais consulter les données confidentielles d'un autre organisme.
+
+# Notre vision
+
+TimeForma doit devenir le point d'entrée unique de la gestion des formateurs.
+
+À terme, un organisme ne devra plus avoir besoin de plusieurs outils.
+
+Le logiciel devra couvrir :
+
+- le réseau de formateurs ;
+- les disponibilités ;
+- les missions ;
+- les documents ;
+- les échanges ;
+- les statistiques.
+
 ---
-Gestion des formateurs
-Une fiche formateur contient notamment :
-prénom ;
-nom ;
-email ;
-téléphone ;
-adresse ;
-code postal ;
-ville ;
-latitude ;
-longitude ;
-compétences ;
-matériel ;
-tarif ;
-statut ;
-notes internes.
-L'organisme peut :
-créer une fiche ;
-consulter une fiche ;
-modifier une fiche ;
-supprimer une fiche.
+
+# Public cible
+
+## Aujourd'hui
+
+- Alter Prévention
+
+## Demain
+
+- Organismes de formation
+- Responsables pédagogiques
+- Coordinateurs
+- Planificateurs
+- Assistants administratifs
+
+## Plus tard
+
+- Formateurs indépendants
+- Administrateurs de plateforme
+
 ---
-Recherche et listing
-Le listing permet de consulter l'ensemble des formateurs.
-Les informations principales affichées sont :
-formateur ;
-localisation ;
-compétences ;
-statut ;
-distance ;
-planning mensuel.
-Les actions principales sont affichées sous le nom du formateur :
-Voir ;
-Modifier ;
-Supprimer.
-Les filtres et tris existants restent disponibles.
+
+# Proposition de valeur
+
+TimeForma permet :
+
+- de trouver rapidement le bon formateur ;
+- de comparer plusieurs profils ;
+- de centraliser les informations ;
+- de gagner du temps ;
+- de réduire les erreurs de planification.
+
 ---
-Distances et géolocalisation
-TimeForma peut calculer la distance entre :
-un lieu de formation ;
-chaque formateur disposant de coordonnées GPS valides.
-Le logiciel peut également compléter automatiquement les coordonnées GPS manquantes à partir de l'adresse, du code postal ou de la ville.
+
+# Fonctionnalités disponibles
+
+## Gestion des formateurs
+
+- création
+- modification
+- suppression
+- consultation
+
 ---
-Disponibilités du formateur
-Principe général
-Le planning repose principalement sur une logique journalière :
-un formateur ;
-une date ;
-un statut déclaré ;
-une ou plusieurs notes éventuelles.
-Le formateur ou l'organisme renseigne simplement la situation d'une journée.
-Statuts déclarés
-Les statuts manuels sont :
-Disponible ;
-Indisponible ;
-Non renseigné.
-Le cycle de clic est :
-```text
-Non renseigné → Disponible → Indisponible → Non renseigné
+
+## Planning
+
+- disponibilités journalières
+- notes
+- vue mensuelle
+- comparaison des formateurs
+
+---
+
+## Recherche
+
+- recherche multicritères
+- tri
+- filtres
+- calcul des distances
+- géolocalisation
+
+---
+
+## Géocodage
+
+Le calcul des distances repose sur une Edge Function Supabase.
+
+Le logiciel indique toujours le lieu réellement reconnu.
+
+---
+
+# Fonctionnalités futures
+
+Les prochaines grandes étapes sont :
+
+- Missions
+- Réseau de formateurs
+- Comptes utilisateurs
+- Marketplace
+- SaaS multi-organismes
+
+Le détail est disponible dans :
+
 ```
-Le statut Mission n'est pas sélectionné manuellement.
-Notes de disponibilité
-Une journée peut contenir une ou plusieurs notes.
-Une ligne correspond à une information.
-Exemples :
-Disponible uniquement à partir de 14 h ;
-Disponible en distanciel ;
-Préférer les missions en Île-de-France.
-Les notes peuvent être :
-ajoutées ;
-modifiées ;
-supprimées individuellement en supprimant leur ligne ;
-supprimées entièrement.
-Le bouton de gestion des notes indique le nombre de notes présentes.
-Dernière mise à jour
-La fiche formateur indique la dernière mise à jour connue du planning affiché.
+ROADMAP.md
+```
+
 ---
-Planning mensuel dans le listing
-Objectif
-Le planning mensuel intégré au listing permet de comparer les disponibilités de plusieurs formateurs sur le même mois.
-Il doit répondre rapidement à la question :
-> Quel formateur est disponible à une date donnée ?
-Présentation
-Le planning prend la forme d'une frise horizontale commune à toutes les lignes.
-Chaque jour du mois correspond à une colonne verticale alignée pour tous les formateurs.
-Le mois est identique pour toutes les lignes.
-Navigation
-L'en-tête du planning permet :
-d'afficher le mois précédent ;
-d'afficher le mois suivant ;
-de revenir au mois courant.
-Le changement de mois actualise simultanément toutes les lignes.
-Couleurs
-Vert : Disponible ;
-Rouge : Indisponible ;
-Gris : Non renseigné ;
-Jaune : Mission.
-Le jour actuel est mis en évidence.
-Notes dans le listing
-Lorsqu'une journée contient une ou plusieurs notes, un point noir apparaît dans la case.
-Au survol d'une case, TimeForma affiche :
-le nom du formateur ;
-la date ;
-le statut ;
-les notes éventuelles.
-Le point noir ne possède pas sa propre info-bulle : le survol affiche toujours le détail complet de la journée.
-En-tête fixe
-L'en-tête du tableau reste visible lors du défilement vertical.
-L'utilisateur conserve ainsi en permanence :
-les noms des colonnes ;
-le mois affiché ;
-l'alignement des jours.
+
+# Principes produit
+
+Chaque fonctionnalité doit répondre à au moins un de ces objectifs :
+
+- faire gagner du temps ;
+- réduire les manipulations ;
+- améliorer la qualité des décisions ;
+- limiter les erreurs ;
+- préparer les évolutions futures.
+
+Une fonctionnalité qui n'apporte aucune valeur métier ne doit pas être développée.
+
 ---
-Missions
-Principe
-Les missions appartiennent à l'organisme qui les crée.
-Le statut Mission sera généré automatiquement par le système lorsqu'une mission sera affectée à un formateur.
-Le formateur n'aura pas à renseigner manuellement ce statut.
-Visibilité
-Une mission sera visible :
-par le formateur concerné ;
-par l'organisme propriétaire.
-Les autres organismes ne verront pas les détails de la mission.
-Ils verront uniquement que le formateur est indisponible.
+
+# Critères de réussite
+
+TimeForma sera considéré comme un succès lorsque :
+
+- un organisme pourra préparer une mission en quelques minutes ;
+- la recherche d'un formateur deviendra quasi instantanée ;
+- les doubles affectations seront évitées automatiquement ;
+- les informations seront centralisées dans un seul outil.
+
 ---
-Propriété des données
-Chaque donnée possède un propriétaire.
-Le propriétaire détermine :
-qui peut modifier la donnée ;
-qui peut la consulter ;
-qui peut la supprimer.
-Cette règle devra être appliquée à l'ensemble des futures fonctionnalités multi-organismes.
----
-Confidentialité
-Le logiciel doit protéger les informations commerciales.
-Un organisme ne doit jamais connaître les données confidentielles d'un autre organisme, notamment :
-ses clients ;
-ses lieux d'intervention ;
-ses tarifs ;
-ses commentaires internes ;
-les détails de ses missions.
----
-Philosophie produit
-TimeForma privilégie :
-la simplicité ;
-la rapidité ;
-la lisibilité ;
-la confidentialité ;
-la collaboration ;
-l'automatisation ;
-la réutilisation des données.
-Chaque nouvelle fonctionnalité doit améliorer l'expérience utilisateur sans alourdir inutilement l'interface.
+
+# Vision long terme
+
+À terme, TimeForma deviendra une plateforme collaborative reliant :
+
+- les organismes de formation ;
+- les formateurs indépendants ;
+- les missions.
+
+L'objectif n'est pas uniquement de gérer des données, mais de faciliter l'organisation des formations.

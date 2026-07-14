@@ -1,192 +1,184 @@
-PRD - TimeForma
-Version : 2.0  
-Dernière mise à jour : 12/07/2026
+# PRD - TimeForma
+
+Version : 4.0  
+Dernière mise à jour : 14/07/2026  
+Correspond au Sprint 5 terminé.
+
 ---
-1. Présentation
-TimeForma est une plateforme de gestion de formateurs créée par Alter Prévention.
-L'objectif est de permettre à un organisme de formation de gérer simplement :
-ses formateurs ;
-leurs compétences ;
-leurs coordonnées ;
-leur localisation ;
-leurs disponibilités ;
-leur future affectation aux missions.
-À terme, TimeForma deviendra une plateforme SaaS accessible à plusieurs organismes de formation et aux formateurs.
+
+# Présentation
+
+TimeForma est une plateforme de gestion des formateurs destinée aux organismes de formation.
+
+Son objectif est de réduire drastiquement le temps nécessaire pour :
+
+- trouver un formateur ;
+- vérifier ses disponibilités ;
+- connaître ses compétences ;
+- calculer sa proximité avec une mission ;
+- affecter le bon formateur.
+
+Le logiciel est développé en priorité pour Alter Prévention, avec une architecture pensée dès aujourd'hui pour une future commercialisation en SaaS.
+
 ---
-2. Objectifs produit
-Les objectifs principaux sont :
-centraliser les informations des formateurs ;
-trouver rapidement un formateur adapté ;
-comparer les disponibilités sur une même période ;
-visualiser les distances entre les formateurs et les lieux de mission ;
-simplifier l'organisation des formations ;
-réduire le temps administratif ;
-préparer une gestion automatisée des missions.
+
+# Le problème
+
+Aujourd'hui, la majorité des organismes gèrent leurs formateurs avec :
+
+- Excel ;
+- Outlook ;
+- des agendas papier ;
+- des fichiers dispersés ;
+- leur mémoire.
+
+Les principales difficultés sont :
+
+- retrouver un formateur compétent ;
+- savoir s'il est disponible ;
+- connaître sa localisation ;
+- éviter les doubles affectations ;
+- conserver un historique.
+
 ---
-3. Public visé
-Aujourd'hui
-Alter Prévention
-À terme
-organismes de formation ;
-responsables pédagogiques ;
-planificateurs ;
-assistants administratifs ;
-formateurs indépendants ;
-administrateurs de la plateforme.
+
+# Notre vision
+
+TimeForma doit devenir le point d'entrée unique de la gestion des formateurs.
+
+À terme, un organisme ne devra plus avoir besoin de plusieurs outils.
+
+Le logiciel devra couvrir :
+
+- le réseau de formateurs ;
+- les disponibilités ;
+- les missions ;
+- les documents ;
+- les échanges ;
+- les statistiques.
+
 ---
-4. Fonctionnalités actuelles
-Gestion des formateurs
-création ;
-modification ;
-suppression ;
-consultation.
-Chaque fiche contient notamment :
-identité ;
-coordonnées ;
-adresse ;
-ville ;
-code postal ;
-email ;
-téléphone ;
-compétences ;
-matériel ;
-tarif ;
-statut ;
-notes internes ;
-géolocalisation.
+
+# Public cible
+
+## Aujourd'hui
+
+- Alter Prévention
+
+## Demain
+
+- Organismes de formation
+- Responsables pédagogiques
+- Coordinateurs
+- Planificateurs
+- Assistants administratifs
+
+## Plus tard
+
+- Formateurs indépendants
+- Administrateurs de plateforme
+
 ---
-Recherche et filtres
-Recherche par :
-nom ;
-ville ;
-département ;
-compétences ;
-matériel ;
-statut.
-Le listing permet également :
-le tri des colonnes ;
-le calcul des distances ;
-la consultation rapide du planning mensuel.
+
+# Proposition de valeur
+
+TimeForma permet :
+
+- de trouver rapidement le bon formateur ;
+- de comparer plusieurs profils ;
+- de centraliser les informations ;
+- de gagner du temps ;
+- de réduire les erreurs de planification.
+
 ---
-Distances
-Calcul automatique de la distance entre :
-un lieu de formation ;
-chaque formateur disposant de coordonnées GPS valides.
-Le logiciel peut compléter les coordonnées GPS manquantes.
+
+# Fonctionnalités disponibles
+
+## Gestion des formateurs
+
+- création
+- modification
+- suppression
+- consultation
+
 ---
-Carte
-affichage Leaflet ;
-visualisation des formateurs sur une carte.
+
+## Planning
+
+- disponibilités journalières
+- notes
+- vue mensuelle
+- comparaison des formateurs
+
 ---
-Disponibilités journalières
-Le calendrier de la fiche formateur permet d'indiquer :
-Disponible ;
-Indisponible ;
-Non renseigné.
-Le statut Mission n'est pas sélectionné manuellement.
-Une journée peut contenir plusieurs notes.
-Exemples :
-Disponible uniquement après 14 h ;
-Disponible en distanciel ;
-Préférer les missions en Île-de-France.
+
+## Recherche
+
+- recherche multicritères
+- tri
+- filtres
+- calcul des distances
+- géolocalisation
+
 ---
-Planning mensuel du listing
-Le listing affiche une frise mensuelle commune à tous les formateurs.
-Fonctions disponibles :
-navigation entre les mois ;
-retour au mois courant ;
-alignement vertical des jours ;
-couleurs par statut ;
-mise en évidence du jour actuel ;
-indicateur de note ;
-affichage du détail au survol ;
-en-tête fixe pendant le défilement.
-Les disponibilités du mois sont chargées en une seule requête Supabase.
+
+## Géocodage
+
+Le calcul des distances repose sur une Edge Function Supabase.
+
+Le logiciel indique toujours le lieu réellement reconnu.
+
 ---
-5. Fonctionnalités prévues
-Prochaine étape : refactoring du listing
-découpage de `ListingTable.jsx` ;
-extraction du planning en composants spécialisés ;
-maintien strict du rendu et des performances.
-Recherche et ergonomie
-filtre Disponible le ;
-filtre Disponible aujourd'hui ;
-filtre Disponible cette semaine ;
-filtre Disponible ce mois ;
-filtre par période ;
-recherche multicritères ;
-modernisation des filtres ;
-colonnes masquables ;
-préférences d'affichage.
-Missions
-création d'une mission ;
-modification ;
-annulation ;
-affectation d'un formateur ;
-gestion des dates et horaires ;
-gestion du client et du lieu ;
-détection des conflits ;
-passage automatique du planning en Mission ;
-confidentialité entre organismes ;
-historique ;
-documents et contrats.
-Comptes utilisateurs
-authentification ;
-comptes formateurs ;
-gestion du profil ;
-gestion du planning personnel ;
-rôles et droits ;
-sécurisation des accès.
-Organisation
-calendrier global ;
-tableau de bord ;
-notifications ;
-emails automatiques ;
-alertes ;
-rappels.
-Version SaaS
-multi-organismes ;
-isolation des données ;
-administration ;
-abonnements ;
-facturation ;
-paiements.
+
+# Fonctionnalités futures
+
+Les prochaines grandes étapes sont :
+
+- Missions
+- Réseau de formateurs
+- Comptes utilisateurs
+- Marketplace
+- SaaS multi-organismes
+
+Le détail est disponible dans :
+
+```
+ROADMAP.md
+```
+
 ---
-6. Technologies
-Frontend
-React
-Vite
-Backend
-Supabase
-PostgreSQL
-Cartographie
-Leaflet
-Nominatim / OpenStreetMap
-Déploiement
-GitHub
-Vercel
+
+# Principes produit
+
+Chaque fonctionnalité doit répondre à au moins un de ces objectifs :
+
+- faire gagner du temps ;
+- réduire les manipulations ;
+- améliorer la qualité des décisions ;
+- limiter les erreurs ;
+- préparer les évolutions futures.
+
+Une fonctionnalité qui n'apporte aucune valeur métier ne doit pas être développée.
+
 ---
-7. Contraintes produit
-TimeForma doit rester :
-simple ;
-rapide ;
-moderne ;
-agréable ;
-intuitif ;
-lisible ;
-performant.
-Les fonctionnalités doivent :
-apporter une valeur métier concrète ;
-éviter les manipulations inutiles ;
-préserver la confidentialité ;
-rester adaptées à un grand nombre de formateurs ;
-préparer l'évolution vers le SaaS.
+
+# Critères de réussite
+
+TimeForma sera considéré comme un succès lorsque :
+
+- un organisme pourra préparer une mission en quelques minutes ;
+- la recherche d'un formateur deviendra quasi instantanée ;
+- les doubles affectations seront évitées automatiquement ;
+- les informations seront centralisées dans un seul outil.
+
 ---
-8. Indicateurs de réussite
-Le produit doit permettre à un organisme de :
-identifier rapidement les formateurs disponibles à une date donnée ;
-réduire le nombre d'ouvertures de fiches individuelles ;
-comparer les disponibilités de plusieurs formateurs en un regard ;
-rechercher un formateur par compétence, lieu et distance ;
-conserver un planning simple à mettre à jour ;
-réduire le temps consacré à la planification.
+
+# Vision long terme
+
+À terme, TimeForma deviendra une plateforme collaborative reliant :
+
+- les organismes de formation ;
+- les formateurs indépendants ;
+- les missions.
+
+L'objectif n'est pas uniquement de gérer des données, mais de faciliter l'organisation des formations.

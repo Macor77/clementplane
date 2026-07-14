@@ -1,269 +1,241 @@
 # ROADMAP - TimeForma
 
-Version : 3.0  
-Dernière mise à jour : 13/07/2026
+Version : 4.0
+Dernière mise à jour : 14/07/2026
 
 ---
 
 # Vision
 
-TimeForma a vocation à devenir la plateforme de référence pour la gestion des formateurs indépendants et des organismes de formation.
+TimeForma a pour objectif de devenir la plateforme de référence permettant aux organismes de formation de gérer, rechercher, planifier et affecter leurs formateurs.
 
-Le développement suit une approche pragmatique :
+Le développement suit trois principes :
 
-- développer les fonctionnalités apportant une valeur immédiate à Alter Prévention ;
-- construire progressivement les fondations nécessaires à une future version SaaS ;
-- faire évoluer la roadmap au fil des retours d'expérience.
-
----
-
-# Sprint 1 — MVP ✅ Terminé
-
-*(inchangé)*
+- répondre d'abord aux besoins opérationnels d'Alter Prévention ;
+- construire des fondations solides avant les fonctionnalités avancées ;
+- préparer progressivement une commercialisation en SaaS.
 
 ---
 
-# Sprint 2 — Migration Supabase & Architecture ✅ Terminé
+# État actuel
 
-*(inchangé)*
+## Sprint 1 — MVP ✅ Terminé
 
----
-
-# Sprint 3 — Agenda & Disponibilités ✅ Terminé
-
-*(inchangé)*
-
----
-
-# Sprint 4 — Refonte du Listing & Vision globale des disponibilités ✅ Terminé
-
-*(inchangé)*
+- Gestion des fiches formateurs
+- CRUD complet
+- Import CSV
+- Carte Leaflet
 
 ---
 
-# Sprint 4.5 — Refactoring du Listing ✅ Terminé
+## Sprint 2 — Migration Supabase ✅ Terminé
 
-*(inchangé)*
+- Migration PostgreSQL
+- Synchronisation Supabase
+- Architecture Services
+- Déploiement Vercel
 
 ---
 
-# Sprint 5 — Recherche & Ergonomie ⚪ À venir
+## Sprint 3 — Disponibilités ✅ Terminé
 
-## Objectif
+- Calendrier individuel
+- Gestion des disponibilités
+- Notes multiples
+- Dernière mise à jour
 
-Permettre à un organisme de formation de trouver le bon formateur en quelques secondes.
+---
+
+## Sprint 4 — Planning mensuel ✅ Terminé
+
+- Planning dans le listing
+- Navigation mensuelle
+- Chargement optimisé
+- Une seule requête Supabase
+
+---
+
+## Sprint 4.5 — Refactoring ✅ Terminé
+
+- Découpage de ListingTable
+- Hooks spécialisés
+- Components Planning
+- Architecture simplifiée
+
+---
+
+## Sprint 5 — Recherche & Géolocalisation ✅ Terminé
 
 ### Recherche
 
-- [ ] Filtre Disponible le
-- [ ] Filtre Disponible aujourd'hui
-- [ ] Filtre Disponible cette semaine
-- [ ] Filtre Disponible ce mois
-- [ ] Filtre par période
-- [ ] Recherche multicritères
-- [ ] Combinaison compétences + distance + disponibilité
-- [ ] Affichage uniquement des formateurs disponibles
-- [ ] Sélection multiple de formateurs
-- [ ] Comparaison rapide de plusieurs profils
+- ✅ Recherche multicritères
+- ✅ Tri des colonnes
+- ✅ Calcul des distances
+- ✅ Recherche par lieu
+- ✅ Recherche déclenchée par bouton
+- ✅ Affichage du lieu reconnu
+- ✅ Tri automatique par distance
+
+### Géolocalisation
+
+- ✅ Géocodage automatique
+- ✅ Complétion des coordonnées GPS
+- ✅ Edge Function Supabase
+- ✅ Fin des appels directs à Nominatim
+- ✅ Affichage du lieu reconnu
 
 ### Ergonomie
 
-- [ ] Modernisation de la barre de filtres
-- [ ] Réorganisation visuelle des filtres
-- [ ] Réinitialisation rapide
-- [ ] Colonnes masquables
-- [ ] Sauvegarde des préférences
-- [ ] Mise en valeur des formateurs Premium
-- [ ] Optimisation grands écrans
-- [ ] Optimisation écrans moyens
-- [ ] Lecture rapide du planning
+- ✅ Barre de recherche simplifiée
+- ✅ Messages utilisateurs améliorés
+- ✅ Boutons sécurisés pendant le calcul
 
 ---
 
-# Sprint 6 — Gestion des missions ⚪ À venir
+# Sprint 6 — Gestion des missions
 
-## Objectif
+Objectif :
 
-Faire de la mission l'élément central de TimeForma.
+Faire de la mission le cœur de TimeForma.
 
-### Gestion
+## Gestion
 
-- [ ] Création d'une mission
-- [ ] Modification
-- [ ] Suppression
-- [ ] Annulation
-- [ ] Affectation d'un formateur
-- [ ] Client
-- [ ] Formation
-- [ ] Adresse
-- [ ] Dates
-- [ ] Horaires
-- [ ] Documents liés
-- [ ] Statut
+- Création d'une mission
+- Modification
+- Suppression
+- Affectation d'un formateur
+- Client
+- Formation
+- Adresse
+- Dates
+- Horaires
+- Documents
 
-### Planning
+## Planning
 
-- [ ] Passage automatique du planning en Mission
-- [ ] Détection des conflits
-- [ ] Prévention des doubles affectations
-- [ ] Mise à jour automatique du listing
-- [ ] Vue globale des missions
+- Passage automatique en Mission
+- Détection des conflits
+- Double affectation
+- Synchronisation avec le planning
 
-### Historique
+## Historique
 
-- [ ] Historique
-- [ ] Archivage
+- Historique des missions
+- Archivage
 
 ---
 
-# Sprint 7 — Référencement ⚪ À venir
+# Sprint 7 — Réseau de formateurs
 
-## Objectif
+Objectif :
 
-Permettre à chaque organisme de construire son propre réseau de formateurs.
+Construire progressivement le réseau propre à chaque organisme.
 
-### Référencement
-
-- [ ] Référencer un formateur
-- [ ] Retirer un référencement
-- [ ] Historique du référencement
-- [ ] Statut du référencement
-- [ ] Recherche dans les formateurs référencés
-- [ ] Recherche hors référencement
-- [ ] Recherche sur les deux
-- [ ] Détection automatique d'un formateur existant via son adresse mail
-- [ ] Éviter les doublons de fiches
+- Référencement
+- Déréférencement
+- Historique
+- Recherche dans les référencés
+- Recherche globale
+- Détection des doublons
 
 ---
 
-# Sprint 8 — Comptes formateurs ⚪ À venir
+# Sprint 8 — Comptes Formateurs
 
-## Objectif
+Objectif :
 
-Permettre aux formateurs de gérer eux-mêmes leur profil.
+Permettre au formateur de gérer lui-même son profil.
 
-### Authentification
+## Authentification
 
-- [ ] Création de compte
-- [ ] Connexion
-- [ ] Déconnexion
-- [ ] Mot de passe oublié
+- Connexion
+- Mot de passe oublié
+- Revendication d'une fiche
 
-### Revendication
+## Profil
 
-- [ ] Revendiquer une fiche existante
-- [ ] Validation par email
-- [ ] Profil revendiqué
-- [ ] Profil non revendiqué
+- Informations personnelles
+- Disponibilités
+- Compétences
+- Secteurs
+- Tarif
+- Matériel
 
-### Profil
+## Préférences
 
-- [ ] Modification des informations autorisées
-- [ ] Gestion des disponibilités
-- [ ] Gestion des notes
-- [ ] Gestion des compétences
-- [ ] Gestion des secteurs géographiques
-- [ ] Gestion du tarif
-- [ ] Gestion du matériel
-
-### Préférences
-
-- [ ] Rayon d'intervention
-- [ ] Types de formations recherchés
-- [ ] Tarif minimum
-- [ ] Notifications de missions
-
-### Sécurité
-
-- [ ] Gestion des rôles
-- [ ] Gestion des droits
+- Rayon d'intervention
+- Types de formations
+- Tarif minimum
 
 ---
 
-# Sprint 9 — Marketplace des missions ⚪ À venir
+# Sprint 9 — Marketplace
 
-## Objectif
+Objectif :
 
-Mettre en relation automatiquement les organismes de formation et les formateurs.
+Automatiser la mise en relation.
 
-### Publication
-
-- [ ] Publier une mission
-- [ ] Mission privée
-- [ ] Mission publique
-
-### Recherche
-
-- [ ] Recherche automatique de formateurs
-- [ ] Recherche parmi les référencés
-- [ ] Recherche hors référencés
-- [ ] Recherche globale
-
-### Notifications
-
-- [ ] Notification des missions compatibles
-- [ ] Notifications selon les compétences
-- [ ] Notifications selon la distance
-- [ ] Notifications selon les disponibilités
-- [ ] Notifications selon le tarif minimum
-
-### Candidatures
-
-- [ ] Je suis intéressé
-- [ ] Retirer ma candidature
-- [ ] Sélection du formateur
-- [ ] Refus
-- [ ] Acceptation
+- Publication des missions
+- Recherche automatique
+- Notifications
+- Candidatures
+- Sélection
 
 ---
 
-# Sprint 10 — Version SaaS ⚪ À venir
+# Sprint 10 — SaaS
 
-## Objectif
+Objectif :
 
-Ouvrir TimeForma à plusieurs organismes de formation.
+Ouvrir TimeForma à plusieurs organismes.
 
-### Multi-organismes
+## Multi-organismes
 
-- [ ] Gestion de plusieurs organismes
-- [ ] Isolation des données
-- [ ] Confidentialité
-- [ ] Gestion des utilisateurs
-- [ ] Paramétrage des organismes
+- Isolation complète des données
+- Gestion des utilisateurs
+- Gestion des rôles
 
-### Administration
+## Administration
 
-- [ ] Interface d'administration
-- [ ] Gestion des comptes
-- [ ] Gestion des droits
-- [ ] Paramètres globaux
+- Tableau de bord
+- Paramétrage
+- Statistiques
 
-### Commercialisation
+## Commercialisation
 
-- [ ] Gestion des abonnements
-- [ ] Facturation
-- [ ] Paiement
-- [ ] Gestion des offres
-- [ ] Essais gratuits
-- [ ] Résiliations
+- Abonnements
+- Paiements
+- Facturation
 
 ---
 
 # Idées futures
 
-- IA de planification
-- IA d'affectation automatique
-- Recherche intelligente du meilleur formateur
+## Intelligence artificielle
+
+- Affectation automatique des missions
+- Suggestion du meilleur formateur
+- Optimisation des tournées
+- Prévision des disponibilités
+
+## Mobilité
+
 - Application mobile
-- API publique
+- Notifications push
+
+## Productivité
+
 - Signature électronique
-- Tableau de bord avancé
-- Statistiques
-- Messagerie intégrée
-- Notifications mobiles
-- Évaluation des formateurs
-- Gamification
-- Suivi des sessions
-- Suivi des jours de formation
-- Suivi des heures réalisées
-- Suivi du nombre d'apprenants
+- Génération automatique des conventions
+- Tableau de bord
+- Statistiques avancées
+
+---
+
+# Philosophie
+
+Chaque sprint doit produire une fonctionnalité immédiatement utilisable par Alter Prévention.
+
+Le projet ne doit jamais évoluer uniquement pour des raisons techniques.
+
+La valeur métier reste la priorité.

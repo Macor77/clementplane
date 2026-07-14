@@ -1,195 +1,237 @@
-DECISIONS - TimeForma
-Version : 2.0  
-Dernière mise à jour : 12/07/2026
+# DECISIONS - TimeForma
+
+Version : 4.0  
+Dernière mise à jour : 14/07/2026  
+Correspond au Sprint 5 terminé.
+
 ---
-Objectif
-Ce document recense les décisions fonctionnelles et techniques structurantes du projet TimeForma.
-Chaque décision précise :
-le contexte ;
-la décision retenue ;
-les conséquences pour les futurs développements.
+
+# Objectif
+
+Ce document recense les décisions structurantes prises au cours du développement de TimeForma.
+
+Il ne décrit pas **ce qui a été développé**, mais **pourquoi** certains choix ont été retenus.
+
 ---
-Décisions techniques
-React
-Décision
-Utiliser React pour le développement de l'interface.
-Raisons
-écosystème mature ;
-grande communauté ;
-composants réutilisables ;
-facilité d'évolution.
+
+# Principes généraux
+
+Les décisions techniques sont guidées par cinq principes :
+
+- Simplicité
+- Lisibilité
+- Évolutivité
+- Performance
+- Valeur métier
+
+Une solution plus simple est toujours préférée à une solution plus complexe lorsqu'elle répond au besoin.
+
 ---
-Vite
-Décision
-Utiliser Vite comme outil de développement.
-Raisons
-démarrage rapide ;
-build performant ;
-configuration simple.
+
+# Architecture React
+
+## Pages = orchestration
+
+Les pages React ne contiennent pas la logique métier.
+
+Elles orchestrent uniquement :
+
+- les hooks ;
+- les composants ;
+- la navigation.
+
+Pourquoi ?
+
+- composants plus petits ;
+- logique réutilisable ;
+- maintenance facilitée.
+
 ---
-GitHub
-Décision
-Héberger le code source sur GitHub.
-Raisons
-versionnement ;
-historique complet ;
-sauvegarde du code ;
-intégration avec Vercel.
+
+## Hooks = logique métier
+
+Toute logique réutilisable est placée dans un hook.
+
+Exemples :
+
+- useDistances
+- useListingFilters
+- usePlanningAvailability
+- useSort
+
+Pourquoi ?
+
+- séparation des responsabilités ;
+- meilleure lisibilité ;
+- tests facilités.
+
 ---
-Vercel
-Décision
-Déployer l'application sur Vercel.
-Raisons
-déploiement automatique ;
-intégration avec GitHub ;
-hébergement simple et fiable.
+
+## Services = accès aux données
+
+Tous les accès externes passent par les services.
+
+Jamais directement depuis un composant.
+
+Les services regroupent :
+
+- Supabase
+- géocodage
+- calcul des distances
+- GPS
+
 ---
-Supabase
-Décision
-Utiliser Supabase comme backend principal.
-Raisons
-base PostgreSQL ;
-authentification intégrée ;
-API automatique ;
-temps réel ;
-stockage de fichiers ;
-évolutivité vers une version SaaS.
+
+# Supabase
+
+Supabase est le backend officiel de TimeForma.
+
+Pourquoi ?
+
+- PostgreSQL
+- Authentification
+- API automatique
+- Edge Functions
+- évolutivité SaaS
+
 ---
-Architecture par services
-Décision
-Tous les accès aux données doivent passer par des fichiers `services`.
-Raisons
-séparer l'interface des données ;
-faciliter les évolutions ;
-simplifier les tests ;
-éviter la duplication du code.
+
+# Géocodage
+
+## Décision
+
+Le navigateur n'appelle jamais directement Nominatim.
+
+Le géocodage passe obligatoirement par une Edge Function.
+
+```
+Navigateur
+
+↓
+
+Edge Function
+
+↓
+
+Nominatim
+```
+
+Pourquoi ?
+
+- éviter les blocages CORS ;
+- masquer la logique côté serveur ;
+- pouvoir changer facilement de fournisseur de géocodage ;
+- centraliser les traitements.
+
 ---
-Pages React comme orchestrateurs
-Contexte
-Le composant `Listing.jsx` concentrait auparavant une grande partie de la logique métier de l'application.
-Décision
-Les pages React deviennent des composants d'orchestration.
-Les responsabilités sont réparties entre :
-hooks ;
-services ;
-composants ;
-utilitaires.
-Conséquence
-Aucune logique métier importante ne doit être ajoutée directement dans une page React lorsqu'elle peut être extraite proprement.
+
+# Recherche de proximité
+
+Le calcul des distances est lancé uniquement lorsque l'utilisateur clique sur le bouton.
+
+Pourquoi ?
+
+Les recherches automatiques provoquaient :
+
+- trop de requêtes ;
+- une mauvaise expérience utilisateur ;
+- des erreurs de géocodage.
+
 ---
-Décisions fonctionnelles
-Disponibilités gérées à la journée
-Contexte
-Une gestion détaillée par heure aurait complexifié la mise à jour du planning et ralenti l'utilisation par les formateurs.
-Décision
-Le planning repose principalement sur une logique journalière :
-un formateur ;
-une date ;
-un statut ;
-une ou plusieurs notes éventuelles.
-Conséquence
-Le planning reste rapide à mettre à jour et simple à lire.
+
+# Lieu reconnu
+
+Après chaque recherche, TimeForma affiche :
+
+```
+📍 Lieu reconnu
+
+Chelles, Seine-et-Marne (77500)
+```
+
+Pourquoi ?
+
+- rassurer l'utilisateur ;
+- détecter immédiatement une mauvaise commune ;
+- éviter les erreurs liées aux homonymes.
+
 ---
-Statuts manuels limités
-Décision
-Les statuts pouvant être renseignés manuellement sont :
-Disponible ;
-Indisponible ;
-Non renseigné.
-Conséquence
-Le cycle de clic est limité à ces trois états.
-Le statut Mission n'est pas accessible dans le cycle manuel.
+
+# Planning
+
+Le planning est commun à tous les formateurs.
+
+Pourquoi ?
+
+Comparer plusieurs formateurs est plus important que consulter plusieurs calendriers indépendants.
+
 ---
-Mission calculée automatiquement
-Contexte
-Une mission est une conséquence de l'affectation réalisée par un organisme, et non une disponibilité déclarée par le formateur.
-Décision
-Le statut Mission sera généré automatiquement par le système lorsqu'une mission sera affectée.
-Conséquence
-le formateur ne renseigne jamais manuellement une mission ;
-l'organisme propriétaire voit les détails ;
-les autres organismes voient uniquement une indisponibilité.
+
+# Disponibilités
+
+Les disponibilités sont journalières.
+
+Pourquoi ?
+
+Une granularité horaire compliquerait inutilement le produit.
+
+Les horaires seront portés par les futures missions.
+
 ---
-Plusieurs notes par journée
-Décision
-Une journée peut contenir plusieurs informations, stockées sous forme de lignes dans le champ de note.
-Conséquence
-une ligne correspond à une information ;
-une note peut être supprimée en supprimant sa ligne ;
-toutes les notes peuvent être supprimées en vidant le champ ;
-le bouton indique le nombre de notes présentes.
+
+# Mission
+
+Une mission n'est jamais saisie manuellement dans le planning.
+
+Elle sera générée automatiquement par le module Missions.
+
+Pourquoi ?
+
+Une mission est une conséquence de l'affectation.
+
+Ce n'est pas une disponibilité.
+
 ---
-Frise mensuelle commune dans le listing
-Contexte
-Le besoin principal d'un organisme est de comparer plusieurs formateurs sur une même date.
-Décision
-Le listing affiche une frise horizontale mensuelle commune à tous les formateurs, plutôt qu'un mini-calendrier indépendant par ligne.
-Conséquence
-tous les formateurs affichent le même mois ;
-les jours sont alignés verticalement ;
-la comparaison date par date est immédiate ;
-le changement de mois agit sur toutes les lignes.
+
+# Refactoring
+
+Un refactoring ne doit jamais modifier :
+
+- le comportement ;
+- l'interface ;
+- les données.
+
+Son objectif est uniquement d'améliorer le code.
+
 ---
-Chargement groupé des disponibilités
-Décision
-Les disponibilités du mois sont récupérées en une seule requête Supabase pour tous les formateurs concernés.
-Conséquence
-Aucune requête distincte ne doit être lancée pour chaque formateur.
-Cette règle protège les performances lorsque le nombre de formateurs augmente.
+
+# Déploiement
+
+Aucun développement n'est considéré terminé tant que :
+
+- les tests locaux sont validés ;
+- GitHub est synchronisé ;
+- Vercel est déployé ;
+- la documentation est mise à jour.
+
 ---
-Actions sous le nom du formateur
-Contexte
-Une colonne Actions dédiée réduisait la largeur disponible pour le planning mensuel.
-Décision
-Les boutons Voir, Modifier et Supprimer sont placés sous le nom du formateur.
-Conséquence
-suppression de la colonne Actions ;
-augmentation légère de la hauteur des lignes ;
-libération de largeur pour le planning.
+
+# Documentation
+
+La documentation fait partie intégrante du projet.
+
+Chaque sprint important doit entraîner une mise à jour :
+
+- README
+- ROADMAP
+- CHANGELOG
+- ARCHITECTURE
+- DECISIONS
+
 ---
-En-tête du listing fixe
-Décision
-L'en-tête du tableau reste visible pendant le défilement vertical.
-Conséquence
-L'utilisateur conserve en permanence :
-les noms des colonnes ;
-le mois sélectionné ;
-les numéros des jours ;
-l'alignement du planning.
----
-Indicateur unique de note
-Décision
-Un seul point noir est affiché dans une case lorsqu'au moins une note existe, quel que soit le nombre de notes.
-Conséquence
-Le point sert uniquement d'indice visuel.
-Le détail complet reste accessible au survol de la case.
----
-Refactoring à venir
-Refactoring de `ListingTable.jsx`
-Contexte
-Le fichier `ListingTable.jsx` est devenu trop volumineux et difficile à maintenir.
-Décision
-Le composant doit être découpé sans changement visuel ni fonctionnel.
-Découpage cible
-`ListingTable.jsx`
-`PlanningHeader.jsx`
-`PlanningRow.jsx`
-`PlanningCell.jsx`
-`PlanningLegend.jsx`
-`planningUtils.js`
-Contraintes
-aucun changement de comportement ;
-aucun changement visuel ;
-aucun changement Supabase ;
-tests après chaque extraction ;
-validation avant déploiement.
----
-Philosophie
-Les choix techniques et fonctionnels doivent toujours privilégier :
-la simplicité ;
-la lisibilité ;
-la maintenabilité ;
-l'évolutivité ;
-la performance ;
-la valeur métier.
-Une solution simple et robuste est préférée à une solution plus complexe, même si cette dernière paraît plus élégante techniquement.
+
+# Philosophie
+
+TimeForma est développé comme un produit.
+
+Chaque évolution doit apporter une valeur immédiate aux organismes de formation tout en préparant progressivement la future plateforme SaaS.

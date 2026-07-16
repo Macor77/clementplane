@@ -1,63 +1,56 @@
 # ARCHITECTURE - TimeForma
 
-Version : 4.0  
-Dernière mise à jour : 14/07/2026  
-Correspond au Sprint 5 terminé.
+Version : 5.0\
+Dernière mise à jour : 16/07/2026\
+Correspond au Sprint 6 terminé.
 
----
+------------------------------------------------------------------------
 
 # Objectif
 
-Ce document décrit l'architecture technique de TimeForma.
+Ce document décrit l'architecture technique de TimeForma et les
+principes qui guident son évolution.
 
-Il précise :
+L'objectif est de conserver une architecture :
 
-- les principes de développement ;
-- l'organisation du code ;
-- les responsabilités des différents dossiers ;
-- les flux de données ;
-- les conventions de développement.
+-   simple ;
+-   lisible ;
+-   modulaire ;
+-   évolutive ;
+-   adaptée à une future version SaaS.
 
-L'objectif est de garantir une architecture simple, lisible et évolutive.
-
----
+------------------------------------------------------------------------
 
 # Stack technique
 
 ## Frontend
 
-- React
-- Vite
-- JavaScript
+-   React
+-   Vite
+-   JavaScript
 
 ## Backend
 
-- Supabase
-- PostgreSQL
+-   Supabase
+-   PostgreSQL
 
 ## Déploiement
 
-- GitHub
-- Vercel
+-   GitHub
+-   GitHub Codespaces
+-   Vercel
 
 ## Cartographie
 
-- Leaflet
-- OpenStreetMap
-- Nominatim
+-   Leaflet
+-   OpenStreetMap
+-   Nominatim via Edge Function
 
-## Géocodage
-
-- Edge Function Supabase
-- Nominatim appelé uniquement côté serveur
-
----
+------------------------------------------------------------------------
 
 # Architecture générale
 
-Le projet suit une architecture en couches.
-
-```
+``` text
 Utilisateur
       │
       ▼
@@ -76,321 +69,207 @@ Supabase
 PostgreSQL
 ```
 
-Les traitements externes (géocodage) transitent par une Edge Function.
+Les pages orchestrent, les hooks coordonnent, les services exécutent la
+logique métier et les accès aux données.
 
-```
-Navigateur
+------------------------------------------------------------------------
 
-      │
+# Organisation du projet
 
-      ▼
-
-Edge Function
-
-      │
-
-      ▼
-
-Nominatim
-```
-
-Le navigateur ne contacte jamais directement Nominatim.
-
----
-
-# Arborescence
-
-```
+``` text
 src/
-
-components/
-hooks/
-pages/
-services/
-utils/
-lib/
+ ├── components/
+ ├── hooks/
+ ├── pages/
+ ├── services/
+ ├── utils/
+ └── lib/
 ```
 
 Chaque dossier possède une responsabilité unique.
 
----
+------------------------------------------------------------------------
 
-# Pages
+# Architecture du moteur de missions
 
-Les pages sont uniquement des orchestrateurs.
+Le Sprint 6 introduit trois tables métier :
 
-Une page :
-
-- récupère les hooks ;
-- transmet les données aux composants ;
-- gère la navigation.
-
-Une page ne contient pas de logique métier complexe.
-
-Exemple :
-
-```
-Listing.jsx
+``` text
+missions
+mission_dates
+mission_formateurs
 ```
 
----
+Le moteur suit le flux :
 
-# Hooks
-
-Les hooks regroupent les comportements métier.
-
-Exemples :
-
-```
-useFormateurs
-
-useDistances
-
-useSort
-
-useListingFilters
-
-usePlanningAvailability
-```
-
-Ils encapsulent :
-
-- les états ;
-- les appels de services ;
-- les traitements.
-
----
-
-# Services
-
-Les services sont les seuls responsables :
-
-- des accès Supabase ;
-- des appels réseau ;
-- des traitements externes.
-
-Exemples :
-
-```
-availabilityService
-
-distanceService
-
-formateursService
-
-geocodingService
-
-gpsService
+``` text
+Mission
+    ↓
+Recherche
+    ↓
+Sélection
+    ↓
+Proposition
+    ↓
+Acceptation
+    ↓
+Option
+    ↓
+Affectation
+    ↓
+Mission confirmée
 ```
 
-Cette séparation facilite les tests et les évolutions.
+------------------------------------------------------------------------
 
----
+# Planning intelligent
 
-# Components
+Le planning n'est plus basé sur une seule table.
 
-Les composants sont responsables :
+Il est calculé à partir de deux sources :
 
-- de l'affichage ;
-- des interactions utilisateur ;
-- du rendu.
-
-Ils ne doivent contenir qu'un minimum de logique métier.
-
----
-
-# Edge Functions
-
-Les Edge Functions sont stockées dans :
-
-```
-supabase/functions/
+``` text
+trainer_availability
+        +
+mission_formateurs
+        +
+mission_dates
 ```
 
-Aujourd'hui :
+## Rôle de chaque table
 
-```
-geocode
-```
+### trainer_availability
 
-Elle est responsable de :
+Contient uniquement les disponibilités déclarées par le formateur :
 
-- recevoir une adresse ;
-- interroger Nominatim ;
-- renvoyer :
+-   Disponible
+-   Indisponible
+-   Non renseigné
+-   Notes
 
-```
-latitude
+### mission_formateurs
 
-longitude
+Contient les états métier :
 
-ville
+-   Sélectionné
+-   Proposition envoyée
+-   Accepté
+-   Refusé
+-   Affecté
+-   indisponible_affecte_ailleurs
 
-département
+### mission_dates
 
-code postal
+Détermine les journées réellement concernées par les missions.
 
-displayName
-```
+------------------------------------------------------------------------
 
----
+# Fusion des données
 
-# Flux du calcul des distances
+Le planning applique la priorité suivante :
 
-```
-Utilisateur
-
+``` text
+Mission
 ↓
-
-ListingFilters
-
+Option
 ↓
-
-useDistances
-
+Indisponible déclaré
 ↓
-
-geocodingService
-
+Disponible
 ↓
-
-Edge Function
-
-↓
-
-Nominatim
-
-↓
-
-Coordonnées GPS
-
-↓
-
-distanceService
-
-↓
-
-Listing
+Non renseigné
 ```
 
----
+Les états Option et Mission ne sont jamais enregistrés dans
+`trainer_availability`.
 
-# Base de données
+Ils sont calculés dynamiquement.
 
-Les accès passent exclusivement par :
+Cette architecture évite les incohérences lors :
 
-```
-Supabase
-```
+-   d'une suppression de mission ;
+-   d'une modification de dates ;
+-   d'une désaffectation.
 
-Aucun accès SQL direct depuis React.
+------------------------------------------------------------------------
 
----
+# Confidentialité
 
-# Organisation du code
+Le moteur est conçu pour un futur fonctionnement multi-organismes.
 
-Chaque nouvelle fonctionnalité doit respecter la séparation suivante.
+Par conséquent :
 
-```
-Page
+-   aucun OF ne voit les missions d'un autre ;
+-   aucune information client n'est partagée ;
+-   seuls les statuts utiles sont exposés.
 
-↓
+------------------------------------------------------------------------
 
-Hook
+# Services principaux
 
-↓
+-   formateursService
+-   availabilityService
+-   missionMatchingService
+-   missionsService
+-   geocodingService
+-   distanceService
 
-Service
+Toute la logique métier est centralisée dans les services.
 
-↓
+------------------------------------------------------------------------
 
-Supabase
-```
+# Hooks principaux
 
-Jamais :
+-   useFormateurs
+-   usePlanningAvailability
+-   useListingFilters
+-   useSort
+-   useDistances
 
-```
-Page
+Les hooks orchestrent les appels aux services sans accéder directement à
+Supabase.
 
-↓
+------------------------------------------------------------------------
 
-Supabase
-```
+# Décisions structurantes
 
----
+-   Une mission est indépendante d'un formateur.
+-   Une option n'est pas une mission.
+-   Une option ne pénalise pas les recommandations.
+-   Une mission bloque automatiquement les dates concernées.
+-   Une seule source de vérité est conservée pour chaque information.
 
-# Principes de développement
+------------------------------------------------------------------------
 
-Le projet suit les règles suivantes :
+# Cycle de développement
 
-- composants courts ;
-- responsabilités uniques ;
-- hooks spécialisés ;
-- services spécialisés ;
-- logique métier centralisée ;
-- architecture évolutive.
-
----
-
-# Refactoring
-
-Lors d'un refactoring :
-
-- aucun changement fonctionnel ;
-- aucun changement visuel ;
-- validation locale obligatoire ;
-- déploiement uniquement après validation.
-
----
-
-# Déploiement
-
-Le cycle de développement est le suivant.
-
-```
-Développement local
-
-↓
-
+``` text
+Développement
+      ↓
 Tests
-
-↓
-
+      ↓
+Documentation
+      ↓
 Git Commit
-
-↓
-
+      ↓
 Git Push
-
-↓
-
-GitHub
-
-↓
-
+      ↓
 Vercel
-
-↓
-
-Production
+      ↓
+Validation
 ```
 
-Les Edge Functions sont déployées indépendamment.
+La documentation est considérée comme une partie intégrante du
+développement.
 
-```
-npx supabase functions deploy geocode
-```
-
----
+------------------------------------------------------------------------
 
 # Philosophie
 
-TimeForma privilégie :
+L'architecture privilégie toujours :
 
-- la simplicité ;
-- la lisibilité ;
-- la séparation des responsabilités ;
-- la maintenabilité ;
-- l'évolutivité.
-
-Une architecture compréhensible est toujours préférée à une architecture complexe.
+-   la séparation des responsabilités ;
+-   la réutilisation ;
+-   la simplicité ;
+-   la maintenabilité ;
+-   l'évolutivité.

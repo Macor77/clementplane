@@ -1,11 +1,15 @@
 export function getDaysInMonth(date) {
   const year = date.getFullYear();
   const month = date.getMonth();
-  const lastDay = new Date(year, month + 1, 0).getDate();
+  const lastDay = new Date(
+    year,
+    month + 1,
+    0,
+  ).getDate();
 
   return Array.from(
     { length: lastDay },
-    (_, index) => index + 1
+    (_, index) => index + 1,
   );
 }
 
@@ -13,14 +17,16 @@ export function isCurrentMonth(date) {
   const today = new Date();
 
   return (
-    date.getFullYear() === today.getFullYear() &&
-    date.getMonth() === today.getMonth()
+    date.getFullYear() ===
+      today.getFullYear() &&
+    date.getMonth() ===
+      today.getMonth()
   );
 }
 
 export function isTodayInPlanningMonth(
   planningDate,
-  day
+  day,
 ) {
   return (
     isCurrentMonth(planningDate) &&
@@ -28,24 +34,39 @@ export function isTodayInPlanningMonth(
   );
 }
 
-export function getISODate(planningDate, day) {
-  const year = planningDate.getFullYear();
+export function getISODate(
+  planningDate,
+  day,
+) {
+  const year =
+    planningDate.getFullYear();
+
   const month = String(
-    planningDate.getMonth() + 1
+    planningDate.getMonth() + 1,
   ).padStart(2, '0');
-  const formattedDay = String(day).padStart(2, '0');
+
+  const formattedDay = String(
+    day,
+  ).padStart(2, '0');
 
   return `${year}-${month}-${formattedDay}`;
 }
 
-export function getMonthLabel(planningDate) {
-  return planningDate.toLocaleDateString('fr-FR', {
-    month: 'long',
-    year: 'numeric',
-  });
+export function getMonthLabel(
+  planningDate,
+) {
+  return planningDate.toLocaleDateString(
+    'fr-FR',
+    {
+      month: 'long',
+      year: 'numeric',
+    },
+  );
 }
 
-export function getPlanningCellAppearance(status) {
+export function getPlanningCellAppearance(
+  status,
+) {
   switch (status) {
     case 'dispo':
       return {
@@ -61,11 +82,18 @@ export function getPlanningCellAppearance(status) {
         border: '#ef4444',
       };
 
+    case 'option':
+      return {
+        label: 'Option',
+        background: '#fde68a',
+        border: '#f59e0b',
+      };
+
     case 'mission':
       return {
         label: 'En mission',
-        background: '#fde047',
-        border: '#eab308',
+        background: '#93c5fd',
+        border: '#2563eb',
       };
 
     default:
@@ -78,7 +106,9 @@ export function getPlanningCellAppearance(status) {
 }
 
 export function getNotes(note) {
-  if (!note) return [];
+  if (!note) {
+    return [];
+  }
 
   return note
     .split('\n')
@@ -92,9 +122,10 @@ export function getPlanningTooltip({
   monthLabel,
   availability,
 }) {
-  const appearance = getPlanningCellAppearance(
-    availability?.status
-  );
+  const appearance =
+    getPlanningCellAppearance(
+      availability?.status,
+    );
 
   const lines = [
     fullName || 'Formateur',
@@ -102,7 +133,29 @@ export function getPlanningTooltip({
     appearance.label,
   ];
 
-  const notes = getNotes(availability?.note);
+  if (
+    availability?.status ===
+    'option'
+  ) {
+    lines.push(
+      '',
+      "Le formateur a accepté une proposition, mais l'OF ne l'a pas encore affecté. Il reste disponible.",
+    );
+  }
+
+  if (
+    availability?.status ===
+    'mission'
+  ) {
+    lines.push(
+      '',
+      'Mission officiellement affectée : le formateur est indisponible.',
+    );
+  }
+
+  const notes = getNotes(
+    availability?.note,
+  );
 
   if (notes.length > 0) {
     lines.push('', 'Notes :');
@@ -115,10 +168,13 @@ export function getPlanningTooltip({
   return lines.join('\n');
 }
 
-export function planningGridStyle(dayCount) {
+export function planningGridStyle(
+  dayCount,
+) {
   return {
     display: 'grid',
-    gridTemplateColumns: `repeat(${dayCount}, 17px)`,
+    gridTemplateColumns:
+      `repeat(${dayCount}, 17px)`,
     gap: 2,
     alignItems: 'center',
     justifyContent: 'center',

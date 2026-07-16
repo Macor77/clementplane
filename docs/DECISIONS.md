@@ -1,237 +1,134 @@
 # DECISIONS - TimeForma
 
-Version : 4.0  
-Dernière mise à jour : 14/07/2026  
-Correspond au Sprint 5 terminé.
+Version : 5.0 Dernière mise à jour : 16/07/2026
 
----
+------------------------------------------------------------------------
 
 # Objectif
 
-Ce document recense les décisions structurantes prises au cours du développement de TimeForma.
+Ce document recense les décisions d'architecture et de conception qui
+structurent durablement TimeForma. Chaque décision est conservée afin
+d'expliquer les choix effectués et d'éviter de revenir sur des
+arbitrages déjà validés.
 
-Il ne décrit pas **ce qui a été développé**, mais **pourquoi** certains choix ont été retenus.
+------------------------------------------------------------------------
 
----
+# Sprint 6 --- Moteur de missions
 
-# Principes généraux
+## Décision 1 --- Une mission est indépendante des formateurs
 
-Les décisions techniques sont guidées par cinq principes :
+Une mission peut être créée, enregistrée et modifiée avant même qu'un
+formateur soit sélectionné.
 
-- Simplicité
-- Lisibilité
-- Évolutivité
-- Performance
-- Valeur métier
+**Pourquoi ?**
 
-Une solution plus simple est toujours préférée à une solution plus complexe lorsqu'elle répond au besoin.
+-   préparation en amont ;
+-   recherche plus tardive ;
+-   meilleure flexibilité.
 
----
+------------------------------------------------------------------------
 
-# Architecture React
+## Décision 2 --- Distinction Option / Mission
 
-## Pages = orchestration
+Le statut **Accepté** représente une **Option**.
 
-Les pages React ne contiennent pas la logique métier.
+Le statut **Affecté** représente une **Mission confirmée**.
 
-Elles orchestrent uniquement :
+Une acceptation ne bloque jamais automatiquement le planning.
 
-- les hooks ;
-- les composants ;
-- la navigation.
+------------------------------------------------------------------------
 
-Pourquoi ?
+## Décision 3 --- Une Option ne pénalise pas les recommandations
 
-- composants plus petits ;
-- logique réutilisable ;
-- maintenance facilitée.
+Un formateur ayant accepté une proposition continue :
 
----
+-   à apparaître dans les recherches ;
+-   à recevoir d'autres propositions ;
+-   à conserver le même score.
 
-## Hooks = logique métier
+------------------------------------------------------------------------
 
-Toute logique réutilisable est placée dans un hook.
+## Décision 4 --- Une Mission bloque le planning
 
-Exemples :
+Une mission affectée rend le formateur indisponible sur les dates
+concernées.
 
-- useDistances
-- useListingFilters
-- usePlanningAvailability
-- useSort
+Cette indisponibilité est calculée automatiquement.
 
-Pourquoi ?
+------------------------------------------------------------------------
 
-- séparation des responsabilités ;
-- meilleure lisibilité ;
-- tests facilités.
+## Décision 5 --- Confidentialité entre organismes
 
----
+Un organisme de formation ne doit jamais connaître :
 
-## Services = accès aux données
+-   les clients d'un autre OF ;
+-   ses missions ;
+-   ses propositions ;
+-   le nombre d'options concurrentes.
 
-Tous les accès externes passent par les services.
+En cas de conflit, seul un statut neutre est affiché.
 
-Jamais directement depuis un composant.
+------------------------------------------------------------------------
 
-Les services regroupent :
+## Décision 6 --- Planning calculé
 
-- Supabase
-- géocodage
-- calcul des distances
-- GPS
+Le planning est construit à partir de :
 
----
+-   trainer_availability ;
+-   mission_formateurs ;
+-   mission_dates.
 
-# Supabase
+Les états **Option** et **Mission** ne sont jamais enregistrés dans
+`trainer_availability`.
 
-Supabase est le backend officiel de TimeForma.
+------------------------------------------------------------------------
 
-Pourquoi ?
+## Décision 7 --- Une seule source de vérité
 
-- PostgreSQL
-- Authentification
-- API automatique
-- Edge Functions
-- évolutivité SaaS
+Chaque donnée est stockée une seule fois.
 
----
+Les vues de l'application déduisent ensuite les états nécessaires.
 
-# Géocodage
+------------------------------------------------------------------------
 
-## Décision
+## Décision 8 --- Une seule affectation
 
-Le navigateur n'appelle jamais directement Nominatim.
+Une mission ne peut posséder qu'un seul formateur affecté.
 
-Le géocodage passe obligatoirement par une Edge Function.
+Cette règle est garantie :
 
-```
-Navigateur
+-   par la logique métier ;
+-   par une contrainte SQL.
 
-↓
+------------------------------------------------------------------------
 
-Edge Function
+## Décision 9 --- Gestion automatique des conflits
 
-↓
+Lorsqu'un formateur est affecté à une mission, toutes les autres
+propositions acceptées en conflit deviennent :
 
-Nominatim
-```
+`indisponible_affecte_ailleurs`
 
-Pourquoi ?
+Si le conflit disparaît, elles reviennent automatiquement à :
 
-- éviter les blocages CORS ;
-- masquer la logique côté serveur ;
-- pouvoir changer facilement de fournisseur de géocodage ;
-- centraliser les traitements.
+`accepte`
 
----
+------------------------------------------------------------------------
 
-# Recherche de proximité
+## Décision 10 --- Développement incrémental
 
-Le calcul des distances est lancé uniquement lorsque l'utilisateur clique sur le bouton.
+Chaque sprint doit produire une fonctionnalité immédiatement
+exploitable.
 
-Pourquoi ?
+La documentation est mise à jour avant la clôture du sprint.
 
-Les recherches automatiques provoquaient :
+------------------------------------------------------------------------
 
-- trop de requêtes ;
-- une mauvaise expérience utilisateur ;
-- des erreurs de géocodage.
+# Principes conservés
 
----
-
-# Lieu reconnu
-
-Après chaque recherche, TimeForma affiche :
-
-```
-📍 Lieu reconnu
-
-Chelles, Seine-et-Marne (77500)
-```
-
-Pourquoi ?
-
-- rassurer l'utilisateur ;
-- détecter immédiatement une mauvaise commune ;
-- éviter les erreurs liées aux homonymes.
-
----
-
-# Planning
-
-Le planning est commun à tous les formateurs.
-
-Pourquoi ?
-
-Comparer plusieurs formateurs est plus important que consulter plusieurs calendriers indépendants.
-
----
-
-# Disponibilités
-
-Les disponibilités sont journalières.
-
-Pourquoi ?
-
-Une granularité horaire compliquerait inutilement le produit.
-
-Les horaires seront portés par les futures missions.
-
----
-
-# Mission
-
-Une mission n'est jamais saisie manuellement dans le planning.
-
-Elle sera générée automatiquement par le module Missions.
-
-Pourquoi ?
-
-Une mission est une conséquence de l'affectation.
-
-Ce n'est pas une disponibilité.
-
----
-
-# Refactoring
-
-Un refactoring ne doit jamais modifier :
-
-- le comportement ;
-- l'interface ;
-- les données.
-
-Son objectif est uniquement d'améliorer le code.
-
----
-
-# Déploiement
-
-Aucun développement n'est considéré terminé tant que :
-
-- les tests locaux sont validés ;
-- GitHub est synchronisé ;
-- Vercel est déployé ;
-- la documentation est mise à jour.
-
----
-
-# Documentation
-
-La documentation fait partie intégrante du projet.
-
-Chaque sprint important doit entraîner une mise à jour :
-
-- README
-- ROADMAP
-- CHANGELOG
-- ARCHITECTURE
-- DECISIONS
-
----
-
-# Philosophie
-
-TimeForma est développé comme un produit.
-
-Chaque évolution doit apporter une valeur immédiate aux organismes de formation tout en préparant progressivement la future plateforme SaaS.
+-   simplicité d'utilisation ;
+-   séparation des responsabilités ;
+-   architecture modulaire ;
+-   confidentialité par défaut ;
+-   préparation au SaaS multi-organismes ;
+-   priorité à la valeur métier.

@@ -1,238 +1,222 @@
-# FONCTIONNEL - TimeForma
+# DATABASE - TimeForma
 
-Version : 4.0  
-Dernière mise à jour : 14/07/2026  
-Correspond au Sprint 5 terminé.
+Version : 5.0\
+Dernière mise à jour : 16/07/2026\
+Correspond au Sprint 6 terminé.
 
----
+------------------------------------------------------------------------
 
 # Objectif
 
-Ce document décrit le comportement fonctionnel attendu de TimeForma.
+Ce document décrit la structure de la base de données PostgreSQL
+utilisée par TimeForma.
 
-Il définit **ce que doit faire le logiciel**, indépendamment de son implémentation technique.
+La base est hébergée sur Supabase et constitue l'unique source de vérité
+des données métier.
 
-La référence technique est décrite dans `ARCHITECTURE.md`.
+------------------------------------------------------------------------
 
----
+# Principes
 
-# Vision
+-   Une information n'est stockée qu'à un seul endroit.
+-   Les relations sont privilégiées aux duplications.
+-   Les contraintes SQL garantissent la cohérence métier.
+-   Toutes les opérations passent par les services de l'application.
 
-TimeForma permet à un organisme de formation de retrouver rapidement le formateur le plus adapté à une mission.
+------------------------------------------------------------------------
 
-Le logiciel centralise :
+# Tables principales
 
-- les informations des formateurs ;
-- leurs disponibilités ;
-- leur localisation ;
-- leurs compétences ;
-- leurs futurs engagements.
+## trainers
 
----
+Contient les fiches des formateurs.
 
-# Gestion des formateurs
+Principales informations :
 
-Chaque formateur possède une fiche contenant notamment :
+-   identité
+-   coordonnées
+-   compétences
+-   matériel
+-   statut
+-   tarif
+-   coordonnées GPS
 
-- prénom
-- nom
-- email
-- téléphone
-- adresse
-- code postal
-- ville
-- coordonnées GPS
-- compétences
-- matériel
-- tarif
-- statut
-- notes internes
+------------------------------------------------------------------------
 
-L'utilisateur peut :
+## trainer_availability
 
-- créer
-- consulter
-- modifier
-- supprimer
+Contient uniquement les disponibilités déclarées par le formateur.
 
-une fiche.
+Colonnes principales :
 
----
+-   trainer_id
+-   day
+-   status
+-   note
+-   updated_at
 
-# Recherche
+### Statuts autorisés
 
-Le listing constitue l'écran principal du logiciel.
+-   dispo
+-   indispo
+-   (vide = non renseigné)
 
-Il permet :
+⚠️ Les états **Option** et **Mission** ne sont jamais enregistrés dans
+cette table.
 
-- la recherche multicritères ;
-- le tri des colonnes ;
-- le calcul des distances ;
-- la consultation du planning ;
-- l'accès rapide aux fiches.
+------------------------------------------------------------------------
 
----
+## missions
 
-# Recherche géographique
+Représente une mission.
 
-L'utilisateur saisit :
+Informations :
 
+-   code interne
+-   client
+-   intitulé
+-   formation
+-   lieu
+-   adresse
+-   coordonnées GPS
+-   compétences requises
+-   matériel requis
+-   prix de vente
+-   coût formateur
+-   commentaire
+-   statut
+
+### Statuts
+
+-   brouillon
+-   a_pourvoir
+-   affectee
+-   confirmee
+-   realisee
+-   annulee
+-   archivee
+
+------------------------------------------------------------------------
+
+## mission_dates
+
+Une mission possède une ou plusieurs journées.
+
+Colonnes :
+
+-   mission_id
+-   date
+-   heure_debut
+-   heure_fin
+
+Relation :
+
+``` text
+1 mission
+    ↓
+1..n mission_dates
 ```
-Chelles
+
+------------------------------------------------------------------------
+
+## mission_formateurs
+
+Table de liaison entre les missions et les formateurs.
+
+Colonnes principales :
+
+-   mission_id
+-   formateur_id
+-   statut
+-   propose_le
+-   repondu_le
+-   affecte_le
+-   commentaire
+
+### Statuts
+
+-   selectionne
+-   proposition_envoyee
+-   accepte
+-   refuse
+-   affecte
+-   indisponible_affecte_ailleurs
+-   annule
+
+------------------------------------------------------------------------
+
+# Relations
+
+``` text
+missions
+    │
+    ├───────────────┐
+    ▼               ▼
+mission_dates   mission_formateurs
+                     │
+                     ▼
+                 trainers
 ```
 
-Puis clique sur :
+------------------------------------------------------------------------
 
-```
-Calculer les distances
-```
+# Planning intelligent
 
-Le logiciel :
+Le planning est calculé par fusion :
 
-- géocode le lieu ;
-- calcule les distances ;
-- trie automatiquement les résultats.
-
-Le lieu reconnu est affiché.
-
-Exemple :
-
-```
-📍 Lieu reconnu
-
-Chelles, Seine-et-Marne (77500)
+``` text
+trainer_availability
+        +
+mission_formateurs
+        +
+mission_dates
 ```
 
-Cette information permet de vérifier immédiatement que le bon lieu a été utilisé.
+Priorité :
 
----
+1.  Mission
+2.  Option
+3.  Indisponible déclaré
+4.  Disponible
+5.  Non renseigné
 
-# Coordonnées GPS
+------------------------------------------------------------------------
 
-Chaque formateur possède :
+# Contraintes importantes
 
-- latitude
-- longitude
+## Une seule affectation
 
-Lorsqu'elles sont absentes, TimeForma peut les compléter automatiquement.
+Une mission ne peut posséder qu'un seul formateur avec le statut :
 
-Le logiciel utilise successivement :
+``` text
+affecte
+```
 
-- adresse complète ;
-- code postal + ville ;
-- ville seule.
+Un index unique partiel garantit cette règle.
 
----
+------------------------------------------------------------------------
 
-# Disponibilités
+## Conflits
 
-Les disponibilités sont gérées **à la journée**.
+Lorsqu'un formateur est affecté à une mission :
 
-Chaque journée possède :
+-   toutes les autres propositions acceptées en conflit passent
+    automatiquement à :
 
-- un statut ;
-- plusieurs notes éventuelles.
+``` text
+indisponible_affecte_ailleurs
+```
 
----
+Si le conflit disparaît, elles reviennent automatiquement à :
 
-# Statuts
+``` text
+accepte
+```
 
-Les statuts disponibles sont :
-
-- Disponible
-- Indisponible
-- Non renseigné
-
-Le statut **Mission** est réservé au système.
-
-Il ne peut jamais être sélectionné manuellement.
-
----
-
-# Notes
-
-Une journée peut contenir plusieurs notes.
-
-Chaque ligne représente une information indépendante.
-
-Exemples :
-
-- Disponible uniquement après 14 h
-- Disponible en distanciel
-- Préférer les missions en Île-de-France
-
----
-
-# Planning
-
-Le planning est affiché directement dans le listing.
-
-Tous les formateurs utilisent la même période.
-
-Les jours sont parfaitement alignés.
-
-Le changement de mois est global.
-
----
-
-# Affichage du planning
-
-Chaque cellule peut afficher :
-
-- la couleur du statut ;
-- un point noir lorsqu'une note existe.
-
-Au survol :
-
-- statut ;
-- notes ;
-- date.
-
----
-
-# Distances
-
-Les distances sont calculées uniquement après une action volontaire de l'utilisateur.
-
-Aucun calcul automatique n'est lancé pendant la saisie.
-
-Le tri par distance devient alors disponible.
-
----
-
-# Missions (Sprint 6)
-
-Le prochain module permettra :
-
-- créer une mission ;
-- affecter un formateur ;
-- réserver automatiquement les dates ;
-- éviter les doubles affectations.
-
-Lorsqu'une mission est créée :
-
-- le planning du formateur est mis à jour ;
-- le statut Mission apparaît automatiquement.
-
----
-
-# Confidentialité
-
-Chaque organisme ne doit accéder qu'à ses propres données.
-
-Les informations confidentielles (missions, clients, notes internes...) ne seront jamais visibles par un autre organisme.
-
-Cette règle sera renforcée lors du passage en SaaS.
-
----
+------------------------------------------------------------------------
 
 # Philosophie
 
-TimeForma privilégie toujours :
-
-- la simplicité ;
-- la rapidité ;
-- la lisibilité ;
-- l'efficacité.
-
-Chaque nouvelle fonctionnalité doit permettre à un organisme de préparer plus rapidement une mission, sans complexifier inutilement l'interface.
+La base doit rester simple, normalisée et prête à évoluer vers une
+architecture multi-organismes sans remise en cause des tables
+existantes.

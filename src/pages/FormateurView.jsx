@@ -2,6 +2,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
+import { getTrainerMissionCommitments } from '../services/missionsService';
 
 // ---- Helpers dates
 function startOfMonth(d){ const x=new Date(d); x.setDate(1); x.setHours(0,0,0,0); return x; }
@@ -35,6 +36,7 @@ const STATUS_LABEL = {
   '': '—',
   dispo: 'Disponible',
   indispo: 'Indisponible',
+  option: 'Option',
   mission: 'En mission',
 };
 
@@ -42,14 +44,16 @@ const STATUS_BG = {
   '': '#f8fafc',
   dispo: '#eaffea',
   indispo: '#ffe3e3',
-  mission: '#fff3cd',
+  option: '#fff7d6',
+  mission: '#dbeafe',
 };
 
 const STATUS_BORDER = {
   '': '#e5e7eb',
   dispo: '#c7f0c7',
   indispo: '#ffb3b3',
-  mission: '#ffe08a',
+  option: '#facc15',
+  mission: '#60a5fa',
 };
 
 export default function FormateurView() {
@@ -167,13 +171,31 @@ export default function FormateurView() {
 
   const handleCellClick = async (d) => {
     const iso = toISODate(d);
-    const current = avail[iso]?.status ?? '';
-    const next = STATUS_ORDER[(STATUS_ORDER.indexOf(current) + 1) % STATUS_ORDER.length];
+    const cell = avail[iso];
+
+    if (
+      cell?.source === 'mission' ||
+      cell?.source === 'option'
+    ) {
+      alert(
+        cell.source === 'mission'
+          ? 'Cette journée est bloquée par une mission affectée.'
+          : "Cette journée est en option : le formateur a accepté une proposition, mais l'OF ne l'a pas encore affecté.",
+      );
+      return;
+    }
+
+    const current = cell?.declaredStatus ?? cell?.status ?? '';
+    const next =
+      STATUS_ORDER[
+        (STATUS_ORDER.indexOf(current) + 1) %
+          STATUS_ORDER.length
+      ];
 
     await saveAvailability(
       iso,
       next,
-      avail[iso]?.note ?? ''
+      cell?.note ?? '',
     );
   };
 
@@ -195,8 +217,10 @@ export default function FormateurView() {
 
     await saveAvailability(
       iso,
-      avail[iso]?.status ?? '',
-      noteModal.text.trim()
+      avail[iso]?.declaredStatus ??
+        avail[iso]?.status ??
+        '',
+      noteModal.text.trim(),
     );
 
     setNoteModal({
@@ -212,8 +236,10 @@ export default function FormateurView() {
 
     await saveAvailability(
       iso,
-      avail[iso]?.status ?? '',
-      ''
+      avail[iso]?.declaredStatus ??
+        avail[iso]?.status ??
+        '',
+      '',
     );
 
     setNoteModal({
@@ -286,6 +312,9 @@ export default function FormateurView() {
           const note = cell?.note ?? '';
           const bg = STATUS_BG[status] ?? STATUS_BG[''];
           const bd = STATUS_BORDER[status] ?? STATUS_BORDER[''];
+          const isMissionState =
+            cell?.source === 'mission' ||
+            cell?.source === 'option';
 
           return (
             <button
@@ -300,13 +329,32 @@ export default function FormateurView() {
                 padding:8,
                 minHeight:92,
                 opacity: inMonth ? 1 : 0.5,
-                cursor:'pointer'
+                cursor: isMissionState ? 'help' : 'pointer'
               }}
             >
               <div style={{display:'flex', justifyContent:'space-between', alignItems:'baseline'}}>
                 <span style={{fontSize:12, opacity:0.7}}>{iso.slice(-2)}/{iso.slice(5,7)}</span>
                 <span style={{fontSize:11, opacity:0.6}}>{STATUS_LABEL[status] ?? '—'}</span>
               </div>
+
+              {isMissionState && (
+                <div
+                  style={{
+                    marginTop: 7,
+                    fontSize: 11,
+                    lineHeight: 1.3,
+                    color:
+                      status === 'mission'
+                        ? '#1d4ed8'
+                        : '#854d0e',
+                    fontWeight: 600,
+                  }}
+                >
+                  {status === 'mission'
+                    ? 'Mission confirmée'
+                    : "Acceptée, en attente d'affectation"}
+                </div>
+              )}
 
               {note && (
                 <div style={{
@@ -495,6 +543,8 @@ function Legend(){
     {k:'', label:'Non renseigné', detail:'Aucun statut défini'},
     {k:'dispo', label:'Disponible', detail:'Le formateur est disponible'},
     {k:'indispo', label:'Indisponible', detail:"Le formateur n'est pas disponible"},
+    {k:'option', label:'Option', detail:"Proposition acceptée, mais pas encore affectée"},
+    {k:'mission', label:'Mission', detail:'Mission officiellement affectée'},
   ];
 
   return (
@@ -542,8 +592,8 @@ function Legend(){
         fontSize:13,
         color:'#1e3a8a'
       }}>
-        La mention “En mission” apparaîtra automatiquement lorsqu’une mission sera affectée.
-        Le formateur n’a rien à faire : son planning se mettra à jour tout seul.
+        Les mentions “Option” et “En mission” apparaissent automatiquement.
+        Une option signifie que le formateur a accepté, mais qu’il reste disponible tant que l’OF n’a pas confirmé l’affectation.
       </div>
 
       <div style={{opacity:0.75, fontSize:12}}>
@@ -553,40 +603,100 @@ function Legend(){
   );
 }
 
-async function fetchMonth(trainerId, refDate, setAvail, setGlobalUpdatedAt){
+async function fetchMonth(
+  trainerId,
+  refDate,
+  setAvail,
+  setGlobalUpdatedAt,
+) {
   const from = startOfMonth(refDate);
   const to = endOfMonth(refDate);
   const fromISO = toISODate(from);
   const toISO = toISODate(to);
 
-  const { data, error } = await supabase
-    .from('trainer_availability')
-    .select('*')
-    .eq('trainer_id', trainerId)
-    .gte('day', fromISO)
-    .lte('day', toISO);
+  try {
+    const [
+      availabilityResult,
+      commitments,
+    ] = await Promise.all([
+      supabase
+        .from('trainer_availability')
+        .select('*')
+        .eq('trainer_id', trainerId)
+        .gte('day', fromISO)
+        .lte('day', toISO),
 
-  if (error) {
-    console.error('Load availability error:', error);
-    return;
-  }
+      getTrainerMissionCommitments({
+        trainerIds: [trainerId],
+        startDay: fromISO,
+        endDay: toISO,
+      }),
+    ]);
 
-  const map = {};
-  let maxUpdated = null;
-
-  for (const row of (data || [])){
-    map[row.day] = {
-      status: row.status,
-      note: row.note ?? '',
-      updated_at: row.updated_at,
-      id: row.id,
-    };
-
-    if (!maxUpdated || new Date(row.updated_at) > new Date(maxUpdated)) {
-      maxUpdated = row.updated_at;
+    if (availabilityResult.error) {
+      throw availabilityResult.error;
     }
-  }
 
-  setAvail(map);
-  setGlobalUpdatedAt(maxUpdated);
+    const map = {};
+    let maxUpdated = null;
+
+    for (const row of availabilityResult.data || []) {
+      map[row.day] = {
+        status: row.status,
+        declaredStatus: row.status,
+        source: 'availability',
+        note: row.note ?? '',
+        updated_at: row.updated_at,
+        id: row.id,
+      };
+
+      if (
+        !maxUpdated ||
+        new Date(row.updated_at) >
+          new Date(maxUpdated)
+      ) {
+        maxUpdated = row.updated_at;
+      }
+    }
+
+    for (const commitment of commitments || []) {
+      const derivedStatus =
+        commitment.statut === 'affecte'
+          ? 'mission'
+          : 'option';
+
+      for (const day of commitment.dates || []) {
+        const current = map[day] || {
+          status: '',
+          declaredStatus: '',
+          source: 'availability',
+          note: '',
+          updated_at: null,
+          id: null,
+        };
+
+        const shouldReplace =
+          derivedStatus === 'mission' ||
+          current.source !== 'mission';
+
+        if (!shouldReplace) {
+          continue;
+        }
+
+        map[day] = {
+          ...current,
+          status: derivedStatus,
+          source: derivedStatus,
+        };
+      }
+    }
+
+    setAvail(map);
+    setGlobalUpdatedAt(maxUpdated);
+  } catch (error) {
+    console.error(
+      'Load planning error:',
+      error,
+    );
+  }
 }

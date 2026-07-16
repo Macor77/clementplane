@@ -1,184 +1,158 @@
-# PRD - TimeForma
+# FONCTIONNEL - TimeForma
 
-Version : 4.0  
-Dernière mise à jour : 14/07/2026  
-Correspond au Sprint 5 terminé.
+Version : 5.0\
+Dernière mise à jour : 16/07/2026\
+Correspond au Sprint 6 terminé.
 
----
+------------------------------------------------------------------------
 
 # Présentation
 
-TimeForma est une plateforme de gestion des formateurs destinée aux organismes de formation.
+TimeForma est un logiciel de gestion des formateurs et des missions
+destiné aux organismes de formation.
 
-Son objectif est de réduire drastiquement le temps nécessaire pour :
+Son objectif est de permettre à un coordinateur de préparer, proposer,
+affecter et suivre une mission depuis une seule interface.
 
-- trouver un formateur ;
-- vérifier ses disponibilités ;
-- connaître ses compétences ;
-- calculer sa proximité avec une mission ;
-- affecter le bon formateur.
+------------------------------------------------------------------------
 
-Le logiciel est développé en priorité pour Alter Prévention, avec une architecture pensée dès aujourd'hui pour une future commercialisation en SaaS.
+# Les grands modules
 
----
+-   Gestion des formateurs
+-   Planning
+-   Recherche multicritères
+-   Géolocalisation
+-   Gestion des missions
+-   Moteur de recommandation
+-   Workflow de propositions
+-   Affectation
+-   Tableau de bord (Sprint 7)
 
-# Le problème
+------------------------------------------------------------------------
 
-Aujourd'hui, la majorité des organismes gèrent leurs formateurs avec :
+# Cycle complet d'une mission
 
-- Excel ;
-- Outlook ;
-- des agendas papier ;
-- des fichiers dispersés ;
-- leur mémoire.
-
-Les principales difficultés sont :
-
-- retrouver un formateur compétent ;
-- savoir s'il est disponible ;
-- connaître sa localisation ;
-- éviter les doubles affectations ;
-- conserver un historique.
-
----
-
-# Notre vision
-
-TimeForma doit devenir le point d'entrée unique de la gestion des formateurs.
-
-À terme, un organisme ne devra plus avoir besoin de plusieurs outils.
-
-Le logiciel devra couvrir :
-
-- le réseau de formateurs ;
-- les disponibilités ;
-- les missions ;
-- les documents ;
-- les échanges ;
-- les statistiques.
-
----
-
-# Public cible
-
-## Aujourd'hui
-
-- Alter Prévention
-
-## Demain
-
-- Organismes de formation
-- Responsables pédagogiques
-- Coordinateurs
-- Planificateurs
-- Assistants administratifs
-
-## Plus tard
-
-- Formateurs indépendants
-- Administrateurs de plateforme
-
----
-
-# Proposition de valeur
-
-TimeForma permet :
-
-- de trouver rapidement le bon formateur ;
-- de comparer plusieurs profils ;
-- de centraliser les informations ;
-- de gagner du temps ;
-- de réduire les erreurs de planification.
-
----
-
-# Fonctionnalités disponibles
-
-## Gestion des formateurs
-
-- création
-- modification
-- suppression
-- consultation
-
----
-
-## Planning
-
-- disponibilités journalières
-- notes
-- vue mensuelle
-- comparaison des formateurs
-
----
-
-## Recherche
-
-- recherche multicritères
-- tri
-- filtres
-- calcul des distances
-- géolocalisation
-
----
-
-## Géocodage
-
-Le calcul des distances repose sur une Edge Function Supabase.
-
-Le logiciel indique toujours le lieu réellement reconnu.
-
----
-
-# Fonctionnalités futures
-
-Les prochaines grandes étapes sont :
-
-- Missions
-- Réseau de formateurs
-- Comptes utilisateurs
-- Marketplace
-- SaaS multi-organismes
-
-Le détail est disponible dans :
-
-```
-ROADMAP.md
+``` text
+Création
+    ↓
+Recherche des formateurs
+    ↓
+Sélection
+    ↓
+Proposition envoyée
+    ↓
+Acceptation / Refus
+    ↓
+OPTION
+    ↓
+Affectation par l'OF
+    ↓
+MISSION
 ```
 
----
+## Principe fondamental
 
-# Principes produit
+Une mission existe indépendamment des formateurs.
 
-Chaque fonctionnalité doit répondre à au moins un de ces objectifs :
+Elle peut être créée sans qu'aucun formateur ne soit encore sélectionné.
 
-- faire gagner du temps ;
-- réduire les manipulations ;
-- améliorer la qualité des décisions ;
-- limiter les erreurs ;
-- préparer les évolutions futures.
+------------------------------------------------------------------------
 
-Une fonctionnalité qui n'apporte aucune valeur métier ne doit pas être développée.
+# Les statuts d'une proposition
 
----
+-   Sélectionné
+-   Proposition envoyée
+-   Accepté
+-   Refusé
+-   Affecté
+-   Indisponible (affecté ailleurs)
 
-# Critères de réussite
+## Accepté ≠ Affecté
 
-TimeForma sera considéré comme un succès lorsque :
+L'acceptation signifie :
 
-- un organisme pourra préparer une mission en quelques minutes ;
-- la recherche d'un formateur deviendra quasi instantanée ;
-- les doubles affectations seront évitées automatiquement ;
-- les informations seront centralisées dans un seul outil.
+-   le formateur est d'accord ;
+-   l'OF ne l'a pas encore confirmé.
 
----
+L'affectation signifie :
 
-# Vision long terme
+-   le formateur est officiellement retenu ;
+-   les dates sont bloquées.
 
-À terme, TimeForma deviendra une plateforme collaborative reliant :
+------------------------------------------------------------------------
 
-- les organismes de formation ;
-- les formateurs indépendants ;
-- les missions.
+# La notion d'OPTION
 
-L'objectif n'est pas uniquement de gérer des données, mais de faciliter l'organisation des formations.
+Une OPTION apparaît lorsqu'un formateur accepte une proposition.
+
+Elle signifie :
+
+-   le formateur reste disponible ;
+-   il peut recevoir d'autres propositions ;
+-   elle n'influence pas son score dans les recommandations.
+
+Une option devient automatiquement une Mission lorsque l'OF clique sur «
+Affecter ».
+
+------------------------------------------------------------------------
+
+# Confidentialité
+
+Un organisme de formation ne voit jamais :
+
+-   les autres missions ;
+-   les autres organismes ;
+-   les autres clients ;
+-   le nombre d'options concurrentes.
+
+En cas de conflit, seul le message « Indisponible » est affiché.
+
+------------------------------------------------------------------------
+
+# Planning intelligent
+
+Le planning est calculé à partir de deux sources :
+
+-   disponibilités déclarées ;
+-   missions.
+
+Priorité :
+
+1.  Mission
+2.  Option
+3.  Indisponible déclaré
+4.  Disponible
+5.  Non renseigné
+
+Les états Option et Mission sont calculés automatiquement.
+
+------------------------------------------------------------------------
+
+# Moteur de recommandation
+
+Les recommandations prennent en compte :
+
+-   les compétences ;
+-   le matériel ;
+-   la distance ;
+-   le statut du formateur ;
+-   les disponibilités déclarées.
+
+Une Option n'est jamais pénalisante.
+
+Une Mission rend le formateur indisponible.
+
+------------------------------------------------------------------------
+
+# Résultat attendu
+
+Le coordinateur peut gérer une mission complète sans quitter TimeForma :
+
+-   création ;
+-   recherche ;
+-   comparaison ;
+-   proposition ;
+-   suivi ;
+-   affectation ;
+-   contrôle des conflits ;
+-   visualisation dans le planning.

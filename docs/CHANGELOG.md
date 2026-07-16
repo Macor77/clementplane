@@ -1,106 +1,137 @@
 # CHANGELOG - TimeForma
 
-Toutes les évolutions importantes du projet sont consignées dans ce document.
+Version : 5.0 Date : 16/07/2026
 
----
+------------------------------------------------------------------------
 
-# Version 4.0 — 14/07/2026
+# Sprint 6 --- Moteur de missions (Terminé)
 
-Correspond au **Sprint 5 terminé**.
+Le Sprint 6 transforme TimeForma d'un gestionnaire de formateurs en un
+véritable moteur de gestion des missions.
 
-## Recherche
+## Mini Sprint 6.1 --- Base de données
 
-- Recherche multicritères stabilisée
-- Recherche géographique par ville
-- Déclenchement manuel du calcul des distances
-- Tri automatique par distance
+### Ajouts
 
-## Géolocalisation
+-   Création de la table `missions`
+-   Création de la table `mission_dates`
+-   Création de la table `mission_formateurs`
+-   Relations entre les trois tables
+-   Contraintes d'intégrité
+-   Préparation de l'architecture multi-organismes
 
-- Création de l'Edge Function `geocode`
-- Suppression des appels directs à Nominatim
-- Complétion automatique des coordonnées GPS
-- Affichage du lieu reconnu
-- Affichage du département et du code postal
+------------------------------------------------------------------------
 
-## Architecture
+## Mini Sprint 6.2 --- Gestion des missions
 
-- Stabilisation de l'architecture Hooks / Services
-- Simplification de `Listing.jsx`
-- Finalisation du module `useDistances`
-- Documentation technique complète
+### Fonctionnalités
 
-## Déploiement
+-   Création d'une mission
+-   Modification d'une mission
+-   Suppression d'une mission
+-   Duplication d'une mission
+-   Gestion de plusieurs dates
+-   Bandeau récapitulatif de la mission
+-   Écran unique de gestion
 
-- Déploiement Vercel
-- Déploiement de l'Edge Function Supabase
+------------------------------------------------------------------------
 
----
+## Mini Sprint 6.3 --- Recommandation des formateurs
 
-# Version 3.0 — 13/07/2026
+### Ajouts
 
-Correspond aux **Sprints 3, 4 et 4.5**.
+-   Classement automatique
+-   Calcul des distances
+-   Filtres multicritères
+-   Sélection multiple des compétences
+-   Sélection multiple du matériel
+-   Affichage des résultats recommandés
 
-## Planning
+------------------------------------------------------------------------
 
-- Planning mensuel intégré au listing
-- Navigation entre les mois
-- Légende
-- En-tête fixe
-- Comparaison de tous les formateurs sur une même période
+## Mini Sprint 6.4 --- Workflow métier
 
-## Disponibilités
+### Nouveau cycle
 
-- Notes multiples
-- Dernière mise à jour
-- Une seule requête Supabase pour charger un mois complet
+Sélection → Proposition → Acceptation → Affectation
 
-## Architecture
+### Nouveaux statuts
 
-- Refactoring complet de `ListingTable`
-- Création des composants du planning
-- Création des hooks spécialisés
+-   selectionne
+-   proposition_envoyee
+-   accepte
+-   refuse
+-   affecte
 
----
+### Ajouts
 
-# Version 2.0
+-   Simulation des réponses
+-   Historique des dates
+-   Désaffectation
 
-Correspond au passage à Supabase.
+------------------------------------------------------------------------
 
-## Backend
+## Mini Sprint 6.5 --- Conflits et planning intelligent
 
-- Migration PostgreSQL
-- Synchronisation Supabase
-- Déploiement Vercel
+### Nouveautés
 
-## Architecture
+-   Distinction Option / Mission
+-   Confidentialité entre organismes
+-   Statut `indisponible_affecte_ailleurs`
+-   Retour automatique à `accepte`
+-   Affectation unique par mission
+-   Fusion automatique du planning
 
-- Création des services
-- Centralisation des accès aux données
+Priorité d'affichage :
 
----
+1.  Mission
+2.  Option
+3.  Indisponible déclaré
+4.  Disponible
+5.  Non renseigné
 
-# Version 1.0
+------------------------------------------------------------------------
 
-Première version opérationnelle.
+# Architecture
 
-## Fonctionnalités
+-   Nouvelle séparation entre disponibilités déclarées et engagements de
+    mission
+-   Centralisation de la logique métier dans les services
+-   Calcul dynamique du planning
 
-- Gestion des formateurs
-- CRUD complet
-- Import CSV
-- Carte Leaflet
-- Calcul initial des distances
+------------------------------------------------------------------------
 
----
+# Interface
 
-# Règles
+Améliorations :
 
-Chaque version majeure doit être publiée lorsque :
+-   Bandeau mission compact
+-   Réorganisation des panneaux
+-   Filtres multiples
+-   Liste des formateurs allégée
+-   Modification des missions
+-   Meilleure ergonomie générale
 
-- un sprint important est terminé ;
-- le code est déployé en production ;
-- la documentation est mise à jour ;
-- la roadmap est synchronisée.
+------------------------------------------------------------------------
 
-Le CHANGELOG constitue l'historique officiel du projet.
+# Résultat
+
+À l'issue du Sprint 6, TimeForma permet :
+
+-   de créer une mission ;
+-   de rechercher les meilleurs formateurs ;
+-   de proposer une mission ;
+-   de suivre les réponses ;
+-   d'affecter un formateur ;
+-   de sécuriser les conflits ;
+-   d'afficher automatiquement les Options et les Missions dans le
+    planning.
+
+Le Sprint 6 constitue la première version opérationnelle du moteur de
+missions.
+
+------------------------------------------------------------------------
+
+# Prochaine étape
+
+Sprint 7 --- Tableau de bord des missions.

@@ -8,6 +8,7 @@ import Listing from './pages/Listing';
 import FormateurForm from './pages/FormateurForm';
 import FormateurView from './pages/FormateurView';
 import Missions from './pages/Missions';
+import MissionDetail from './pages/MissionDetail';
 import MissionForm from './pages/MissionForm';
 import MigrateLocal from './pages/MigrateLocal';
 import EnvCheck from './pages/EnvCheck';
@@ -111,6 +112,11 @@ export default function App() {
         <Route
           path="/missions/new"
           element={<MissionForm />}
+        />
+
+        <Route
+          path="/missions/:id"
+          element={<MissionDetail />}
         />
 
         <Route

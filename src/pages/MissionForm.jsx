@@ -196,14 +196,19 @@ export default function MissionForm() {
           mission,
           dates,
         });
-      } else {
-        await createMission({
-          mission,
-          dates,
-        });
-      }
 
-      navigate('/missions');
+        navigate(`/missions/${id}`);
+      } else {
+        const createdMission =
+          await createMission({
+            mission,
+            dates,
+          });
+
+        navigate(
+          `/missions/${createdMission.id}`,
+        );
+      }
     } catch (saveError) {
       console.error(
         isEditMode

@@ -9,6 +9,9 @@ import { buildDistanceMap } from './distanceService';
 
 export async function getMissionRecommendations(
   mission,
+  {
+    locationQuery = '',
+  } = {},
 ) {
   if (!mission) {
     return {
@@ -84,6 +87,7 @@ export async function getMissionRecommendations(
   } = await calculateMissionDistances({
     mission,
     formateurs,
+    locationQuery,
   });
 
   const requiredCompetences =
@@ -120,11 +124,51 @@ export async function getMissionRecommendations(
 async function calculateMissionDistances({
   mission,
   formateurs,
+  locationQuery = '',
 }) {
   let targetCoords = null;
   let recognizedPlace = null;
 
+  const cleanedLocationQuery =
+    String(locationQuery || '').trim();
+
+  const missionSearchQuery =
+    buildMissionSearchQuery(mission);
+
+  const searchQuery =
+    cleanedLocationQuery ||
+    missionSearchQuery;
+
+  if (searchQuery) {
+    try {
+      const target = await geocodeQuery(
+        `${searchQuery}, France`,
+      );
+
+      if (
+        target &&
+        hasValidCoords(
+          target.latitude,
+          target.longitude,
+        )
+      ) {
+        targetCoords = target;
+
+        recognizedPlace =
+          target.displayName ||
+          searchQuery;
+      }
+    } catch (error) {
+      console.error(
+        'Erreur lors du géocodage du lieu de formation :',
+        error,
+      );
+    }
+  }
+
   if (
+    !targetCoords &&
+    !cleanedLocationQuery &&
     hasValidCoords(
       mission.latitude,
       mission.longitude,
@@ -139,39 +183,6 @@ async function calculateMissionDistances({
 
     recognizedPlace =
       formatMissionLocation(mission);
-  } else {
-    const searchQuery =
-      buildMissionSearchQuery(mission);
-
-    if (searchQuery) {
-      try {
-        const target =
-          await geocodeQuery(
-            `${searchQuery}, France`,
-          );
-
-        if (
-          target &&
-          hasValidCoords(
-            target.latitude,
-            target.longitude,
-          )
-        ) {
-          targetCoords = target;
-
-          recognizedPlace =
-            target.displayName ||
-            formatMissionLocation(
-              mission,
-            );
-        }
-      } catch (error) {
-        console.error(
-          'Erreur lors du calcul des distances de la mission :',
-          error,
-        );
-      }
-    }
   }
 
   if (!targetCoords) {
@@ -324,124 +335,17 @@ function buildRecommendation({
     );
 
   const distance =
-    distances.get(
-      formateur.id,
-    ) ?? null;
-
-  const score = calculateScore({
-    formateur,
-    availability,
-    distance,
-    requiredCompetences,
-    matchedCompetences,
-    requiredMateriel,
-    matchedMateriel,
-  });
+    distances.get(formateur.id) ??
+    distances.get(formateur) ??
+    null;
 
   return {
     ...formateur,
     distance,
-    score,
     availability,
     matchedCompetences,
     matchedMateriel,
   };
-}
-
-function calculateScore({
-  formateur,
-  availability,
-  distance,
-  requiredCompetences,
-  matchedCompetences,
-  requiredMateriel,
-  matchedMateriel,
-}) {
-  let score = 0;
-
-  const normalizedStatus =
-    normalizeText(
-      formateur.statut,
-    );
-
-  if (
-    normalizedStatus === 'premium'
-  ) {
-    score += 30;
-  } else if (
-    normalizedStatus === 'standard'
-  ) {
-    score += 20;
-  } else if (
-    normalizedStatus === 'inactif'
-  ) {
-    score -= 40;
-  } else if (
-    normalizedStatus === 'black'
-  ) {
-    score -= 100;
-  }
-
-  if (
-    availability.status ===
-    'available'
-  ) {
-    score += 35;
-  }
-
-  if (
-    availability.status ===
-    'unknown'
-  ) {
-    score += 5;
-  }
-
-  if (
-    availability.status ===
-    'unavailable'
-  ) {
-    score -= 100;
-  }
-
-  /*
-   * Aucun bonus ni malus n'est appliqué aux options.
-   * Une option signifie que le formateur a accepté une proposition,
-   * mais qu'il reste disponible tant qu'aucune affectation n'est faite.
-   */
-
-  if (distance !== null) {
-    if (distance <= 20) {
-      score += 30;
-    } else if (distance <= 50) {
-      score += 22;
-    } else if (distance <= 100) {
-      score += 14;
-    } else if (distance <= 200) {
-      score += 6;
-    } else {
-      score -= 5;
-    }
-  }
-
-  if (
-    requiredCompetences.length > 0
-  ) {
-    score +=
-      (matchedCompetences.length /
-        requiredCompetences.length) *
-      40;
-  }
-
-  if (
-    requiredMateriel.length > 0
-  ) {
-    score +=
-      (matchedMateriel.length /
-        requiredMateriel.length) *
-      20;
-  }
-
-  return Math.round(score);
 }
 
 function getAvailabilitySummary({
@@ -562,44 +466,19 @@ function compareRecommendations(
   first,
   second,
 ) {
-  const firstUnavailable =
-    first.availability.status ===
-    'unavailable';
-
-  const secondUnavailable =
-    second.availability.status ===
-    'unavailable';
-
-  if (
-    firstUnavailable !==
-    secondUnavailable
-  ) {
-    return firstUnavailable ? 1 : -1;
-  }
-
-  if (
-    second.score !== first.score
-  ) {
-    return (
-      second.score - first.score
-    );
-  }
-
   if (
     first.distance !== null &&
     second.distance !== null
   ) {
-    return (
-      first.distance -
-      second.distance
-    );
-  }
+    const distanceDifference =
+      first.distance - second.distance;
 
-  if (first.distance !== null) {
+    if (distanceDifference !== 0) {
+      return distanceDifference;
+    }
+  } else if (first.distance !== null) {
     return -1;
-  }
-
-  if (second.distance !== null) {
+  } else if (second.distance !== null) {
     return 1;
   }
 

@@ -252,7 +252,7 @@ export default function Missions() {
                 <h2 style={styles.cardTitle}>
                   {mission.intitule ||
                     mission.formation ||
-                    'Mission sans intitulé'}
+                    'Session sans code interne'}
                 </h2>
 
                 <div style={styles.client}>

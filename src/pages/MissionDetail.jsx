@@ -453,7 +453,7 @@ export default function MissionDetail() {
           <h1 style={styles.title}>
             {mission.intitule ||
               mission.formation ||
-              'Mission sans intitulé'}
+              'Session sans code interne'}
           </h1>
         </div>
 
@@ -481,15 +481,11 @@ export default function MissionDetail() {
       )}
 
       <div style={styles.layout}>
-        <aside style={styles.missionColumn}>
-          <MissionInformation
-            mission={mission}
-            affectedTrainer={
-              affectedTrainer
-            }
-            onDelete={handleDelete}
-          />
-        </aside>
+        <MissionInformation
+          mission={mission}
+          affectedTrainer={affectedTrainer}
+          onDelete={handleDelete}
+        />
 
         <main style={styles.mainColumn}>
           <TrainerFilters
@@ -619,7 +615,7 @@ function MissionInformation({
       </div>
 
       <Information
-        label="Intitulé"
+        label="Code interne de session"
         value={
           mission.intitule ||
           'Non renseigné'
@@ -1764,15 +1760,13 @@ function buildMissionLocationLabel(
     ]
       .filter(Boolean)
       .join(' '),
-    mission.lieu,
   ]
     .filter(Boolean)
     .join(', ');
 }
 
 function formatFullLocation(mission) {
-  return [
-    mission.lieu,
+  const address = [
     mission.adresse,
     [
       mission.code_postal,
@@ -1781,6 +1775,14 @@ function formatFullLocation(mission) {
       .filter(Boolean)
       .join(' '),
   ]
+    .filter(Boolean)
+    .join('\n');
+
+  const site = mission.lieu
+    ? `Site : ${mission.lieu}`
+    : '';
+
+  return [site, address]
     .filter(Boolean)
     .join('\n') ||
     'Non renseigné';
@@ -1831,7 +1833,7 @@ function formatArray(value) {
     : 'Non renseigné';
 }
 
-const styles = {
+const baseStyles = {
   page: {
     width: '100%',
     maxWidth: 1280,
@@ -2326,4 +2328,69 @@ const styles = {
     background: '#fef3f2',
     color: '#b42318',
   },
+
 };
+
+const compactStyles = {
+  // Polish UI 7.2 — version compacte et pleine largeur
+  page: {
+    width: '100%',
+    maxWidth: 1500,
+    boxSizing: 'border-box',
+    margin: '0 auto',
+    padding: '0 0 28px',
+    fontFamily: 'Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+  },
+  header: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: 14,
+    marginBottom: 12,
+  },
+  breadcrumb: { display: 'flex', gap: 6, marginBottom: 4, color: '#667085', fontSize: 11 },
+  title: { margin: 0, color: '#101828', fontSize: 24, lineHeight: 1.2, letterSpacing: '-0.025em' },
+  headerActions: { display: 'flex', flexWrap: 'wrap', gap: 7 },
+  primaryLink: { display: 'inline-flex', minHeight: 36, alignItems: 'center', padding: '0 12px', borderRadius: 8, background: '#087a55', color: '#fff', fontSize: 12, fontWeight: 700, textDecoration: 'none' },
+  secondaryLink: { display: 'inline-flex', minHeight: 36, alignItems: 'center', padding: '0 12px', border: '1px solid #d0d5dd', borderRadius: 8, background: '#fff', color: '#344054', fontSize: 12, fontWeight: 650, textDecoration: 'none' },
+  layout: { display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 12, alignItems: 'start' },
+  missionColumn: { position: 'static' },
+  mainColumn: { display: 'grid', minWidth: 0, width: '100%', gap: 12, overflow: 'visible' },
+  infoCard: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(5, minmax(130px, 1fr))',
+    gap: '10px 18px',
+    padding: '14px 16px',
+    border: '1px solid #e4e7ec',
+    borderRadius: 11,
+    background: '#fff',
+    boxShadow: '0 1px 3px rgba(16,24,40,.04)',
+  },
+  infoHeader: { gridColumn: '1 / -1', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8, paddingBottom: 9, borderBottom: '1px solid #eef1f5' },
+  infoTitle: { margin: 0, color: '#101828', fontSize: 15 },
+  information: { display: 'grid', alignContent: 'start', gap: 2, minWidth: 0 },
+  informationLabel: { color: '#667085', fontSize: 9, fontWeight: 750, letterSpacing: '.04em', textTransform: 'uppercase' },
+  informationValue: { color: '#344054', fontSize: 12, lineHeight: 1.35, overflowWrap: 'anywhere' },
+  deleteMissionButton: { minHeight: 32, alignSelf: 'end', border: '1px solid #fda29b', borderRadius: 7, background: '#fff', color: '#b42318', fontSize: 11, fontWeight: 650, cursor: 'pointer' },
+  filterCard: { padding: 14, border: '1px solid #e4e7ec', borderRadius: 11, background: '#fff', boxShadow: '0 1px 3px rgba(16,24,40,.04)' },
+  sectionCard: { padding: 14, border: '1px solid #e4e7ec', borderRadius: 11, background: '#fff', boxShadow: '0 1px 3px rgba(16,24,40,.04)' },
+  sectionHeader: { display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8, marginBottom: 10 },
+  sectionTitle: { margin: 0, color: '#101828', fontSize: 15 },
+  sectionSubtitle: { margin: '2px 0 0', color: '#667085', fontSize: 11 },
+  recognizedPlaceBox: { display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10, padding: '7px 9px', border: '1px solid #bbf7d0', borderRadius: 7, background: '#f0fdf4', color: '#166534', fontSize: 11 },
+  recognizedPlaceLabel: { fontSize: 9, fontWeight: 750, textTransform: 'uppercase', whiteSpace: 'nowrap' },
+  filterGrid: { display: 'grid', gridTemplateColumns: '1.35fr 1.15fr 1fr 1fr .9fr', gap: 8 },
+  input: { boxSizing: 'border-box', width: '100%', minHeight: 34, padding: '6px 9px', border: '1px solid #d0d5dd', borderRadius: 7, background: '#fff', fontFamily: 'inherit', fontSize: 12 },
+  locationButton: { flexShrink: 0, minHeight: 34, padding: '5px 8px', border: '1px solid #d0d5dd', borderRadius: 7, background: '#fff', color: '#344054', fontSize: 10, fontWeight: 650, cursor: 'pointer' },
+  statusRow: { display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 8, marginTop: 10, paddingTop: 10, borderTop: '1px solid #f2f4f7' },
+  trackedTrainerRow: { display: 'grid', gridTemplateColumns: 'minmax(170px,1.2fr) 72px 115px minmax(150px,1fr) auto', gap: 10, alignItems: 'center', padding: '8px 10px', border: '1px solid #e4e7ec', borderRadius: 8, background: '#fff' },
+  trainerRow: { display: 'grid', gridTemplateColumns: 'minmax(180px,1.25fr) 72px minmax(125px,.85fr) 80px minmax(220px,1.5fr) auto', gap: 10, alignItems: 'center', padding: '8px 10px', border: '1px solid #e4e7ec', borderRadius: 8, background: '#fff' },
+  trainerIdentity: { display: 'grid', minWidth: 0, gap: 2, color: '#101828', fontSize: 12 },
+  trainerMeta: { overflow: 'hidden', color: '#667085', fontSize: 10, textOverflow: 'ellipsis', whiteSpace: 'nowrap' },
+  criteria: { display: 'grid', minWidth: 0, overflowWrap: 'anywhere', gap: 2, color: '#667085', fontSize: 10, lineHeight: 1.3 },
+  actionButton: { minHeight: 29, padding: '4px 8px', border: '1px solid #d0d5dd', borderRadius: 6, background: '#fff', color: '#344054', fontSize: 10, fontWeight: 650 },
+  badge: { display: 'inline-flex', width: 'fit-content', padding: '3px 6px', borderRadius: 999, fontSize: 9, fontWeight: 750 },
+
+};
+
+const styles = { ...baseStyles, ...compactStyles };

@@ -1,8 +1,8 @@
 # ARCHITECTURE - TimeForma
 
-Version : 5.0\
-Dernière mise à jour : 16/07/2026\
-Correspond au Sprint 6 terminé.
+Version : 5.2\
+Dernière mise à jour : 05/08/2026\
+Correspond au Sprint 7 terminé.
 
 ------------------------------------------------------------------------
 
@@ -273,3 +273,54 @@ L'architecture privilégie toujours :
 -   la simplicité ;
 -   la maintenabilité ;
 -   l'évolutivité.
+
+
+------------------------------------------------------------------------
+
+# Évolution v0.6.1
+
+La consultation d'une mission est désormais séparée de la liste des missions.
+
+- page dédiée par mission ;
+- panneau latéral d'informations ;
+- réutilisation du moteur de filtres du listing ;
+- calcul des distances partagé avec le listing ;
+- tri par proximité ou par nom ;
+- consultation de la fiche formateur dans un nouvel onglet.
+
+
+------------------------------------------------------------------------
+
+# Évolutions Sprint 7
+
+## Nouvelles vues
+
+L'architecture intègre désormais les pages :
+
+- Dashboard
+- Planning
+- Missions
+- Carte
+- Paramètres
+
+Ces vues réutilisent les mêmes services métier afin d'éviter toute duplication de logique.
+
+------------------------------------------------------------------------
+
+## Moteur de proximité
+
+Le calcul de proximité repose désormais exclusivement sur :
+
+- adresse ;
+- code postal ;
+- ville.
+
+Le champ « Nom du site » est conservé à des fins descriptives uniquement et n'intervient plus dans le géocodage.
+
+------------------------------------------------------------------------
+
+## Planning
+
+Le planning mensuel est devenu une vue dédiée.
+
+Les composants ont été optimisés afin de conserver une hauteur fixe des cellules, d'afficher un compteur de missions et d'améliorer la lisibilité générale de l'interface.

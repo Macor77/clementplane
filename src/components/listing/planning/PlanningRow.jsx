@@ -13,7 +13,7 @@ export default function PlanningRow({
   planningLoading,
 }) {
   return (
-    <div style={planningGridStyle(days.length)}>
+    <div className="listing-planning-grid" style={planningGridStyle(days.length)}>
       {days.map((day) => {
         const isoDate = getISODate(planningDate, day);
 

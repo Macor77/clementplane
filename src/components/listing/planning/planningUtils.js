@@ -174,9 +174,8 @@ export function planningGridStyle(
   return {
     display: 'grid',
     gridTemplateColumns:
-      `repeat(${dayCount}, 17px)`,
-    gap: 2,
+      `repeat(${dayCount}, 13px)`,
+    gap: 1,
     alignItems: 'center',
-    justifyContent: 'center',
   };
 }

@@ -1064,7 +1064,7 @@ function cleanMissionPayload(mission) {
         mission.formation,
       ),
 
-    lieu: mission.lieu.trim(),
+    lieu: String(mission.lieu || '').trim(),
 
     adresse:
       cleanNullableText(
@@ -1139,11 +1139,29 @@ function validateMission(
   }
 
   if (
-    !mission.lieu ||
-    !mission.lieu.trim()
+    !mission.adresse ||
+    !mission.adresse.trim()
   ) {
     throw new Error(
-      'Le lieu de la mission est obligatoire.',
+      'L’adresse de la mission est obligatoire.',
+    );
+  }
+
+  if (
+    !mission.code_postal ||
+    !mission.code_postal.trim()
+  ) {
+    throw new Error(
+      'Le code postal de la mission est obligatoire.',
+    );
+  }
+
+  if (
+    !mission.ville ||
+    !mission.ville.trim()
+  ) {
+    throw new Error(
+      'La ville de la mission est obligatoire.',
     );
   }
 

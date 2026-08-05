@@ -238,10 +238,12 @@ export default function useListingFilters({
           filters.materiel
         );
 
+        const normalizedTrainerStatus = normalizeSearchValue(formateur.statut);
+
         const matchesStatus =
           filters.statuts.length === 0 ||
-          filters.statuts.includes(
-            formateur.statut
+          filters.statuts.some(
+            (status) => normalizeSearchValue(status) === normalizedTrainerStatus
           );
 
         const availabilityFilterIsActive =
@@ -280,8 +282,13 @@ export default function useListingFilters({
     availabilityLoading,
   ]);
 
-  const handleStatutChange = (event) => {
-    const value = event.target.value;
+  const handleStatutChange = (eventOrValue) => {
+    const value =
+      typeof eventOrValue === 'string'
+        ? eventOrValue
+        : eventOrValue?.target?.value;
+
+    if (!value) return;
 
     setFilters((previousFilters) => {
       const statuts =

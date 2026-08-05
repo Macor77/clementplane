@@ -1,11 +1,13 @@
 export default function ListingHeader({ onAdd }) {
   return (
-    <>
-      <h2>Liste des formateurs</h2>
-
-      <div style={{ marginBottom: 12 }}>
-        <button onClick={onAdd}>Ajouter un formateur</button>
+    <div className="listing-page__header">
+      <div>
+        <h1>Formateurs</h1>
+        <p>Retrouvez, filtrez et planifiez vos formateurs.</p>
       </div>
-    </>
+      <button className="button button--primary button--compact" onClick={onAdd}>
+        + Ajouter un formateur
+      </button>
+    </div>
   );
 }

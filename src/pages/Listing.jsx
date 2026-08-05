@@ -11,8 +11,6 @@ import useListingFilters from '../hooks/useListingFilters';
 import useDistances from '../hooks/useDistances';
 import usePlanningAvailability from '../hooks/usePlanningAvailability';
 
-import { completeMissingGps } from '../services/gpsService';
-import { hasValidCoords } from '../services/geocodingService';
 
 export default function Listing() {
   const navigate = useNavigate();
@@ -54,12 +52,6 @@ export default function Listing() {
     formateurs,
     sortList,
   });
-
-  const [gpsStatus, setGpsStatus] =
-    useState('');
-
-  const [gpsLoading, setGpsLoading] =
-    useState(false);
 
   const [
     planningDate,
@@ -167,89 +159,13 @@ export default function Listing() {
       }
     };
 
-  const handleCompleteGps = async () => {
-    const missing = formateurs.filter(
-      (formateur) =>
-        !hasValidCoords(
-          formateur.latitude,
-          formateur.longitude
-        )
-    );
-
-    if (missing.length === 0) {
-      alert(
-        'Tous les formateurs ont déjà des coordonnées GPS.'
-      );
-
-      setGpsStatus(
-        'Tous les formateurs ont déjà des coordonnées GPS.'
-      );
-
-      return;
-    }
-
-    const ok = window.confirm(
-      `Compléter les coordonnées GPS de ${missing.length} formateur(s) ?\n\n` +
-        `Le logiciel va utiliser l’adresse, le code postal et/ou la ville.\n` +
-        `L’opération peut prendre quelques minutes.`
-    );
-
-    if (!ok) return;
-
-    setGpsLoading(true);
-
-    setGpsStatus(
-      `Géocodage en cours : 0 / ${missing.length}`
-    );
-
-    try {
-      const result =
-        await completeMissingGps({
-          formateurs,
-          onProgress: setGpsStatus,
-          onCoordsFound:
-            updateFormateurCoords,
-        });
-
-      setGpsStatus(
-        `Terminé : ${result.updatedCount} coordonnée(s) ajoutée(s), ` +
-          `${result.notFoundCount} introuvable(s).`
-      );
-
-      let message =
-        `Coordonnées GPS ajoutées : ${result.updatedCount}\n` +
-        `Introuvables : ${result.notFoundCount}`;
-
-      if (
-        result.notFound.length > 0
-      ) {
-        message +=
-          `\n\nÀ vérifier manuellement :\n- ` +
-          result.notFound.join('\n- ');
-      }
-
-      alert(message);
-    } catch (error) {
-      console.error(
-        'Erreur géolocalisation :',
-        error
-      );
-
-      setGpsStatus(
-        'Impossible de compléter les coordonnées GPS pour le moment.'
-      );
-    } finally {
-      setGpsLoading(false);
-    }
-  };
-
   const renderList = (value) =>
     Array.isArray(value)
       ? value.join(', ')
       : value || '';
 
   return (
-    <div style={{ padding: '1rem' }}>
+    <div className="listing-page">
       <ListingHeader
         onAdd={() =>
           navigate('/formateur/new')
@@ -265,11 +181,6 @@ export default function Listing() {
         handleCalculateDistances={
           handleCalculateDistances
         }
-        handleCompleteGps={
-          handleCompleteGps
-        }
-        gpsLoading={gpsLoading}
-        gpsStatus={gpsStatus}
         distanceLoading={
           distanceLoading
         }

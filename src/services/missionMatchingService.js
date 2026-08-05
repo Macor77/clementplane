@@ -514,7 +514,6 @@ function buildMissionSearchQuery(
     mission.adresse,
     mission.code_postal,
     mission.ville,
-    mission.lieu,
   ]
     .filter(Boolean)
     .join(', ');
@@ -524,7 +523,6 @@ function formatMissionLocation(
   mission,
 ) {
   return [
-    mission.lieu,
     mission.adresse,
     [
       mission.code_postal,

@@ -1,8 +1,8 @@
 # FONCTIONNEL - TimeForma
 
-Version : 5.0\
-Dernière mise à jour : 16/07/2026\
-Correspond au Sprint 6 terminé.
+Version : 5.2\
+Dernière mise à jour : 05/08/2026\
+Correspond au Sprint 7 terminé.
 
 ------------------------------------------------------------------------
 
@@ -26,7 +26,9 @@ affecter et suivre une mission depuis une seule interface.
 -   Moteur de recommandation
 -   Workflow de propositions
 -   Affectation
--   Tableau de bord (Sprint 7)
+-   Tableau de bord
+-   Planning des missions
+-   Navigation multi-vues
 
 ------------------------------------------------------------------------
 
@@ -156,3 +158,55 @@ Le coordinateur peut gérer une mission complète sans quitter TimeForma :
 -   affectation ;
 -   contrôle des conflits ;
 -   visualisation dans le planning.
+
+
+------------------------------------------------------------------------
+
+# Évolutions v0.6.1
+
+L'écran Mission devient l'écran principal de travail.
+
+Le coordinateur dispose :
+- d'une colonne d'informations sur la mission ;
+- des mêmes filtres que le listing ;
+- d'un tri par proximité ;
+- de l'affichage du lieu réellement reconnu ;
+- d'un accès direct à la fiche de chaque formateur.
+
+
+------------------------------------------------------------------------
+
+# Évolutions Sprint 7
+
+Le Sprint 7 apporte principalement des améliorations ergonomiques et une
+nouvelle organisation de l'application.
+
+## Navigation
+
+Le logiciel est désormais organisé autour des pages :
+
+- Accueil
+- Planning
+- Missions
+- Formateurs
+- Carte
+- Paramètres
+
+## Planning
+
+Le planning mensuel devient la vue principale de planification.
+
+Il permet :
+
+- de visualiser toutes les missions du mois ;
+- d'afficher un compteur lorsqu'une journée comporte plusieurs missions ;
+- de conserver une hauteur fixe des cellules ;
+- d'accéder rapidement aux informations de chaque mission.
+
+## Gestion des missions
+
+Les évolutions principales sont :
+
+- remplacement du champ « Intitulé de la mission » par « Code interne de session » ;
+- remplacement du champ « Lieu » par « Nom du site » (facultatif) ;
+- calcul des distances exclusivement à partir de l'adresse, du code postal et de la ville afin de fiabiliser les recommandations.

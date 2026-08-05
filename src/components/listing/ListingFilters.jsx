@@ -3,9 +3,6 @@ export default function ListingFilters({
   setLieu,
   recognizedPlace,
   handleCalculateDistances,
-  handleCompleteGps,
-  gpsLoading,
-  gpsStatus,
   distanceLoading,
   distanceError,
   filters,
@@ -17,351 +14,146 @@ export default function ListingFilters({
   availabilityLoading,
   availabilityError,
 }) {
-  const hasActiveFilters =
-    filters.recherche.trim() !== '' ||
-    filters.competence.trim() !== '' ||
-    filters.materiel.trim() !== '' ||
-    filters.statuts.length > 0 ||
+  const active =
+    filters.recherche.trim() ||
+    filters.competence.trim() ||
+    filters.materiel.trim() ||
+    filters.statuts.length ||
     filters.disponibilite !== 'all';
 
-  const updateFilter = (key, value) => {
-    setFilters((previousFilters) => ({
-      ...previousFilters,
-      [key]: value,
-    }));
-  };
+  const update = (key, value) =>
+    setFilters((prev) => ({ ...prev, [key]: value }));
 
-  const handleAvailabilityChange = (
-    event
-  ) => {
+  const availabilityChange = (event) => {
     const value = event.target.value;
 
-    setFilters((previousFilters) => ({
-      ...previousFilters,
+    setFilters((prev) => ({
+      ...prev,
       disponibilite: value,
       dateDisponibilite:
-        value === 'date'
-          ? previousFilters.dateDisponibilite
-          : '',
+        value === 'date' ? prev.dateDisponibilite : '',
     }));
   };
 
-  const handlePlaceKeyDown = (event) => {
-    if (
-      event.key === 'Enter' &&
-      !distanceLoading
-    ) {
-      event.preventDefault();
-      handleCalculateDistances();
-    }
+  const submitPlace = (event) => {
+    if (event.key !== 'Enter' || distanceLoading) return;
+
+    event.preventDefault();
+    event.currentTarget.blur();
   };
 
   return (
-    <>
-      <div
-        style={{
-          marginBottom: 12,
-          display: 'flex',
-          alignItems: 'center',
-          gap: 8,
-          flexWrap: 'wrap',
-        }}
-      >
+    <section className="listing-filters">
+      <div className="listing-place-search">
         <input
+          className="compact-control listing-filters__place"
           type="search"
           placeholder="Lieu de formation : ville ou code postal"
-          aria-label="Lieu de formation"
           value={lieu ?? ''}
-          onChange={(event) =>
-            setLieu(event.target.value)
-          }
-          onKeyDown={handlePlaceKeyDown}
-          disabled={distanceLoading}
-          style={{
-            minWidth: 280,
-            flex: '1 1 340px',
-            maxWidth: 500,
+          onChange={(event) => setLieu(event.target.value)}
+          onKeyDown={submitPlace}
+          onBlur={() => {
+            if (!distanceLoading && String(lieu ?? '').trim()) {
+              handleCalculateDistances();
+            }
           }}
+          disabled={distanceLoading}
         />
-
-        <button
-          type="button"
-          onClick={handleCalculateDistances}
-          disabled={
-            distanceLoading ||
-            String(lieu ?? '').trim() === ''
-          }
-        >
-          {distanceLoading
-            ? 'Calcul des distances...'
-            : 'Calculer les distances'}
-        </button>
-
-        <button
-          type="button"
-          onClick={handleCompleteGps}
-          disabled={
-            gpsLoading || distanceLoading
-          }
-        >
-          {gpsLoading
-            ? 'Géolocalisation...'
-            : '🔄 Compléter les coordonnées GPS manquantes'}
-        </button>
+        <span className="listing-place-search__state" aria-live="polite">
+          {distanceLoading ? 'Calcul en cours…' : 'Entrée ou sortie du champ pour calculer'}
+        </span>
       </div>
 
-      {recognizedPlace?.label &&
-        !distanceLoading &&
-        !distanceError && (
-          <div
-            style={{
-              marginBottom: 12,
-              padding: '10px 12px',
-              border: '1px solid #bbf7d0',
-              borderRadius: 8,
-              background: '#f0fdf4',
-              color: '#166534',
-              fontSize: 14,
-              lineHeight: 1.45,
-              maxWidth: 620,
-            }}
-          >
-            <div
-              style={{
-                fontWeight: 600,
-              }}
-            >
-              📍 Lieu reconnu :
-            </div>
-
-            <div
-              style={{
-                fontWeight: 700,
-              }}
-            >
-              {recognizedPlace.label}
-            </div>
-          </div>
-        )}
+      {recognizedPlace?.label && !distanceLoading && !distanceError && (
+        <div className="listing-message listing-message--success">
+          <strong>Lieu reconnu :</strong> {recognizedPlace.label}
+        </div>
+      )}
 
       {distanceError && (
-        <div
-          role="alert"
-          style={{
-            marginBottom: 12,
-            padding: '10px 12px',
-            border: '1px solid #fecaca',
-            borderRadius: 8,
-            background: '#fef2f2',
-            color: '#b91c1c',
-            fontSize: 13,
-            lineHeight: 1.45,
-            maxWidth: 620,
-          }}
-        >
+        <div className="listing-message listing-message--error">
           {distanceError}
         </div>
       )}
 
-      {gpsStatus && (
-        <div style={{ marginBottom: 12 }}>
-          {gpsStatus}
-        </div>
-      )}
-
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 8,
-          flexWrap: 'wrap',
-          marginBottom: 12,
-        }}
-      >
+      <div className="listing-filters__row listing-filters__row--search">
         <input
+          className="compact-control"
           type="search"
           placeholder="Nom, prénom, ville ou code postal"
-          aria-label="Filtrer par nom, prénom, ville ou code postal"
           value={filters.recherche}
-          onChange={(event) =>
-            updateFilter(
-              'recherche',
-              event.target.value
-            )
-          }
-          style={{
-            minWidth: 260,
-            flex: '1 1 300px',
-            maxWidth: 420,
-          }}
+          onChange={(event) => update('recherche', event.target.value)}
         />
-
         <input
+          className="compact-control"
           type="search"
           placeholder="Compétence"
-          aria-label="Filtrer par compétence"
           value={filters.competence}
-          onChange={(event) =>
-            updateFilter(
-              'competence',
-              event.target.value
-            )
-          }
-          style={{
-            minWidth: 180,
-            flex: '1 1 220px',
-            maxWidth: 300,
-          }}
+          onChange={(event) => update('competence', event.target.value)}
         />
-
         <input
+          className="compact-control"
           type="search"
           placeholder="Matériel"
-          aria-label="Filtrer par matériel"
           value={filters.materiel}
-          onChange={(event) =>
-            updateFilter(
-              'materiel',
-              event.target.value
-            )
-          }
-          style={{
-            minWidth: 180,
-            flex: '1 1 220px',
-            maxWidth: 300,
-          }}
+          onChange={(event) => update('materiel', event.target.value)}
         />
-      </div>
-
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 8,
-          flexWrap: 'wrap',
-          marginBottom: 12,
-        }}
-      >
-        <label htmlFor="availability-filter">
-          <strong>Disponibilité :</strong>
-        </label>
-
         <select
-          id="availability-filter"
+          className="compact-control"
           value={filters.disponibilite}
-          onChange={handleAvailabilityChange}
+          onChange={availabilityChange}
         >
-          <option value="all">
-            Toutes
-          </option>
-
-          <option value="today">
-            Disponible aujourd’hui
-          </option>
-
-          <option value="week">
-            Disponible cette semaine
-          </option>
-
-          <option value="date">
-            Disponible à une date précise
-          </option>
+          <option value="all">Toutes les disponibilités</option>
+          <option value="today">Disponible aujourd’hui</option>
+          <option value="week">Disponible cette semaine</option>
+          <option value="date">Disponible à une date précise</option>
         </select>
-
-        {filters.disponibilite ===
-          'date' && (
+        {filters.disponibilite === 'date' && (
           <input
+            className="compact-control"
             type="date"
-            aria-label="Date de disponibilité recherchée"
-            value={
-              filters.dateDisponibilite
-            }
-            onChange={(event) =>
-              updateFilter(
-                'dateDisponibilite',
-                event.target.value
-              )
-            }
+            value={filters.dateDisponibilite}
+            onChange={(event) => update('dateDisponibilite', event.target.value)}
           />
         )}
-
-        {availabilityLoading && (
-          <span
-            style={{
-              fontSize: 13,
-              color: '#6b7280',
-            }}
-          >
-            Vérification des disponibilités…
-          </span>
-        )}
-
-        {hasActiveFilters && (
-          <button
-            type="button"
-            onClick={resetFilters}
-          >
-            Effacer les filtres
-          </button>
-        )}
-
-        <strong
-          style={{
-            whiteSpace: 'nowrap',
-          }}
-        >
-          {resultCount} formateur
-          {resultCount > 1 ? 's' : ''}
-
-          {resultCount !== totalCount
-            ? ` sur ${totalCount}`
-            : ''}
-        </strong>
       </div>
 
-      {availabilityError && (
-        <div
-          style={{
-            marginBottom: 12,
-            color: '#b91c1c',
-            fontSize: 13,
-          }}
-        >
-          {availabilityError}
+      <div className="listing-filters__footer">
+        <div className="listing-statuses">
+          {['Premium', 'Standard', 'Inactif', 'Black'].map((status) => (
+            <label
+              key={status}
+              className={`listing-status-filter listing-status-filter--${status.toLowerCase()}`}
+            >
+              <input
+                type="checkbox"
+                value={status}
+                checked={filters.statuts.includes(status)}
+                onChange={handleStatutChange}
+              />
+              <span>{status}</span>
+            </label>
+          ))}
         </div>
-      )}
 
-      <fieldset style={{ marginBottom: 12 }}>
-        <legend>
-          Filtrer par statut :
-        </legend>
-
-        {[
-          'Premium',
-          'Standard',
-          'Inactif',
-          'Black',
-        ].map((statut) => (
-          <label
-            key={statut}
-            style={{
-              marginRight: '1rem',
-            }}
-          >
-            <input
-              type="checkbox"
-              value={statut}
-              checked={filters.statuts.includes(
-                statut
-              )}
-              onChange={
-                handleStatutChange
-              }
-            />{' '}
-            {statut}
-          </label>
-        ))}
-      </fieldset>
-    </>
+        <div className="listing-filters__summary">
+          {availabilityLoading && <span>Vérification des disponibilités…</span>}
+          {availabilityError && <span className="text-error">{availabilityError}</span>}
+          {active && (
+            <button
+              className="button button--compact"
+              type="button"
+              onClick={resetFilters}
+            >
+              Effacer les filtres
+            </button>
+          )}
+          <strong>
+            {resultCount} formateur{resultCount > 1 ? 's' : ''}
+            {resultCount !== totalCount ? ` sur ${totalCount}` : ''}
+          </strong>
+        </div>
+      </div>
+    </section>
   );
 }

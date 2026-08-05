@@ -21,7 +21,16 @@ const getFallbackCity = (displayName) =>
     .split(',')[0]
     .trim();
 
-const buildRecognizedPlace = (target) => {
+const extractPostcode = (...values) => {
+  for (const value of values) {
+    const match = String(value ?? '').match(/\b(?:0[1-9]|[1-8]\d|9[0-5]|2A|2B)\d{3}\b/i);
+    if (match) return match[0].toUpperCase();
+  }
+
+  return '';
+};
+
+const buildRecognizedPlace = (target, query) => {
   const city =
     String(target.city ?? '').trim() ||
     getFallbackCity(target.displayName);
@@ -30,9 +39,11 @@ const buildRecognizedPlace = (target) => {
     target.department
   );
 
-  const postcode = String(
-    target.postcode ?? ''
-  ).trim();
+  const postcode = extractPostcode(
+    target.postcode,
+    target.displayName,
+    query
+  );
 
   const locationParts = [
     city,
@@ -169,7 +180,7 @@ export default function useDistances({
         setDistances(new Map(newMap));
 
         setRecognizedPlace(
-          buildRecognizedPlace(target)
+          buildRecognizedPlace(target, normalizedPlace)
         );
 
         setDistanceError('');

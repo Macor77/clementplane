@@ -1,6 +1,7 @@
 # CHANGELOG - TimeForma
 
-Version : 5.0 Date : 16/07/2026
+Version : 5.2
+Date : 05/08/2026
 
 ------------------------------------------------------------------------
 
@@ -135,3 +136,70 @@ missions.
 # Prochaine étape
 
 Sprint 7 --- Tableau de bord des missions.
+
+
+------------------------------------------------------------------------
+
+# Version corrective v0.6.1
+
+- Refonte de la page Mission.
+- Consultation d'une mission sur une page dédiée.
+- Filtres identiques au listing.
+- Tri par proximité.
+- Affichage du lieu réellement reconnu.
+- Accès à la fiche formateur dans un nouvel onglet.
+- Correction du calcul des distances entre le listing et les missions.
+
+
+------------------------------------------------------------------------
+
+# Sprint 7 — Vues opérationnelles des missions (Terminé)
+
+Le Sprint 7 transforme TimeForma en un véritable outil de planification quotidien.
+
+## Mini Sprint 7.1 — Nouvelle architecture
+
+### Ajouts
+
+- Nouvelle navigation (Accueil, Planning, Missions, Formateurs, Carte, Paramètres)
+- Création des nouvelles pages principales
+- Planning mensuel des missions
+- Synthèse mensuelle
+- Navigation entre les mois
+
+------------------------------------------------------------------------
+
+## Mini Sprint 7.2 — Polish UI
+
+### Améliorations
+
+- Planning compact affichable sans scroll vertical
+- Déplacement des commandes du calendrier dans la colonne de droite
+- Compteur du nombre de missions par journée
+- Une seule étiquette affichée par cellule
+- Suppression des horaires sur les étiquettes du calendrier
+- Optimisation de la densité d'affichage
+- Harmonisation générale de l'interface
+
+### Missions
+
+- « Intitulé de la mission » devient « Code interne de session »
+- « Lieu » devient « Nom du site » (facultatif)
+- Calcul de proximité basé exclusivement sur l'adresse, le code postal et la ville
+
+------------------------------------------------------------------------
+
+# Résultat
+
+À l'issue du Sprint 7, TimeForma dispose :
+
+- d'une navigation moderne ;
+- d'un planning mensuel opérationnel ;
+- d'une interface optimisée pour la planification ;
+- d'une recherche géographique plus fiable grâce à l'utilisation de l'adresse structurée.
+
+------------------------------------------------------------------------
+
+# Prochaine étape
+
+Sprint 8 — Comptes formateurs.

@@ -50,8 +50,8 @@ export default function PlanningCell({
 }
 
 const planningCellStyle = {
-  width: 17,
-  height: 22,
+  width: 14,
+  height: 18,
   borderRadius: 4,
   boxSizing: 'border-box',
   display: 'flex',
@@ -62,8 +62,8 @@ const planningCellStyle = {
 };
 
 const noteIndicatorStyle = {
-  width: 5,
-  height: 5,
+  width: 4,
+  height: 4,
   borderRadius: '50%',
   background: '#111827',
   display: 'block',

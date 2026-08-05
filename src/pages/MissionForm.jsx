@@ -299,7 +299,7 @@ export default function MissionForm() {
               />
             </Field>
 
-            <Field label="Intitulé de la mission">
+            <Field label="Code interne de session">
               <input
                 type="text"
                 name="intitule"
@@ -307,7 +307,7 @@ export default function MissionForm() {
                 onChange={
                   handleMissionChange
                 }
-                placeholder="Ex. Formation incendie"
+                placeholder="Ex. AP-2026-084"
                 style={styles.input}
               />
             </Field>
@@ -367,9 +367,8 @@ export default function MissionForm() {
           </h2>
 
           <Field
-            label="Lieu"
-            required
-            help="Ce champ est obligatoire."
+            label="Nom du site"
+            help="Facultatif. Cette information ne sert pas au calcul des distances."
           >
             <input
               type="text"
@@ -378,13 +377,16 @@ export default function MissionForm() {
               onChange={
                 handleMissionChange
               }
-              placeholder="Ex. Site ENGIE de Saint-Denis"
-              required
+              placeholder="Ex. Théâtre de Chelles, siège social, agence…"
               style={styles.input}
             />
           </Field>
 
-          <Field label="Adresse">
+          <Field
+            label="Adresse"
+            required
+            help="L’adresse, le code postal et la ville servent au calcul de proximité."
+          >
             <input
               type="text"
               name="adresse"
@@ -393,12 +395,13 @@ export default function MissionForm() {
                 handleMissionChange
               }
               placeholder="Ex. 10 rue de la Formation"
+              required
               style={styles.input}
             />
           </Field>
 
           <div style={styles.postalGrid}>
-            <Field label="Code postal">
+            <Field label="Code postal" required>
               <input
                 type="text"
                 name="code_postal"
@@ -409,11 +412,12 @@ export default function MissionForm() {
                   handleMissionChange
                 }
                 placeholder="93200"
+                required
                 style={styles.input}
               />
             </Field>
 
-            <Field label="Ville">
+            <Field label="Ville" required>
               <input
                 type="text"
                 name="ville"
@@ -422,6 +426,7 @@ export default function MissionForm() {
                   handleMissionChange
                 }
                 placeholder="Saint-Denis"
+                required
                 style={styles.input}
               />
             </Field>

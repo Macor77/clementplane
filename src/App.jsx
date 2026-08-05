@@ -1,8 +1,4 @@
-import {
-  Routes,
-  Route,
-  Link,
-} from 'react-router-dom';
+import { NavLink, Route, Routes } from 'react-router-dom';
 
 import Listing from './pages/Listing';
 import FormateurForm from './pages/FormateurForm';
@@ -12,137 +8,79 @@ import MissionDetail from './pages/MissionDetail';
 import MissionForm from './pages/MissionForm';
 import MigrateLocal from './pages/MigrateLocal';
 import EnvCheck from './pages/EnvCheck';
+import Dashboard from './pages/Dashboard';
+import Planning from './pages/Planning';
+import MapPage from './pages/MapPage';
+import Settings from './pages/Settings';
+
+import './App.css';
+
+const navigationItems = [
+  { to: '/', label: 'Accueil', icon: '⌂', end: true },
+  { to: '/planning', label: 'Planning', icon: '▦' },
+  { to: '/missions', label: 'Missions', icon: '▣' },
+  { to: '/listing', label: 'Formateurs', icon: '♙' },
+  { to: '/carte', label: 'Carte', icon: '⌖' },
+  { to: '/parametres', label: 'Paramètres', icon: '⚙' },
+];
 
 export default function App() {
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        padding: '16px',
-        boxSizing: 'border-box',
-        fontFamily: 'Arial, sans-serif',
-        background: '#f8fafc',
-      }}
-    >
-      <nav
-        style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          alignItems: 'center',
-          gap: 8,
-          maxWidth: 1400,
-          margin: '0 auto 24px',
-          padding: 10,
-          border: '1px solid #e4e7ec',
-          borderRadius: 10,
-          background: '#ffffff',
-        }}
-      >
-        <Link
-          to="/listing"
-          style={navigationLinkStyle}
-        >
-          Formateurs
-        </Link>
+    <div className="app-shell">
+      <aside className="app-sidebar">
+        <div className="app-brand">
+          <span className="app-brand__icon">▦</span>
+          <span>
+            Time<span>Forma</span>
+          </span>
+        </div>
 
-        <Link
-          to="/formateur/new"
-          style={navigationLinkStyle}
-        >
-          Ajouter un formateur
-        </Link>
+        <nav className="app-nav" aria-label="Navigation principale">
+          {navigationItems.map((item) => (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              end={item.end}
+              className={({ isActive }) =>
+                `app-nav__link${isActive ? ' app-nav__link--active' : ''}`
+              }
+            >
+              <span className="app-nav__icon" aria-hidden="true">
+                {item.icon}
+              </span>
+              <span>{item.label}</span>
+            </NavLink>
+          ))}
+        </nav>
 
-        <Link
-          to="/missions"
-          style={navigationLinkStyle}
-        >
-          Missions
-        </Link>
+        <div className="app-sidebar__footer">
+          <strong>Vincent Macor</strong>
+          <span>Alter Prévention</span>
+        </div>
+      </aside>
 
-        <Link
-          to="/missions/new"
-          style={navigationLinkStyle}
-        >
-          Créer une mission
-        </Link>
+      <main className="app-main">
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/planning" element={<Planning />} />
 
-        <Link
-          to="/env-check"
-          style={{
-            ...navigationLinkStyle,
-            marginLeft: 'auto',
-            color: '#067647',
-          }}
-        >
-          🧩 Vérifier Supabase
-        </Link>
-      </nav>
+          <Route path="/listing" element={<Listing />} />
+          <Route path="/formateur/view/:id" element={<FormateurView />} />
+          <Route path="/formateur/edit/:id" element={<FormateurForm />} />
+          <Route path="/formateur/new" element={<FormateurForm />} />
 
-      <Routes>
-        <Route
-          path="/"
-          element={<Listing />}
-        />
+          <Route path="/missions" element={<Missions />} />
+          <Route path="/missions/new" element={<MissionForm />} />
+          <Route path="/missions/:id" element={<MissionDetail />} />
+          <Route path="/missions/edit/:id" element={<MissionForm />} />
 
-        <Route
-          path="/listing"
-          element={<Listing />}
-        />
+          <Route path="/carte" element={<MapPage />} />
+          <Route path="/parametres" element={<Settings />} />
 
-        <Route
-          path="/formateur/view/:id"
-          element={<FormateurView />}
-        />
-
-        <Route
-          path="/formateur/edit/:id"
-          element={<FormateurForm />}
-        />
-
-        <Route
-          path="/formateur/new"
-          element={<FormateurForm />}
-        />
-
-        <Route
-          path="/missions"
-          element={<Missions />}
-        />
-
-        <Route
-          path="/missions/new"
-          element={<MissionForm />}
-        />
-
-        <Route
-          path="/missions/:id"
-          element={<MissionDetail />}
-        />
-
-        <Route
-          path="/missions/edit/:id"
-          element={<MissionForm />}
-        />
-
-        <Route
-          path="/migrate-local"
-          element={<MigrateLocal />}
-        />
-
-        <Route
-          path="/env-check"
-          element={<EnvCheck />}
-        />
-      </Routes>
+          <Route path="/migrate-local" element={<MigrateLocal />} />
+          <Route path="/env-check" element={<EnvCheck />} />
+        </Routes>
+      </main>
     </div>
   );
 }
-
-const navigationLinkStyle = {
-  padding: '8px 11px',
-  borderRadius: 7,
-  color: '#344054',
-  fontSize: 14,
-  fontWeight: 600,
-  textDecoration: 'none',
-};

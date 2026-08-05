@@ -35,7 +35,7 @@ export default function PlanningHeader({
 
         <div
           style={{
-            minWidth: 160,
+            minWidth: 118,
             textAlign: 'center',
             fontWeight: 700,
             textTransform: 'capitalize',
@@ -86,7 +86,7 @@ export default function PlanningHeader({
         </div>
       )}
 
-      <div style={planningGridStyle(days.length)}>
+      <div className="listing-planning-grid" style={planningGridStyle(days.length)}>
         {days.map((day) => {
           const isToday = isTodayInPlanningMonth(
             planningDate,
@@ -121,13 +121,13 @@ const monthButtonStyle = {
 };
 
 const dayHeaderStyle = {
-  width: 17,
-  height: 20,
+  width: 14,
+  height: 18,
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
   borderRadius: 5,
-  fontSize: 9,
+  fontSize: 8,
   color: '#4b5563',
   boxSizing: 'border-box',
 };

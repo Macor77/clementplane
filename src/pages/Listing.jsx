@@ -18,7 +18,6 @@ export default function Listing() {
   const {
     formateurs,
     removeFormateur,
-    updateFormateurCoords,
   } = useFormateurs();
 
   const {

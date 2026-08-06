@@ -13,6 +13,8 @@ import Planning from './pages/Planning';
 import MapPage from './pages/MapPage';
 import Settings from './pages/Settings';
 
+import UserCard from './components/layout/UserCard';
+
 import './App.css';
 
 const navigationItems = [
@@ -54,8 +56,7 @@ export default function App() {
         </nav>
 
         <div className="app-sidebar__footer">
-          <strong>Vincent Macor</strong>
-          <span>Alter Prévention</span>
+          <UserCard />
         </div>
       </aside>
 

@@ -152,6 +152,7 @@ alter table public.mission_formateurs
             'accepte',
             'refuse',
             'affecte',
+            'indisponible_affecte_ailleurs',
             'annule'
         )
     );

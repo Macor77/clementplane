@@ -1,12 +1,17 @@
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 export default function Dashboard() {
+  const { profile, displayName, loading } = useAuth();
+  const firstName = profile?.first_name || displayName?.split(' ')[0] || null;
+  const greeting = loading ? 'Bonjour' : `Bonjour${firstName ? ` ${firstName}` : ''}`;
+
   return (
     <div className="page-container">
       <header className="page-heading">
         <div>
           <p className="page-eyebrow">Accueil</p>
-          <h1>Bonjour Vincent</h1>
+          <h1>{greeting}</h1>
           <p>Le tableau de bord détaillé sera développé au mini-sprint 7.3.</p>
         </div>
         <Link className="button button--primary" to="/missions/new">

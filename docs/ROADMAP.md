@@ -526,98 +526,93 @@ Le Sprint 7 marquera également une évolution importante de TimeForma :
 Le logiciel ne sera plus seulement un outil de gestion des formateurs, mais un véritable outil de planification des organismes de formation.
 L'identité visuelle du logiciel a été modernisée afin d'offrir une expérience utilisateur plus cohérente, fluide et professionnelle.
 ---
-Sprint 8 — Comptes formateurs
+Sprint 8 — Gestion des utilisateurs et des rôles
+
 Objectif
-Rendre progressivement les formateurs autonomes.
-Le logiciel continuera de fonctionner même si certains formateurs ne possèdent pas encore de compte.
+
+Mettre en place un modèle de compte unique : un utilisateur possède une seule adresse e-mail mais peut cumuler plusieurs rôles.
+
+Principe :
+- un compte Utilisateur ;
+- une ou plusieurs Organisations ;
+- un Profil Formateur facultatif.
+
+Un même utilisateur peut être simultanément OF et Formateur.
+
 ---
-Authentification
-Connexion
-Déconnexion
-Mot de passe oublié
-Invitation
-Revendication d'une fiche existante
-Association sécurisée entre compte et fiche formateur
+
+Mini Sprint 8.1 — Modèle utilisateur unique
+
+Création du compte Utilisateur et des relations :
+- Utilisateur ↔ Organisation(s)
+- Utilisateur ↔ Profil Formateur
+
 ---
-Profil
-Le formateur pourra modifier certaines informations :
-email ;
-téléphone ;
-adresse ;
-code postal ;
-ville ;
-compétences ;
-matériel ;
-tarif ;
-rayon d'intervention.
-Certaines informations pourront rester contrôlées par l'OF.
+
+Mini Sprint 8.2 — Interface Formateur
+
+Création de l'espace Formateur :
+- tableau de bord ;
+- missions ;
+- planning ;
+- disponibilités ;
+- profil ;
+- compétences ;
+- matériel ;
+- préférences.
+
 ---
-Disponibilités
-Consultation du planning
-Déclaration des disponibilités
-Déclaration des indisponibilités
-Ajout de notes
-Mise à jour mobile
-Affichage automatique des Options
-Affichage automatique des Missions
+
+Mini Sprint 8.3 — Création de compte et revendication
+
+- création d'un nouveau compte ;
+- revendication sécurisée d'une fiche existante ;
+- aucune duplication.
+
 ---
-Préférences
-distance maximale ;
-secteurs géographiques ;
-formations recherchées ;
-types de missions souhaitées ;
-tarif minimum ;
-disponibilité en distanciel ;
-matériel disponible.
+
+Mini Sprint 8.4 — Authentification
+
+Connexion, déconnexion, récupération du mot de passe, gestion de session.
+
 ---
+
+Mini Sprint 8.5 — Gouvernance des disponibilités
+
+Les disponibilités appartiennent au formateur.
+
+Elles peuvent être mises à jour par le formateur ou par un organisme.
+
+Règles :
+- dernière modification prioritaire ;
+- historique conservé ;
+- le formateur voit le nom de l'OF ;
+- un OF voit « Vous » pour ses propres actions ;
+- les autres voient « Un organisme partenaire ».
+
+---
+
+Mini Sprint 8.6 — Réponse aux missions
+
+Consultation, acceptation, refus, commentaires, suivi des Options et Missions.
+
 Résultat attendu
-Les formateurs mettent eux-mêmes à jour leur profil et leurs disponibilités sans remettre en cause le fonctionnement actuel de l'OF.
+
+Un modèle d'utilisateur unique permet de gérer naturellement les doubles casquettes (OF + Formateur).
+
 ---
-Sprint 9 — Notifications et propositions réelles
+
+Sprint 9 — Notifications, relances et automatisations
+
 Objectif
-Transformer le workflow simulé du Sprint 6 en workflow réellement collaboratif.
----
-Envoi des propositions
-Le planificateur pourra envoyer une proposition à plusieurs formateurs.
-Canaux envisagés :
-email ;
-SMS ;
-notification interne ;
-lien sécurisé.
----
-Contenu de la proposition
-intitulé ;
-formation ;
-dates ;
-horaires ;
-lieu ;
-tarif proposé ;
-informations utiles ;
-boutons Accepter et Refuser.
----
-Réponse
-Le formateur pourra répondre directement.
-Accepter
-création automatique d'une Option ;
-information claire sur le fait que l'affectation n'est pas encore confirmée ;
-avertissement si une autre Option existe sur la période, sans révéler d'informations confidentielles.
-Refuser
-statut Refusé ;
-motif facultatif ;
-historique conservé.
----
-Relances
-relance manuelle ;
-relance automatique ;
-délai paramétrable ;
-suivi du temps de réponse.
----
-Affectation
-confirmation par l'OF ;
-passage de l'Option à Mission ;
-mise à jour des conflits ;
-notification au formateur ;
-notification aux autres OF concernés sans révéler la mission concurrente.
+
+Automatiser les échanges et les relances autour des propositions de missions.
+
+- notifications (email, SMS, notifications) ;
+- relances automatiques ;
+- suivi des réponses ;
+- arrêt automatique des propositions lorsqu'une mission est pourvue.
+
 ---
 Sprint 10 — Réseau et collaboration
 Objectif
@@ -763,6 +758,6 @@ un ZIP complet du projet est créé.
 Priorité actuelle
 La prochaine étape est :
 ```text
-Sprint 8 — Comptes formateurs
+Sprint 8 — Gestion des utilisateurs et des rôles
 ```
 Le moteur de missions étant désormais opérationnel, TimeForma doit devenir un outil de pilotage quotidien capable d'indiquer immédiatement au coordinateur les actions à effectuer.

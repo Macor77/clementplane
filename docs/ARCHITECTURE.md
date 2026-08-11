@@ -1,8 +1,8 @@
 # ARCHITECTURE - TimeForma
 
-Version : 5.2\
-Dernière mise à jour : 05/08/2026\
-Correspond au Sprint 7 terminé.
+Version : 8.0
+Dernière mise à jour : 11/08/2026
+Correspond au Sprint 8 terminé et validé.
 
 ------------------------------------------------------------------------
 
@@ -324,3 +324,198 @@ Le champ « Nom du site » est conservé à des fins descriptives uniquement et 
 Le planning mensuel est devenu une vue dédiée.
 
 Les composants ont été optimisés afin de conserver une hauteur fixe des cellules, d'afficher un compteur de missions et d'améliorer la lisibilité générale de l'interface.
+------------------------------------------------------------------------
+
+# Évolutions Sprint 8 — Authentification et architecture multi-organismes
+
+Le Sprint 8 introduit une couche d'identité et de rattachement permettant à TimeForma de fonctionner avec plusieurs utilisateurs, plusieurs organismes et des profils formateurs partagés.
+
+## Modèle d'identité
+
+L'architecture distingue désormais :
+
+``` text
+Utilisateur Supabase Auth
+        │
+        ▼
+profiles
+        │
+        ├──────── memberships ──────── Organisation(s)
+        │
+        └──────── trainer_profiles ─── Profil formateur
+```
+
+Un même utilisateur peut donc disposer de plusieurs contextes sans multiplier les comptes d'authentification.
+
+## Relations organisme / formateur
+
+La relation entre un organisme et un formateur est désormais distincte de l'identité globale du formateur.
+
+``` text
+Organisation
+     │
+     ▼
+organization_trainers
+     │
+     ▼
+Formateur
+```
+
+Cette séparation permet :
+
+- à plusieurs OF de référencer le même formateur ;
+- d'éviter la duplication des profils ;
+- de partager les données communes autorisées ;
+- de conserver séparément les données propres à chaque relation OF / formateur.
+
+## Services ajoutés
+
+Le Sprint 8 ajoute notamment les services suivants :
+
+- `authService`
+- `currentUserService`
+- `organizationSignupService`
+- `proposalService`
+- `trainerAvailabilityService`
+- `trainerClaimService`
+- `trainerProfileService`
+- `trainerProposalService`
+- `trainerSearchService`
+
+Ils complètent les services historiques du moteur de missions.
+
+## Nouvelles pages et composants
+
+L'application intègre désormais notamment :
+
+- `Login`
+- `Signup`
+- `OrganizationSignup`
+- `ForgotPassword`
+- `ResetPassword`
+- `SpaceChooser`
+- `TrainerClaimStart`
+- `TrainerHome`
+- `TrainerSearch`
+- les pages de l'espace `trainer/`
+- des composants dédiés à l'authentification et à l'espace formateur.
+
+## Authentification
+
+Supabase Auth devient la source d'authentification.
+
+Le contexte React d'authentification :
+
+- suit la session ;
+- charge le contexte utilisateur ;
+- détermine les espaces disponibles ;
+- permet le routage entre espace OF et espace formateur ;
+- gère la déconnexion.
+
+## Disponibilités
+
+L'architecture des disponibilités évolue pour gérer plusieurs sources de modification et leur historique.
+
+Les migrations du Sprint 8 introduisent ou renforcent :
+
+- l'édition des disponibilités par le formateur ;
+- les notes ;
+- la propriété des notes ;
+- l'historique ;
+- la lecture sécurisée de l'historique ;
+- la traçabilité de la source de modification.
+
+Le planning reste calculé à partir des disponibilités déclarées et des engagements de mission.
+
+## Recherche globale et réseau
+
+Une recherche globale permet de retrouver un formateur existant au-delà du seul réseau local d'un OF.
+
+La relation `organization_trainers` rattache ensuite ce profil à l'organisme demandeur.
+
+Le profil global et les données spécifiques à l'OF sont volontairement séparés.
+
+## Multi-organismes et missions
+
+Les migrations du Sprint 8 adaptent progressivement le modèle des missions au multi-organismes.
+
+Les accès aux missions sont cloisonnés par organisation.
+
+Les engagements d'un formateur restent toutefois utilisables pour détecter un conflit de planning entre plusieurs OF.
+
+## RPC de confidentialité des engagements
+
+La fonction :
+
+``` text
+get_trainer_mission_commitments_safe
+```
+
+est appelée par `getTrainerMissionCommitments()`.
+
+Elle utilise une logique sécurisée côté base afin de fournir uniquement les informations nécessaires au calcul d'une disponibilité.
+
+Principe :
+
+``` text
+OF propriétaire de la mission
+        → peut obtenir l'état Mission nécessaire à son affichage
+
+OF tiers
+        → reçoit uniquement une indisponibilité neutre
+```
+
+Aucune donnée métier de la mission externe n'est exposée.
+
+Cette couche est essentielle : la détection globale des conflits doit fonctionner sans casser l'isolation entre organismes.
+
+## Migrations Sprint 8
+
+Les migrations ajoutées pendant le Sprint 8 couvrent notamment :
+
+- propositions publiques de mission ;
+- revendication de profil formateur ;
+- profil et disponibilités en libre-service formateur ;
+- correction des RPC de disponibilité ;
+- propositions côté formateur ;
+- notes et historique de disponibilités ;
+- consultation des missions côté formateur ;
+- relation `organization_trainers` ;
+- recherche globale des formateurs ;
+- inscription d'un organisme ;
+- missions multi-organisations ;
+- confidentialité des missions externes.
+
+## Principe de sécurité
+
+Le modèle vise désormais explicitement le fonctionnement suivant :
+
+``` text
+Données globales du formateur
+        +
+Relation privée OF / formateur
+        +
+Données privées de l'organisation
+        +
+Engagements globaux exposés uniquement sous forme minimale
+```
+
+Le besoin métier de prévention des doubles affectations est ainsi concilié avec la confidentialité inter-organismes.
+
+------------------------------------------------------------------------
+
+# État architectural après le Sprint 8
+
+TimeForma n'est plus architecturé comme une application mono-organisme avec un futur multi-tenant théorique.
+
+Les briques fondamentales du multi-organismes sont désormais présentes :
+
+- authentification ;
+- profils utilisateurs ;
+- memberships ;
+- profil formateur rattachable ;
+- double espace ;
+- réseau de formateurs ;
+- inscription d'organismes ;
+- cloisonnement des données ;
+- détection sécurisée des conflits entre OF.

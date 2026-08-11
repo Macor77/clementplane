@@ -1,7 +1,7 @@
 ROADMAP - TimeForma
-Version : 5.2  
-Dernière mise à jour : 05/08/2026  
-Correspond au Sprint 7 terminé.
+Version : 8.0  
+Dernière mise à jour : 11/08/2026  
+Correspond au Sprint 8 terminé et validé.
 ---
 Vision
 TimeForma a pour ambition de devenir la plateforme de référence permettant aux organismes de formation de :
@@ -526,79 +526,166 @@ Le Sprint 7 marquera également une évolution importante de TimeForma :
 Le logiciel ne sera plus seulement un outil de gestion des formateurs, mais un véritable outil de planification des organismes de formation.
 L'identité visuelle du logiciel a été modernisée afin d'offrir une expérience utilisateur plus cohérente, fluide et professionnelle.
 ---
-Sprint 8 — Gestion des utilisateurs et des rôles
+Sprint 8 — Gestion des utilisateurs, espace formateur et multi-organismes ✅
 
 Objectif
 
-Mettre en place un modèle de compte unique : un utilisateur possède une seule adresse e-mail mais peut cumuler plusieurs rôles.
-
-Principe :
-- un compte Utilisateur ;
-- une ou plusieurs Organisations ;
-- un Profil Formateur facultatif.
-
-Un même utilisateur peut être simultanément OF et Formateur.
+Faire passer TimeForma d'un outil principalement utilisé par un OF à une plateforme authentifiée dans laquelle :
+- un utilisateur possède un compte unique ;
+- un utilisateur peut être OF, formateur, ou les deux ;
+- un formateur peut collaborer avec plusieurs organismes ;
+- les informations communes sont mutualisées sans duplication ;
+- les données propres à chaque OF restent confidentielles.
 
 ---
 
-Mini Sprint 8.1 — Modèle utilisateur unique
+Mini Sprint 8.1 — Authentification et compte unique ✅
 
-Création du compte Utilisateur et des relations :
-- Utilisateur ↔ Organisation(s)
-- Utilisateur ↔ Profil Formateur
+Réalisations :
+- Supabase Auth intégré à l'application ;
+- connexion et déconnexion ;
+- création de compte ;
+- mot de passe oublié ;
+- réinitialisation du mot de passe ;
+- gestion de session ;
+- affichage / masquage du mot de passe ;
+- routage selon le contexte utilisateur.
+
+Principe validé :
+- un seul compte utilisateur ;
+- une ou plusieurs organisations ;
+- un profil formateur facultatif.
 
 ---
 
-Mini Sprint 8.2 — Interface Formateur
+Mini Sprint 8.2 — Propositions de mission et préparation du parcours formateur ✅
 
-Création de l'espace Formateur :
+Réalisations :
+- proposition de mission à un formateur ;
+- lien de réponse pour un formateur non encore inscrit ;
+- préparation de la consultation et de la réponse côté formateur ;
+- compatibilité avec le workflow Sélection → Proposition → Acceptation / Refus → Affectation.
+
+---
+
+Mini Sprint 8.3 — Espace formateur et revendication de profil ✅
+
+Réalisations :
+- revendication sécurisée d'une fiche existante ;
+- prévention des doublons ;
+- choix de l'espace pour les doubles casquettes ;
+- espace formateur ;
 - tableau de bord ;
-- missions ;
+- profil formateur ;
 - planning ;
 - disponibilités ;
-- profil ;
-- compétences ;
-- matériel ;
-- préférences.
+- propositions ;
+- missions ;
+- navigation dédiée ;
+- possibilité de passer de l'espace OF à l'espace formateur.
+
+Cas validé :
+un utilisateur OF peut également être rattaché à sa propre fiche formateur et utiliser les deux espaces avec le même compte.
 
 ---
 
-Mini Sprint 8.3 — Création de compte et revendication
+Mini Sprint 8.4 — Gouvernance des disponibilités et historique ✅
 
-- création d'un nouveau compte ;
-- revendication sécurisée d'une fiche existante ;
-- aucune duplication.
-
----
-
-Mini Sprint 8.4 — Authentification
-
-Connexion, déconnexion, récupération du mot de passe, gestion de session.
-
----
-
-Mini Sprint 8.5 — Gouvernance des disponibilités
-
-Les disponibilités appartiennent au formateur.
-
-Elles peuvent être mises à jour par le formateur ou par un organisme.
+Réalisations :
+- modification des disponibilités depuis l'espace formateur ;
+- visibilité immédiate des modifications côté OF ;
+- modification possible par les organismes autorisés ;
+- historique des changements ;
+- traçabilité de l'auteur ;
+- règles de confidentialité sur l'affichage de l'origine ;
+- gestion des notes et de leur propriété.
 
 Règles :
-- dernière modification prioritaire ;
-- historique conservé ;
-- le formateur voit le nom de l'OF ;
-- un OF voit « Vous » pour ses propres actions ;
-- les autres voient « Un organisme partenaire ».
+- le formateur voit l'organisme à l'origine d'une modification ;
+- l'OF auteur voit « Vous » ;
+- un autre OF voit une information neutre de type « Un organisme partenaire ».
 
 ---
 
-Mini Sprint 8.6 — Réponse aux missions
+Mini Sprint 8.5 — Réponses du formateur aux missions ✅
 
-Consultation, acceptation, refus, commentaires, suivi des Options et Missions.
+Réalisations :
+- consultation des propositions ;
+- acceptation ;
+- refus ;
+- consultation des missions ;
+- intégration des réponses dans le workflow existant ;
+- affichage des Options et Missions dans l'espace formateur.
 
-Résultat attendu
+---
 
-Un modèle d'utilisateur unique permet de gérer naturellement les doubles casquettes (OF + Formateur).
+Mini Sprint 8.6 — Réseau partagé de formateurs ✅
+
+Réalisations :
+- création de `organization_trainers` ;
+- recherche globale d'un formateur existant ;
+- ajout d'un formateur au réseau d'un OF sans duplication ;
+- même fiche accessible par plusieurs OF ;
+- séparation entre données communes et données propres à chaque OF.
+
+Test validé :
+deux OF peuvent accéder à la même fiche formateur sans voir les informations privées de l'autre OF.
+
+---
+
+Mini Sprint 8.7 — Inscription des organismes et multi-organisations ✅
+
+Réalisations :
+- création d'un nouvel organisme depuis l'application ;
+- rattachement de l'utilisateur à son organisation ;
+- adaptation des accès et services au contexte d'organisation ;
+- évolution des missions vers le modèle multi-organismes.
+
+---
+
+Mini Sprint 8.8 — Confidentialité des missions externes et conflits globaux ✅
+
+Objectif :
+permettre à plusieurs OF de travailler avec le même formateur sans révéler leurs missions respectives.
+
+Réalisations :
+- détection globale des engagements du formateur ;
+- RPC sécurisée `get_trainer_mission_commitments_safe` ;
+- cloisonnement des détails des missions ;
+- conservation de la détection des doubles affectations ;
+- affichage différencié selon l'OF.
+
+Règle validée :
+- l'OF propriétaire voit « Mission » ;
+- un OF tiers voit uniquement « Indisponible ».
+
+Un OF tiers ne voit jamais :
+- l'organisme ayant affecté le formateur ;
+- le client ;
+- le lieu ;
+- le contenu de la mission.
+
+---
+
+Résultat du Sprint 8
+
+Le Sprint 8 constitue une étape majeure vers le SaaS TimeForma.
+
+La plateforme dispose désormais :
+- d'une authentification réelle ;
+- d'un compte utilisateur unique ;
+- d'un espace organisme ;
+- d'un espace formateur ;
+- de la double casquette OF + formateur ;
+- de profils formateurs revendicables ;
+- de disponibilités partagées et historisées ;
+- de réponses aux propositions ;
+- d'un réseau de formateurs multi-organismes ;
+- de l'inscription des organismes ;
+- d'une confidentialité inter-organismes testée ;
+- d'une détection sécurisée des conflits de missions entre plusieurs OF.
+
+La base multi-organismes prévue initialement pour un sprint ultérieur est donc déjà largement engagée.
 
 ---
 
@@ -758,6 +845,6 @@ un ZIP complet du projet est créé.
 Priorité actuelle
 La prochaine étape est :
 ```text
-Sprint 8 — Gestion des utilisateurs et des rôles
+Sprint 9 — Notifications, relances et automatisations
 ```
 Le moteur de missions étant désormais opérationnel, TimeForma doit devenir un outil de pilotage quotidien capable d'indiquer immédiatement au coordinateur les actions à effectuer.

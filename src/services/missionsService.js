@@ -39,6 +39,10 @@ export async function getMissions() {
         repondu_le,
         affecte_le,
         commentaire,
+        proposal_token,
+        proposal_expires_at,
+        proposal_viewed_at,
+        response_comment,
         created_at,
         trainer:trainers (
           id,
@@ -51,9 +55,7 @@ export async function getMissions() {
           latitude,
           longitude,
           competences,
-          materiel,
-          tarif,
-          statut
+          materiel
         )
       )
     `)
@@ -99,6 +101,10 @@ export async function getMissionById(id) {
         repondu_le,
         affecte_le,
         commentaire,
+        proposal_token,
+        proposal_expires_at,
+        proposal_viewed_at,
+        response_comment,
         created_at,
         trainer:trainers (
           id,
@@ -111,9 +117,7 @@ export async function getMissionById(id) {
           latitude,
           longitude,
           competences,
-          materiel,
-          tarif,
-          statut
+          materiel
         )
       )
     `)
@@ -140,83 +144,45 @@ export async function getTrainerMissionCommitments({
   startDay,
   endDay,
   excludeMissionId = null,
+  organizationId = null,
 }) {
   if (
     !Array.isArray(trainerIds) ||
     trainerIds.length === 0 ||
     !startDay ||
-    !endDay
+    !endDay ||
+    !organizationId
   ) {
     return [];
   }
 
-  const { data: dateRows, error: dateError } =
-    await supabase
-      .from(MISSION_DATES_TABLE)
-      .select('mission_id, date')
-      .gte('date', startDay)
-      .lte('date', endDay);
+  /*
+   * Cette RPC SECURITY DEFINER vérifie les conflits
+   * à travers tous les OF sans révéler le client,
+   * le lieu, l'organisme ou le contenu de la mission.
+   */
+  const { data, error } = await supabase.rpc(
+    'get_trainer_mission_commitments_safe',
+    {
+      p_trainer_ids:
+        trainerIds,
+      p_start_day:
+        startDay,
+      p_end_day:
+        endDay,
+      p_exclude_mission_id:
+        excludeMissionId,
 
-  if (dateError) {
-    throw dateError;
-  }
-
-  const datesByMission = new Map();
-
-  for (const row of dateRows || []) {
-    if (
-      excludeMissionId &&
-      row.mission_id === excludeMissionId
-    ) {
-      continue;
-    }
-
-    if (!datesByMission.has(row.mission_id)) {
-      datesByMission.set(
-        row.mission_id,
-        [],
-      );
-    }
-
-    datesByMission
-      .get(row.mission_id)
-      .push(row.date);
-  }
-
-  const missionIds = [
-    ...datesByMission.keys(),
-  ];
-
-  if (missionIds.length === 0) {
-    return [];
-  }
-
-  const { data: commitmentRows, error } =
-    await supabase
-      .from(MISSION_FORMATEURS_TABLE)
-      .select(
-        'mission_id, formateur_id, statut',
-      )
-      .in('mission_id', missionIds)
-      .in('formateur_id', trainerIds)
-      .in('statut', [
-        'accepte',
-        'affecte',
-      ]);
+      p_organization_id:
+        organizationId,
+    },
+  );
 
   if (error) {
     throw error;
   }
 
-  return (commitmentRows || []).map(
-    (row) => ({
-      ...row,
-      dates:
-        datesByMission.get(
-          row.mission_id,
-        ) || [],
-    }),
-  );
+  return data || [];
 }
 
 /**
@@ -225,11 +191,20 @@ export async function getTrainerMissionCommitments({
 export async function createMission({
   mission,
   dates = [],
+  organizationId = null,
 }) {
   validateMission(mission, dates);
 
-  const missionPayload =
-    cleanMissionPayload(mission);
+  const resolvedOrganizationId =
+    await resolveMissionOrganizationId(
+      organizationId,
+    );
+
+  const missionPayload = {
+    ...cleanMissionPayload(mission),
+    organization_id:
+      resolvedOrganizationId,
+  };
 
   const {
     data: createdMission,
@@ -408,6 +383,8 @@ export async function duplicateMission(id) {
   return createMission({
     mission: duplicatedMission,
     dates: duplicatedDates,
+    organizationId:
+      sourceMission.organization_id,
   });
 }
 
@@ -677,51 +654,21 @@ async function assertTrainerCanBeAffected({
   missionId,
   formateurId,
 }) {
-  const currentDates =
-    await getMissionDateValues(
-      missionId,
-    );
-
-  if (currentDates.length === 0) {
-    return;
-  }
-
-  const { data: affectedRows, error } =
-    await supabase
-      .from(MISSION_FORMATEURS_TABLE)
-      .select('mission_id')
-      .eq(
-        'formateur_id',
+  const { data, error } = await supabase.rpc(
+    'trainer_has_affected_conflict',
+    {
+      p_mission_id:
+        missionId,
+      p_trainer_id:
         formateurId,
-      )
-      .eq('statut', 'affecte')
-      .neq('mission_id', missionId);
+    },
+  );
 
   if (error) {
     throw error;
   }
 
-  const otherMissionIds = (
-    affectedRows || []
-  ).map((row) => row.mission_id);
-
-  if (otherMissionIds.length === 0) {
-    return;
-  }
-
-  const { data: otherDates, error: dateError } =
-    await supabase
-      .from(MISSION_DATES_TABLE)
-      .select('mission_id, date')
-      .in('mission_id', otherMissionIds)
-      .in('date', currentDates)
-      .limit(1);
-
-  if (dateError) {
-    throw dateError;
-  }
-
-  if ((otherDates || []).length > 0) {
+  if (data === true) {
     throw new Error(
       "Ce formateur n'est plus disponible sur cette période.",
     );
@@ -754,137 +701,17 @@ async function reconcileTrainerConflicts(
 async function reconcileSingleTrainerConflicts(
   trainerId,
 ) {
-  const { data: rows, error } =
-    await supabase
-      .from(MISSION_FORMATEURS_TABLE)
-      .select(
-        'id, mission_id, statut',
-      )
-      .eq('formateur_id', trainerId)
-      .in('statut', [
-        'affecte',
-        'accepte',
-        'indisponible_affecte_ailleurs',
-      ]);
+  const { error } = await supabase.rpc(
+    'reconcile_trainer_conflicts_safe',
+    {
+      p_trainer_id:
+        trainerId,
+    },
+  );
 
   if (error) {
     throw error;
   }
-
-  const commitments = rows || [];
-
-  if (commitments.length === 0) {
-    return;
-  }
-
-  const missionIds = [
-    ...new Set(
-      commitments.map(
-        (row) => row.mission_id,
-      ),
-    ),
-  ];
-
-  const { data: dateRows, error: dateError } =
-    await supabase
-      .from(MISSION_DATES_TABLE)
-      .select('mission_id, date')
-      .in('mission_id', missionIds);
-
-  if (dateError) {
-    throw dateError;
-  }
-
-  const datesByMission = new Map();
-
-  for (const row of dateRows || []) {
-    if (
-      !datesByMission.has(
-        row.mission_id,
-      )
-    ) {
-      datesByMission.set(
-        row.mission_id,
-        new Set(),
-      );
-    }
-
-    datesByMission
-      .get(row.mission_id)
-      .add(row.date);
-  }
-
-  const affectedRows =
-    commitments.filter(
-      (row) => row.statut === 'affecte',
-    );
-
-  for (const row of commitments) {
-    if (row.statut === 'affecte') {
-      continue;
-    }
-
-    const rowDates =
-      datesByMission.get(
-        row.mission_id,
-      ) || new Set();
-
-    const hasConflict =
-      affectedRows.some(
-        (affectedRow) => {
-          if (
-            affectedRow.mission_id ===
-            row.mission_id
-          ) {
-            return false;
-          }
-
-          const affectedDates =
-            datesByMission.get(
-              affectedRow.mission_id,
-            ) || new Set();
-
-          return setsOverlap(
-            rowDates,
-            affectedDates,
-          );
-        },
-      );
-
-    const expectedStatus = hasConflict
-      ? 'indisponible_affecte_ailleurs'
-      : 'accepte';
-
-    if (row.statut === expectedStatus) {
-      continue;
-    }
-
-    const { error: updateError } =
-      await supabase
-        .from(MISSION_FORMATEURS_TABLE)
-        .update({
-          statut: expectedStatus,
-          affecte_le: null,
-        })
-        .eq('id', row.id);
-
-    if (updateError) {
-      throw updateError;
-    }
-  }
-}
-
-function setsOverlap(
-  firstSet,
-  secondSet,
-) {
-  for (const value of firstSet) {
-    if (secondSet.has(value)) {
-      return true;
-    }
-  }
-
-  return false;
 }
 
 async function getMissionTrainerIds(
@@ -908,22 +735,6 @@ async function getMissionTrainerIds(
   ];
 }
 
-async function getMissionDateValues(
-  missionId,
-) {
-  const { data, error } = await supabase
-    .from(MISSION_DATES_TABLE)
-    .select('date')
-    .eq('mission_id', missionId);
-
-  if (error) {
-    throw error;
-  }
-
-  return (data || [])
-    .map((row) => row.date)
-    .filter(Boolean);
-}
 
 async function syncMissionStatusWithAffectation(
   missionId,
@@ -1038,6 +849,89 @@ async function insertMissionDates(
 
   return data || [];
 }
+
+/**
+ * Détermine l'organisation propriétaire lors de la création.
+ *
+ * Le formulaire actuel ne transmet pas encore explicitement l'OF.
+ * Tant qu'un utilisateur n'appartient qu'à un seul OF actif,
+ * nous pouvons le déterminer sans ambiguïté.
+ *
+ * Si un utilisateur appartient demain à plusieurs OF,
+ * l'appel devra fournir organizationId explicitement.
+ */
+async function resolveMissionOrganizationId(
+  requestedOrganizationId = null,
+) {
+  const {
+    data: userData,
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError) {
+    throw userError;
+  }
+
+  const userId =
+    userData?.user?.id;
+
+  if (!userId) {
+    throw new Error(
+      'Utilisateur non authentifié.',
+    );
+  }
+
+  let query = supabase
+    .from('organization_members')
+    .select('organization_id')
+    .eq('user_id', userId)
+    .eq('status', 'active');
+
+  if (requestedOrganizationId) {
+    query = query.eq(
+      'organization_id',
+      requestedOrganizationId,
+    );
+  }
+
+  const {
+    data,
+    error,
+  } = await query.limit(2);
+
+  if (error) {
+    throw error;
+  }
+
+  const memberships =
+    data || [];
+
+  if (requestedOrganizationId) {
+    if (memberships.length !== 1) {
+      throw new Error(
+        "Vous n'avez pas accès à cet organisme.",
+      );
+    }
+
+    return requestedOrganizationId;
+  }
+
+  if (memberships.length === 1) {
+    return memberships[0]
+      .organization_id;
+  }
+
+  if (memberships.length === 0) {
+    throw new Error(
+      "Aucun organisme actif n'est rattaché à votre compte.",
+    );
+  }
+
+  throw new Error(
+    "Plusieurs organismes sont rattachés à votre compte. L'organisme actif doit être précisé.",
+  );
+}
+
 
 /**
  * Nettoie les informations avant l'envoi à Supabase.

@@ -1,8 +1,8 @@
 # FONCTIONNEL - TimeForma
 
-Version : 5.2\
-Dernière mise à jour : 05/08/2026\
-Correspond au Sprint 7 terminé.
+Version : 8.0
+Dernière mise à jour : 11/08/2026
+Correspond au Sprint 8 terminé et validé.
 
 ------------------------------------------------------------------------
 
@@ -210,3 +210,103 @@ Les évolutions principales sont :
 - remplacement du champ « Intitulé de la mission » par « Code interne de session » ;
 - remplacement du champ « Lieu » par « Nom du site » (facultatif) ;
 - calcul des distances exclusivement à partir de l'adresse, du code postal et de la ville afin de fiabiliser les recommandations.
+------------------------------------------------------------------------
+
+# Évolutions Sprint 8
+
+Le Sprint 8 introduit les comptes utilisateurs réels et transforme TimeForma en plateforme multi-organismes dans laquelle un même formateur peut collaborer avec plusieurs OF.
+
+## Compte utilisateur unique
+
+Un utilisateur possède un seul compte d'authentification.
+
+Ce compte peut donner accès à :
+
+- un espace organisme de formation ;
+- un espace formateur ;
+- les deux espaces simultanément.
+
+Lorsqu'un utilisateur cumule les deux rôles, il peut choisir son espace et passer de l'un à l'autre sans créer un second compte.
+
+## Authentification
+
+TimeForma permet désormais :
+
+- la création d'un compte organisme ;
+- la création d'un compte formateur ;
+- la connexion ;
+- la déconnexion ;
+- la récupération d'un mot de passe oublié ;
+- la définition d'un nouveau mot de passe ;
+- l'affichage ou le masquage des mots de passe dans les formulaires concernés.
+
+## Revendication d'une fiche formateur
+
+Lorsqu'un formateur crée son compte, TimeForma cherche à le rattacher à une fiche existante.
+
+Le principe est de ne pas dupliquer un formateur déjà présent dans la base.
+
+Une fiche revendiquée devient le profil professionnel du compte formateur.
+
+## Espace formateur
+
+Le formateur dispose d'un espace dédié lui permettant notamment de :
+
+- consulter son tableau de bord ;
+- consulter et modifier son profil ;
+- gérer ses disponibilités ;
+- consulter son planning ;
+- consulter ses propositions ;
+- accepter ou refuser une proposition ;
+- consulter ses missions.
+
+## Disponibilités et historique
+
+Les disponibilités appartiennent au profil formateur et peuvent être mises à jour depuis plusieurs espaces autorisés.
+
+Chaque modification est historisée afin de conserver la traçabilité.
+
+L'affichage de l'auteur respecte la confidentialité :
+
+- le formateur peut identifier l'organisme ayant modifié sa disponibilité ;
+- l'organisme auteur voit « Vous » ;
+- un autre organisme voit une indication neutre de type « Un organisme partenaire ».
+
+Les notes associées aux disponibilités suivent les mêmes principes de propriété et de confidentialité.
+
+## Réseau multi-organismes
+
+Une même fiche formateur peut appartenir au réseau de plusieurs organismes.
+
+Un OF peut :
+
+- rechercher un formateur déjà présent dans TimeForma ;
+- consulter les informations communes autorisées ;
+- l'ajouter à son propre réseau sans créer de doublon.
+
+Les informations propres à la relation entre un OF et un formateur restent isolées des autres organismes.
+
+## Confidentialité inter-organismes
+
+Lorsqu'un formateur est affecté sur une mission d'un autre organisme, l'OF tiers ne doit jamais connaître :
+
+- le nom de l'autre OF ;
+- le client ;
+- le contenu de la mission ;
+- le lieu ou les détails de cette mission.
+
+Il voit uniquement que le formateur est « Indisponible » pour la date concernée.
+
+L'OF propriétaire de la mission conserve, lui, l'affichage normal de la mission.
+
+## Inscription des organismes
+
+Un nouvel organisme peut créer son compte et son espace TimeForma.
+
+Les données et relations sont rattachées à l'organisation concernée afin de préparer l'exploitation SaaS multi-organismes.
+
+## Résultat fonctionnel
+
+À l'issue du Sprint 8, TimeForma permet à plusieurs organismes de travailler avec une même base de profils formateurs tout en conservant leurs informations métier confidentielles.
+
+Le formateur devient également un utilisateur actif de la plateforme : il peut gérer son profil, ses disponibilités et ses réponses aux propositions.

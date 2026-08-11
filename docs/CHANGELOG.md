@@ -1,7 +1,7 @@
 # CHANGELOG - TimeForma
 
-Version : 5.2
-Date : 05/08/2026
+Version : 8.0
+Date : 11/08/2026
 
 ------------------------------------------------------------------------
 
@@ -203,3 +203,113 @@ Le Sprint 7 transforme TimeForma en un véritable outil de planification quotidi
 # Prochaine étape
 
 Sprint 8 — Comptes formateurs.
+------------------------------------------------------------------------
+
+# Sprint 8 — Comptes, espaces et collaboration multi-organismes (Terminé)
+
+Le Sprint 8 fait évoluer TimeForma vers une véritable plateforme multi-utilisateurs et multi-organismes. Un même compte peut désormais disposer d'un espace organisme de formation, d'un espace formateur, ou des deux.
+
+## Authentification et sécurité
+
+- Connexion et déconnexion avec Supabase Auth.
+- Création de compte organisme.
+- Création de compte formateur.
+- Mot de passe oublié et réinitialisation sécurisée.
+- Déconnexion après modification du mot de passe.
+- Affichage / masquage du mot de passe sur les formulaires concernés.
+- Gestion de session et routage selon le contexte utilisateur.
+- Choix de l'espace pour les utilisateurs ayant une double casquette OF + formateur.
+
+## Espace formateur
+
+- Revendication sécurisée d'une fiche formateur existante.
+- Rattachement d'un profil formateur à un compte utilisateur sans duplication.
+- Tableau de bord formateur.
+- Consultation et modification du profil professionnel.
+- Consultation et modification des disponibilités.
+- Consultation de l'historique des disponibilités.
+- Consultation des propositions de mission.
+- Consultation des missions.
+- Planning formateur.
+- Navigation dédiée à l'espace formateur.
+
+## Gouvernance des disponibilités
+
+- Les disponibilités sont rattachées au profil formateur.
+- Elles peuvent être modifiées depuis l'espace formateur ou depuis un organisme autorisé.
+- Les modifications sont historisées.
+- L'origine d'une modification est affichée de façon adaptée :
+  - le formateur peut identifier l'organisme ayant effectué une modification ;
+  - l'OF auteur voit « Vous » ;
+  - un autre OF voit une formulation neutre afin de préserver la confidentialité.
+- Les notes de disponibilité respectent également les règles de propriété et de confidentialité.
+
+## Propositions de mission
+
+- Un formateur peut consulter les propositions qui lui sont adressées.
+- Il peut accepter ou refuser une proposition.
+- Les propositions et réponses sont intégrées au workflow métier existant.
+- Les propositions publiques préparées au Sprint 8.2 restent compatibles avec les formateurs non encore inscrits.
+
+## Réseau de formateurs et multi-organismes
+
+- Création de la relation `organization_trainers`.
+- Une même fiche formateur peut être référencée par plusieurs organismes.
+- Recherche globale de formateurs existants.
+- Ajout d'un formateur existant au réseau d'un OF sans créer de doublon.
+- Les données communes du profil restent partagées.
+- Les informations propres à chaque organisme restent cloisonnées.
+- Inscription d'un nouvel organisme avec création de son espace.
+- Adaptation progressive des missions au fonctionnement multi-organismes.
+
+## Confidentialité des missions externes
+
+Correction et sécurisation du comportement lorsqu'un formateur est affecté par un autre organisme :
+
+- l'OF propriétaire de la mission voit normalement l'état « Mission » ;
+- les autres OF voient uniquement « Indisponible » ;
+- aucune information sur la mission externe, son client ou l'organisme concerné n'est révélée ;
+- le moteur de recommandation conserve l'information nécessaire pour empêcher les doubles affectations sans exposer les données confidentielles.
+
+Une RPC sécurisée `get_trainer_mission_commitments_safe` fournit uniquement les informations minimales nécessaires au calcul des disponibilités.
+
+## Validation
+
+La batterie de tests multi-organismes a validé notamment :
+
+- accès d'une même fiche formateur par deux OF ;
+- cloisonnement des informations propres à chaque OF ;
+- double casquette OF + formateur ;
+- modification des disponibilités depuis l'espace formateur et visibilité côté OF ;
+- propositions et réponses de mission ;
+- affectation d'une mission ;
+- confidentialité d'une affectation réalisée par un autre OF ;
+- affichage « Indisponible » chez l'OF tiers au lieu de « En mission ».
+
+`npm run lint` : aucune erreur bloquante, un avertissement React Hook restant dans `usePlanningAvailability.js`.
+
+`npm run build` : build de production validé.
+
+------------------------------------------------------------------------
+
+# Résultat du Sprint 8
+
+TimeForma dispose désormais des fondations nécessaires à son fonctionnement SaaS multi-organismes :
+
+- comptes utilisateurs réels ;
+- authentification ;
+- espaces OF et formateur ;
+- double casquette avec un compte unique ;
+- profil formateur revendicable ;
+- réseau de formateurs partagé sans duplication ;
+- disponibilités pilotables et historisées ;
+- réponses aux propositions ;
+- inscription d'organismes ;
+- confidentialité inter-organismes ;
+- missions et indisponibilités compatibles avec plusieurs OF.
+
+------------------------------------------------------------------------
+
+# Prochaine étape
+
+Sprint 9 — Notifications, relances et automatisations.

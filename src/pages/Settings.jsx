@@ -1,90 +1,89 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-
-import useFormateurs from '../hooks/useFormateurs';
-import { completeMissingGps } from '../services/gpsService';
-import { hasValidCoords } from '../services/geocodingService';
+import { useAuth } from '../context/AuthContext';
 
 export default function Settings() {
-  const { formateurs, updateFormateurCoords } = useFormateurs();
-  const [gpsLoading, setGpsLoading] = useState(false);
-  const [gpsStatus, setGpsStatus] = useState('');
+  const { signOut, profile, currentOrganization } = useAuth();
 
-  const handleCompleteGps = async () => {
-    const missing = formateurs.filter(
-      (formateur) => !hasValidCoords(formateur.latitude, formateur.longitude)
-    );
-
-    if (missing.length === 0) {
-      setGpsStatus('Tous les formateurs ont déjà des coordonnées GPS.');
-      return;
-    }
-
-    const confirmed = window.confirm(
-      `Compléter les coordonnées GPS de ${missing.length} formateur(s) ?\n\n` +
-        `Le logiciel utilisera leurs adresses, codes postaux et villes.`
-    );
-
-    if (!confirmed) return;
-
-    setGpsLoading(true);
-    setGpsStatus(`Géocodage en cours : 0 / ${missing.length}`);
-
+  const handleLogout = async () => {
     try {
-      const result = await completeMissingGps({
-        formateurs,
-        onProgress: setGpsStatus,
-        onCoordsFound: updateFormateurCoords,
-      });
-
-      setGpsStatus(
-        `Terminé : ${result.updatedCount} coordonnée(s) ajoutée(s), ` +
-          `${result.notFoundCount} introuvable(s).`
-      );
+      await signOut();
     } catch (error) {
-      console.error('Erreur géolocalisation :', error);
-      setGpsStatus('Impossible de compléter les coordonnées GPS pour le moment.');
-    } finally {
-      setGpsLoading(false);
+      console.error('Erreur lors de la déconnexion :', error);
+      alert("Impossible de vous déconnecter pour le moment.");
     }
   };
 
+  const fullName =
+    [profile?.first_name, profile?.last_name].filter(Boolean).join(' ') ||
+    'Utilisateur TimeForma';
+
   return (
     <div className="page-container">
-      <header className="page-heading">
+      <div className="page-header">
         <div>
-          <p className="page-eyebrow">Paramètres</p>
-          <h1>Paramètres</h1>
-          <p>Les réglages et outils techniques de TimeForma sont regroupés ici.</p>
+          <div className="page-eyebrow">PARAMÈTRES</div>
+          <h1>Mon compte</h1>
         </div>
-      </header>
+      </div>
 
-      <section className="settings-grid">
-        <article className="dashboard-card">
-          <span className="dashboard-card__label">Technique</span>
-          <h2>Connexion Supabase</h2>
-          <p>Vérifie la configuration et l’accès à la base de données.</p>
-          <Link to="/env-check">Vérifier Supabase →</Link>
-        </article>
-
-        <article className="dashboard-card settings-maintenance-card">
-          <span className="dashboard-card__label">Maintenance</span>
-          <h2>Coordonnées GPS des formateurs</h2>
-          <p>
-            Complète ponctuellement les coordonnées manquantes après un import
-            ou une modification d’adresse.
-          </p>
-          <button
-            className="button button--secondary"
-            type="button"
-            onClick={handleCompleteGps}
-            disabled={gpsLoading}
+      <div
+        style={{
+          maxWidth: '680px',
+          background: '#fff',
+          border: '1px solid #dde4ef',
+          borderRadius: '18px',
+          padding: '28px',
+          boxShadow: '0 8px 24px rgba(15, 23, 42, 0.05)',
+        }}
+      >
+        <div style={{ marginBottom: '28px' }}>
+          <div
+            style={{
+              fontSize: '12px',
+              fontWeight: 800,
+              letterSpacing: '0.08em',
+              color: '#2563eb',
+              marginBottom: '8px',
+            }}
           >
-            {gpsLoading ? 'Géolocalisation en cours…' : 'Compléter les GPS manquants'}
+            COMPTE UTILISATEUR
+          </div>
+
+          <h2 style={{ margin: '0 0 6px' }}>{fullName}</h2>
+
+          <div style={{ color: '#64748b' }}>
+            {currentOrganization?.name || 'Aucune organisation'}
+          </div>
+        </div>
+
+        <div
+          style={{
+            borderTop: '1px solid #e5e7eb',
+            paddingTop: '24px',
+          }}
+        >
+          <h3 style={{ marginTop: 0 }}>Session</h3>
+
+          <p style={{ color: '#64748b', marginBottom: '18px' }}>
+            Vous pouvez fermer votre session TimeForma sur cet appareil.
+          </p>
+
+          <button
+            type="button"
+            onClick={handleLogout}
+            style={{
+              border: '1px solid #fecaca',
+              background: '#fff',
+              color: '#dc2626',
+              borderRadius: '10px',
+              padding: '11px 16px',
+              fontWeight: 700,
+              cursor: 'pointer',
+            }}
+          >
+            Se déconnecter
           </button>
-          {gpsStatus && <div className="settings-maintenance-status">{gpsStatus}</div>}
-        </article>
-      </section>
+        </div>
+      </div>
     </div>
   );
 }

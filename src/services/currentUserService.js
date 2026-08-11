@@ -29,7 +29,7 @@ export async function getCurrentUserContext(userId) {
       `)
       .eq('user_id', userId)
       .eq('status', 'active'),
-    supabase.from('trainers').select('id, prenom, nom, statut').eq('user_id', userId).maybeSingle(),
+    supabase.from('trainers').select('id, prenom, nom, email, telephone, ville, code_postal, statut').eq('user_id', userId).maybeSingle(),
   ]);
 
   if (profileResult.error) throw profileResult.error;

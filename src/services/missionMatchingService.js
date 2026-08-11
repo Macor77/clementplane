@@ -21,7 +21,9 @@ export async function getMissionRecommendations(
   }
 
   const trainersData =
-    await getFormateurs();
+    await getFormateurs(
+      mission.organization_id,
+    );
 
   const formateurs = (
     trainersData || []
@@ -78,6 +80,8 @@ export async function getMissionRecommendations(
       missionDates,
       currentMissionId:
         mission.id,
+      organizationId:
+        mission.organization_id,
     }),
   ]);
 
@@ -255,6 +259,7 @@ async function loadMissionCommitments({
   trainerIds,
   missionDates,
   currentMissionId,
+  organizationId,
 }) {
   if (
     trainerIds.length === 0 ||
@@ -273,6 +278,7 @@ async function loadMissionCommitments({
         ],
       excludeMissionId:
         currentMissionId,
+      organizationId,
     });
 
   const commitmentMap = {};

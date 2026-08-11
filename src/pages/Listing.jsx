@@ -11,14 +11,27 @@ import useListingFilters from '../hooks/useListingFilters';
 import useDistances from '../hooks/useDistances';
 import usePlanningAvailability from '../hooks/usePlanningAvailability';
 
+import { useAuth } from '../context/AuthContext';
+
 
 export default function Listing() {
-  const navigate = useNavigate();
+  const navigate =
+    useNavigate();
+
+  const {
+    currentOrganization,
+  } = useAuth();
 
   const {
     formateurs,
     removeFormateur,
-  } = useFormateurs();
+    loading: formateursLoading,
+    error: formateursError,
+  } = useFormateurs({
+    organizationId:
+      currentOrganization?.id,
+  });
+
 
   const {
     lieu,
@@ -29,7 +42,10 @@ export default function Listing() {
     clearDistances,
     distanceLoading,
     distanceError,
-  } = useDistances({ formateurs });
+  } = useDistances({
+    formateurs,
+  });
+
 
   const {
     sort,
@@ -37,7 +53,10 @@ export default function Listing() {
     toggleSort,
     activateDistanceSort,
     deactivateDistanceSort,
-  } = useSort({ distances });
+  } = useSort({
+    distances,
+  });
+
 
   const {
     filters,
@@ -52,10 +71,14 @@ export default function Listing() {
     sortList,
   });
 
+
   const [
     planningDate,
     setPlanningDate,
-  ] = useState(() => new Date());
+  ] = useState(
+    () => new Date(),
+  );
+
 
   const {
     planningAvailability,
@@ -66,78 +89,118 @@ export default function Listing() {
     planningDate,
   });
 
-  const handlePreviousMonth = () => {
-    setPlanningDate((currentDate) => {
-      const newDate = new Date(
-        currentDate
+
+  const handlePreviousMonth =
+    () => {
+      setPlanningDate(
+        (currentDate) => {
+          const newDate =
+            new Date(
+              currentDate,
+            );
+
+          newDate.setDate(
+            1,
+          );
+
+          newDate.setMonth(
+            newDate.getMonth() -
+              1,
+          );
+
+          return newDate;
+        },
       );
+    };
 
-      newDate.setDate(1);
-      newDate.setMonth(
-        newDate.getMonth() - 1
+
+  const handleNextMonth =
+    () => {
+      setPlanningDate(
+        (currentDate) => {
+          const newDate =
+            new Date(
+              currentDate,
+            );
+
+          newDate.setDate(
+            1,
+          );
+
+          newDate.setMonth(
+            newDate.getMonth() +
+              1,
+          );
+
+          return newDate;
+        },
       );
+    };
 
-      return newDate;
-    });
-  };
 
-  const handleNextMonth = () => {
-    setPlanningDate((currentDate) => {
-      const newDate = new Date(
-        currentDate
+  const handleCurrentMonth =
+    () => {
+      setPlanningDate(
+        new Date(),
       );
+    };
 
-      newDate.setDate(1);
-      newDate.setMonth(
-        newDate.getMonth() + 1
-      );
 
-      return newDate;
-    });
-  };
+  const handleDelete =
+    async (id) => {
+      if (!id) {
+        return;
+      }
 
-  const handleCurrentMonth = () => {
-    setPlanningDate(new Date());
-  };
+      const formateur =
+        formateurs.find(
+          (item) =>
+            item.id === id,
+        );
 
-  const handleDelete = async (id) => {
-    if (!id) return;
+      const label =
+        formateur
+          ? `${formateur.prenom || ''} ${formateur.nom || ''}`.trim()
+          : 'ce formateur';
 
-    const formateur = formateurs.find(
-      (item) => item.id === id
-    );
+      const ok =
+        window.confirm(
+          `Retirer ${label} de votre réseau ?\n\nSa fiche TimeForma ne sera pas supprimée. Cette action retire uniquement le formateur du réseau de ${currentOrganization?.name || 'votre organisme'}.`,
+        );
 
-    const label = formateur
-      ? `${formateur.prenom || ''} ${
-          formateur.nom || ''
-        }`.trim()
-      : 'ce formateur';
+      if (!ok) {
+        return;
+      }
 
-    const ok = window.confirm(
-      `Voulez-vous vraiment supprimer ${label} ?\nCette action est définitive.`
-    );
+      try {
+        await removeFormateur(
+          id,
+        );
 
-    if (!ok) return;
+        clearDistances();
 
-    try {
-      await removeFormateur(id);
-      clearDistances();
-      deactivateDistanceSort();
-    } catch (error) {
-      console.error(
-        '❌ Erreur suppression formateur :',
+        deactivateDistanceSort();
+      } catch (
         error
-      );
+      ) {
+        console.error(
+          '❌ Erreur retrait du formateur :',
+          error,
+        );
 
-      alert('Suppression échouée.');
-    }
-  };
+        alert(
+          'Impossible de retirer ce formateur de votre réseau.',
+        );
+      }
+    };
+
 
   const handleCalculateDistances =
     async () => {
-      const normalizedPlace = String(
-        lieu ?? ''
-      ).trim();
+      const normalizedPlace =
+        String(
+          lieu ?? '',
+        ).trim();
 
       if (!normalizedPlace) {
         clearDistances();
@@ -148,7 +211,7 @@ export default function Listing() {
 
       const success =
         await computeDistances(
-          normalizedPlace
+          normalizedPlace,
         );
 
       if (success) {
@@ -158,22 +221,56 @@ export default function Listing() {
       }
     };
 
-  const renderList = (value) =>
-    Array.isArray(value)
-      ? value.join(', ')
-      : value || '';
+
+  const renderList =
+    (value) =>
+      Array.isArray(
+        value,
+      )
+        ? value.join(', ')
+        : value || '';
+
 
   return (
     <div className="listing-page">
+
       <ListingHeader
         onAdd={() =>
-          navigate('/formateur/new')
+          navigate(
+            '/formateur/new',
+          )
+        }
+        onSearch={() =>
+          navigate(
+            '/formateurs/recherche',
+          )
         }
       />
 
+
+      {formateursError ? (
+        <div
+          style={{
+            marginBottom: 14,
+            padding: 12,
+            border: '1px solid #fecaca',
+            borderRadius: 8,
+            background: '#fef2f2',
+            color: '#b91c1c',
+          }}
+        >
+          Impossible de charger le réseau de formateurs.
+        </div>
+      ) : null}
+
+
       <ListingFilters
-        lieu={lieu}
-        setLieu={setLieu}
+        lieu={
+          lieu
+        }
+        setLieu={
+          setLieu
+        }
         recognizedPlace={
           recognizedPlace
         }
@@ -183,40 +280,68 @@ export default function Listing() {
         distanceLoading={
           distanceLoading
         }
-        distanceError={distanceError}
-        filters={filters}
-        setFilters={setFilters}
+        distanceError={
+          distanceError
+        }
+        filters={
+          filters
+        }
+        setFilters={
+          setFilters
+        }
         handleStatutChange={
           handleStatutChange
         }
-        resetFilters={resetFilters}
+        resetFilters={
+          resetFilters
+        }
         resultCount={
           filteredFormateurs.length
         }
-        totalCount={formateurs.length}
+        totalCount={
+          formateurs.length
+        }
         availabilityLoading={
-          availabilityLoading
+          availabilityLoading ||
+          formateursLoading
         }
         availabilityError={
           availabilityError
         }
       />
 
+
       <ListingTable
         filteredFormateurs={
           filteredFormateurs
         }
-        distances={distances}
-        sort={sort}
-        toggleSort={toggleSort}
-        renderList={renderList}
-        navigate={navigate}
-        handleDelete={handleDelete}
-        planningDate={planningDate}
+        distances={
+          distances
+        }
+        sort={
+          sort
+        }
+        toggleSort={
+          toggleSort
+        }
+        renderList={
+          renderList
+        }
+        navigate={
+          navigate
+        }
+        handleDelete={
+          handleDelete
+        }
+        planningDate={
+          planningDate
+        }
         onPreviousMonth={
           handlePreviousMonth
         }
-        onNextMonth={handleNextMonth}
+        onNextMonth={
+          handleNextMonth
+        }
         onCurrentMonth={
           handleCurrentMonth
         }
@@ -224,10 +349,14 @@ export default function Listing() {
           planningAvailability
         }
         planningLoading={
-          planningLoading
+          planningLoading ||
+          formateursLoading
         }
-        planningError={planningError}
+        planningError={
+          planningError
+        }
       />
+
     </div>
   );
 }

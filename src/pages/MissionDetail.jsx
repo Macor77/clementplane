@@ -20,6 +20,7 @@ import {
 } from '../services/missionsService';
 
 import { getMissionRecommendations } from '../services/missionMatchingService';
+import { prepareMissionProposal } from '../services/proposalService';
 
 const INITIAL_FILTERS = {
   recherche: '',
@@ -367,6 +368,31 @@ export default function MissionDetail() {
     }
   };
 
+  const handlePrepareProposal = async (missionTrainerId, trainerId) => {
+    setActionTrainerId(trainerId);
+    setError('');
+
+    try {
+      const { url } = await prepareMissionProposal(missionTrainerId);
+
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(url);
+        window.alert('Le lien de proposition a été généré et copié dans le presse-papiers.');
+      } else {
+        window.prompt('Copie ce lien et envoie-le au formateur :', url);
+      }
+
+      await refresh();
+    } catch (actionError) {
+      setError(
+        actionError?.message ||
+          'Impossible de préparer la proposition.',
+      );
+    } finally {
+      setActionTrainerId(null);
+    }
+  };
+
   const handleApplyLocation = () => {
     const cleanedLocation =
       locationDraft.trim();
@@ -532,6 +558,9 @@ export default function MissionDetail() {
             onRemove={handleRemove}
             onStatusChange={
               handleStatusChange
+            }
+            onPrepareProposal={
+              handlePrepareProposal
             }
           />
 
@@ -997,6 +1026,7 @@ function TrackedTrainers({
   actionTrainerId,
   onRemove,
   onStatusChange,
+  onPrepareProposal,
 }) {
   return (
     <section style={styles.sectionCard}>
@@ -1045,6 +1075,12 @@ function TrackedTrainers({
                     status,
                   )
                 }
+                onPrepareProposal={() =>
+                  onPrepareProposal(
+                    missionTrainer.id,
+                    missionTrainer.formateur_id,
+                  )
+                }
               />
             ),
           )}
@@ -1059,6 +1095,7 @@ function TrackedTrainerRow({
   loading,
   onRemove,
   onStatusChange,
+  onPrepareProposal,
 }) {
   const trainer =
     missionTrainer.trainer || {};
@@ -1119,17 +1156,19 @@ function TrackedTrainerRow({
             label="Proposer"
             loading={loading}
             primary
-            onClick={() =>
-              onStatusChange(
-                'proposition_envoyee',
-              )
-            }
+            onClick={onPrepareProposal}
           />
         )}
 
         {missionTrainer.statut ===
           'proposition_envoyee' && (
           <>
+            <ActionButton
+              label="Copier le lien"
+              loading={loading}
+              primary
+              onClick={onPrepareProposal}
+            />
             <ActionButton
               label="Accepter"
               loading={loading}

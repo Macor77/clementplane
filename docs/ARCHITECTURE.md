@@ -1,4 +1,4 @@
-# ARCHITECTURE - TimeForma
+# ARCHITECTURE - Formaplane
 
 Version : 8.0
 Dernière mise à jour : 11/08/2026
@@ -8,7 +8,7 @@ Correspond au Sprint 8 terminé et validé.
 
 # Objectif
 
-Ce document décrit l'architecture technique de TimeForma et les
+Ce document décrit l'architecture technique de Formaplane et les
 principes qui guident son évolution.
 
 L'objectif est de conserver une architecture :
@@ -328,7 +328,7 @@ Les composants ont été optimisés afin de conserver une hauteur fixe des cellu
 
 # Évolutions Sprint 8 — Authentification et architecture multi-organismes
 
-Le Sprint 8 introduit une couche d'identité et de rattachement permettant à TimeForma de fonctionner avec plusieurs utilisateurs, plusieurs organismes et des profils formateurs partagés.
+Le Sprint 8 introduit une couche d'identité et de rattachement permettant à Formaplane de fonctionner avec plusieurs utilisateurs, plusieurs organismes et des profils formateurs partagés.
 
 ## Modèle d'identité
 
@@ -506,7 +506,7 @@ Le besoin métier de prévention des doubles affectations est ainsi concilié av
 
 # État architectural après le Sprint 8
 
-TimeForma n'est plus architecturé comme une application mono-organisme avec un futur multi-tenant théorique.
+Formaplane n'est plus architecturé comme une application mono-organisme avec un futur multi-tenant théorique.
 
 Les briques fondamentales du multi-organismes sont désormais présentes :
 

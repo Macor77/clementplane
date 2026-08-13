@@ -1,4 +1,4 @@
-# PRD - TimeForma
+# PRD - Formaplane
 
 Version : 4.0  
 Dernière mise à jour : 14/07/2026  
@@ -8,7 +8,7 @@ Correspond au Sprint 5 terminé.
 
 # Présentation
 
-TimeForma est une plateforme de gestion des formateurs destinée aux organismes de formation.
+Formaplane est une plateforme de gestion des formateurs destinée aux organismes de formation.
 
 Son objectif est de réduire drastiquement le temps nécessaire pour :
 
@@ -44,7 +44,7 @@ Les principales difficultés sont :
 
 # Notre vision
 
-TimeForma doit devenir le point d'entrée unique de la gestion des formateurs.
+Formaplane doit devenir le point d'entrée unique de la gestion des formateurs.
 
 À terme, un organisme ne devra plus avoir besoin de plusieurs outils.
 
@@ -82,7 +82,7 @@ Le logiciel devra couvrir :
 
 # Proposition de valeur
 
-TimeForma permet :
+Formaplane permet :
 
 - de trouver rapidement le bon formateur ;
 - de comparer plusieurs profils ;
@@ -164,7 +164,7 @@ Une fonctionnalité qui n'apporte aucune valeur métier ne doit pas être dével
 
 # Critères de réussite
 
-TimeForma sera considéré comme un succès lorsque :
+Formaplane sera considéré comme un succès lorsque :
 
 - un organisme pourra préparer une mission en quelques minutes ;
 - la recherche d'un formateur deviendra quasi instantanée ;
@@ -175,7 +175,7 @@ TimeForma sera considéré comme un succès lorsque :
 
 # Vision long terme
 
-À terme, TimeForma deviendra une plateforme collaborative reliant :
+À terme, Formaplane deviendra une plateforme collaborative reliant :
 
 - les organismes de formation ;
 - les formateurs indépendants ;

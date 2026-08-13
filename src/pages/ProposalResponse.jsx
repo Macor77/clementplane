@@ -83,7 +83,13 @@ export default function ProposalResponse() {
   return (
     <div style={styles.page}>
       <main style={styles.card}>
-        <div style={styles.brand}>Time<span style={styles.brandAccent}>Forma</span></div>
+        <div style={styles.brand}>
+          <img
+            src="/brand/formaplane-logo.svg"
+            alt="Formaplane"
+            style={{ width: '220px', height: 'auto', display: 'block' }}
+          />
+        </div>
 
         <p style={styles.eyebrow}>PROPOSITION DE MISSION</p>
         <h1 style={styles.title}>{proposal.mission_title}</h1>
@@ -193,7 +199,13 @@ function PublicState({ message, error = false }) {
   return (
     <div style={styles.page}>
       <main style={styles.card}>
-        <div style={styles.brand}>Time<span style={styles.brandAccent}>Forma</span></div>
+        <div style={styles.brand}>
+          <img
+            src="/brand/formaplane-logo.svg"
+            alt="Formaplane"
+            style={{ width: '220px', height: 'auto', display: 'block' }}
+          />
+        </div>
         <div style={error ? styles.error : styles.loading}>{message}</div>
       </main>
     </div>

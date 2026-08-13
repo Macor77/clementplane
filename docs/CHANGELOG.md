@@ -1,4 +1,4 @@
-# CHANGELOG - TimeForma
+# CHANGELOG - Formaplane
 
 Version : 8.0
 Date : 11/08/2026
@@ -7,7 +7,7 @@ Date : 11/08/2026
 
 # Sprint 6 --- Moteur de missions (Terminé)
 
-Le Sprint 6 transforme TimeForma d'un gestionnaire de formateurs en un
+Le Sprint 6 transforme Formaplane d'un gestionnaire de formateurs en un
 véritable moteur de gestion des missions.
 
 ## Mini Sprint 6.1 --- Base de données
@@ -117,7 +117,7 @@ Améliorations :
 
 # Résultat
 
-À l'issue du Sprint 6, TimeForma permet :
+À l'issue du Sprint 6, Formaplane permet :
 
 -   de créer une mission ;
 -   de rechercher les meilleurs formateurs ;
@@ -155,7 +155,7 @@ Sprint 7 --- Tableau de bord des missions.
 
 # Sprint 7 — Vues opérationnelles des missions (Terminé)
 
-Le Sprint 7 transforme TimeForma en un véritable outil de planification quotidien.
+Le Sprint 7 transforme Formaplane en un véritable outil de planification quotidien.
 
 ## Mini Sprint 7.1 — Nouvelle architecture
 
@@ -191,7 +191,7 @@ Le Sprint 7 transforme TimeForma en un véritable outil de planification quotidi
 
 # Résultat
 
-À l'issue du Sprint 7, TimeForma dispose :
+À l'issue du Sprint 7, Formaplane dispose :
 
 - d'une navigation moderne ;
 - d'un planning mensuel opérationnel ;
@@ -207,7 +207,7 @@ Sprint 8 — Comptes formateurs.
 
 # Sprint 8 — Comptes, espaces et collaboration multi-organismes (Terminé)
 
-Le Sprint 8 fait évoluer TimeForma vers une véritable plateforme multi-utilisateurs et multi-organismes. Un même compte peut désormais disposer d'un espace organisme de formation, d'un espace formateur, ou des deux.
+Le Sprint 8 fait évoluer Formaplane vers une véritable plateforme multi-utilisateurs et multi-organismes. Un même compte peut désormais disposer d'un espace organisme de formation, d'un espace formateur, ou des deux.
 
 ## Authentification et sécurité
 
@@ -294,7 +294,7 @@ La batterie de tests multi-organismes a validé notamment :
 
 # Résultat du Sprint 8
 
-TimeForma dispose désormais des fondations nécessaires à son fonctionnement SaaS multi-organismes :
+Formaplane dispose désormais des fondations nécessaires à son fonctionnement SaaS multi-organismes :
 
 - comptes utilisateurs réels ;
 - authentification ;

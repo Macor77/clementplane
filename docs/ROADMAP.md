@@ -1,10 +1,10 @@
-ROADMAP - TimeForma
+ROADMAP - Formaplane
 Version : 8.0  
 Dernière mise à jour : 11/08/2026  
 Correspond au Sprint 8 terminé et validé.
 ---
 Vision
-TimeForma a pour ambition de devenir la plateforme de référence permettant aux organismes de formation de :
+Formaplane a pour ambition de devenir la plateforme de référence permettant aux organismes de formation de :
 gérer leur réseau de formateurs ;
 rechercher rapidement les profils les plus adaptés ;
 consulter leurs disponibilités ;
@@ -51,7 +51,7 @@ Listing des formateurs
 Carte Leaflet
 Premiers calculs de distance
 Résultat
-Une première version opérationnelle de TimeForma permet de centraliser les informations des formateurs dans une seule interface.
+Une première version opérationnelle de Formaplane permet de centraliser les informations des formateurs dans une seule interface.
 ---
 Sprint 2 — Migration Supabase ✅
 Base de données
@@ -70,7 +70,7 @@ Déploiement sur Vercel
 Utilisation de Codespaces
 Travail possible entièrement en ligne
 Résultat
-Supabase devient le backend officiel de TimeForma. Le projet dispose désormais d'une base technique stable et déployée.
+Supabase devient le backend officiel de Formaplane. Le projet dispose désormais d'une base technique stable et déployée.
 ---
 Sprint 3 — Disponibilités ✅
 Calendrier individuel
@@ -154,11 +154,11 @@ code postal + ville ;
 ville seule.
 Mise à jour des fiches formateurs
 Résultat
-TimeForma permet de rechercher et classer les formateurs selon leur proximité avec un futur lieu de mission.
+Formaplane permet de rechercher et classer les formateurs selon leur proximité avec un futur lieu de mission.
 ---
 Sprint 6 — Moteur de missions ✅
 Objectif
-Faire de la mission le cœur opérationnel de TimeForma.
+Faire de la mission le cœur opérationnel de Formaplane.
 À la fin du Sprint 6, l'organisme de formation peut :
 créer une mission ;
 enregistrer plusieurs dates ;
@@ -431,7 +431,7 @@ Disponible ;
 Indisponible ;
 Non renseigné.
 Résultat du Sprint 6
-TimeForma dispose désormais d'un véritable moteur de missions capable de :
+Formaplane dispose désormais d'un véritable moteur de missions capable de :
 rechercher ;
 recommander ;
 sélectionner ;
@@ -445,7 +445,7 @@ Le cœur métier du produit est opérationnel.
 ---
 Sprint 7 — Vues opérationnelles des missions ✅
 Objectif
-Faire de la mission le véritable centre de TimeForma.
+Faire de la mission le véritable centre de Formaplane.
 Après le Sprint 6, les fonctionnalités métier sont en place.
 Le Sprint 7 a pour objectif de transformer ces fonctionnalités en une expérience utilisateur fluide, moderne et orientée planification.
 Une même mission pourra être visualisée selon plusieurs vues complémentaires :
@@ -469,7 +469,7 @@ Chaque écran répond à un besoin différent tout en manipulant les mêmes donn
 ---
 Mini Sprint 7.1 — Nouvelle architecture ✅
 Objectif
-Mettre en place la nouvelle organisation de TimeForma.
+Mettre en place la nouvelle organisation de Formaplane.
 Réalisations
 nouvelle navigation principale ;
 création de la page Accueil ;
@@ -485,7 +485,7 @@ synthèse mensuelle ;
 panneau latéral de la journée sélectionnée ;
 actions rapides.
 Résultat
-L'architecture générale de TimeForma est désormais en place.
+L'architecture générale de Formaplane est désormais en place.
 ---
 Mini Sprint 7.2 — Polish UI ✅
 Objectif
@@ -513,7 +513,7 @@ Objectif UX
 Obtenir une interface professionnelle donnant immédiatement confiance à l'utilisateur.
 ---
 Résultat du Sprint 7
-À la fin du Sprint 7, TimeForma proposera quatre vues complémentaires :
+À la fin du Sprint 7, Formaplane proposera quatre vues complémentaires :
 🏠 Accueil
 → piloter son activité quotidienne.
 📅 Planning
@@ -522,7 +522,7 @@ Résultat du Sprint 7
 → rechercher, filtrer et gérer les missions.
 🗺️ Carte
 → visualiser les missions géographiquement.
-Le Sprint 7 marquera également une évolution importante de TimeForma :
+Le Sprint 7 marquera également une évolution importante de Formaplane :
 Le logiciel ne sera plus seulement un outil de gestion des formateurs, mais un véritable outil de planification des organismes de formation.
 L'identité visuelle du logiciel a été modernisée afin d'offrir une expérience utilisateur plus cohérente, fluide et professionnelle.
 ---
@@ -530,7 +530,7 @@ Sprint 8 — Gestion des utilisateurs, espace formateur et multi-organismes ✅
 
 Objectif
 
-Faire passer TimeForma d'un outil principalement utilisé par un OF à une plateforme authentifiée dans laquelle :
+Faire passer Formaplane d'un outil principalement utilisé par un OF à une plateforme authentifiée dans laquelle :
 - un utilisateur possède un compte unique ;
 - un utilisateur peut être OF, formateur, ou les deux ;
 - un formateur peut collaborer avec plusieurs organismes ;
@@ -669,7 +669,7 @@ Un OF tiers ne voit jamais :
 
 Résultat du Sprint 8
 
-Le Sprint 8 constitue une étape majeure vers le SaaS TimeForma.
+Le Sprint 8 constitue une étape majeure vers le SaaS Formaplane.
 
 La plateforme dispose désormais :
 - d'une authentification réelle ;
@@ -703,7 +703,7 @@ Automatiser les échanges et les relances autour des propositions de missions.
 ---
 Sprint 10 — Réseau et collaboration
 Objectif
-Développer la dimension collaborative de TimeForma.
+Développer la dimension collaborative de Formaplane.
 ---
 Réseau de formateurs
 invitations ;
@@ -722,13 +722,13 @@ compétences partagées ou validées.
 ---
 Recherche étendue
 recherche dans son propre réseau ;
-recherche dans le réseau TimeForma ;
+recherche dans le réseau Formaplane ;
 profils visibles selon les autorisations ;
 demandes de mise en relation.
 ---
 Sprint 11 — SaaS multi-organismes
 Objectif
-Ouvrir TimeForma à plusieurs organismes avec une séparation stricte des données.
+Ouvrir Formaplane à plusieurs organismes avec une séparation stricte des données.
 ---
 Organisations
 création d'un organisme ;
@@ -847,4 +847,4 @@ La prochaine étape est :
 ```text
 Sprint 9 — Notifications, relances et automatisations
 ```
-Le moteur de missions étant désormais opérationnel, TimeForma doit devenir un outil de pilotage quotidien capable d'indiquer immédiatement au coordinateur les actions à effectuer.
+Le moteur de missions étant désormais opérationnel, Formaplane doit devenir un outil de pilotage quotidien capable d'indiquer immédiatement au coordinateur les actions à effectuer.

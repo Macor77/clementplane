@@ -50,7 +50,11 @@ export default function TrainerHome() {
     <div className="auth-page">
       <div className="auth-card">
         <div className="auth-logo">
-          Time<span>Forma</span>
+          <img
+            src="/brand/formaplane-logo.svg"
+            alt="Formaplane"
+            style={{ width: '100%', maxWidth: '320px', height: 'auto' }}
+          />
         </div>
 
         <p className="auth-eyebrow">

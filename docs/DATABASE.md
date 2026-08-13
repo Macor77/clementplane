@@ -1,4 +1,4 @@
-# DATABASE - TimeForma
+# DATABASE - Formaplane
 
 Version : 5.0\
 Dernière mise à jour : 16/07/2026\
@@ -9,7 +9,7 @@ Correspond au Sprint 6 terminé.
 # Objectif
 
 Ce document décrit la structure de la base de données PostgreSQL
-utilisée par TimeForma.
+utilisée par Formaplane.
 
 La base est hébergée sur Supabase et constitue l'unique source de vérité
 des données métier.

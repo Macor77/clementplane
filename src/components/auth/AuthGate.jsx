@@ -5,7 +5,13 @@ function LoadingScreen() {
   return (
     <div className="auth-screen">
       <div className="auth-card auth-card--compact">
-        <div className="auth-brand">Time<span>Forma</span></div>
+        <div className="auth-brand">
+          <img
+            src="/brand/formaplane-logo.svg"
+            alt="Formaplane"
+            style={{ width: '220px', height: 'auto' }}
+          />
+        </div>
         <p className="auth-muted">Chargement de votre espace…</p>
       </div>
     </div>

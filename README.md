@@ -1,4 +1,4 @@
-# TimeForma
+# Formaplane
 
 **Version : 4.0**  
 **Dernière mise à jour : 14/07/2026**  
@@ -8,7 +8,7 @@
 
 # Présentation
 
-TimeForma est une application web développée par **Alter Prévention**.
+Formaplane est une application web développée par **Alter Prévention**.
 
 Son objectif est de permettre à un organisme de formation de retrouver, comparer et planifier rapidement les formateurs les plus adaptés à une mission.
 
@@ -72,7 +72,7 @@ Le listing permet notamment :
 
 ## Géolocalisation
 
-TimeForma calcule automatiquement la distance entre :
+Formaplane calcule automatiquement la distance entre :
 
 - un lieu de formation
 - les formateurs
@@ -96,7 +96,7 @@ Nominatim
 Coordonnées GPS
 ```
 
-Lors d'une recherche, TimeForma affiche le lieu réellement reconnu.
+Lors d'une recherche, Formaplane affiche le lieu réellement reconnu.
 
 Exemple :
 

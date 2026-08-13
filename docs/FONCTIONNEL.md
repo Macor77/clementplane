@@ -1,4 +1,4 @@
-# FONCTIONNEL - TimeForma
+# FONCTIONNEL - Formaplane
 
 Version : 8.0
 Dernière mise à jour : 11/08/2026
@@ -8,7 +8,7 @@ Correspond au Sprint 8 terminé et validé.
 
 # Présentation
 
-TimeForma est un logiciel de gestion des formateurs et des missions
+Formaplane est un logiciel de gestion des formateurs et des missions
 destiné aux organismes de formation.
 
 Son objectif est de permettre à un coordinateur de préparer, proposer,
@@ -148,7 +148,7 @@ Une Mission rend le formateur indisponible.
 
 # Résultat attendu
 
-Le coordinateur peut gérer une mission complète sans quitter TimeForma :
+Le coordinateur peut gérer une mission complète sans quitter Formaplane :
 
 -   création ;
 -   recherche ;
@@ -214,7 +214,7 @@ Les évolutions principales sont :
 
 # Évolutions Sprint 8
 
-Le Sprint 8 introduit les comptes utilisateurs réels et transforme TimeForma en plateforme multi-organismes dans laquelle un même formateur peut collaborer avec plusieurs OF.
+Le Sprint 8 introduit les comptes utilisateurs réels et transforme Formaplane en plateforme multi-organismes dans laquelle un même formateur peut collaborer avec plusieurs OF.
 
 ## Compte utilisateur unique
 
@@ -230,7 +230,7 @@ Lorsqu'un utilisateur cumule les deux rôles, il peut choisir son espace et pass
 
 ## Authentification
 
-TimeForma permet désormais :
+Formaplane permet désormais :
 
 - la création d'un compte organisme ;
 - la création d'un compte formateur ;
@@ -242,7 +242,7 @@ TimeForma permet désormais :
 
 ## Revendication d'une fiche formateur
 
-Lorsqu'un formateur crée son compte, TimeForma cherche à le rattacher à une fiche existante.
+Lorsqu'un formateur crée son compte, Formaplane cherche à le rattacher à une fiche existante.
 
 Le principe est de ne pas dupliquer un formateur déjà présent dans la base.
 
@@ -280,7 +280,7 @@ Une même fiche formateur peut appartenir au réseau de plusieurs organismes.
 
 Un OF peut :
 
-- rechercher un formateur déjà présent dans TimeForma ;
+- rechercher un formateur déjà présent dans Formaplane ;
 - consulter les informations communes autorisées ;
 - l'ajouter à son propre réseau sans créer de doublon.
 
@@ -301,12 +301,12 @@ L'OF propriétaire de la mission conserve, lui, l'affichage normal de la mission
 
 ## Inscription des organismes
 
-Un nouvel organisme peut créer son compte et son espace TimeForma.
+Un nouvel organisme peut créer son compte et son espace Formaplane.
 
 Les données et relations sont rattachées à l'organisation concernée afin de préparer l'exploitation SaaS multi-organismes.
 
 ## Résultat fonctionnel
 
-À l'issue du Sprint 8, TimeForma permet à plusieurs organismes de travailler avec une même base de profils formateurs tout en conservant leurs informations métier confidentielles.
+À l'issue du Sprint 8, Formaplane permet à plusieurs organismes de travailler avec une même base de profils formateurs tout en conservant leurs informations métier confidentielles.
 
 Le formateur devient également un utilisateur actif de la plateforme : il peut gérer son profil, ses disponibilités et ses réponses aux propositions.

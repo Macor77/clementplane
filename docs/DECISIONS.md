@@ -1,4 +1,4 @@
-# DECISIONS - TimeForma
+# DECISIONS - Formaplane
 
 Version : 5.0 Dernière mise à jour : 16/07/2026
 
@@ -7,7 +7,7 @@ Version : 5.0 Dernière mise à jour : 16/07/2026
 # Objectif
 
 Ce document recense les décisions d'architecture et de conception qui
-structurent durablement TimeForma. Chaque décision est conservée afin
+structurent durablement Formaplane. Chaque décision est conservée afin
 d'expliquer les choix effectués et d'éviter de revenir sur des
 arbitrages déjà validés.
 

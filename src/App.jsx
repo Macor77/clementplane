@@ -109,13 +109,11 @@ function OrganizationApp() {
       <div className="app-shell">
         <aside className="app-sidebar">
           <div className="app-brand">
-            <span className="app-brand__icon">
-              ▦
-            </span>
-
-            <span className="app-brand__name">
-              Time<span>Forma</span>
-            </span>
+            <img
+              className="app-brand__logo"
+              src="/brand/formaplane-logo-light.svg"
+              alt="Formaplane"
+            />
           </div>
 
           <nav
@@ -457,7 +455,7 @@ function AccountRouter() {
           fontWeight: 600,
         }}
       >
-        Chargement de votre espace TimeForma…
+        Chargement de votre espace Formaplane…
       </div>
     );
   }

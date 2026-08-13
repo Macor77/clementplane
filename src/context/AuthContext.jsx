@@ -254,7 +254,7 @@ export function AuthProvider({ children }) {
     return (
       fullName ||
       session?.user?.email ||
-      'Utilisateur TimeForma'
+      'Utilisateur Formaplane'
     );
   }, [profile, session]);
 

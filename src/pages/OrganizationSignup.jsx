@@ -183,8 +183,8 @@ export default function OrganizationSignup() {
         <div className="auth-card">
 
           <div className="auth-brand">
-            Time<span>Forma</span>
-          </div>
+          <img src="/brand/formaplane-logo.svg" alt="Formaplane" />
+        </div>
 
 
           <p className="auth-eyebrow">
@@ -203,7 +203,7 @@ export default function OrganizationSignup() {
               {form.email}
             </strong>.
             {' '}
-            Après confirmation, connectez-vous à TimeForma :
+            Après confirmation, connectez-vous à Formaplane :
             votre organisme sera déjà rattaché à votre compte.
           </p>
 
@@ -226,7 +226,7 @@ export default function OrganizationSignup() {
       <div className="auth-card auth-card--wide">
 
         <div className="auth-brand">
-          Time<span>Forma</span>
+          <img src="/brand/formaplane-logo.svg" alt="Formaplane" />
         </div>
 
 
@@ -241,7 +241,7 @@ export default function OrganizationSignup() {
 
 
         <p className="auth-muted">
-          Créez votre espace TimeForma pour gérer vos formateurs,
+          Créez votre espace Formaplane pour gérer vos formateurs,
           vos missions et votre planning.
         </p>
 

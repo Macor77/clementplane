@@ -90,8 +90,8 @@ export default function ResetPassword() {
       <div className="auth-screen">
         <div className="auth-card auth-card--compact">
           <div className="auth-brand">
-            Time<span>Forma</span>
-          </div>
+          <img src="/brand/formaplane-logo.svg" alt="Formaplane" />
+        </div>
 
           <p className="auth-muted">
             Validation du lien sécurisé…
@@ -106,8 +106,8 @@ export default function ResetPassword() {
       <div className="auth-screen">
         <div className="auth-card">
           <div className="auth-brand">
-            Time<span>Forma</span>
-          </div>
+          <img src="/brand/formaplane-logo.svg" alt="Formaplane" />
+        </div>
 
           <p className="auth-eyebrow">
             Lien invalide
@@ -137,7 +137,7 @@ export default function ResetPassword() {
     <div className="auth-screen">
       <div className="auth-card">
         <div className="auth-brand">
-          Time<span>Forma</span>
+          <img src="/brand/formaplane-logo.svg" alt="Formaplane" />
         </div>
 
         <p className="auth-eyebrow">

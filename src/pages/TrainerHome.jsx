@@ -60,7 +60,7 @@ export default function TrainerHome() {
         <h1>Bonjour {firstName}</h1>
 
         <p className="auth-description">
-          Votre espace personnel TimeForma est
+          Votre espace personnel Formaplane est
           maintenant identifié. Son tableau de bord
           complet sera construit dans les prochaines
           étapes du Mini Sprint 8.3.
@@ -95,7 +95,7 @@ export default function TrainerHome() {
             }}
           >
             Fiche professionnelle rattachée à votre
-            compte TimeForma.
+            compte Formaplane.
           </p>
         </div>
 

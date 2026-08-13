@@ -4,7 +4,7 @@
   place-items: center;
   padding: 32px 20px;
   background: #f4f7fb;
-  color: #0d2440;
+  color: #0b132b;
 }
 
 .auth-card {
@@ -21,14 +21,16 @@
 
 .auth-brand {
   margin-bottom: 28px;
-  font-size: 24px;
-  font-weight: 900;
-  letter-spacing: -0.04em;
 }
-.auth-brand span { color: #2563eb; }
+.auth-brand img {
+  display: block;
+  width: 210px;
+  max-width: 70%;
+  height: auto;
+}
 .auth-eyebrow {
   margin: 0 0 8px;
-  color: #2563eb;
+  color: #3b82f6;
   font-size: 12px;
   font-weight: 800;
   letter-spacing: .12em;
@@ -51,7 +53,7 @@
   font: inherit;
   outline: none;
 }
-.auth-form input:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, .12); }
+.auth-form input:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(37, 99, 235, .12); }
 
 .auth-button {
   display: inline-flex;
@@ -61,7 +63,7 @@
   padding: 0 18px;
   border: 0;
   border-radius: 10px;
-  background: #2563eb;
+  background: #3b82f6;
   color: #fff;
   font: inherit;
   font-weight: 800;
@@ -73,7 +75,7 @@
 .auth-alert { padding: 12px 14px; border-radius: 10px; font-size: 14px; }
 .auth-alert--error { background: #fff1f2; color: #b42318; border: 1px solid #fecdd3; }
 .auth-footer { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 24px; color: #64748b; font-size: 14px; }
-.auth-footer a { color: #2563eb; font-weight: 800; text-decoration: none; }
+.auth-footer a { color: #3b82f6; font-weight: 800; text-decoration: none; }
 
 .space-choice { display: grid; gap: 14px; margin-top: 24px; }
 .space-choice__item {
@@ -85,7 +87,7 @@
   text-decoration: none;
   transition: .15s ease;
 }
-.space-choice__item:hover { border-color: #2563eb; transform: translateY(-1px); }
+.space-choice__item:hover { border-color: #3b82f6; transform: translateY(-1px); }
 .space-choice__item strong { display: block; margin-bottom: 4px; }
 .space-choice__item span { color: #64748b; font-size: 14px; }
 
@@ -100,7 +102,7 @@
   margin-top: -8px;
 }
 .auth-form__helper a {
-  color: #2563eb;
+  color: #3b82f6;
   font-size: 13px;
   font-weight: 800;
   text-decoration: none;
@@ -185,5 +187,5 @@
 
 .auth-password-toggle:hover {
   background: #f1f5f9;
-  color: #2563eb;
+  color: #3b82f6;
 }

@@ -48,10 +48,38 @@ export default function SpaceChooser() {
   };
 
   return (
-    <div className="auth-page">
+    <div
+      className="auth-page"
+      style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '24px',
+        boxSizing: 'border-box',
+      }}
+    >
       <div className="auth-card">
-        <div className="auth-logo">
-          Time<span>Forma</span>
+        <div
+          className="auth-logo"
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginBottom: '28px',
+          }}
+        >
+          <img
+            src="/brand/formaplane-logo.svg"
+            alt="Formaplane"
+            style={{
+              display: 'block',
+              width: '100%',
+              maxWidth: '320px',
+              height: 'auto',
+              objectFit: 'contain',
+            }}
+          />
         </div>
 
         <p className="auth-eyebrow">
@@ -61,7 +89,7 @@ export default function SpaceChooser() {
         <h1>Bonjour {displayName}</h1>
 
         <p className="auth-description">
-          Votre compte possède plusieurs usages TimeForma.
+          Votre compte possède plusieurs usages Formaplane.
           Choisissez l’espace dans lequel vous souhaitez
           travailler.
         </p>

@@ -124,11 +124,13 @@ export default function TrainerClaimStart() {
     return (
       <div className="auth-screen">
         <div className="auth-card">
-          <div className="auth-brand">Time<span>Forma</span></div>
+          <div className="auth-brand">
+          <img src="/brand/formaplane-logo.svg" alt="Formaplane" />
+        </div>
           <p className="auth-eyebrow">Profil formateur</p>
           <h1>Votre fiche est déjà rattachée.</h1>
           <p className="auth-muted">
-            {trainerProfile.prenom} {trainerProfile.nom} est bien lié à votre compte TimeForma.
+            {trainerProfile.prenom} {trainerProfile.nom} est bien lié à votre compte Formaplane.
           </p>
           <button className="auth-button auth-button--link" type="button" onClick={() => navigate('/formateur/espace')}>
             Accéder à mon espace
@@ -141,11 +143,13 @@ export default function TrainerClaimStart() {
   return (
     <div className="auth-screen">
       <div className="auth-card auth-card--wide">
-        <div className="auth-brand">Time<span>Forma</span></div>
+        <div className="auth-brand">
+          <img src="/brand/formaplane-logo.svg" alt="Formaplane" />
+        </div>
         <p className="auth-eyebrow">Votre profil professionnel</p>
         <h1>{firstName}, retrouvons votre fiche.</h1>
         <p className="auth-muted">
-          TimeForma recherche uniquement les fiches utilisant la même adresse e-mail que votre compte.
+          Formaplane recherche uniquement les fiches utilisant la même adresse e-mail que votre compte.
           Vos notes internes, tarifs négociés et autres informations propres aux organismes ne sont jamais affichés ici.
         </p>
 

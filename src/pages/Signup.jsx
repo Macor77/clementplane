@@ -142,8 +142,8 @@ export default function Signup() {
         <div className="auth-card">
 
           <div className="auth-brand">
-            Time<span>Forma</span>
-          </div>
+          <img src="/brand/formaplane-logo.svg" alt="Formaplane" />
+        </div>
 
           <p className="auth-eyebrow">
             Compte créé
@@ -159,7 +159,7 @@ export default function Signup() {
               {form.email}
             </strong>.
             {' '}
-            Après confirmation, revenez sur TimeForma pour vous connecter.
+            Après confirmation, revenez sur Formaplane pour vous connecter.
           </p>
 
           <Link
@@ -180,7 +180,7 @@ export default function Signup() {
       <div className="auth-card auth-card--wide">
 
         <div className="auth-brand">
-          Time<span>Forma</span>
+          <img src="/brand/formaplane-logo.svg" alt="Formaplane" />
         </div>
 
 

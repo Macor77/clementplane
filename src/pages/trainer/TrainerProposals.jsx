@@ -379,7 +379,7 @@ export default function TrainerProposals() {
             Consultez les missions qui
             vous sont proposées et
             répondez directement depuis
-            TimeForma.
+            Formaplane.
           </p>
         </div>
       </div>

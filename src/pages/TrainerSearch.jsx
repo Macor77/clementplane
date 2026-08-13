@@ -182,7 +182,7 @@ export default function TrainerSearch() {
               color: '#64748b',
             }}
           >
-            Recherchez un formateur déjà présent sur TimeForma par nom, prénom ou e-mail.
+            Recherchez un formateur déjà présent sur Formaplane par nom, prénom ou e-mail.
           </p>
         </div>
 

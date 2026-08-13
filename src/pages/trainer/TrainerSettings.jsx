@@ -34,7 +34,7 @@ export default function TrainerSettings() {
 
           <p>
             Gérez votre session et vos espaces
-            TimeForma.
+            Formaplane.
           </p>
         </div>
       </div>

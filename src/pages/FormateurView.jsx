@@ -238,7 +238,7 @@ const STATUS_BORDER = {
 function getHistoryActorLabel(item) {
   const actor =
     item.actor_name ||
-    'Utilisateur TimeForma';
+    'Utilisateur Formaplane';
 
   if (
     item.source ===

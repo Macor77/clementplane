@@ -149,7 +149,7 @@ export default function ProposalResponse() {
         )}
 
         <p style={styles.footerNote}>
-          Aucun compte TimeForma n’est nécessaire pour répondre à cette proposition.
+          Aucun compte Formaplane n’est nécessaire pour répondre à cette proposition.
         </p>
       </main>
     </div>

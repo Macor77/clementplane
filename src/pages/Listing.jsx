@@ -165,7 +165,7 @@ export default function Listing() {
 
       const ok =
         window.confirm(
-          `Retirer ${label} de votre réseau ?\n\nSa fiche TimeForma ne sera pas supprimée. Cette action retire uniquement le formateur du réseau de ${currentOrganization?.name || 'votre organisme'}.`,
+          `Retirer ${label} de votre réseau ?\n\nSa fiche Formaplane ne sera pas supprimée. Cette action retire uniquement le formateur du réseau de ${currentOrganization?.name || 'votre organisme'}.`,
         );
 
       if (!ok) {

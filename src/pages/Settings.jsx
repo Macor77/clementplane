@@ -14,7 +14,7 @@ export default function Settings() {
 
   const fullName =
     [profile?.first_name, profile?.last_name].filter(Boolean).join(' ') ||
-    'Utilisateur TimeForma';
+    'Utilisateur Formaplane';
 
   return (
     <div className="page-container">
@@ -64,7 +64,7 @@ export default function Settings() {
           <h3 style={{ marginTop: 0 }}>Session</h3>
 
           <p style={{ color: '#64748b', marginBottom: '18px' }}>
-            Vous pouvez fermer votre session TimeForma sur cet appareil.
+            Vous pouvez fermer votre session Formaplane sur cet appareil.
           </p>
 
           <button

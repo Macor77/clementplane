@@ -1,9 +1,9 @@
 :root {
   --sidebar-width: 224px;
-  --navy-950: #0b1f3a;
-  --navy-900: #102a4c;
-  --blue-600: #2563eb;
-  --blue-700: #1d4ed8;
+  --navy-950: #0b132b;
+  --navy-900: #1e3a8a;
+  --blue-600: #3b82f6;
+  --blue-700: #1e3a8a;
   --slate-950: #101828;
   --slate-700: #344054;
   --slate-500: #667085;
@@ -11,7 +11,7 @@
   --slate-200: #e4e7ec;
   --slate-100: #f2f4f7;
   --surface: #ffffff;
-  --page: #f7f9fc;
+  --page: #f8fafc;
 }
 
 * {
@@ -43,25 +43,14 @@
 .app-brand {
   display: flex;
   align-items: center;
-  gap: 10px;
   padding: 2px 6px 26px;
-  font-size: 24px;
-  font-weight: 800;
-  letter-spacing: -0.7px;
 }
 
-.app-brand > span:last-child span {
-  color: #67a1ff;
-}
-
-.app-brand__icon {
-  display: grid;
-  width: 30px;
-  height: 30px;
-  place-items: center;
-  border: 2px solid rgba(255, 255, 255, 0.88);
-  border-radius: 8px;
-  font-size: 16px;
+.app-brand__logo {
+  display: block;
+  width: 176px;
+  max-width: 100%;
+  height: auto;
 }
 
 .app-nav {
@@ -89,7 +78,7 @@
 }
 
 .app-nav__link--active {
-  background: linear-gradient(135deg, #2459b9, #1f4ca0);
+  background: linear-gradient(135deg, var(--blue-700), var(--blue-600));
   color: #fff;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
 }
@@ -1129,7 +1118,7 @@ button,
 input,
 select,
 textarea {
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: Manrope, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 .app-sidebar {
@@ -3817,4 +3806,197 @@ textarea {
   display: flex;
   justify-content: flex-end;
   gap: 8px;
+}
+
+
+/* =========================================================
+   Mini-Sprint 9.1.2 — Harmonisation identité Formaplane
+   ---------------------------------------------------------
+   Objectif :
+   - unifier la couleur d'action Formaplane ;
+   - renforcer légèrement la présence du logo ;
+   - harmoniser cartes, focus et états interactifs ;
+   - préserver strictement la structure et la densité
+     validées du planning Sprint 7.2.
+   ========================================================= */
+
+:root {
+  --formaplane-blue: #3b82f6;
+  --formaplane-blue-dark: #2563eb;
+  --formaplane-blue-deep: #1d4ed8;
+  --formaplane-blue-soft: #eff6ff;
+  --formaplane-blue-border: #bfdbfe;
+
+  --navy-950: #0b1533;
+  --navy-900: #1e3a8a;
+
+  --blue-600: var(--formaplane-blue);
+  --blue-700: var(--formaplane-blue-dark);
+
+  --page: #f8fafc;
+  --surface: #ffffff;
+}
+
+/* Sidebar / marque */
+.app-sidebar {
+  background: linear-gradient(
+    180deg,
+    var(--navy-950) 0%,
+    #14275d 58%,
+    var(--navy-900) 100%
+  );
+}
+
+.app-brand {
+  padding-top: 2px;
+  padding-bottom: 21px;
+}
+
+.app-brand__logo {
+  width: 184px;
+  max-width: 100%;
+}
+
+.app-nav__link--active {
+  border-color: rgba(255, 255, 255, 0.14);
+  background: linear-gradient(
+    135deg,
+    var(--formaplane-blue) 0%,
+    var(--formaplane-blue-dark) 100%
+  );
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.2);
+}
+
+/* Couleur d'accent commune */
+.page-eyebrow,
+.dashboard-card__label,
+.trainer-dashboard-card__label,
+.dashboard-card a,
+.trainer-dashboard-card a,
+.trainer-cell__actions button,
+.calendar-day__more,
+.trainer-note-item__actions button {
+  color: var(--formaplane-blue);
+}
+
+.button--primary {
+  border-color: var(--formaplane-blue);
+  background: var(--formaplane-blue);
+}
+
+.button--primary:hover {
+  border-color: var(--formaplane-blue-dark);
+  background: var(--formaplane-blue-dark);
+}
+
+.button--soft {
+  border-color: var(--formaplane-blue-border);
+  background: var(--formaplane-blue-soft);
+  color: var(--formaplane-blue-deep);
+}
+
+.button--soft:hover {
+  border-color: #93c5fd;
+  background: #e8f1ff;
+}
+
+/* Focus cohérent dans toute l'application */
+.compact-control:focus,
+.trainer-profile-field input:focus,
+.trainer-profile-chips:focus-within,
+.trainer-proposal-response textarea:focus,
+.trainer-note-modal textarea:focus,
+.trainer-note-editor textarea:focus {
+  border-color: #93c5fd;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+}
+
+/* Cartes : rendu légèrement plus doux sans modifier leurs dimensions */
+.dashboard-card,
+.placeholder-card,
+.panel-card,
+.calendar-card,
+.trainer-dashboard-card,
+.trainer-dashboard-panel,
+.trainer-proposal-card,
+.trainer-dashboard-stat,
+.trainer-dashboard-next,
+.trainer-dashboard-availability {
+  border-color: #e2e8f0;
+}
+
+.dashboard-card,
+.placeholder-card,
+.trainer-dashboard-card,
+.trainer-dashboard-panel,
+.trainer-proposal-card,
+.trainer-dashboard-stat,
+.trainer-dashboard-next,
+.trainer-dashboard-availability {
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.045);
+}
+
+/* États bleus Formaplane */
+.count-badge,
+.trainer-proposal-tab--active span {
+  background: var(--formaplane-blue);
+}
+
+.trainer-proposal-tab--active {
+  border-color: var(--formaplane-blue-border);
+  background: var(--formaplane-blue-soft);
+  color: var(--formaplane-blue-deep);
+}
+
+.trainer-profile-chip,
+.listing-status-filter:has(input:checked) {
+  border-color: var(--formaplane-blue-border);
+  background: var(--formaplane-blue-soft);
+  color: #2457a7;
+}
+
+/* Planning OF :
+   uniquement harmonisation de la teinte bleue.
+   Aucune dimension, grille, hauteur ou densité n'est modifiée. */
+.planning-page .calendar-day--selected {
+  outline-color: var(--formaplane-blue);
+}
+
+.planning-page .calendar-day--today .calendar-day__number {
+  background: var(--formaplane-blue);
+  box-shadow: 0 5px 12px rgba(59, 130, 246, 0.22);
+}
+
+.planning-page .calendar-day__mission-count {
+  border-color: var(--formaplane-blue-border);
+  background: var(--formaplane-blue-soft);
+  color: #2457a7;
+  box-shadow: 0 2px 6px rgba(59, 130, 246, 0.12);
+}
+
+/* Espace formateur */
+.trainer-planning-day--selected {
+  box-shadow: inset 0 0 0 2px var(--formaplane-blue);
+}
+
+.trainer-planning-day--today .trainer-planning-day__number,
+.trainer-availability-day--today .trainer-availability-day__number {
+  background: var(--formaplane-blue);
+  color: #fff;
+}
+
+.trainer-dashboard-stat--primary,
+.trainer-dashboard-card--accent {
+  background: linear-gradient(
+    135deg,
+    var(--formaplane-blue-soft),
+    #ffffff
+  );
+}
+
+/* Responsive : le logo reste correctement contenu dans la sidebar compacte */
+@media (max-width: 900px) {
+  .app-brand__logo {
+    width: 100%;
+  }
 }

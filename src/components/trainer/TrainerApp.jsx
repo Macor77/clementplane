@@ -90,12 +90,25 @@ export default function TrainerApp() {
   return (
     <div className="app-shell trainer-app">
       <aside className="app-sidebar">
-        <div className="app-brand">
-          <span className="app-brand__icon">▦</span>
-
-          <span className="app-brand__name">
-            Time<span>Forma</span>
-          </span>
+        <div
+          className="app-brand"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            minHeight: '52px',
+          }}
+        >
+          <img
+            src="/brand/formaplane-logo-light.svg"
+            alt="Formaplane"
+            style={{
+              display: 'block',
+              width: '148px',
+              maxWidth: '100%',
+              height: 'auto',
+              objectFit: 'contain',
+            }}
+          />
         </div>
 
         <div className="trainer-sidebar-label">

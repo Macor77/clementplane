@@ -74,7 +74,7 @@ export default function Login() {
       <div className="auth-card">
 
         <div className="auth-brand">
-          Time<span>Forma</span>
+          <img src="/brand/formaplane-logo.svg" alt="Formaplane" />
         </div>
 
 
@@ -89,7 +89,7 @@ export default function Login() {
 
 
         <p className="auth-muted">
-          Connectez-vous à votre espace TimeForma.
+          Connectez-vous à votre espace Formaplane.
         </p>
 
 
@@ -222,7 +222,7 @@ export default function Login() {
               color: '#0f172a',
             }}
           >
-            Nouveau sur TimeForma ?
+            Nouveau sur Formaplane ?
           </p>
 
 
@@ -297,7 +297,7 @@ export default function Login() {
               Vous êtes à la fois organisme de formation et formateur ?
             </strong>
             {' '}
-            TimeForma fonctionne avec un seul compte utilisateur.
+            Formaplane fonctionne avec un seul compte utilisateur.
             Commencez par créer l’un de vos espaces ; votre second
             espace pourra ensuite être ajouté ou rattaché au même compte.
           </div>

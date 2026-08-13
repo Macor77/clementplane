@@ -318,7 +318,7 @@ export default function TrainerProfile() {
           <p>
             Gérez vos informations
             professionnelles utilisées dans
-            TimeForma.
+            Formaplane.
           </p>
         </div>
       </div>
@@ -387,7 +387,7 @@ export default function TrainerProfile() {
 
               <span className="trainer-profile-help">
                 Cette adresse correspond à
-                votre compte TimeForma.
+                votre compte Formaplane.
               </span>
             </div>
 

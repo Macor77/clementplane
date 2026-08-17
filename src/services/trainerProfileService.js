@@ -16,9 +16,10 @@ export async function updateMyTrainerProfile({
   firstName,
   lastName,
   phone,
-  address,
   city,
   postalCode,
+  latitude,
+  longitude,
   skills,
   equipment,
 }) {
@@ -28,9 +29,16 @@ export async function updateMyTrainerProfile({
       p_first_name: firstName,
       p_last_name: lastName,
       p_phone: phone || null,
-      p_address: address || null,
       p_city: city || null,
       p_postal_code: postalCode || null,
+      p_latitude:
+        latitude == null
+          ? null
+          : Number(latitude),
+      p_longitude:
+        longitude == null
+          ? null
+          : Number(longitude),
       p_skills: skills || [],
       p_equipment: equipment || [],
     },

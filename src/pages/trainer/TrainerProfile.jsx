@@ -1,6 +1,5 @@
 import {
   useEffect,
-  useRef,
   useState,
 } from 'react';
 
@@ -9,132 +8,30 @@ import {
   updateMyTrainerProfile,
 } from '../../services/trainerProfileService';
 
+import {
+  geocodeTrainer,
+  hasValidCoords,
+} from '../../services/geocodingService';
+
 import { useAuth } from '../../context/AuthContext';
+import CompetencyInput from '../../components/CompetencyInput';
+import EquipmentInput from '../../components/EquipmentInput';
 
 const EMPTY_FORM = {
   firstName: '',
   lastName: '',
   email: '',
   phone: '',
-  address: '',
   postalCode: '',
   city: '',
   skills: [],
   equipment: [],
 };
 
-function normalize(value) {
-  return value.trim();
-}
 
-function ChipsInput({
-  label,
-  values,
-  onChange,
-  placeholder,
-}) {
-  const [input, setInput] = useState('');
-  const inputRef = useRef(null);
 
-  const addValue = (value) => {
-    const normalized = normalize(value);
 
-    if (!normalized) return;
 
-    if (
-      values.some(
-        (item) =>
-          item.toLowerCase() ===
-          normalized.toLowerCase(),
-      )
-    ) {
-      setInput('');
-      return;
-    }
-
-    onChange([...values, normalized]);
-    setInput('');
-  };
-
-  const removeValue = (index) => {
-    onChange(
-      values.filter(
-        (_, currentIndex) =>
-          currentIndex !== index,
-      ),
-    );
-  };
-
-  const handleKeyDown = (event) => {
-    if (
-      event.key === 'Enter' ||
-      event.key === ',' ||
-      event.key === ';'
-    ) {
-      event.preventDefault();
-
-      if (input) {
-        addValue(input);
-      }
-    }
-
-    if (
-      event.key === 'Backspace' &&
-      !input &&
-      values.length > 0
-    ) {
-      removeValue(values.length - 1);
-    }
-  };
-
-  return (
-    <div className="trainer-profile-field">
-      <label>{label}</label>
-
-      <div
-        className="trainer-profile-chips"
-        onClick={() =>
-          inputRef.current?.focus()
-        }
-      >
-        {values.map((value, index) => (
-          <span
-            className="trainer-profile-chip"
-            key={`${value}-${index}`}
-          >
-            {value}
-
-            <button
-              type="button"
-              onClick={(event) => {
-                event.stopPropagation();
-                removeValue(index);
-              }}
-              aria-label={`Supprimer ${value}`}
-            >
-              ×
-            </button>
-          </span>
-        ))}
-
-        <input
-          ref={inputRef}
-          value={input}
-          onChange={(event) =>
-            setInput(event.target.value)
-          }
-          onKeyDown={handleKeyDown}
-          onBlur={() => {
-            if (input) {
-              addValue(input);
-            }
-          }}
-          placeholder={placeholder}
-        />
-      </div>
-    </div>
-  );
-}
 
 export default function TrainerProfile() {
   const { refreshUserContext } = useAuth();
@@ -180,8 +77,6 @@ export default function TrainerProfile() {
             profile.email || '',
           phone:
             profile.telephone || '',
-          address:
-            profile.adresse || '',
           postalCode:
             profile.code_postal || '',
           city:
@@ -239,6 +134,37 @@ export default function TrainerProfile() {
     setSaving(true);
 
     try {
+      let latitude = null;
+      let longitude = null;
+
+      try {
+        const coords =
+          await geocodeTrainer({
+            ville:
+              form.city,
+            codePostal:
+              form.postalCode,
+          });
+
+        if (
+          coords &&
+          hasValidCoords(
+            coords.latitude,
+            coords.longitude,
+          )
+        ) {
+          latitude =
+            coords.latitude;
+          longitude =
+            coords.longitude;
+        }
+      } catch (geocodingError) {
+        console.error(
+          'Géocodage du profil formateur impossible :',
+          geocodingError,
+        );
+      }
+
       const updated =
         await updateMyTrainerProfile({
           firstName:
@@ -247,12 +173,12 @@ export default function TrainerProfile() {
             form.lastName,
           phone:
             form.phone,
-          address:
-            form.address,
           city:
             form.city,
           postalCode:
             form.postalCode,
+          latitude,
+          longitude,
           skills:
             form.skills,
           equipment:
@@ -269,8 +195,6 @@ export default function TrainerProfile() {
           current.lastName,
         phone:
           updated?.telephone || '',
-        address:
-          updated?.adresse || '',
         postalCode:
           updated?.code_postal || '',
         city:
@@ -412,22 +336,17 @@ export default function TrainerProfile() {
             </p>
 
             <h2>
-              Adresse professionnelle
+              Localisation professionnelle
             </h2>
+
+            <p>
+              Votre ville et votre code postal sont utilisés pour calculer
+              votre proximité avec les missions. Votre adresse postale
+              complète n'est pas nécessaire.
+            </p>
           </div>
 
           <div className="trainer-profile-grid">
-            <div className="trainer-profile-field trainer-profile-field--wide">
-              <label>Adresse</label>
-
-              <input
-                value={form.address}
-                onChange={updateField(
-                  'address',
-                )}
-              />
-            </div>
-
             <div className="trainer-profile-field">
               <label>Code postal</label>
 
@@ -472,7 +391,7 @@ export default function TrainerProfile() {
           </div>
 
           <div className="trainer-profile-professional">
-            <ChipsInput
+            <CompetencyInput
               label="Compétences"
               values={form.skills}
               onChange={(skills) =>
@@ -481,10 +400,10 @@ export default function TrainerProfile() {
                   skills,
                 }))
               }
-              placeholder="Ex. SST, incendie..."
+              placeholder="Rechercher ou ajouter une compétence…"
             />
 
-            <ChipsInput
+            <EquipmentInput
               label="Matériel"
               values={form.equipment}
               onChange={(equipment) =>
@@ -493,7 +412,7 @@ export default function TrainerProfile() {
                   equipment,
                 }))
               }
-              placeholder="Ex. vidéoprojecteur..."
+              placeholder="Rechercher ou ajouter du matériel…"
             />
           </div>
         </section>

@@ -14,6 +14,9 @@ import {
   updateMission,
 } from '../services/missionsService';
 
+import CompetencyInput from '../components/CompetencyInput';
+import EquipmentInput from '../components/EquipmentInput';
+
 const EMPTY_MISSION = {
   client: '',
   intitule: '',
@@ -327,35 +330,45 @@ export default function MissionForm() {
           <div style={styles.twoColumns}>
             <Field
               label="Compétences requises"
-              help="Sépare les compétences avec un point-virgule."
+              help="Choisissez une compétence existante ou ajoutez-en une nouvelle au référentiel."
             >
-              <input
-                type="text"
-                name="competences"
-                value={
-                  mission.competences
+              <CompetencyInput
+                label=""
+                values={parseInputToArray(
+                  mission.competences,
+                )}
+                onChange={(values) =>
+                  setMission(
+                    (previousMission) => ({
+                      ...previousMission,
+                      competences:
+                        values.join(' ; '),
+                    }),
+                  )
                 }
-                onChange={
-                  handleMissionChange
-                }
-                placeholder="Ex. SST ; Incendie ; Évacuation"
-                style={styles.input}
+                placeholder="Rechercher ou ajouter une compétence…"
               />
             </Field>
 
             <Field
               label="Matériel requis"
-              help="Sépare les matériels avec un point-virgule."
+              help="Choisissez du matériel existant ou ajoutez une nouvelle référence."
             >
-              <input
-                type="text"
-                name="materiel"
-                value={mission.materiel}
-                onChange={
-                  handleMissionChange
+              <EquipmentInput
+                label=""
+                values={parseInputToArray(
+                  mission.materiel,
+                )}
+                onChange={(values) =>
+                  setMission(
+                    (previousMission) => ({
+                      ...previousMission,
+                      materiel:
+                        values.join(' ; '),
+                    }),
+                  )
                 }
-                placeholder="Ex. Extincteurs ; Générateur de flammes"
-                style={styles.input}
+                placeholder="Rechercher ou ajouter du matériel…"
               />
             </Field>
           </div>
@@ -645,6 +658,18 @@ function Field({
     </label>
   );
 }
+
+function parseInputToArray(value) {
+  if (!value) {
+    return [];
+  }
+
+  return String(value)
+    .split(/[;,\n]+/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
 
 function formatArrayForInput(value) {
   if (!Array.isArray(value)) {

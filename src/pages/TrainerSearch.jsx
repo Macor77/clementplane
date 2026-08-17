@@ -55,18 +55,112 @@ export default function TrainerSearch() {
   ] = useState(null);
 
 
+  const validateSearch =
+    (value) => {
+      const normalized =
+        value
+          .trim()
+          .replace(
+            /\s+/g,
+            ' ',
+          );
+
+      if (!normalized) {
+        return {
+          valid: false,
+          message:
+            'Saisissez le prénom et le nom complets du formateur, ou son adresse e-mail exacte.',
+        };
+      }
+
+      const looksLikeEmail =
+        normalized.includes(
+          '@',
+        );
+
+      if (looksLikeEmail) {
+        const emailPattern =
+          /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (
+          !emailPattern.test(
+            normalized,
+          )
+        ) {
+          return {
+            valid: false,
+            message:
+              "Saisissez l'adresse e-mail complète du formateur.",
+          };
+        }
+
+        return {
+          valid: true,
+          normalized,
+        };
+      }
+
+      const identityParts =
+        normalized
+          .split(' ')
+          .filter(Boolean);
+
+      if (
+        identityParts.length < 2
+      ) {
+        return {
+          valid: false,
+          message:
+            'La recherche par identité nécessite le prénom et le nom complets du formateur.',
+        };
+      }
+
+      return {
+        valid: true,
+        normalized,
+      };
+    };
+
+
+  const handleQueryChange =
+    (event) => {
+      setQuery(
+        event.target.value,
+      );
+
+      setError(null);
+      setSearched(false);
+      setResults([]);
+    };
+
+
   const handleSearch =
     async (event) => {
       event.preventDefault();
 
-      const normalized =
-        query.trim();
+      const validation =
+        validateSearch(
+          query,
+        );
 
       if (
-        normalized.length < 2
+        !validation.valid
       ) {
+        setResults([]);
+        setSearched(false);
         setError(
-          'Saisissez au moins 2 caractères.',
+          validation.message,
+        );
+        return;
+      }
+
+      if (
+        !currentOrganization?.id
+      ) {
+        setResults([]);
+        setSearched(false);
+        setError(
+          "Aucun organisme n'est actuellement sélectionné.",
         );
         return;
       }
@@ -74,14 +168,15 @@ export default function TrainerSearch() {
       setLoading(true);
       setError(null);
       setSearched(true);
+      setResults([]);
 
       try {
         const data =
           await searchGlobalTrainers({
             organizationId:
-              currentOrganization?.id,
+              currentOrganization.id,
             query:
-              normalized,
+              validation.normalized,
           });
 
         setResults(
@@ -161,9 +256,11 @@ export default function TrainerSearch() {
       <div
         style={{
           display: 'flex',
-          justifyContent: 'space-between',
+          justifyContent:
+            'space-between',
           gap: 16,
-          alignItems: 'flex-start',
+          alignItems:
+            'flex-start',
           marginBottom: 24,
         }}
       >
@@ -179,10 +276,22 @@ export default function TrainerSearch() {
           <p
             style={{
               marginTop: 8,
+              marginBottom: 0,
               color: '#64748b',
             }}
           >
-            Recherchez un formateur déjà présent sur Formaplane par nom, prénom ou e-mail.
+            Retrouvez un formateur que vous connaissez déjà à l'aide de son prénom et de son nom complets, ou de son adresse e-mail exacte.
+          </p>
+
+          <p
+            style={{
+              marginTop: 6,
+              marginBottom: 0,
+              color: '#94a3b8',
+              fontSize: 14,
+            }}
+          >
+            Les coordonnées des formateurs qui ne font pas encore partie de votre réseau restent confidentielles.
           </p>
         </div>
 
@@ -215,20 +324,18 @@ export default function TrainerSearch() {
           value={
             query
           }
-          onChange={(
-            event,
-          ) =>
-            setQuery(
-              event.target.value,
-            )
+          onChange={
+            handleQueryChange
           }
-          placeholder="Nom, prénom ou e-mail…"
+          placeholder="Prénom Nom ou adresse e-mail exacte…"
           autoFocus
+          autoComplete="off"
           style={{
             flex: 1,
             minHeight: 42,
             padding: '0 12px',
-            border: '1px solid #cbd5e1',
+            border:
+              '1px solid #cbd5e1',
             borderRadius: 8,
             fontSize: 15,
           }}
@@ -253,9 +360,11 @@ export default function TrainerSearch() {
           style={{
             marginBottom: 16,
             padding: 12,
-            border: '1px solid #fecaca',
+            border:
+              '1px solid #fecaca',
             borderRadius: 8,
-            background: '#fef2f2',
+            background:
+              '#fef2f2',
             color: '#b91c1c',
           }}
         >
@@ -270,35 +379,25 @@ export default function TrainerSearch() {
         <div
           style={{
             padding: 20,
-            border: '1px solid #e2e8f0',
+            border:
+              '1px solid #e2e8f0',
             borderRadius: 10,
             background: '#fff',
           }}
         >
           <strong>
-            Aucun formateur trouvé.
+            Aucun formateur correspondant trouvé.
           </strong>
 
           <p
             style={{
-              marginBottom: 14,
+              marginTop: 8,
+              marginBottom: 0,
               color: '#64748b',
             }}
           >
-            Vous pouvez créer une nouvelle fiche formateur.
+            Vérifiez l'identité ou l'adresse e-mail saisie. Si ce formateur n'utilise pas encore Formaplane, vous pourrez prochainement l'inviter à rejoindre votre réseau.
           </p>
-
-          <button
-            type="button"
-            className="button button--primary"
-            onClick={() =>
-              navigate(
-                '/formateur/new',
-              )
-            }
-          >
-            + Créer un formateur
-          </button>
         </div>
       ) : null}
 
@@ -334,14 +433,19 @@ export default function TrainerSearch() {
                     trainer.id
                   }
                   style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
+                    display:
+                      'flex',
+                    justifyContent:
+                      'space-between',
+                    alignItems:
+                      'center',
                     gap: 18,
                     padding: 16,
-                    border: '1px solid #e2e8f0',
+                    border:
+                      '1px solid #e2e8f0',
                     borderRadius: 10,
-                    background: '#fff',
+                    background:
+                      '#fff',
                   }}
                 >
                   <div>
@@ -355,39 +459,66 @@ export default function TrainerSearch() {
                         'Formateur'}
                     </div>
 
-                    {location ? (
+                    {trainer
+                      .already_in_network ? (
+                      <>
+                        {location ? (
+                          <div
+                            style={{
+                              marginTop: 4,
+                              color:
+                                '#64748b',
+                            }}
+                          >
+                            {location}
+                          </div>
+                        ) : null}
+
+                        {trainer.email ? (
+                          <div
+                            style={{
+                              marginTop: 3,
+                              color:
+                                '#64748b',
+                              fontSize: 14,
+                            }}
+                          >
+                            {
+                              trainer.email
+                            }
+                          </div>
+                        ) : null}
+                      </>
+                    ) : (
                       <div
                         style={{
                           marginTop: 4,
-                          color: '#64748b',
-                        }}
-                      >
-                        {location}
-                      </div>
-                    ) : null}
-
-                    {trainer.email ? (
-                      <div
-                        style={{
-                          marginTop: 3,
-                          color: '#64748b',
+                          color:
+                            '#64748b',
                           fontSize: 14,
                         }}
                       >
-                        {trainer.email}
+                        Présent sur Formaplane · Coordonnées confidentielles
                       </div>
-                    ) : null}
+                    )}
                   </div>
 
-                  {trainer.already_in_network ? (
+                  {trainer
+                    .already_in_network ? (
                     <span
                       style={{
-                        padding: '7px 10px',
-                        borderRadius: 999,
-                        background: '#ecfdf5',
-                        color: '#047857',
-                        fontWeight: 700,
-                        fontSize: 13,
+                        padding:
+                          '7px 10px',
+                        borderRadius:
+                          999,
+                        background:
+                          '#ecfdf5',
+                        color:
+                          '#047857',
+                        fontWeight:
+                          700,
+                        fontSize:
+                          13,
                       }}
                     >
                       Déjà dans mon réseau

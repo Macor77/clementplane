@@ -9,26 +9,20 @@ import {
   respondToMyMissionProposal,
 } from '../../services/trainerProposalService';
 
-
 const FILTERS = [
   {
     id: 'pending',
     label: 'À répondre',
   },
   {
-    id: 'accepted',
-    label: 'Acceptées',
-  },
-  {
     id: 'refused',
     label: 'Refusées',
   },
   {
-    id: 'other',
-    label: 'Autres',
+    id: 'history',
+    label: 'Historique',
   },
 ];
-
 
 function isExpired(proposal) {
   if (!proposal?.expires_at) {
@@ -43,7 +37,6 @@ function isExpired(proposal) {
   );
 }
 
-
 function getProposalCategory(proposal) {
   if (
     proposal.status ===
@@ -54,21 +47,26 @@ function getProposalCategory(proposal) {
   }
 
   if (
-    proposal.status === 'accepte' ||
-    proposal.status === 'affecte'
-  ) {
-    return 'accepted';
-  }
-
-  if (
-    proposal.status === 'refuse'
+    proposal.status ===
+    'refuse'
   ) {
     return 'refused';
   }
 
-  return 'other';
-}
+  /*
+   * Les propositions acceptées et les missions
+   * affectées appartiennent désormais à
+   * "Mes missions" et ne sont plus affichées ici.
+   */
+  if (
+    proposal.status === 'accepte' ||
+    proposal.status === 'affecte'
+  ) {
+    return 'missions';
+  }
 
+  return 'history';
+}
 
 function getStatusLabel(proposal) {
   if (
@@ -82,21 +80,16 @@ function getStatusLabel(proposal) {
   const labels = {
     proposition_envoyee:
       'À répondre',
-
-    accepte:
-      'Acceptée',
-
     refuse:
       'Refusée',
-
-    affecte:
-      'Mission confirmée',
-
     indisponible_affecte_ailleurs:
       'Indisponible',
-
     annule:
       'Annulée',
+    mission_pourvue:
+      'Mission pourvue',
+    desiste:
+      'Désistement',
   };
 
   return (
@@ -104,7 +97,6 @@ function getStatusLabel(proposal) {
     proposal.status
   );
 }
-
 
 function getStatusClass(proposal) {
   if (
@@ -118,20 +110,15 @@ function getStatusClass(proposal) {
   const classes = {
     proposition_envoyee:
       'pending',
-
-    accepte:
-      'accepted',
-
-    affecte:
-      'affected',
-
     refuse:
       'refused',
-
     indisponible_affecte_ailleurs:
       'unavailable',
-
     annule:
+      'cancelled',
+    mission_pourvue:
+      'cancelled',
+    desiste:
       'cancelled',
   };
 
@@ -140,7 +127,6 @@ function getStatusClass(proposal) {
     'cancelled'
   );
 }
-
 
 function formatDate(dateValue) {
   if (!dateValue) {
@@ -161,7 +147,6 @@ function formatDate(dateValue) {
     ),
   );
 }
-
 
 function formatDates(dates) {
   if (
@@ -191,7 +176,6 @@ function formatDates(dates) {
     })
     .join('\n');
 }
-
 
 export default function TrainerProposals() {
   const [
@@ -229,7 +213,6 @@ export default function TrainerProposals() {
     setError,
   ] = useState('');
 
-
   const loadProposals =
     async () => {
       setLoading(true);
@@ -239,9 +222,7 @@ export default function TrainerProposals() {
         const rows =
           await getMyMissionProposals();
 
-        setProposals(
-          rows,
-        );
+        setProposals(rows);
 
         setComments(
           Object.fromEntries(
@@ -249,7 +230,6 @@ export default function TrainerProposals() {
               (proposal) => [
                 proposal
                   .mission_formateur_id,
-
                 proposal
                   .response_comment ||
                   '',
@@ -258,9 +238,7 @@ export default function TrainerProposals() {
           ),
         );
       } catch (loadError) {
-        console.error(
-          loadError,
-        );
+        console.error(loadError);
 
         setError(
           'Impossible de charger vos propositions.',
@@ -270,35 +248,38 @@ export default function TrainerProposals() {
       }
     };
 
-
   useEffect(() => {
     loadProposals();
   }, []);
-
 
   const counts =
     useMemo(() => {
       const result = {
         pending: 0,
-        accepted: 0,
         refused: 0,
-        other: 0,
+        history: 0,
       };
 
       for (
-        const proposal of
-        proposals
+        const proposal of proposals
       ) {
-        result[
+        const category =
           getProposalCategory(
             proposal,
+          );
+
+        if (
+          Object.prototype.hasOwnProperty.call(
+            result,
+            category,
           )
-        ] += 1;
+        ) {
+          result[category] += 1;
+        }
       }
 
       return result;
     }, [proposals]);
-
 
   const filteredProposals =
     useMemo(
@@ -314,7 +295,6 @@ export default function TrainerProposals() {
         activeFilter,
       ],
     );
-
 
   const submitResponse =
     async (
@@ -332,9 +312,7 @@ export default function TrainerProposals() {
         await respondToMyMissionProposal({
           missionFormateurId:
             id,
-
           response,
-
           comment:
             comments[id] ||
             '',
@@ -342,9 +320,7 @@ export default function TrainerProposals() {
 
         await loadProposals();
 
-        setExpandedId(
-          null,
-        );
+        setExpandedId(null);
       } catch (submitError) {
         console.error(
           submitError,
@@ -355,16 +331,12 @@ export default function TrainerProposals() {
             'Impossible d’enregistrer votre réponse.',
         );
       } finally {
-        setSubmittingId(
-          null,
-        );
+        setSubmittingId(null);
       }
     };
 
-
   return (
     <div className="page-container trainer-proposals-page">
-
       <div className="page-heading">
         <div>
           <p className="page-eyebrow">
@@ -376,14 +348,16 @@ export default function TrainerProposals() {
           </h1>
 
           <p>
-            Consultez les missions qui
-            vous sont proposées et
-            répondez directement depuis
-            Formaplane.
+            Retrouvez ici uniquement les
+            propositions auxquelles vous
+            devez répondre et l’historique
+            de vos refus ou propositions
+            terminées. Une proposition
+            acceptée rejoint automatiquement
+            « Mes missions ».
           </p>
         </div>
       </div>
-
 
       {error ? (
         <div className="alert alert--error">
@@ -391,9 +365,7 @@ export default function TrainerProposals() {
         </div>
       ) : null}
 
-
       <div className="trainer-proposal-tabs">
-
         {FILTERS.map(
           (filter) => (
             <button
@@ -421,9 +393,7 @@ export default function TrainerProposals() {
             </button>
           ),
         )}
-
       </div>
-
 
       {loading ? (
         <div className="trainer-proposals-loading">
@@ -432,7 +402,6 @@ export default function TrainerProposals() {
       ) : filteredProposals.length ===
         0 ? (
         <div className="trainer-proposals-empty">
-
           <strong>
             Aucune proposition
           </strong>
@@ -441,14 +410,11 @@ export default function TrainerProposals() {
             Rien à afficher dans cette
             catégorie pour le moment.
           </span>
-
         </div>
       ) : (
         <div className="trainer-proposal-list">
-
           {filteredProposals.map(
             (proposal) => {
-
               const id =
                 proposal
                   .mission_formateur_id;
@@ -476,13 +442,9 @@ export default function TrainerProposals() {
                   className="trainer-proposal-card"
                   key={id}
                 >
-
                   <div className="trainer-proposal-card__summary">
-
                     <div className="trainer-proposal-card__main">
-
                       <div className="trainer-proposal-card__topline">
-
                         <span
                           className={`trainer-proposal-status trainer-proposal-status--${getStatusClass(
                             proposal,
@@ -505,7 +467,6 @@ export default function TrainerProposals() {
                             )}
                           </span>
                         ) : null}
-
                       </div>
 
                       <h2>
@@ -516,7 +477,6 @@ export default function TrainerProposals() {
                       </h2>
 
                       <div className="trainer-proposal-card__meta">
-
                         {proposal
                           .formation ? (
                           <span>
@@ -539,11 +499,8 @@ export default function TrainerProposals() {
                               .dates,
                           )}
                         </span>
-
                       </div>
-
                     </div>
-
 
                     <button
                       type="button"
@@ -560,15 +517,11 @@ export default function TrainerProposals() {
                         ? 'Fermer'
                         : 'Voir la proposition'}
                     </button>
-
                   </div>
-
 
                   {expanded ? (
                     <div className="trainer-proposal-detail">
-
                       <div className="trainer-proposal-detail__grid">
-
                         {proposal
                           .client ? (
                           <Detail
@@ -605,20 +558,6 @@ export default function TrainerProposals() {
                           />
                         ) : null}
 
-                        {proposal
-                          .expires_at ? (
-                          <Detail
-                            label="Répondre avant"
-                            value={
-                              new Date(
-                                proposal
-                                  .expires_at,
-                              ).toLocaleString(
-                                'fr-FR',
-                              )
-                            }
-                          />
-                        ) : null}
 
                         {proposal
                           .mission_notes ? (
@@ -631,13 +570,10 @@ export default function TrainerProposals() {
                             multiline
                           />
                         ) : null}
-
                       </div>
-
 
                       {canRespond ? (
                         <div className="trainer-proposal-response">
-
                           <label>
                             Commentaire facultatif
 
@@ -656,7 +592,6 @@ export default function TrainerProposals() {
                                     current,
                                   ) => ({
                                     ...current,
-
                                     [id]:
                                       event
                                         .target
@@ -668,9 +603,7 @@ export default function TrainerProposals() {
                             />
                           </label>
 
-
                           <div className="trainer-proposal-response__actions">
-
                             <button
                               type="button"
                               className="trainer-proposal-refuse"
@@ -707,9 +640,7 @@ export default function TrainerProposals() {
                                 ? 'Enregistrement…'
                                 : 'Accepter la mission'}
                             </button>
-
                           </div>
-
                         </div>
                       ) : (
                         <div
@@ -722,22 +653,17 @@ export default function TrainerProposals() {
                           )}
                         </div>
                       )}
-
                     </div>
                   ) : null}
-
                 </article>
               );
             },
           )}
-
         </div>
       )}
-
     </div>
   );
 }
-
 
 function Detail({
   label,
@@ -750,7 +676,6 @@ function Detail({
 
   return (
     <div className="trainer-proposal-detail__row">
-
       <span>
         {label}
       </span>
@@ -765,7 +690,6 @@ function Detail({
       >
         {value}
       </strong>
-
     </div>
   );
 }

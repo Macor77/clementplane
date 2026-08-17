@@ -6,10 +6,6 @@ export const hasValidCoords = (lat, lon) =>
   Number.isFinite(Number(lon));
 
 const buildGeocodeQueries = (formateur) => {
-  const adresse = String(
-    formateur.adresse ?? ''
-  ).trim();
-
   const codePostal = String(
     formateur.codePostal ??
       formateur.code_postal ??
@@ -21,7 +17,6 @@ const buildGeocodeQueries = (formateur) => {
   ).trim();
 
   const queries = [
-    [adresse, codePostal, ville, 'France'],
     [codePostal, ville, 'France'],
     [ville, codePostal, 'France'],
     [ville, 'France'],

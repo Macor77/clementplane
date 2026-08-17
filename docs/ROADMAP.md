@@ -1,7 +1,7 @@
 ROADMAP - Formaplane
-Version : 8.0  
-Dernière mise à jour : 11/08/2026  
-Correspond au Sprint 8 terminé et validé.
+Version : 9.0  
+Dernière mise à jour : 14/08/2026  
+Correspond au Sprint 9 et à la nouvelle planification pré-bêta de Formaplane.
 ---
 Vision
 Formaplane a pour ambition de devenir la plateforme de référence permettant aux organismes de formation de :
@@ -689,162 +689,462 @@ La base multi-organismes prévue initialement pour un sprint ultérieur est donc
 
 ---
 
-Sprint 9 — Notifications, relances et automatisations
+Sprint 9 — Identité Formaplane, domaine et marque ✅
 
 Objectif
 
-Automatiser les échanges et les relances autour des propositions de missions.
+Donner à l'application son identité définitive et préparer son exploitation sous le nom Formaplane.
 
-- notifications (email, SMS, notifications) ;
-- relances automatiques ;
+Réalisations
+- choix définitif du nom Formaplane ;
+- acquisition de `formaplane.fr` ;
+- acquisition de `formaplane.com` ;
+- configuration du domaine ;
+- création et configuration de `contact@formaplane.fr` dans Google Workspace ;
+- tests d'envoi et de réception ;
+- configuration de l'expéditeur ;
+- dépôt de la marque Formaplane auprès de l'INPI ;
+- travail sur l'identité visuelle et le logo.
+
+Résultat
+
+Formaplane dispose de son nom définitif, de ses domaines, de son infrastructure de messagerie et de la base de son identité de marque.
+
+---
+
+Sprint 10 — Préparation à la bêta
+
+Objectif
+
+Stabiliser les éléments structurels, la confidentialité des données et les parcours fondamentaux avant l'arrivée des premiers formateurs et organismes de formation pilotes.
+
+Ce sprint ne vise pas à rendre Formaplane parfait. Il vise à rendre la plateforme suffisamment fiable, simple et sécurisée pour être utilisée par de vrais utilisateurs.
+
+Axes prévus
+
+Confidentialité et recherche des formateurs
+- supprimer la recherche trop permissive à partir de deux caractères ;
+- supprimer la recherche libre par prénom seul ;
+- définir une recherche suffisamment précise, notamment par identité et/ou adresse e-mail exacte ;
+- ne jamais exposer l'adresse e-mail d'un formateur à un OF qui n'est pas lié à lui ;
+- limiter les informations visibles avant la mise en relation ;
+- distinguer un formateur déjà partenaire, un formateur présent sur Formaplane et un formateur absent ;
+- permettre l'invitation d'un formateur absent ;
+- vérifier les règles RLS associées.
+
+Principe :
+> Formaplane ne doit pas devenir un annuaire permettant à un organisme de reconstituer le réseau de formateurs d'un autre organisme.
+
+Référentiel des compétences
+- remplacer progressivement la saisie totalement libre par une recherche avec suggestions ;
+- proposer les compétences déjà existantes ;
+- permettre l'ajout d'une compétence absente ;
+- éviter les doublons et variantes inutiles ;
+- préparer un référentiel Formaplane administrable ;
+- conserver la possibilité future de fusionner des doublons et gérer des synonymes.
+
+Référentiel du matériel
+- appliquer la même logique que pour les compétences ;
+- suggestions automatiques ;
+- sélection dans le référentiel ;
+- ajout d'un matériel absent ;
+- prévention des doublons.
+
+Géocodage automatique
+- géocoder automatiquement une adresse lors de la création ou de la modification d'un formateur ;
+- supprimer toute manipulation technique dans le parcours normal ;
+- conserver la gestion des erreurs et les stratégies de fallback existantes ;
+- réserver les éventuels outils de correction manuelle à l'administration.
+
+Gestion des profils
+
+Espace OF :
+- permettre la modification du prénom ;
+- permettre la modification du nom ;
+- permettre la gestion des informations du compte ;
+- prévoir une procédure sécurisée pour modifier l'adresse e-mail.
+
+Espace formateur :
+- permettre la modification du prénom ;
+- permettre la modification du nom ;
+- permettre la gestion des informations du compte ;
+- prévoir une procédure sécurisée pour modifier l'adresse e-mail ;
+- clarifier les informations relevant du compte et celles relevant du profil formateur.
+
+Suppression du compte
+- définir les règles de suppression d'un compte ;
+- distinguer compte utilisateur, profil formateur, relations avec les OF, missions et historique ;
+- ne jamais supprimer les données métier appartenant à un organisme lorsqu'un utilisateur ferme son compte ;
+- déterminer les données à supprimer, anonymiser ou conserver ;
+- prévoir au minimum une procédure claire de demande de suppression avant la bêta.
+
+Espace formateur — propositions et missions
+
+Réorganiser « Mes propositions » autour des catégories :
+- À répondre ;
+- Option en attente ;
+- Acceptées ;
+- Refusées.
+
+Règles :
+- ne plus afficher par défaut les propositions dont les dates sont expirées ;
+- conserver les anciennes propositions dans un historique ;
+- privilégier les missions futures et les actions nécessaires sur la page d'accueil formateur.
+
+Navigation OF
+- afficher clairement « Espace Organisme de Formation » ;
+- réorganiser le menu autour de : Accueil, Formateurs, Missions, Planning, Carte, Paramètres ;
+- placer la déconnexion en bas de la barre latérale ;
+- mieux afficher le nom de l'organisme et éviter les coupures ;
+- mieux afficher le statut et le contexte de l'utilisateur ;
+- harmoniser l'expérience avec l'espace formateur.
+
+Missions OF
+- revoir et stabiliser les statuts métier ;
+- gérer correctement les missions futures, passées, réalisées et annulées ;
+- prendre en compte les missions multi-dates ;
+- ajouter recherche, filtres et tris essentiels ;
+- préparer l'archivage des missions.
+
+L'affichage alternatif en cartes ou en lignes pourra être développé ultérieurement.
+
+Résultat attendu
+
+À la fin du Sprint 10, Formaplane doit pouvoir accueillir ses premiers utilisateurs pilotes sans exposer inutilement les données des formateurs et sans créer de dette importante dans les référentiels ou les parcours essentiels.
+
+---
+
+Sprint 11 — Brevo et emails transactionnels
+
+Objectif
+
+Donner à Formaplane un véritable système de communication externe automatisé.
+
+Infrastructure
+- intégration de Brevo ;
+- configuration de l'expéditeur Formaplane ;
+- authentification du domaine ;
+- architecture centralisée d'envoi ;
+- gestion des modèles d'emails ;
+- journalisation des envois ;
+- gestion des erreurs.
+
+Emails à intégrer progressivement
+- invitation d'un formateur ;
+- proposition de mission ;
+- confirmation de réponse ;
+- affectation ;
+- annulation ;
+- modification importante d'une mission ;
+- autres emails transactionnels utiles au parcours utilisateur.
+
+Principe
+
+Les emails métier doivent être générés par Formaplane et ne pas dépendre d'une action manuelle de l'organisme.
+
+---
+
+Sprint 12 — Notifications et relances
+
+Objectif
+
+Faire de Formaplane un outil proactif capable d'attirer l'attention de l'utilisateur sur les actions importantes.
+
+Notifications
+- nouvelle proposition ;
+- acceptation ;
+- refus ;
+- affectation ;
+- modification importante ;
+- annulation ;
+- conflit lorsque pertinent ;
+- évolution de disponibilité lorsque pertinent.
+
+Relances
+- relances automatiques des propositions sans réponse ;
 - suivi des réponses ;
-- arrêt automatique des propositions lorsqu'une mission est pourvue.
+- arrêt des relances lorsqu'une réponse rend la relance inutile.
+
+Mission pourvue
+Lorsqu'une mission est pourvue :
+- arrêt des relances ;
+- mise à jour des propositions concernées ;
+- information des utilisateurs lorsque nécessaire.
+
+Préparation future
+- SMS ;
+- notifications Push ;
+- préférences individuelles de notification.
 
 ---
-Sprint 10 — Réseau et collaboration
+
+Jalon — Début de la bêta Formaplane
+
+Après stabilisation des Sprints 10 à 12, Formaplane pourra commencer à accueillir progressivement :
+- les premiers formateurs pilotes ;
+- quelques organismes de formation pilotes.
+
+Le lancement de la bêta ne signifie pas que Formaplane est terminé.
+
+Il permet au contraire de commencer à orienter les évolutions suivantes à partir de comportements et de retours utilisateurs réels.
+
+---
+
+Sprint 13 — Partage des disponibilités
+
 Objectif
-Développer la dimension collaborative de Formaplane.
+
+Permettre au formateur d'utiliser Formaplane pour communiquer activement ses disponibilités à ses organismes partenaires.
+
+Fonction principale
+
+Ajouter un bouton :
+> Partager mes disponibilités
+
+Contacts
+Le formateur peut :
+- sélectionner ses OF partenaires déjà présents sur Formaplane ;
+- ajouter un contact externe ;
+- enregistrer son prénom, son nom, son organisme et son adresse e-mail ;
+- retrouver automatiquement les contacts enregistrés lors du prochain partage ;
+- cocher ou décocher les destinataires avant chaque envoi.
+
+Partage
+- génération d'un email permettant au destinataire de consulter les disponibilités pertinentes du formateur ;
+- exploitation de Brevo et de l'infrastructure créée lors des Sprints 11 et 12.
+
+OF utilisant déjà Formaplane
+Lorsque le destinataire utilise Formaplane :
+- enrichir progressivement le partage avec les informations pertinentes de la relation OF / formateur ;
+- permettre à terme de rapprocher les disponibilités communiquées des missions à pourvoir de l'OF.
+
+Vision
+
+Cette fonctionnalité doit également pouvoir devenir un levier naturel d'acquisition de nouveaux organismes de formation.
+
 ---
-Réseau de formateurs
-invitations ;
-demandes de collaboration ;
-formateurs référencés ;
-formateurs non référencés ;
-annuaire partagé ;
-historique des collaborations.
----
-Référencement
-statut du formateur dans chaque OF ;
-fiche commune ;
-données propres à chaque OF ;
-notes internes isolées ;
-compétences partagées ou validées.
----
-Recherche étendue
-recherche dans son propre réseau ;
-recherche dans le réseau Formaplane ;
-profils visibles selon les autorisations ;
-demandes de mise en relation.
----
-Sprint 11 — SaaS multi-organismes
+
+Sprint 14 — Expérience utilisateur et productivité
+
 Objectif
-Ouvrir Formaplane à plusieurs organismes avec une séparation stricte des données.
+
+Améliorer Formaplane à partir des premiers retours des utilisateurs pilotes.
+
+Planning formateur
+- faire évoluer le planning vers une expérience proche des standards d'un agenda moderne ;
+- envisager une vue mois ;
+- envisager une vue semaine ;
+- afficher clairement Disponible, Indisponible, Option et Mission ;
+- faciliter la saisie et la modification des disponibilités.
+
+Missions OF avancées
+- affichage en liste ;
+- affichage en cartes ;
+- choix de la vue ;
+- filtres avancés ;
+- tris ;
+- recherche ;
+- archivage ;
+- actions rapides.
+
+Recherche globale
+Ajouter une barre de recherche globale permettant de retrouver rapidement, selon les droits de l'utilisateur :
+- formateurs ;
+- missions ;
+- clients lorsque pertinent ;
+- autres éléments principaux de l'application.
+
+Polish issu de la bêta
+- ergonomie ;
+- navigation ;
+- responsive ;
+- formulaires ;
+- messages d'erreur ;
+- terminologie ;
+- simplification des actions ;
+- performances.
+
+Principe
+
+Une partie de ce sprint est volontairement laissée ouverte afin que les vrais retours utilisateurs déterminent les améliorations prioritaires.
+
 ---
-Organisations
-création d'un organisme ;
-gestion des utilisateurs ;
-rattachement à une organisation ;
-paramètres propres à l'OF.
+
+Sprint 15 — Réseau et collaboration
+
+Objectif
+
+Transformer progressivement Formaplane en réseau professionnel entre organismes de formation et formateurs.
+
+Une partie de l'architecture nécessaire existe déjà grâce au Sprint 8.
+
+Fonctionnalités envisagées
+- invitations ;
+- demandes de collaboration ;
+- gestion enrichie des relations OF / formateurs ;
+- historique des collaborations ;
+- profils visibles selon les autorisations ;
+- demandes de mise en relation ;
+- enrichissement du réseau propre à chaque OF.
+
+Principe de confidentialité
+
+Formaplane n'est pas un annuaire public de formateurs.
+
+La visibilité d'un profil et de ses informations dépend :
+- de la relation existante ;
+- des autorisations ;
+- du contexte de recherche ;
+- des règles de confidentialité de la plateforme.
+
 ---
+
+Sprint 16 — Administration SaaS et organisations avancées
+
+Objectif
+
+Finaliser les fonctions nécessaires à l'exploitation de Formaplane comme véritable SaaS multi-organismes.
+
+Une partie importante du modèle multi-organismes ayant déjà été développée au Sprint 8, ce sprint se concentre sur l'administration avancée.
+
+Gestion des utilisateurs d'un OF
+- invitation de collaborateurs ;
+- gestion des accès ;
+- retrait d'un utilisateur d'une organisation.
+
 Rôles
-administrateur ;
-dirigeant ;
-coordinateur ;
-assistant ;
-formateur.
----
+- administrateur ;
+- dirigeant ;
+- coordinateur ;
+- assistant ;
+- autres rôles pertinents selon les besoins constatés.
+
 Sécurité
-isolation des données ;
-RLS par organisme ;
-contrôle des accès ;
-journalisation ;
-confidentialité des missions ;
-confidentialité des clients ;
-confidentialité des notes internes.
+- finalisation et audit des RLS ;
+- contrôle fin des accès ;
+- journalisation ;
+- audit des règles de confidentialité.
+
+Administration Formaplane
+- gestion des organisations ;
+- gestion des comptes ;
+- support ;
+- licences ;
+- abonnements ;
+- suivi de consommation ;
+- administration globale.
+
 ---
-Administration
-gestion des abonnements ;
-gestion des licences ;
-paramétrage ;
-support ;
-suivi de consommation.
----
-Sprint 12 — Pilotage et statistiques
+
+Sprint 17 — Pilotage et statistiques
+
 Objectif
-Donner aux dirigeants une vision complète de leur activité.
----
-Indicateurs
-nombre de missions ;
-missions affectées ;
-missions non pourvues ;
-délai moyen d'affectation ;
-taux d'acceptation ;
-taux de refus ;
-nombre de propositions par mission ;
-chiffre d'affaires ;
-coût formateur ;
-marge par mission ;
-marge par client ;
-marge par formateur ;
-kilomètres ;
-répartition géographique ;
-taux de remplissage.
----
+
+Donner aux dirigeants et coordinateurs une vision complète de leur activité.
+
+Indicateurs envisagés
+- nombre de missions ;
+- missions affectées ;
+- missions non pourvues ;
+- délai moyen d'affectation ;
+- taux d'acceptation ;
+- taux de refus ;
+- nombre de propositions par mission ;
+- chiffre d'affaires ;
+- coût formateur ;
+- marge par mission ;
+- marge par client ;
+- marge par formateur ;
+- kilomètres ;
+- répartition géographique ;
+- taux de remplissage.
+
 Exports
-Excel ;
-CSV ;
-PDF ;
-rapports mensuels ;
-rapports clients ;
-rapports formateurs.
+- Excel ;
+- CSV ;
+- PDF ;
+- rapports mensuels ;
+- rapports clients ;
+- rapports formateurs.
+
 ---
+
 Idées futures
-Évolutions UI envisagées
-Tableau de bord intelligent (ancien mini Sprint 7.3).
-Vue Carte avancée des missions (ancien mini Sprint 7.4).
-Ces améliorations seront réalisées ultérieurement afin de perfectionner la plateforme, sans bloquer les évolutions métier prioritaires.
-Intelligence artificielle
-recommandation automatique du meilleur formateur ;
-détection des missions à risque ;
-prévision des disponibilités ;
-suggestions de relance ;
-détection d'anomalies ;
-optimisation des tournées ;
-assistant de planification ;
-estimation du coût d'une mission.
----
-Mobilité
-application mobile ;
-notifications Push ;
-réponse rapide ;
-consultation hors bureau ;
-ajout de disponibilités depuis un téléphone.
----
+
+Messagerie
+- Envoyer et recevoir des messages entre OF et formateurs via Formaplane
+
 Documents
-convention ;
-convocation ;
-ordre de mission ;
-feuille de présence ;
-attestation ;
-certificat ;
-signature électronique ;
-archivage.
+- convention ;
+- convocation ;
+- ordre de mission ;
+- feuille de présence ;
+- attestation ;
+- certificat ;
+- signature électronique ;
+- archivage.
+
+Synchronisation calendrier
+- Google Calendar ;
+- Outlook ;
+- export calendrier ;
+- synchronisation des missions ;
+- synchronisation éventuelle des indisponibilités.
+
+Mobilité
+- optimisation mobile ;
+- application mobile si le besoin est confirmé ;
+- notifications Push ;
+- réponse rapide ;
+- ajout de disponibilités depuis un téléphone.
+
+SMS
+- propositions urgentes ;
+- relances ;
+- notifications importantes ;
+- préférences utilisateurs.
+
+Automatisations avancées
+- import de missions ;
+- duplication en série ;
+- missions récurrentes ;
+- affectation automatique selon des règles ;
+- génération automatique de documents.
+
+Intelligence artificielle
+- recommandation automatique du meilleur formateur ;
+- détection des missions à risque ;
+- prévision des disponibilités ;
+- suggestions de relance ;
+- détection d'anomalies ;
+- optimisation des tournées ;
+- assistant de planification ;
+- estimation du coût d'une mission.
+
 ---
-Automatisation
-import de missions ;
-duplication en série ;
-missions récurrentes ;
-relances automatiques ;
-affectation automatique selon des règles ;
-synchronisation agenda ;
-génération de documents.
----
+
 Méthode de clôture d'un sprint
+
 Un sprint n'est considéré comme terminé que lorsque :
-le développement est réalisé ;
-les tests sont validés ;
-les données Supabase sont vérifiées ;
-la documentation est mise à jour ;
-la roadmap est synchronisée ;
-le CHANGELOG est mis à jour ;
-le code est poussé sur GitHub ;
-Vercel est déployé ;
-la version en ligne est testée ;
-un ZIP complet du projet est créé.
+- le développement est réalisé ;
+- les tests sont validés ;
+- les données Supabase sont vérifiées ;
+- la documentation est mise à jour ;
+- la roadmap est synchronisée ;
+- le CHANGELOG est mis à jour ;
+- le code est poussé sur GitHub ;
+- Vercel est déployé ;
+- la version en ligne est testée ;
+- un ZIP complet du projet est créé.
+
 ---
+
 Priorité actuelle
+
 La prochaine étape est :
+
 ```text
-Sprint 9 — Notifications, relances et automatisations
+Sprint 10 — Préparation à la bêta
 ```
-Le moteur de missions étant désormais opérationnel, Formaplane doit devenir un outil de pilotage quotidien capable d'indiquer immédiatement au coordinateur les actions à effectuer.
+
+Avant d'accélérer les emails, notifications et invitations, Formaplane doit stabiliser la confidentialité, les référentiels de données et les parcours fondamentaux qui seront utilisés par les premiers formateurs et organismes pilotes.

@@ -11,12 +11,20 @@ import {
 
 import { supabase } from '../lib/supabaseClient';
 import { useAuth } from '../context/AuthContext';
+import CompetencyInput from '../components/CompetencyInput';
+import EquipmentInput from '../components/EquipmentInput';
 
 import {
-  createOrganizationTrainerRelation,
+  createTrainerForOrganization,
   getOrganizationTrainerRelation,
   updateOrganizationTrainerRelation,
+  updateUnclaimedTrainerForOrganization,
 } from '../services/formateursService';
+
+import {
+  geocodeTrainer,
+  hasValidCoords,
+} from '../services/geocodingService';
 
 
 const EMPTY = {
@@ -26,7 +34,7 @@ const EMPTY = {
   codePostal: '',
   competences: [],
   materiel: [],
-  statut: 'Inactif',
+  statut: 'Standard',
   tarif: '',
   telephone: '',
   email: '',
@@ -66,6 +74,11 @@ export default function FormateurForm() {
     err,
     setErr,
   ] = useState(null);
+
+  const [
+    isClaimed,
+    setIsClaimed,
+  ] = useState(false);
 
 
   const norm =
@@ -136,6 +149,15 @@ export default function FormateurForm() {
         const data =
           trainerResult.data;
 
+        const claimed =
+          Boolean(
+            data.user_id,
+          );
+
+        setIsClaimed(
+          claimed,
+        );
+
 
         setForm({
           prenom:
@@ -147,12 +169,18 @@ export default function FormateurForm() {
             '',
 
           ville:
-            data.ville ??
-            '',
+            claimed
+              ? data.ville ??
+                ''
+              : relation.ville ??
+                '',
 
           codePostal:
-            data.code_postal ??
-            '',
+            claimed
+              ? data.code_postal ??
+                ''
+              : relation.code_postal ??
+                '',
 
           competences:
             Array.isArray(
@@ -172,7 +200,7 @@ export default function FormateurForm() {
 
           statut:
             relation.statut ??
-            'Inactif',
+            'Standard',
 
           tarif:
             relation.tarif ??
@@ -244,6 +272,7 @@ export default function FormateurForm() {
     values,
     onChangeValues,
     placeholder,
+    disabled = false,
   }) {
     const [
       input,
@@ -256,6 +285,10 @@ export default function FormateurForm() {
 
     const addValue =
       (value) => {
+        if (disabled) {
+          return;
+        }
+
         const normalized =
           norm(value);
 
@@ -279,6 +312,10 @@ export default function FormateurForm() {
 
     const removeAt =
       (index) => {
+        if (disabled) {
+          return;
+        }
+
         const next =
           [...values];
 
@@ -295,6 +332,10 @@ export default function FormateurForm() {
 
     const handleKeyDown =
       (event) => {
+        if (disabled) {
+          return;
+        }
+
         if (
           event.key ===
             'Enter' ||
@@ -326,6 +367,10 @@ export default function FormateurForm() {
 
     const handleBlur =
       () => {
+        if (disabled) {
+          return;
+        }
+
         if (input) {
           addValue(
             input,
@@ -336,6 +381,10 @@ export default function FormateurForm() {
 
     const handlePaste =
       (event) => {
+        if (disabled) {
+          return;
+        }
+
         const text =
           event.clipboardData.getData(
             'text',
@@ -417,9 +466,11 @@ export default function FormateurForm() {
             alignItems:
               'center',
           }}
-          onClick={() =>
-            inputRef.current?.focus()
-          }
+          onClick={() => {
+            if (!disabled) {
+              inputRef.current?.focus();
+            }
+          }}
         >
 
           {values.map(
@@ -454,34 +505,36 @@ export default function FormateurForm() {
               >
                 {value}
 
-                <button
-                  type="button"
-                  onClick={() =>
-                    removeAt(
-                      index,
-                    )
-                  }
-                  aria-label={`Supprimer ${value}`}
-                  title="Supprimer"
-                  style={{
-                    border:
-                      'none',
+                {!disabled ? (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      removeAt(
+                        index,
+                      )
+                    }
+                    aria-label={`Supprimer ${value}`}
+                    title="Supprimer"
+                    style={{
+                      border:
+                        'none',
 
-                    background:
-                      'transparent',
+                      background:
+                        'transparent',
 
-                    cursor:
-                      'pointer',
+                      cursor:
+                        'pointer',
 
-                    fontSize:
-                      14,
+                      fontSize:
+                        14,
 
-                    lineHeight:
-                      1,
-                  }}
-                >
-                  ×
-                </button>
+                      lineHeight:
+                        1,
+                    }}
+                  >
+                    ×
+                  </button>
+                ) : null}
               </span>
             ),
           )}
@@ -511,7 +564,12 @@ export default function FormateurForm() {
               handlePaste
             }
             placeholder={
-              placeholder
+              disabled
+                ? ''
+                : placeholder
+            }
+            disabled={
+              disabled
             }
             style={{
               flex: 1,
@@ -547,52 +605,13 @@ export default function FormateurForm() {
       }
 
 
-      const trainerPayload = {
-        prenom:
-          form.prenom ||
-          null,
-
-        nom:
-          form.nom ||
-          null,
-
-        ville:
-          form.ville ||
-          null,
-
-        code_postal:
-          form.codePostal ||
-          null,
-
-        competences:
-          form.competences ??
-          [],
-
-        materiel:
-          form.materiel ??
-          [],
-
-        telephone:
-          form.telephone ||
-          null,
-
-        email:
-          form.email ||
-          null,
-
-        adresse:
-          form.adresse ||
-          null,
-      };
-
-
       const relationPayload = {
         organizationId:
           currentOrganization.id,
 
         statut:
           form.statut ||
-          'Inactif',
+          'Standard',
 
         tarif:
           form.tarif,
@@ -603,37 +622,21 @@ export default function FormateurForm() {
 
 
       try {
-        if (id) {
-          const {
-            error:
-              trainerError,
-          } =
-            await supabase
-              .from(
-                'trainers',
-              )
-              .update(
-                trainerPayload,
-              )
-              .eq(
-                'id',
-                id,
-              );
-
-
-          if (
-            trainerError
-          ) {
-            throw trainerError;
-          }
-
-
+        /*
+         * Profil revendiqué :
+         * l'OF ne modifie plus aucune donnée globale de trainers.
+         * Il ne peut gérer que ses données privées de relation :
+         * statut, tarif et notes.
+         */
+        if (
+          id &&
+          isClaimed
+        ) {
           await updateOrganizationTrainerRelation({
             ...relationPayload,
             trainerId:
               id,
           });
-
 
           navigate(
             `/formateur/view/${id}`,
@@ -643,59 +646,117 @@ export default function FormateurForm() {
         }
 
 
-        const {
-          data,
-          error:
-            trainerError,
-        } =
-          await supabase
-            .from(
-              'trainers',
-            )
-            .insert([
-              trainerPayload,
-            ])
-            .select()
-            .single();
-
-
-        if (
-          trainerError
-        ) {
-          throw trainerError;
-        }
-
+        /*
+         * Profil non revendiqué :
+         * la localisation appartient à cet OF.
+         * Elle est géocodée à chaque enregistrement.
+         * En cas d'échec, le GPS est volontairement neutralisé.
+         */
+        let latitude = null;
+        let longitude = null;
 
         try {
-          await createOrganizationTrainerRelation({
-            ...relationPayload,
-            trainerId:
-              data.id,
-          });
-        } catch (
-          relationError
-        ) {
-          /*
-           * Si le rattachement échoue pendant
-           * la création, on évite de laisser
-           * une fiche orpheline créée par erreur.
-           */
-          await supabase
-            .from(
-              'trainers',
-            )
-            .delete()
-            .eq(
-              'id',
-              data.id,
-            );
+          const coords =
+            await geocodeTrainer({
+              ville:
+                form.ville,
 
-          throw relationError;
+              codePostal:
+                form.codePostal,
+            });
+
+          if (
+            coords &&
+            hasValidCoords(
+              coords.latitude,
+              coords.longitude,
+            )
+          ) {
+            latitude =
+              coords.latitude;
+
+            longitude =
+              coords.longitude;
+          }
+        } catch (
+          geocodingError
+        ) {
+          console.error(
+            'Géocodage de la localisation du formateur impossible :',
+            geocodingError,
+          );
         }
+
+
+        const commonPayload = {
+          organizationId:
+            currentOrganization.id,
+
+          prenom:
+            form.prenom,
+
+          nom:
+            form.nom,
+
+          competences:
+            form.competences ??
+            [],
+
+          materiel:
+            form.materiel ??
+            [],
+
+          telephone:
+            form.telephone,
+
+          email:
+            form.email,
+
+          ville:
+            form.ville,
+
+          codePostal:
+            form.codePostal,
+
+          latitude,
+
+          longitude,
+
+          statut:
+            form.statut ||
+            'Standard',
+
+          tarif:
+            form.tarif,
+
+          notes:
+            form.notes,
+        };
+
+
+        if (id) {
+          await updateUnclaimedTrainerForOrganization({
+            ...commonPayload,
+            trainerId:
+              id,
+          });
+
+          navigate(
+            `/formateur/view/${id}`,
+          );
+
+          return;
+        }
+
+
+        const trainerId =
+          await createTrainerForOrganization(
+            commonPayload,
+          );
 
 
         navigate(
-          `/formateur/view/${data.id}`,
+          `/formateur/view/${trainerId}`,
         );
       } catch (
         submitError
@@ -709,7 +770,6 @@ export default function FormateurForm() {
         );
       }
     };
-
 
   if (loading) {
     return (
@@ -780,7 +840,10 @@ export default function FormateurForm() {
             onChange
           }
           required
-        />
+                  disabled={
+            isClaimed
+          }
+/>
 
 
         <input
@@ -793,7 +856,25 @@ export default function FormateurForm() {
             onChange
           }
           required
-        />
+                  disabled={
+            isClaimed
+          }
+/>
+
+
+        {isClaimed ? (
+          <div
+            style={{
+              padding: 10,
+              borderRadius: 8,
+              background: '#f8fafc',
+              color: '#475569',
+              fontSize: 14,
+            }}
+          >
+            Profil géré par le formateur. Ses informations globales (identité, coordonnées, localisation, compétences et matériel) sont en lecture seule. Votre organisme peut toujours gérer son statut, son tarif et ses notes privées.
+          </div>
+        ) : null}
 
 
         <input
@@ -804,6 +885,9 @@ export default function FormateurForm() {
           }
           onChange={
             onChange
+          }
+          disabled={
+            isClaimed
           }
         />
 
@@ -817,17 +901,16 @@ export default function FormateurForm() {
           onChange={
             onChange
           }
+          disabled={
+            isClaimed
+          }
         />
 
 
-        <ChipsInput
+        <CompetencyInput
           label="Compétences"
-          values={
-            form.competences
-          }
-          onChangeValues={(
-            values,
-          ) =>
+          values={form.competences}
+          onChange={(values) =>
             setForm(
               (previous) => ({
                 ...previous,
@@ -836,18 +919,17 @@ export default function FormateurForm() {
               }),
             )
           }
-          placeholder="Tape et appuie sur Entrée ou une virgule…"
+          placeholder="Rechercher ou ajouter une compétence…"
+          disabled={
+            isClaimed
+          }
         />
 
 
-        <ChipsInput
+        <EquipmentInput
           label="Matériel"
-          values={
-            form.materiel
-          }
-          onChangeValues={(
-            values,
-          ) =>
+          values={form.materiel}
+          onChange={(values) =>
             setForm(
               (previous) => ({
                 ...previous,
@@ -856,7 +938,10 @@ export default function FormateurForm() {
               }),
             )
           }
-          placeholder="Tape et appuie sur Entrée ou une virgule…"
+          placeholder="Rechercher ou ajouter du matériel…"
+          disabled={
+            isClaimed
+          }
         />
 
 
@@ -883,7 +968,10 @@ export default function FormateurForm() {
           onChange={
             onChange
           }
-        />
+                  disabled={
+            isClaimed
+          }
+/>
 
 
         <input
@@ -896,19 +984,10 @@ export default function FormateurForm() {
           onChange={
             onChange
           }
-        />
-
-
-        <input
-          name="adresse"
-          placeholder="Adresse"
-          value={
-            form.adresse
+                  disabled={
+            isClaimed
           }
-          onChange={
-            onChange
-          }
-        />
+/>
 
 
         <label>
@@ -950,8 +1029,8 @@ export default function FormateurForm() {
             Inactif
           </option>
 
-          <option value="Black">
-            Black
+          <option value="Exclu">
+            Exclu
           </option>
         </select>
 

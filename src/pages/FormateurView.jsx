@@ -756,12 +756,18 @@ export default function FormateurView() {
           '',
 
         ville:
-          data.ville ??
-          '',
+          data.user_id
+            ? data.ville ??
+              ''
+            : relation.ville ??
+              '',
 
         codePostal:
-          data.code_postal ??
-          '',
+          data.user_id
+            ? data.code_postal ??
+              ''
+            : relation.code_postal ??
+              '',
 
         competences:
           Array.isArray(

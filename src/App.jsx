@@ -54,9 +54,9 @@ const navigationItems = [
     end: true,
   },
   {
-    to: '/planning',
-    label: 'Planning',
-    icon: '▦',
+    to: '/listing',
+    label: 'Formateurs',
+    icon: '♙',
   },
   {
     to: '/missions',
@@ -64,9 +64,9 @@ const navigationItems = [
     icon: '▣',
   },
   {
-    to: '/listing',
-    label: 'Formateurs',
-    icon: '♙',
+    to: '/planning',
+    label: 'Planning',
+    icon: '▦',
   },
   {
     to: '/carte',
@@ -96,6 +96,8 @@ function isTrainerPersonalPath(pathname) {
   return (
     pathname === '/formateur/espace' ||
     pathname === '/formateur/propositions' ||
+    pathname === '/formateur/missions' ||
+    pathname.startsWith('/formateur/missions/') ||
     pathname === '/formateur/disponibilites' ||
     pathname === '/formateur/planning' ||
     pathname === '/formateur/profil' ||
@@ -114,6 +116,10 @@ function OrganizationApp() {
               src="/brand/formaplane-logo-light.svg"
               alt="Formaplane"
             />
+          </div>
+
+          <div className="trainer-sidebar-label">
+            ESPACE ORGANISME DE FORMATION
           </div>
 
           <nav

@@ -13,6 +13,8 @@ const MISSION_FORMATEUR_STATUSES = [
   'affecte',
   'indisponible_affecte_ailleurs',
   'annule',
+  'desiste',
+  'mission_pourvue',
 ];
 
 /**
@@ -75,6 +77,58 @@ export async function getMissions() {
 /**
  * Retourne une mission complète à partir de son identifiant.
  */
+
+/**
+ * Retourne l'historique des actions réalisées sur les formateurs
+ * d'une mission.
+ *
+ * L'historique est alimenté côté base par un trigger afin de tracer
+ * aussi bien les actions OF que les réponses réalisées par le formateur.
+ */
+export async function getMissionTrainerHistory(
+  missionId,
+) {
+  if (!missionId) {
+    throw new Error(
+      "L'identifiant de la mission est obligatoire.",
+    );
+  }
+
+  const { data, error } = await supabase
+    .from('mission_trainer_history')
+    .select(`
+      id,
+      mission_id,
+      trainer_id,
+      mission_formateur_id,
+      action,
+      previous_status,
+      new_status,
+      actor_user_id,
+      actor_type,
+      actor_display_name,
+      actor_organization_id,
+      actor_organization_name,
+      details,
+      created_at,
+      trainer:trainers (
+        id,
+        prenom,
+        nom
+      )
+    `)
+    .eq('mission_id', missionId)
+    .order('created_at', {
+      ascending: false,
+    });
+
+  if (error) {
+    throw error;
+  }
+
+  return data || [];
+}
+
 export async function getMissionById(id) {
   if (!id) {
     throw new Error(
@@ -535,6 +589,30 @@ export async function updateMissionFormateurStatus(
 
     if (resetPreviousError) {
       throw resetPreviousError;
+    }
+
+    /*
+     * Une mission ne peut être affectée qu'à un seul formateur.
+     * Dès qu'un formateur est confirmé, les autres propositions/options
+     * encore actives sur CETTE mission sont clôturées comme "mission pourvue".
+     */
+    const { error: closeOtherOptionsError } =
+      await supabase
+        .from(MISSION_FORMATEURS_TABLE)
+        .update({
+          statut: 'mission_pourvue',
+          affecte_le: null,
+        })
+        .eq('mission_id', missionId)
+        .neq('formateur_id', formateurId)
+        .in('statut', [
+          'selectionne',
+          'proposition_envoyee',
+          'accepte',
+        ]);
+
+    if (closeOtherOptionsError) {
+      throw closeOtherOptionsError;
     }
 
     await reconcileTrainerConflicts(

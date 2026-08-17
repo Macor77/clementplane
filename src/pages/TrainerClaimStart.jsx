@@ -7,6 +7,10 @@ import {
   createTrainerProfile,
   getTrainerClaimCandidates,
 } from '../services/trainerClaimService';
+import {
+  geocodeTrainer,
+  hasValidCoords,
+} from '../services/geocodingService';
 import './Auth.css';
 
 function formatLocation(candidate) {
@@ -39,6 +43,10 @@ export default function TrainerClaimStart() {
     firstName: profile?.first_name || '',
     lastName: profile?.last_name || '',
     phone: profile?.phone || '',
+    city: '',
+    postalCode: '',
+  });
+  const [claimLocation, setClaimLocation] = useState({
     city: '',
     postalCode: '',
   });
@@ -85,16 +93,85 @@ export default function TrainerClaimStart() {
     return '';
   }, [candidates.length]);
 
+  const geocodeLocation = async ({
+    city,
+    postalCode,
+  }) => {
+    let latitude = null;
+    let longitude = null;
+
+    try {
+      const coords =
+        await geocodeTrainer({
+          ville:
+            city,
+          codePostal:
+            postalCode,
+        });
+
+      if (
+        coords &&
+        hasValidCoords(
+          coords.latitude,
+          coords.longitude,
+        )
+      ) {
+        latitude =
+          coords.latitude;
+        longitude =
+          coords.longitude;
+      }
+    } catch (geocodingError) {
+      console.error(
+        'Géocodage de la localisation formateur impossible :',
+        geocodingError,
+      );
+    }
+
+    return {
+      latitude,
+      longitude,
+    };
+  };
+
   const handleClaim = async (trainerId) => {
     setBusyId(trainerId);
     setError('');
+
     try {
-      await claimTrainerProfile(trainerId);
+      const {
+        latitude,
+        longitude,
+      } =
+        await geocodeLocation(
+          claimLocation,
+        );
+
+      await claimTrainerProfile({
+        trainerId,
+        city:
+          claimLocation.city,
+        postalCode:
+          claimLocation.postalCode,
+        latitude,
+        longitude,
+      });
+
       await refreshUserContext();
-      navigate('/formateur/espace', { replace: true });
+
+      navigate(
+        '/formateur/espace',
+        {
+          replace: true,
+        },
+      );
     } catch (claimError) {
       console.error(claimError);
-      setError(friendlyError(claimError));
+      setError(
+        friendlyError(
+          claimError,
+        ),
+      );
     } finally {
       setBusyId(null);
     }
@@ -108,13 +185,40 @@ export default function TrainerClaimStart() {
     event.preventDefault();
     setError('');
     setCreating(true);
+
     try {
-      await createTrainerProfile(form);
+      const {
+        latitude,
+        longitude,
+      } =
+        await geocodeLocation({
+          city:
+            form.city,
+          postalCode:
+            form.postalCode,
+        });
+
+      await createTrainerProfile({
+        ...form,
+        latitude,
+        longitude,
+      });
+
       await refreshUserContext();
-      navigate('/formateur/espace', { replace: true });
+
+      navigate(
+        '/formateur/espace',
+        {
+          replace: true,
+        },
+      );
     } catch (createError) {
       console.error(createError);
-      setError(friendlyError(createError));
+      setError(
+        friendlyError(
+          createError,
+        ),
+      );
     } finally {
       setCreating(false);
     }
@@ -169,19 +273,63 @@ export default function TrainerClaimStart() {
               <p>Vérifiez les informations ci-dessous avant de confirmer.</p>
             </div>
 
+            <div className="auth-alert claim-spacing">
+              <strong>Confirmez votre localisation</strong>
+              <p>
+                Une fois la fiche revendiquée, votre ville et votre code postal
+                deviennent la localisation de référence visible par vos organismes
+                partenaires. Les anciennes localisations propres à chaque organisme
+                ne sont alors plus utilisées.
+              </p>
+
+              <div className="auth-grid">
+                <label>
+                  Code postal
+                  <input
+                    value={claimLocation.postalCode}
+                    onChange={(event) =>
+                      setClaimLocation((current) => ({
+                        ...current,
+                        postalCode: event.target.value,
+                      }))
+                    }
+                    inputMode="numeric"
+                    required
+                  />
+                </label>
+
+                <label>
+                  Ville
+                  <input
+                    value={claimLocation.city}
+                    onChange={(event) =>
+                      setClaimLocation((current) => ({
+                        ...current,
+                        city: event.target.value,
+                      }))
+                    }
+                    required
+                  />
+                </label>
+              </div>
+            </div>
+
             <div className="claim-candidates">
               {candidates.map((candidate) => (
                 <article className="claim-candidate" key={candidate.id}>
                   <div>
                     <strong>{candidate.prenom} {candidate.nom}</strong>
-                    <span>{formatLocation(candidate)}</span>
                     {candidate.telephone ? <span>{candidate.telephone}</span> : null}
                     <span>{candidate.email}</span>
                   </div>
                   <button
                     className="auth-button"
                     type="button"
-                    disabled={busyId !== null}
+                    disabled={
+                      busyId !== null ||
+                      !claimLocation.city.trim() ||
+                      !claimLocation.postalCode.trim()
+                    }
                     onClick={() => handleClaim(candidate.id)}
                   >
                     {busyId === candidate.id ? 'Rattachement…' : 'Oui, c’est bien moi'}
@@ -231,12 +379,12 @@ export default function TrainerClaimStart() {
 
               <div className="auth-grid">
                 <label>
-                  Code postal <span className="claim-optional">(facultatif)</span>
-                  <input value={form.postalCode} onChange={updateField('postalCode')} inputMode="numeric" />
+                  Code postal
+                  <input value={form.postalCode} onChange={updateField('postalCode')} inputMode="numeric" required />
                 </label>
                 <label>
-                  Ville <span className="claim-optional">(facultatif)</span>
-                  <input value={form.city} onChange={updateField('city')} />
+                  Ville
+                  <input value={form.city} onChange={updateField('city')} required />
                 </label>
               </div>
 

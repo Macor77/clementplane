@@ -85,6 +85,35 @@ function isExpired(proposal) {
 }
 
 
+function hasCurrentOrFutureDate(proposal) {
+  const today = new Date();
+  const todayKey = [
+    today.getFullYear(),
+    String(today.getMonth() + 1).padStart(2, '0'),
+    String(today.getDate()).padStart(2, '0'),
+  ].join('-');
+
+  const dates = Array.isArray(proposal?.dates)
+    ? proposal.dates
+    : [];
+
+  if (dates.length === 0) {
+    return true;
+  }
+
+  return dates.some(
+    (item) =>
+      item?.date &&
+      item.date >= todayKey,
+  );
+}
+
+
+function isPastMission(proposal) {
+  return !hasCurrentOrFutureDate(proposal);
+}
+
+
 function getNextConfirmedMission(
   proposals,
 ) {
@@ -267,6 +296,9 @@ export default function TrainerDashboard() {
               'proposition_envoyee' &&
             !isExpired(
               proposal,
+            ) &&
+            hasCurrentOrFutureDate(
+              proposal,
             ),
         ),
       [proposals],
@@ -279,7 +311,10 @@ export default function TrainerDashboard() {
         proposals.filter(
           (proposal) =>
             proposal.status ===
-            'accepte',
+              'accepte' &&
+            hasCurrentOrFutureDate(
+              proposal,
+            ),
         ),
       [proposals],
     );
@@ -291,7 +326,10 @@ export default function TrainerDashboard() {
         proposals.filter(
           (proposal) =>
             proposal.status ===
-            'affecte',
+              'affecte' &&
+            hasCurrentOrFutureDate(
+              proposal,
+            ),
         ),
       [proposals],
     );

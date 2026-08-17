@@ -120,7 +120,7 @@ export default function ListingFilters({
 
       <div className="listing-filters__footer">
         <div className="listing-statuses">
-          {['Premium', 'Standard', 'Inactif', 'Black'].map((status) => (
+          {['Premium', 'Standard', 'Inactif', 'Exclu'].map((status) => (
             <label
               key={status}
               className={`listing-status-filter listing-status-filter--${status.toLowerCase()}`}

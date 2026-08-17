@@ -14,6 +14,7 @@ import {
 import {
   deleteMission,
   getMissionById,
+  getMissionTrainerHistory,
   removeFormateurFromMission,
   selectFormateurForMission,
   updateMissionFormateurStatus,
@@ -36,6 +37,16 @@ export default function MissionDetail() {
 
   const [mission, setMission] =
     useState(null);
+
+  const [
+    missionHistory,
+    setMissionHistory,
+  ] = useState([]);
+
+  const [
+    expandedHistoryTrainerId,
+    setExpandedHistoryTrainerId,
+  ] = useState(null);
 
   const [
     recommendations,
@@ -84,10 +95,18 @@ export default function MissionDetail() {
       setError('');
 
       try {
-        const data =
-          await getMissionById(id);
+        const [
+          data,
+          historyRows,
+        ] = await Promise.all([
+          getMissionById(id),
+          getMissionTrainerHistory(id),
+        ]);
 
         setMission(data);
+        setMissionHistory(
+          historyRows,
+        );
 
         setLocationDraft(
           buildMissionLocationLabel(data),
@@ -276,10 +295,18 @@ export default function MissionDetail() {
   }, [mission, recommendations]);
 
   const refresh = async () => {
-    const data =
-      await getMissionById(id);
+    const [
+      data,
+      historyRows,
+    ] = await Promise.all([
+      getMissionById(id),
+      getMissionTrainerHistory(id),
+    ]);
 
     setMission(data);
+    setMissionHistory(
+      historyRows,
+    );
   };
 
   const handleSelect = async (
@@ -485,13 +512,6 @@ export default function MissionDetail() {
 
         <div style={styles.headerActions}>
           <Link
-            to={`/missions/edit/${id}`}
-            style={styles.secondaryLink}
-          >
-            Modifier la mission
-          </Link>
-
-          <Link
             to="/missions/new"
             style={styles.primaryLink}
           >
@@ -510,6 +530,7 @@ export default function MissionDetail() {
         <MissionInformation
           mission={mission}
           affectedTrainer={affectedTrainer}
+          missionId={id}
           onDelete={handleDelete}
         />
 
@@ -552,6 +573,13 @@ export default function MissionDetail() {
 
           <TrackedTrainers
             trainers={trackedTrainers}
+            history={missionHistory}
+            expandedHistoryTrainerId={
+              expandedHistoryTrainerId
+            }
+            setExpandedHistoryTrainerId={
+              setExpandedHistoryTrainerId
+            }
             actionTrainerId={
               actionTrainerId
             }
@@ -629,101 +657,554 @@ export default function MissionDetail() {
 function MissionInformation({
   mission,
   affectedTrainer,
+  missionId,
   onDelete,
 }) {
+  const missionDates = [
+    ...(mission.mission_dates || []),
+  ].sort((first, second) =>
+    first.date.localeCompare(second.date),
+  );
+
+  const firstDate =
+    missionDates[0] || null;
+
+  const lastDate =
+    missionDates[
+      missionDates.length - 1
+    ] || null;
+
+  const acceptedTrainers = (
+    mission.mission_formateurs || []
+  ).filter(
+    (item) => item.statut === 'accepte',
+  );
+
+  const pendingProposals = (
+    mission.mission_formateurs || []
+  ).filter(
+    (item) =>
+      item.statut ===
+      'proposition_envoyee',
+  );
+
+  const missionSituation =
+    getMissionSituation({
+      mission,
+      affectedTrainer,
+      acceptedTrainers,
+      pendingProposals,
+    });
+
   return (
     <section style={styles.infoCard}>
       <div style={styles.infoHeader}>
-        <h2 style={styles.infoTitle}>
-          Informations de la mission
-        </h2>
+        <div>
+          <h2 style={styles.infoTitle}>
+            Informations de la mission
+          </h2>
 
-        <MissionStatus
-          status={mission.statut}
+          <p style={styles.infoSubtitle}>
+            Les informations essentielles de la
+            session en un coup d’œil.
+          </p>
+        </div>
+
+        <MissionSituationBadge
+          situation={missionSituation}
         />
       </div>
 
-      <Information
-        label="Code interne de session"
-        value={
-          mission.intitule ||
-          'Non renseigné'
-        }
-      />
+      <div style={styles.missionSummary}>
+        <SummaryItem
+          icon="📅"
+          label="Quand ?"
+          value={formatMissionPeriod(
+            missionDates,
+          )}
+          detail={formatMissionHours(
+            firstDate,
+            lastDate,
+          )}
+        />
 
-      <Information
-        label="Client"
-        value={
-          mission.client ||
-          'Non renseigné'
-        }
-      />
+        <SummaryItem
+          icon="📍"
+          label="Où ?"
+          value={
+            [
+              mission.code_postal,
+              mission.ville,
+            ]
+              .filter(Boolean)
+              .join(' ') ||
+            mission.lieu ||
+            'Lieu non renseigné'
+          }
+          detail={
+            mission.lieu &&
+            mission.lieu !== mission.ville
+              ? mission.lieu
+              : ''
+          }
+        />
 
-      <Information
-        label="Formation"
-        value={
-          mission.formation ||
-          'Non renseignée'
-        }
-      />
+        <SummaryItem
+          icon="👤"
+          label="Avec qui ?"
+          value={
+            affectedTrainer
+              ? formatTrainerName(
+                  affectedTrainer.trainer,
+                )
+              : missionSituation.summary
+          }
+          detail={
+            affectedTrainer
+              ? 'Formateur affecté'
+              : missionSituation.detail
+          }
+        />
+      </div>
 
-      <Information
-        label="Lieu"
-        value={formatFullLocation(
-          mission,
-        )}
-      />
+      <div style={styles.infoBlocks}>
+        <InformationBlock
+          title="Mission"
+          items={[
+            {
+              label: 'Référence',
+              value:
+                mission.intitule ||
+                'Non renseignée',
+            },
+            {
+              label: 'Client',
+              value:
+                mission.client ||
+                'Non renseigné',
+            },
+            {
+              label: 'Formation',
+              value:
+                mission.formation ||
+                'Non renseignée',
+            },
+          ]}
+        />
 
-      <Information
-        label="Dates et horaires"
-        value={formatDatesAndHours(
-          mission.mission_dates,
-        )}
-        multiline
-      />
+        <InformationBlock
+          title="Lieu"
+          items={[
+            {
+              label: 'Site',
+              value:
+                mission.lieu ||
+                'Non renseigné',
+            },
+            {
+              label: 'Adresse',
+              value:
+                mission.adresse ||
+                'Non renseignée',
+            },
+            {
+              label: 'Ville',
+              value:
+                [
+                  mission.code_postal,
+                  mission.ville,
+                ]
+                  .filter(Boolean)
+                  .join(' ') ||
+                'Non renseignée',
+            },
+          ]}
+        />
 
-      <Information
-        label="Compétences requises"
-        value={formatArray(
-          mission.competences,
-        )}
-      />
+        <InformationBlock
+          title="Besoins formateur"
+          items={[
+            {
+              label: 'Compétences',
+              value: formatArray(
+                mission.competences,
+              ),
+            },
+            {
+              label: 'Matériel',
+              value: formatArray(
+                mission.materiel,
+              ),
+            },
+          ]}
+        />
+      </div>
 
-      <Information
-        label="Matériel requis"
-        value={formatArray(
-          mission.materiel,
-        )}
-      />
+      <div style={styles.commentBox}>
+        <span style={styles.commentIcon}>
+          💬
+        </span>
 
-      <Information
-        label="Formateur affecté"
-        value={
-          affectedTrainer
-            ? formatTrainerName(
-                affectedTrainer.trainer,
-              )
-            : 'Aucun'
-        }
-      />
+        <div>
+          <span style={styles.commentLabel}>
+            Commentaire
+          </span>
 
-      <Information
-        label="Commentaire"
-        value={
-          mission.commentaire ||
-          'Aucun commentaire'
-        }
-        multiline
-      />
+          <p style={styles.commentValue}>
+            {mission.commentaire ||
+              'Aucun commentaire'}
+          </p>
+        </div>
+      </div>
 
-      <button
-        type="button"
-        onClick={onDelete}
-        style={styles.deleteMissionButton}
-      >
-        Supprimer la mission
-      </button>
+      {missionSituation.notice && (
+        <div
+          style={{
+            ...styles.missionNotice,
+            background:
+              missionSituation.noticeBackground,
+            borderColor:
+              missionSituation.noticeBorder,
+            color:
+              missionSituation.noticeColor,
+          }}
+        >
+          <strong>
+            {missionSituation.noticeTitle}
+          </strong>
+          <span>
+            {missionSituation.notice}
+          </span>
+        </div>
+      )}
+
+      <div style={styles.missionActions}>
+        <Link
+          to={`/missions/edit/${missionId}`}
+          style={styles.editMissionLink}
+        >
+          Modifier la mission
+        </Link>
+
+        <button
+          type="button"
+          onClick={onDelete}
+          style={styles.deleteMissionButton}
+        >
+          Supprimer la mission
+        </button>
+      </div>
     </section>
+  );
+}
+
+function SummaryItem({
+  icon,
+  label,
+  value,
+  detail,
+}) {
+  return (
+    <div style={styles.summaryItem}>
+      <span
+        style={styles.summaryIcon}
+        aria-hidden="true"
+      >
+        {icon}
+      </span>
+
+      <div style={styles.summaryContent}>
+        <span style={styles.summaryLabel}>
+          {label}
+        </span>
+
+        <strong style={styles.summaryValue}>
+          {value}
+        </strong>
+
+        {detail && (
+          <span style={styles.summaryDetail}>
+            {detail}
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function InformationBlock({
+  title,
+  items,
+}) {
+  return (
+    <div style={styles.informationBlock}>
+      <h3 style={styles.informationBlockTitle}>
+        {title}
+      </h3>
+
+      <div style={styles.informationBlockContent}>
+        {items.map((item) => (
+          <div
+            key={item.label}
+            style={styles.informationLine}
+          >
+            <span
+              style={styles.informationLineLabel}
+            >
+              {item.label}
+            </span>
+
+            <strong
+              style={styles.informationLineValue}
+            >
+              {item.value}
+            </strong>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function MissionSituationBadge({
+  situation,
+}) {
+  return (
+    <div style={styles.missionSituation}>
+      <span
+        style={{
+          ...styles.badge,
+          background: situation.background,
+          color: situation.color,
+        }}
+      >
+        {situation.label}
+      </span>
+
+      {situation.secondary && (
+        <span
+          style={styles.missionSituationSecondary}
+        >
+          {situation.secondary}
+        </span>
+      )}
+    </div>
+  );
+}
+
+function getMissionSituation({
+  mission,
+  affectedTrainer,
+  acceptedTrainers,
+  pendingProposals,
+}) {
+  if (
+    mission.statut === 'annulee'
+  ) {
+    return {
+      label: 'Annulée',
+      summary: 'Mission annulée',
+      detail: '',
+      background: '#fef3f2',
+      color: '#b42318',
+    };
+  }
+
+  if (
+    mission.statut === 'archivee'
+  ) {
+    return {
+      label: 'Archivée',
+      summary: 'Mission archivée',
+      detail: '',
+      background: '#f2f4f7',
+      color: '#475467',
+    };
+  }
+
+  if (
+    mission.statut === 'realisee'
+  ) {
+    return {
+      label: 'Réalisée',
+      summary: 'Mission réalisée',
+      detail: '',
+      background: '#f4f3ff',
+      color: '#5925dc',
+    };
+  }
+
+  if (affectedTrainer) {
+    return {
+      label: 'Affectée',
+      summary: formatTrainerName(
+        affectedTrainer.trainer,
+      ),
+      detail: 'Formateur affecté',
+      background: '#eff8ff',
+      color: '#175cd3',
+    };
+  }
+
+  if (acceptedTrainers.length > 0) {
+    const trainerName =
+      formatTrainerName(
+        acceptedTrainers[0].trainer,
+      );
+
+    return {
+      label: 'Formateur disponible',
+      secondary:
+        'Affectation à confirmer',
+      summary: trainerName,
+      detail:
+        acceptedTrainers.length > 1
+          ? `${acceptedTrainers.length} formateurs ont accepté`
+          : 'A accepté la proposition',
+      background: '#fff7ed',
+      color: '#c2410c',
+      noticeTitle:
+        'Action requise : confirmer l’affectation',
+      notice:
+        acceptedTrainers.length > 1
+          ? `${acceptedTrainers.length} formateurs ont accepté cette mission. Choisis maintenant le formateur à affecter dans le suivi ci-dessous.`
+          : `${trainerName} a accepté cette mission. Il faut maintenant confirmer son affectation dans le suivi ci-dessous.`,
+      noticeBackground: '#fff7ed',
+      noticeBorder: '#fdba74',
+      noticeColor: '#9a3412',
+    };
+  }
+
+  if (pendingProposals.length > 0) {
+    return {
+      label: 'À pourvoir',
+      secondary: `${pendingProposals.length} réponse${
+        pendingProposals.length > 1
+          ? 's'
+          : ''
+      } attendue${
+        pendingProposals.length > 1
+          ? 's'
+          : ''
+      }`,
+      summary: 'Réponse en attente',
+      detail: `${pendingProposals.length} proposition${
+        pendingProposals.length > 1
+          ? 's'
+          : ''
+      } en cours`,
+      background: '#fff6ed',
+      color: '#c4320a',
+    };
+  }
+
+  if (
+    mission.statut === 'brouillon'
+  ) {
+    return {
+      label: 'Brouillon',
+      summary: 'Mission en préparation',
+      detail: 'Création non terminée',
+      background: '#f2f4f7',
+      color: '#344054',
+    };
+  }
+
+  return {
+    label: 'À pourvoir',
+    secondary: 'À proposer',
+    summary: 'Aucun formateur',
+    detail: 'Proposition à envoyer',
+    background: '#fff6ed',
+    color: '#c4320a',
+    noticeTitle:
+      'Action requise : proposer la mission',
+    notice:
+      'Aucune réponse n’est actuellement attendue. Sélectionne un formateur ci-dessous puis envoie-lui la proposition.',
+    noticeBackground: '#fffaeb',
+    noticeBorder: '#fedf89',
+    noticeColor: '#93370d',
+  };
+}
+
+function formatMissionPeriod(
+  dates = [],
+) {
+  if (dates.length === 0) {
+    return 'Dates non renseignées';
+  }
+
+  const sorted = [...dates].sort(
+    (first, second) =>
+      first.date.localeCompare(
+        second.date,
+      ),
+  );
+
+  const first = sorted[0];
+  const last =
+    sorted[sorted.length - 1];
+
+  const countLabel = `${sorted.length} journée${
+    sorted.length > 1 ? 's' : ''
+  }`;
+
+  return `${formatLongMissionDate(
+    first.date,
+  )} → ${formatLongMissionDate(
+    last.date,
+  )} · ${countLabel}`;
+}
+
+function formatMissionHours(
+  firstDate,
+  lastDate,
+) {
+  if (!firstDate) {
+    return '';
+  }
+
+  if (
+    firstDate.date === lastDate?.date
+  ) {
+    return `${formatTime(
+      firstDate.heure_debut,
+    )} → ${formatTime(
+      firstDate.heure_fin,
+    )}`;
+  }
+
+  const sameHours =
+    firstDate.heure_debut ===
+      lastDate?.heure_debut &&
+    firstDate.heure_fin ===
+      lastDate?.heure_fin;
+
+  if (sameHours) {
+    return `${formatTime(
+      firstDate.heure_debut,
+    )} → ${formatTime(
+      firstDate.heure_fin,
+    )} chaque journée`;
+  }
+
+  return 'Horaires détaillés dans la mission';
+}
+
+function formatLongMissionDate(value) {
+  if (!value) {
+    return '—';
+  }
+
+  return new Intl.DateTimeFormat(
+    'fr-FR',
+    {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    },
+  ).format(
+    new Date(`${value}T12:00:00`),
   );
 }
 
@@ -957,7 +1438,7 @@ function TrainerFilters({
           'Premium',
           'Standard',
           'Inactif',
-          'Black',
+          'Exclu',
         ].map((status) => (
           <label
             key={status}
@@ -1023,11 +1504,39 @@ function TrainerFilters({
 
 function TrackedTrainers({
   trainers,
+  history,
+  expandedHistoryTrainerId,
+  setExpandedHistoryTrainerId,
   actionTrainerId,
   onRemove,
   onStatusChange,
   onPrepareProposal,
 }) {
+  const historyByTrainer =
+    useMemo(() => {
+      const grouped =
+        new Map();
+
+      for (const item of history || []) {
+        if (
+          !grouped.has(
+            item.trainer_id,
+          )
+        ) {
+          grouped.set(
+            item.trainer_id,
+            [],
+          );
+        }
+
+        grouped
+          .get(item.trainer_id)
+          .push(item);
+      }
+
+      return grouped;
+    }, [history]);
+
   return (
     <section style={styles.sectionCard}>
       <div style={styles.sectionHeader}>
@@ -1039,6 +1548,8 @@ function TrackedTrainers({
           <p style={styles.sectionSubtitle}>
             Formateurs déjà sélectionnés,
             contactés ou affectés.
+            Chaque action est maintenant
+            historisée avec son auteur.
           </p>
         </div>
 
@@ -1054,35 +1565,73 @@ function TrackedTrainers({
       ) : (
         <div style={styles.trainerList}>
           {trainers.map(
-            (missionTrainer) => (
-              <TrackedTrainerRow
-                key={missionTrainer.id}
-                missionTrainer={
-                  missionTrainer
-                }
-                loading={
-                  actionTrainerId ===
-                  missionTrainer.formateur_id
-                }
-                onRemove={() =>
-                  onRemove(
-                    missionTrainer.formateur_id,
-                  )
-                }
-                onStatusChange={(status) =>
-                  onStatusChange(
-                    missionTrainer.formateur_id,
-                    status,
-                  )
-                }
-                onPrepareProposal={() =>
-                  onPrepareProposal(
-                    missionTrainer.id,
-                    missionTrainer.formateur_id,
-                  )
-                }
-              />
-            ),
+            (missionTrainer) => {
+              const trainerHistory =
+                historyByTrainer.get(
+                  missionTrainer.formateur_id,
+                ) || [];
+
+              const historyOpen =
+                expandedHistoryTrainerId ===
+                missionTrainer.formateur_id;
+
+              return (
+                <div
+                  key={missionTrainer.id}
+                  style={
+                    styles.trackedTrainerHistoryGroup
+                  }
+                >
+                  <TrackedTrainerRow
+                    missionTrainer={
+                      missionTrainer
+                    }
+                    historyCount={
+                      trainerHistory.length
+                    }
+                    historyOpen={
+                      historyOpen
+                    }
+                    onToggleHistory={() =>
+                      setExpandedHistoryTrainerId(
+                        historyOpen
+                          ? null
+                          : missionTrainer.formateur_id,
+                      )
+                    }
+                    loading={
+                      actionTrainerId ===
+                      missionTrainer.formateur_id
+                    }
+                    onRemove={() =>
+                      onRemove(
+                        missionTrainer.formateur_id,
+                      )
+                    }
+                    onStatusChange={(status) =>
+                      onStatusChange(
+                        missionTrainer.formateur_id,
+                        status,
+                      )
+                    }
+                    onPrepareProposal={() =>
+                      onPrepareProposal(
+                        missionTrainer.id,
+                        missionTrainer.formateur_id,
+                      )
+                    }
+                  />
+
+                  {historyOpen ? (
+                    <TrainerHistory
+                      items={
+                        trainerHistory
+                      }
+                    />
+                  ) : null}
+                </div>
+              );
+            },
           )}
         </div>
       )}
@@ -1090,8 +1639,227 @@ function TrackedTrainers({
   );
 }
 
+function TrainerHistory({
+  items,
+}) {
+  return (
+    <div style={styles.historyPanel}>
+      <div style={styles.historyPanelHeader}>
+        <strong>
+          Historique des actions
+        </strong>
+
+        <span>
+          {items.length}{' '}
+          événement
+          {items.length > 1
+            ? 's'
+            : ''}
+        </span>
+      </div>
+
+      {items.length === 0 ? (
+        <div style={styles.historyEmpty}>
+          Aucun événement enregistré pour
+          ce formateur depuis l’activation
+          de l’historique.
+        </div>
+      ) : (
+        <div style={styles.historyList}>
+          {items.map((item) => (
+            <div
+              key={item.id}
+              style={styles.historyItem}
+            >
+              <div
+                style={styles.historyMarker}
+                aria-hidden="true"
+              />
+
+              <div style={styles.historyContent}>
+                <div style={styles.historyTopline}>
+                  <strong>
+                    {getHistoryActionLabel(
+                      item,
+                    )}
+                  </strong>
+
+                  <span>
+                    {formatHistoryDateTime(
+                      item.created_at,
+                    )}
+                  </span>
+                </div>
+
+                <div style={styles.historyActor}>
+                  {formatHistoryActor(
+                    item,
+                  )}
+                </div>
+
+                {getHistoryDetail(
+                  item,
+                ) ? (
+                  <div
+                    style={
+                      styles.historyDetail
+                    }
+                  >
+                    {getHistoryDetail(
+                      item,
+                    )}
+                  </div>
+                ) : null}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function getHistoryActionLabel(
+  item,
+) {
+  const labels = {
+    selected:
+      'Formateur sélectionné',
+    proposal_sent:
+      'Proposition envoyée',
+    accepted:
+      item.actor_type === 'organization'
+        ? 'Acceptation enregistrée au nom du formateur'
+        : 'Proposition acceptée',
+    refused:
+      item.actor_type === 'organization'
+        ? 'Refus enregistré au nom du formateur'
+        : 'Proposition refusée',
+    assigned:
+      'Affectation confirmée',
+    reset:
+      'Suivi réinitialisé',
+    unavailable_elsewhere:
+      'Plus disponible · mission confirmée ailleurs',
+    withdrawn:
+      'Désistement du formateur',
+    mission_filled:
+      'Mission pourvue par un autre formateur',
+    cancelled:
+      'Suivi annulé',
+    removed:
+      'Formateur retiré de la mission',
+    status_changed:
+      'Statut modifié',
+  };
+
+  return (
+    labels[item.action] ||
+    'Action enregistrée'
+  );
+}
+
+function formatHistoryActor(
+  item,
+) {
+  const name =
+    item.actor_display_name ||
+    (
+      item.actor_type === 'system'
+        ? 'Formaplane'
+        : 'Utilisateur'
+    );
+
+  if (
+    item.actor_type ===
+    'trainer'
+  ) {
+    return `Par ${name} · Formateur`;
+  }
+
+  if (
+    item.actor_type ===
+    'organization'
+  ) {
+    return [
+      `Par ${name}`,
+      item.actor_organization_name,
+    ]
+      .filter(Boolean)
+      .join(' · ');
+  }
+
+  return `Par ${name} · Système`;
+}
+
+function getHistoryDetail(
+  item,
+) {
+  if (
+    item.previous_status &&
+    item.new_status &&
+    item.previous_status !==
+      item.new_status
+  ) {
+    return `${formatHistoryStatus(
+      item.previous_status,
+    )} → ${formatHistoryStatus(
+      item.new_status,
+    )}`;
+  }
+
+  return '';
+}
+
+function formatHistoryStatus(
+  status,
+) {
+  const labels = {
+    selectionne:
+      'Sélectionné',
+    proposition_envoyee:
+      'Proposition envoyée',
+    accepte:
+      'Accepté',
+    refuse:
+      'Refusé',
+    affecte:
+      'Affecté',
+    indisponible_affecte_ailleurs:
+      'Indisponible',
+    annule:
+      'Annulé',
+  };
+
+  return labels[status] || status;
+}
+
+function formatHistoryDateTime(
+  value,
+) {
+  if (!value) {
+    return '';
+  }
+
+  return new Intl.DateTimeFormat(
+    'fr-FR',
+    {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    },
+  ).format(
+    new Date(value),
+  );
+}
+
 function TrackedTrainerRow({
   missionTrainer,
+  historyCount,
+  historyOpen,
+  onToggleHistory,
   loading,
   onRemove,
   onStatusChange,
@@ -1143,13 +1911,36 @@ function TrackedTrainerRow({
         status={missionTrainer.statut}
       />
 
-      <span style={styles.timeline}>
-        {formatTimeline(
-          missionTrainer,
-        )}
-      </span>
+      <div style={styles.trainerResponseColumn}>
+        <span style={styles.timeline}>
+          {formatTimeline(
+            missionTrainer,
+          )}
+        </span>
+
+        {missionTrainer.response_comment ? (
+          <div style={styles.trainerResponseComment}>
+            <strong>Commentaire du formateur</strong>
+            <span>{missionTrainer.response_comment}</span>
+          </div>
+        ) : null}
+      </div>
 
       <div style={styles.rowActions}>
+        <ActionButton
+          label={
+            historyOpen
+              ? 'Fermer historique'
+              : `Historique${
+                  historyCount > 0
+                    ? ` (${historyCount})`
+                    : ''
+                }`
+          }
+          loading={false}
+          onClick={onToggleHistory}
+        />
+
         {missionTrainer.statut ===
           'selectionne' && (
           <ActionButton
@@ -1498,7 +2289,7 @@ function TrainerMissionStatus({
       '#b42318',
     ],
     indisponible_affecte_ailleurs: [
-      'Indisponible',
+      'Plus disponible',
       '#fff6ed',
       '#c4320a',
     ],
@@ -1509,6 +2300,16 @@ function TrainerMissionStatus({
     ],
     annule: [
       'Annulé',
+      '#f2f4f7',
+      '#475467',
+    ],
+    desiste: [
+      'Désistement',
+      '#fff6ed',
+      '#c4320a',
+    ],
+    mission_pourvue: [
+      'Mission pourvue',
       '#f2f4f7',
       '#475467',
     ],
@@ -2397,20 +3198,40 @@ const compactStyles = {
   mainColumn: { display: 'grid', minWidth: 0, width: '100%', gap: 12, overflow: 'visible' },
   infoCard: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(5, minmax(130px, 1fr))',
-    gap: '10px 18px',
-    padding: '14px 16px',
+    gap: 12,
+    padding: '15px 16px',
     border: '1px solid #e4e7ec',
     borderRadius: 11,
     background: '#fff',
     boxShadow: '0 1px 3px rgba(16,24,40,.04)',
   },
-  infoHeader: { gridColumn: '1 / -1', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8, paddingBottom: 9, borderBottom: '1px solid #eef1f5' },
+  infoHeader: { display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'flex-start', gap: 10, paddingBottom: 10, borderBottom: '1px solid #eef1f5' },
   infoTitle: { margin: 0, color: '#101828', fontSize: 15 },
-  information: { display: 'grid', alignContent: 'start', gap: 2, minWidth: 0 },
-  informationLabel: { color: '#667085', fontSize: 9, fontWeight: 750, letterSpacing: '.04em', textTransform: 'uppercase' },
-  informationValue: { color: '#344054', fontSize: 12, lineHeight: 1.35, overflowWrap: 'anywhere' },
-  deleteMissionButton: { minHeight: 32, alignSelf: 'end', border: '1px solid #fda29b', borderRadius: 7, background: '#fff', color: '#b42318', fontSize: 11, fontWeight: 650, cursor: 'pointer' },
+  infoSubtitle: { margin: '2px 0 0', color: '#667085', fontSize: 10 },
+  missionSituation: { display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-end', alignItems: 'center', gap: 7 },
+  missionSituationSecondary: { color: '#667085', fontSize: 10, fontWeight: 650 },
+  missionSummary: { display: 'grid', gridTemplateColumns: '1.45fr 1fr 1fr', gap: 8 },
+  summaryItem: { display: 'flex', minWidth: 0, gap: 9, padding: '10px 11px', border: '1px solid #e4e7ec', borderRadius: 9, background: '#f9fafb' },
+  summaryIcon: { flexShrink: 0, fontSize: 17, lineHeight: 1.2 },
+  summaryContent: { display: 'grid', minWidth: 0, alignContent: 'start', gap: 2 },
+  summaryLabel: { color: '#667085', fontSize: 9, fontWeight: 750, letterSpacing: '.04em', textTransform: 'uppercase' },
+  summaryValue: { color: '#101828', fontSize: 12, lineHeight: 1.35, overflowWrap: 'anywhere' },
+  summaryDetail: { color: '#667085', fontSize: 10, lineHeight: 1.3 },
+  infoBlocks: { display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 8 },
+  informationBlock: { minWidth: 0, padding: '10px 11px', border: '1px solid #eef1f5', borderRadius: 9, background: '#fff' },
+  informationBlockTitle: { margin: '0 0 8px', color: '#344054', fontSize: 10, fontWeight: 800, letterSpacing: '.06em', textTransform: 'uppercase' },
+  informationBlockContent: { display: 'grid', gap: 6 },
+  informationLine: { display: 'grid', gridTemplateColumns: '86px minmax(0, 1fr)', gap: 7, alignItems: 'start' },
+  informationLineLabel: { color: '#667085', fontSize: 10 },
+  informationLineValue: { color: '#344054', fontSize: 11, lineHeight: 1.35, overflowWrap: 'anywhere' },
+  commentBox: { display: 'flex', gap: 8, padding: '9px 11px', borderRadius: 8, background: '#f9fafb' },
+  commentIcon: { flexShrink: 0, fontSize: 14 },
+  commentLabel: { display: 'block', marginBottom: 2, color: '#667085', fontSize: 9, fontWeight: 750, letterSpacing: '.04em', textTransform: 'uppercase' },
+  commentValue: { margin: 0, color: '#475467', fontSize: 11, lineHeight: 1.4, whiteSpace: 'pre-line' },
+  missionNotice: { display: 'flex', flexWrap: 'wrap', gap: 5, padding: '8px 10px', border: '1px solid', borderRadius: 8, fontSize: 10, lineHeight: 1.4 },
+  missionActions: { display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 7, paddingTop: 2 },
+  editMissionLink: { display: 'inline-flex', minHeight: 32, alignItems: 'center', padding: '0 10px', border: '1px solid #d0d5dd', borderRadius: 7, background: '#fff', color: '#344054', fontSize: 11, fontWeight: 650, textDecoration: 'none' },
+  deleteMissionButton: { minHeight: 32, padding: '0 10px', border: '1px solid #fda29b', borderRadius: 7, background: '#fff', color: '#b42318', fontSize: 11, fontWeight: 650, cursor: 'pointer' },
   filterCard: { padding: 14, border: '1px solid #e4e7ec', borderRadius: 11, background: '#fff', boxShadow: '0 1px 3px rgba(16,24,40,.04)' },
   sectionCard: { padding: 14, border: '1px solid #e4e7ec', borderRadius: 11, background: '#fff', boxShadow: '0 1px 3px rgba(16,24,40,.04)' },
   sectionHeader: { display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8, marginBottom: 10 },
@@ -2422,9 +3243,22 @@ const compactStyles = {
   input: { boxSizing: 'border-box', width: '100%', minHeight: 34, padding: '6px 9px', border: '1px solid #d0d5dd', borderRadius: 7, background: '#fff', fontFamily: 'inherit', fontSize: 12 },
   locationButton: { flexShrink: 0, minHeight: 34, padding: '5px 8px', border: '1px solid #d0d5dd', borderRadius: 7, background: '#fff', color: '#344054', fontSize: 10, fontWeight: 650, cursor: 'pointer' },
   statusRow: { display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 8, marginTop: 10, paddingTop: 10, borderTop: '1px solid #f2f4f7' },
+  trackedTrainerHistoryGroup: { display: 'grid', gap: 6 },
   trackedTrainerRow: { display: 'grid', gridTemplateColumns: 'minmax(170px,1.2fr) 72px 115px minmax(150px,1fr) auto', gap: 10, alignItems: 'center', padding: '8px 10px', border: '1px solid #e4e7ec', borderRadius: 8, background: '#fff' },
+  historyPanel: { marginLeft: 12, padding: '10px 12px', borderLeft: '2px solid #bfdbfe', borderRadius: '0 8px 8px 0', background: '#f8fafc' },
+  historyPanelHeader: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10, marginBottom: 8, color: '#475467', fontSize: 10 },
+  historyList: { display: 'grid', gap: 7 },
+  historyItem: { display: 'grid', gridTemplateColumns: '8px minmax(0,1fr)', gap: 8, alignItems: 'start' },
+  historyMarker: { width: 7, height: 7, marginTop: 5, borderRadius: 999, background: '#3b82f6' },
+  historyContent: { display: 'grid', gap: 2, minWidth: 0 },
+  historyTopline: { display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', gap: 8, color: '#344054', fontSize: 10 },
+  historyActor: { color: '#667085', fontSize: 10 },
+  historyDetail: { color: '#667085', fontSize: 9 },
+  historyEmpty: { color: '#667085', fontSize: 10 },
   trainerRow: { display: 'grid', gridTemplateColumns: 'minmax(180px,1.25fr) 72px minmax(125px,.85fr) 80px minmax(220px,1.5fr) auto', gap: 10, alignItems: 'center', padding: '8px 10px', border: '1px solid #e4e7ec', borderRadius: 8, background: '#fff' },
   trainerIdentity: { display: 'grid', minWidth: 0, gap: 2, color: '#101828', fontSize: 12 },
+  trainerResponseColumn: { display: 'grid', gap: 5, minWidth: 0 },
+  trainerResponseComment: { display: 'grid', gap: 2, padding: '5px 7px', borderLeft: '2px solid #3b82f6', borderRadius: '0 6px 6px 0', background: '#eff6ff', color: '#475467', fontSize: 9, lineHeight: 1.35, overflowWrap: 'anywhere' },
   trainerMeta: { overflow: 'hidden', color: '#667085', fontSize: 10, textOverflow: 'ellipsis', whiteSpace: 'nowrap' },
   criteria: { display: 'grid', minWidth: 0, overflowWrap: 'anywhere', gap: 2, color: '#667085', fontSize: 10, lineHeight: 1.3 },
   actionButton: { minHeight: 29, padding: '4px 8px', border: '1px solid #d0d5dd', borderRadius: 6, background: '#fff', color: '#344054', fontSize: 10, fontWeight: 650 },

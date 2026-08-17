@@ -44,6 +44,24 @@ export async function updateCurrentUserPassword(password) {
   return data;
 }
 
+export async function requestCurrentUserEmailChange(email) {
+  const normalizedEmail = String(email || '').trim().toLowerCase();
+
+  if (!normalizedEmail) {
+    throw new Error('Veuillez saisir une adresse e-mail.');
+  }
+
+  const { data, error } = await supabase.auth.updateUser(
+    { email: normalizedEmail },
+    {
+      emailRedirectTo: `${window.location.origin}/parametres`,
+    },
+  );
+
+  if (error) throw error;
+  return data;
+}
+
 export async function signOutCurrentUser() {
   const { error } = await supabase.auth.signOut();
   if (error) throw error;

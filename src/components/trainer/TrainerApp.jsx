@@ -2,6 +2,8 @@ import { NavLink, Route, Routes, useNavigate } from 'react-router-dom';
 
 import TrainerDashboard from '../../pages/trainer/TrainerDashboard';
 import TrainerProposals from '../../pages/trainer/TrainerProposals';
+import TrainerMissions from '../../pages/trainer/TrainerMissions';
+import TrainerMissionDetail from '../../pages/trainer/TrainerMissionDetail';
 import TrainerAvailability from '../../pages/trainer/TrainerAvailability';
 import TrainerPlanning from '../../pages/trainer/TrainerPlanning';
 import TrainerProfile from '../../pages/trainer/TrainerProfile';
@@ -22,6 +24,11 @@ const navigationItems = [
     to: '/formateur/propositions',
     label: 'Mes propositions',
     icon: '✉',
+  },
+  {
+    to: '/formateur/missions',
+    label: 'Mes missions',
+    icon: '▣',
   },
   {
     to: '/formateur/disponibilites',
@@ -186,6 +193,16 @@ export default function TrainerApp() {
           <Route
             path="/formateur/propositions"
             element={<TrainerProposals />}
+          />
+
+          <Route
+            path="/formateur/missions"
+            element={<TrainerMissions />}
+          />
+
+          <Route
+            path="/formateur/missions/:id"
+            element={<TrainerMissionDetail />}
           />
 
           <Route

@@ -46,3 +46,29 @@ export async function getCurrentUserContext(userId) {
     trainerProfile: trainerResult.data,
   };
 }
+
+export async function updateCurrentUserProfile(userId, {
+  firstName,
+  lastName,
+  phone,
+}) {
+  if (!userId) {
+    throw new Error('Utilisateur introuvable.');
+  }
+
+  const payload = {
+    first_name: String(firstName || '').trim() || null,
+    last_name: String(lastName || '').trim() || null,
+    phone: String(phone || '').trim() || null,
+  };
+
+  const { data, error } = await supabase
+    .from('profiles')
+    .update(payload)
+    .eq('id', userId)
+    .select('*')
+    .single();
+
+  if (error) throw error;
+  return data;
+}

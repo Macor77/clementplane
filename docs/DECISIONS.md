@@ -1,6 +1,6 @@
 # DECISIONS - Formaplane
 
-Version : 5.0 Dernière mise à jour : 16/07/2026
+Version : 10.0  Dernière mise à jour : 18/08/2026
 
 ------------------------------------------------------------------------
 
@@ -132,3 +132,44 @@ La documentation est mise à jour avant la clôture du sprint.
 -   confidentialité par défaut ;
 -   préparation au SaaS multi-organismes ;
 -   priorité à la valeur métier.
+
+
+------------------------------------------------------------------------
+
+# Décisions Sprints 8 à 10
+
+## Décision 11 — Un compte peut avoir plusieurs espaces
+
+Un même utilisateur peut être membre d'un organisme, formateur, ou cumuler les deux rôles. Le changement d'espace ne nécessite pas plusieurs comptes d'authentification.
+
+## Décision 12 — Profil global et données privées OF sont séparés
+
+Un OF ne doit pas pouvoir imposer à tous les autres organismes les informations privées qu'il conserve sur un formateur. Avant revendication, la localisation peut être propre à la relation OF / formateur. Après revendication, les données globales pilotées par le formateur deviennent la référence.
+
+## Décision 13 — Les compétences et le matériel utilisent des référentiels
+
+Les saisies sont normalisées par des catalogues partagés. Le moteur historique reste compatible afin d'éviter une refonte risquée avant la bêta.
+
+## Décision 14 — Plusieurs options peuvent coexister
+
+Plusieurs formateurs peuvent accepter la même mission. Une acceptation n'est pas une affectation définitive. L'OF conserve le choix final.
+
+## Décision 15 — Affecter un formateur clôt les autres options
+
+Lorsqu'un formateur est affecté, les autres propositions/options encore actives de cette mission passent à **Mission pourvue ailleurs**. Cette opération doit être atomique pour garantir la cohérence de la base.
+
+## Décision 16 — Une modification de mission peut exiger une revalidation
+
+L'OF peut modifier la mission, mais un formateur déjà engagé ne doit pas être considéré comme ayant accepté automatiquement les nouvelles conditions. Si son accord est requis, son état devient **Revalidation en attente** et toute confirmation d'affectation est bloquée jusqu'à sa réponse.
+
+## Décision 17 — Les actions et commentaires métier sont historisés
+
+Acceptation, refus, désistement, affectation, clôture et revalidation doivent rester traçables avec l'auteur et, lorsqu'il existe, le commentaire associé.
+
+## Décision 18 — Les missions annulées restent dans Missions, pas dans le planning
+
+Le planning sert à piloter l'activité opérationnelle. Une mission annulée doit rester retrouvable dans le listing Missions mais ne doit plus encombrer le calendrier.
+
+## Décision 19 — Suppression du statut Brouillon
+
+Une mission créée est immédiatement une mission métier **À pourvoir**. Le statut `brouillon` est supprimé du modèle afin d'éviter un parcours parallèle sans utilité opérationnelle.

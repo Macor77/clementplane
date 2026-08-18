@@ -1,8 +1,8 @@
 # DATABASE - Formaplane
 
-Version : 5.0\
-Dernière mise à jour : 16/07/2026\
-Correspond au Sprint 6 terminé.
+Version : 10.0\
+Dernière mise à jour : 18/08/2026\
+Correspond au Sprint 10 terminé et validé.
 
 ------------------------------------------------------------------------
 
@@ -88,7 +88,6 @@ Informations :
 
 ### Statuts
 
--   brouillon
 -   a_pourvoir
 -   affectee
 -   confirmee
@@ -220,3 +219,64 @@ accepte
 La base doit rester simple, normalisée et prête à évoluer vers une
 architecture multi-organismes sans remise en cause des tables
 existantes.
+
+
+------------------------------------------------------------------------
+
+# Évolutions de la base — Sprints 8 à 10
+
+## Identité et multi-organismes
+
+Le modèle distingue désormais `profiles`, `organizations`, `memberships`, `trainer_profiles` et `organization_trainers`. Un profil formateur peut être partagé entre plusieurs organismes sans partager leurs données privées.
+
+Pour un profil non revendiqué, la localisation propre à chaque OF est portée par `organization_trainers` (`ville`, `code_postal`, `latitude`, `longitude`). Après revendication du profil, la localisation globale du formateur devient la référence.
+
+## Référentiels
+
+Deux catalogues structurent désormais les saisies :
+
+- `competency_catalog` pour les compétences ;
+- `equipment_catalog` pour le matériel.
+
+Les données historiques ont été normalisées sans refondre le moteur de matching existant.
+
+## Historique du workflow mission / formateur
+
+La table `mission_trainer_history` conserve les changements d'état et leur auteur. Les commentaires associés aux actions sont également conservés afin que l'OF et le formateur disposent d'une traçabilité exploitable.
+
+Les statuts autorisés de `mission_formateurs` après le Sprint 10 sont :
+
+- `selectionne` ;
+- `proposition_envoyee` ;
+- `accepte` ;
+- `refuse` ;
+- `affecte` ;
+- `indisponible_affecte_ailleurs` ;
+- `annule` ;
+- `desiste` ;
+- `mission_pourvue`.
+
+L'affectation définitive est transactionnelle : le formateur choisi passe à `affecte` et les autres propositions/options actives de la même mission passent à `mission_pourvue`.
+
+## Revalidation après modification d'une mission
+
+Les tables `mission_change_requests` et `mission_change_request_trainers` assurent le suivi des modifications nécessitant une nouvelle validation des formateurs déjà engagés. Elles mémorisent la demande, les formateurs concernés, leur réponse et leur commentaire.
+
+Tant qu'une revalidation est attendue, l'affectation définitive du formateur concerné est bloquée. Une mission précédemment affectée n'est plus considérée comme confirmée tant que le formateur n'a pas revalidé les nouvelles conditions.
+
+## Statut des missions
+
+Le statut métier `brouillon` a été supprimé au Sprint 10. Toute nouvelle mission entre directement dans le workflow avec `a_pourvoir`. Les anciennes lignes `brouillon` ont été migrées vers `a_pourvoir`.
+
+Les statuts SQL autorisés de `missions` sont désormais :
+
+- `a_pourvoir` ;
+- `affectee` ;
+- `confirmee` ;
+- `realisee` ;
+- `annulee` ;
+- `archivee`.
+
+## Sécurité
+
+Le Sprint 10 renforce les RLS et les RPC de recherche/édition afin qu'un OF n'accède qu'aux données qui lui sont destinées. Les engagements externes restent utilisables pour prévenir les conflits de planning sans exposer les informations métier d'un autre organisme.

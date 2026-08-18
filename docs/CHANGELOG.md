@@ -1,7 +1,7 @@
 # CHANGELOG - Formaplane
 
-Version : 8.0
-Date : 11/08/2026
+Version : 10.0
+Date : 18/08/2026
 
 ------------------------------------------------------------------------
 
@@ -313,3 +313,69 @@ Formaplane dispose désormais des fondations nécessaires à son fonctionnement 
 # Prochaine étape
 
 Sprint 9 — Notifications, relances et automatisations.
+
+
+------------------------------------------------------------------------
+
+# Sprint 9 — Nom et identité Formaplane (Terminé)
+
+## Identité produit
+
+- Adoption officielle du nom **Formaplane**.
+- Renommage technique du projet.
+- Ajout des ressources de marque et harmonisation visuelle.
+- Préparation des domaines `formaplane.fr` et `formaplane.com`.
+- Mise en service de l'adresse `contact@formaplane.fr`.
+- Dépôt de la marque engagé.
+
+------------------------------------------------------------------------
+
+# Sprint 10 — Préparation bêta et consolidation métier (Terminé)
+
+Version de clôture : **v0.10.0**.
+
+## Confidentialité et multi-organismes
+
+- Sécurisation de la recherche globale des formateurs.
+- Renforcement des RLS.
+- Séparation de la localisation privée OF et de la localisation globale revendiquée.
+- Durcissement des privilèges de `organization_trainers`.
+
+## Référentiels
+
+- Ajout du catalogue de compétences.
+- Ajout du catalogue de matériel.
+- Normalisation des compétences historiques.
+
+## Comptes et paramètres
+
+- Amélioration des informations de compte et d'organisation.
+- Ajout du parcours de suppression de compte avec garde-fous et Edge Function dédiée.
+
+## Workflow missions
+
+- Historique détaillé des actions mission / formateur avec auteur.
+- Gestion explicite des options acceptées.
+- Désistement d'une option par le formateur.
+- Historique formateur avec filtres.
+- Fiche contact de l'organisme côté formateur.
+- Revalidation après modification des conditions d'une mission.
+- Blocage de l'affectation tant qu'une revalidation nécessaire est en attente.
+- Commentaires rattachés aux actions d'historique.
+- Affectation atomique : le formateur retenu est affecté et les autres options sont clôturées en `mission_pourvue`.
+- Suppression définitive du statut mission `brouillon` au profit de `a_pourvoir`.
+
+## Planning et ergonomie
+
+- Simplification de la synthèse du planning OF.
+- Masquage des missions annulées dans le planning.
+- Liens directs vers la fiche mission depuis le planning et les disponibilités formateur.
+- Amélioration des états et messages liés aux revalidations.
+
+## Recette
+
+Les parcours principaux ont été rejoués et validés : proposition simple, options concurrentes, affectation, mission pourvue ailleurs, désistement, désaffectation, revalidation, historiques/commentaires, plannings et création directe en `À pourvoir`.
+
+# Prochaine étape
+
+Sprint 11 — Brevo et e-mails transactionnels.

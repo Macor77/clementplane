@@ -1,8 +1,8 @@
 # FONCTIONNEL - Formaplane
 
-Version : 8.0
-Dernière mise à jour : 11/08/2026
-Correspond au Sprint 8 terminé et validé.
+Version : 10.0
+Dernière mise à jour : 18/08/2026
+Correspond au Sprint 10 terminé et validé.
 
 ------------------------------------------------------------------------
 
@@ -310,3 +310,65 @@ Les données et relations sont rattachées à l'organisation concernée afin de 
 À l'issue du Sprint 8, Formaplane permet à plusieurs organismes de travailler avec une même base de profils formateurs tout en conservant leurs informations métier confidentielles.
 
 Le formateur devient également un utilisateur actif de la plateforme : il peut gérer son profil, ses disponibilités et ses réponses aux propositions.
+
+
+------------------------------------------------------------------------
+
+# Évolutions Sprint 9 — Identité Formaplane
+
+L'application porte désormais officiellement le nom **Formaplane**. L'identité visuelle, les domaines et l'adresse de contact ont été préparés pour la mise en bêta.
+
+------------------------------------------------------------------------
+
+# Évolutions Sprint 10 — Préparation bêta et workflow missions
+
+## Confidentialité et réseau formateurs
+
+La recherche globale est sécurisée et évite d'exposer inutilement les données d'un formateur à un OF tiers. Avant revendication, certaines informations de localisation peuvent rester propres à l'organisme. Après revendication, le formateur pilote les données globales de son profil.
+
+## Compétences et matériel
+
+Les saisies de compétences et de matériel reposent désormais sur des référentiels communs afin d'améliorer la cohérence des données sans casser le matching existant.
+
+## Options et affectation
+
+Un formateur qui accepte une proposition crée une **option**. Plusieurs formateurs peuvent accepter la même mission tant que l'OF n'a pas choisi. Lorsque l'OF affecte un formateur :
+
+- le formateur retenu devient **Affecté** ;
+- les autres propositions/options actives deviennent **Mission pourvue ailleurs** ;
+- l'opération est traitée de façon atomique.
+
+## Désistement et désaffectation
+
+Un formateur peut se désister d'une option tant qu'il n'est pas définitivement affecté. L'OF peut désaffecter un formateur déjà retenu, avec une confirmation explicite rappelant qu'un contact direct avec le formateur est nécessaire. Les actions sont historisées.
+
+## Modification d'une mission engagée
+
+La mission elle-même est mise à jour lorsque l'OF modifie ses conditions. Si un formateur avait déjà accepté ou été affecté et que le changement nécessite son accord, son engagement passe en **revalidation en attente**.
+
+Le formateur peut consulter la mission complète avant de répondre, puis accepter ou refuser les nouvelles conditions et ajouter un commentaire. Tant que sa réponse est attendue, l'OF ne peut pas confirmer son affectation. Une mission précédemment affectée n'est plus présentée comme définitivement confirmée pendant cette revalidation.
+
+## Historique des propositions
+
+`Mes propositions` est organisé autour de :
+
+- **À répondre** : propositions et revalidations nécessitant une action ;
+- **Historique** : refus, désistements, missions pourvues ailleurs et autres propositions clôturées, avec filtres par date et statut.
+
+Les missions acceptées restent accessibles dans **Mes missions**.
+
+## Historique et commentaires
+
+Les actions importantes du workflow sont historisées avec leur auteur. Les commentaires laissés lors d'une réponse, d'une revalidation ou d'un désistement sont rattachés à l'action correspondante afin de conserver le contexte.
+
+## Planning et disponibilités formateur
+
+Les options et missions sont visibles dans les calendriers. Une option ou une mission affichée peut être ouverte directement pour consulter sa fiche. Les journées comportant une option restent protégées contre une modification incohérente de disponibilité.
+
+## Planning OF
+
+Le planning OF se concentre sur les états réellement utiles à la coordination : nombre total de missions, missions validées/affectées et missions restant à affecter. Les missions annulées ne sont plus affichées dans le planning et restent consultables dans le module Missions.
+
+## Suppression du brouillon
+
+Le statut **Brouillon** n'est plus utilisé. Une mission nouvellement créée entre directement dans le workflow **À pourvoir**.

@@ -1,8 +1,8 @@
 # PRD - Formaplane
 
-Version : 4.0  
-Dernière mise à jour : 14/07/2026  
-Correspond au Sprint 5 terminé.
+Version : 10.0  
+Dernière mise à jour : 18/08/2026  
+État produit après le Sprint 10 terminé et validé.
 
 ---
 
@@ -130,21 +130,35 @@ Le logiciel indique toujours le lieu réellement reconnu.
 
 ---
 
-# Fonctionnalités futures
+# Fonctionnalités disponibles après le Sprint 10
 
-Les prochaines grandes étapes sont :
+En complément du socle initial, Formaplane dispose désormais de :
 
-- Missions
-- Réseau de formateurs
-- Comptes utilisateurs
-- Marketplace
-- SaaS multi-organismes
+- création et suivi des missions ;
+- recherche et sélection de formateurs depuis une mission ;
+- propositions, acceptations et refus ;
+- gestion de plusieurs options concurrentes ;
+- affectation définitive et prévention des doubles affectations ;
+- espace formateur autonome ;
+- authentification et espaces multi-rôles ;
+- réseau partagé entre plusieurs organismes avec confidentialité ;
+- revendication d'un profil formateur ;
+- historiques des disponibilités et des actions mission ;
+- désistement et désaffectation ;
+- revalidation après modification des conditions d'une mission ;
+- référentiels de compétences et de matériel ;
+- plannings OF et formateur.
 
-Le détail est disponible dans :
+# Prochaines grandes étapes
 
-```
-ROADMAP.md
-```
+La priorité pré-bêta est désormais :
+
+- e-mails transactionnels via Brevo ;
+- notifications et relances ;
+- préparation et accompagnement de la bêta ;
+- poursuite progressive des fonctions SaaS et collaboratives.
+
+Le séquencement détaillé est maintenu dans `ROADMAP.md`.
 
 ---
 
@@ -182,3 +196,13 @@ Formaplane sera considéré comme un succès lorsque :
 - les missions.
 
 L'objectif n'est pas uniquement de gérer des données, mais de faciliter l'organisation des formations.
+
+---
+
+# État produit après le Sprint 10
+
+Formaplane n'est plus seulement un gestionnaire interne de fiches formateurs. Le produit permet désormais à un organisme de créer une mission, rechercher des profils, envoyer des propositions, recevoir plusieurs acceptations sous forme d'options, choisir un formateur, gérer les changements de conditions et suivre les engagements dans les plannings.
+
+Le formateur possède son propre espace pour gérer ses disponibilités, propositions, missions, profil et réponses aux revalidations. L'architecture multi-organismes protège les données propres à chaque OF tout en permettant la prévention globale des conflits de planning.
+
+Le prochain enjeu produit est de rendre ces workflows utilisables sans surveillance manuelle grâce aux communications transactionnelles et notifications avant l'ouverture de la bêta.

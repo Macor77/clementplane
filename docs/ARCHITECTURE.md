@@ -1,8 +1,8 @@
 # ARCHITECTURE - Formaplane
 
-Version : 8.0
-Dernière mise à jour : 11/08/2026
-Correspond au Sprint 8 terminé et validé.
+Version : 10.0
+Dernière mise à jour : 18/08/2026
+Correspond au Sprint 10 terminé et validé.
 
 ------------------------------------------------------------------------
 
@@ -519,3 +519,45 @@ Les briques fondamentales du multi-organismes sont désormais présentes :
 - inscription d'organismes ;
 - cloisonnement des données ;
 - détection sécurisée des conflits entre OF.
+
+
+------------------------------------------------------------------------
+
+# Évolutions Sprints 9 et 10
+
+## Identité Formaplane
+
+Le produit est désormais exploité sous le nom Formaplane. Les ressources publiques de marque sont regroupées sous `public/brand/`.
+
+## Confidentialité du réseau formateurs
+
+Le Sprint 10 renforce la séparation entre profil global et relation privée OF / formateur. La recherche globale passe par des fonctions sécurisées et la localisation d'un profil non revendiqué peut rester spécifique à chaque organisme. Une fois le profil revendiqué, les données pilotées par le formateur deviennent la référence commune.
+
+## Référentiels de saisie
+
+Les composants `CompetencyInput` et `EquipmentInput` s'appuient sur des services et catalogues dédiés. Cette couche normalise progressivement les compétences et le matériel tout en conservant la compatibilité avec les données métier existantes.
+
+## Workflow mission enrichi
+
+Le moteur de mission comprend désormais :
+
+- plusieurs options acceptées en parallèle ;
+- désistement formateur ;
+- clôture automatique des autres options lors de l'affectation ;
+- historique des actions avec auteur et commentaires ;
+- revalidation lorsqu'une mission engagée est modifiée ;
+- blocage d'une affectation tant qu'une revalidation nécessaire est en attente.
+
+L'affectation finale est réalisée par une opération SQL atomique afin d'éviter les états intermédiaires incohérents.
+
+## Espace formateur
+
+L'espace formateur possède des vues dédiées pour les propositions, les missions, le planning, les disponibilités, le profil et le contact avec l'organisme. Les cartes de planning et de disponibilité donnent accès à la fiche mission concernée.
+
+## Suppression de compte
+
+Le projet contient une Edge Function `delete-account` et un service `accountDeletionService`. La suppression est protégée par les règles métier et de sécurité mises en place côté Supabase.
+
+# État architectural après le Sprint 10
+
+Formaplane dispose désormais d'un socle pré-bêta multi-organismes : authentification, espaces OF/formateur, confidentialité renforcée, réseau partagé, référentiels, workflow mission traçable, revalidation et prévention des doubles affectations. Le Sprint 11 peut se concentrer sur les e-mails transactionnels sans remettre en cause ce socle.

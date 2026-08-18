@@ -11,7 +11,7 @@ import {
 import {
   createMission,
   getMissionById,
-  updateMission,
+  updateMissionWithRevalidation,
 } from '../services/missionsService';
 
 import CompetencyInput from '../components/CompetencyInput';
@@ -27,7 +27,7 @@ const EMPTY_MISSION = {
   competences: '',
   materiel: '',
   commentaire: '',
-  statut: 'brouillon',
+  statut: 'a_pourvoir',
 };
 
 const EMPTY_DATE = {
@@ -92,7 +92,7 @@ export default function MissionForm() {
           commentaire:
             missionData.commentaire || '',
           statut:
-            missionData.statut || 'brouillon',
+            missionData.statut || 'a_pourvoir',
         });
 
         const missionDates =
@@ -194,12 +194,20 @@ export default function MissionForm() {
 
     try {
       if (isEditMode) {
-        await updateMission(id, {
-          mission,
-          dates,
-        });
+        const result =
+          await updateMissionWithRevalidation(
+            id,
+            {
+              mission,
+              dates,
+            },
+          );
 
-        navigate(`/missions/${id}`);
+        navigate(
+          result.revalidationRequired
+            ? `/missions/${id}?modification=proposee`
+            : `/missions/${id}`,
+        );
       } else {
         const createdMission =
           await createMission({
@@ -250,7 +258,7 @@ export default function MissionForm() {
 
           <p style={styles.subtitle}>
             {isEditMode
-              ? 'Modifie les informations, les critères ou les dates de la mission.'
+              ? 'Modifie les informations de la mission. Si un formateur a déjà accepté ou été affecté, tout changement essentiel devra être validé par lui.'
               : 'Enregistre les informations de la mission. Les formateurs pourront ensuite être sélectionnés depuis le moteur de recommandations.'}
           </p>
         </div>

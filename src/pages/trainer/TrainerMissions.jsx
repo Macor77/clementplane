@@ -108,8 +108,19 @@ export default function TrainerMissions() {
               {place ? <span>📍 {place}</span> : null}
             </div>
           </div>
-          <span style={{...styles.status, ...(mission.status === 'affecte' ? styles.confirmed : mission.status === 'accepte' ? styles.waiting : styles.cancelled)}}>{statusLabel(mission.status)}</span>
-          <Link className="button button--soft" to={`/formateur/missions/${mission.mission_id}`}>Ouvrir</Link>
+          <div style={styles.statusStack}>
+            {mission.pending_change ? (
+              <span style={styles.revalidation}>⚠️ Nouvelles conditions à valider</span>
+            ) : null}
+            <span style={{...styles.status, ...(mission.pending_change ? styles.revalidationStatus : mission.status === 'affecte' ? styles.confirmed : mission.status === 'accepte' ? styles.waiting : styles.cancelled)}}>
+              {mission.pending_change
+                ? 'Revalidation en attente'
+                : statusLabel(mission.status)}
+            </span>
+          </div>
+          <Link className={mission.pending_change ? 'button button--primary' : 'button button--soft'} to={`/formateur/missions/${mission.mission_id}`}>
+            {mission.pending_change ? 'Consulter la mission' : 'Ouvrir'}
+          </Link>
         </article>;
       })}</div>
     </section>)}
@@ -121,6 +132,7 @@ const styles = {
   monthSection: { marginTop: 20 }, monthSeparator: { display: 'grid', gridTemplateColumns: 'auto 1fr', gap: 12, alignItems: 'center', marginBottom: 8, color: '#475467', fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.06em' },
   list: { display: 'grid', gap: 7 }, row: { display: 'grid', gridTemplateColumns: 'minmax(0,1fr) auto auto', gap: 14, alignItems: 'center', padding: '11px 13px', border: '1px solid #e4e7ec', borderRadius: 9, background: '#fff' },
   main: { minWidth: 0, display: 'grid', gap: 5 }, organization: { color: '#344054' }, organizationLink: { color: '#2563eb', fontWeight: 750, textDecoration: 'none' }, period: { color: '#101828', fontSize: 12 }, meta: { display: 'flex', flexWrap: 'wrap', gap: '4px 12px', color: '#667085', fontSize: 10 },
-  status: { padding: '5px 8px', borderRadius: 999, fontSize: 9, fontWeight: 750, whiteSpace: 'nowrap' }, confirmed: { background: '#ecfdf3', color: '#027a48' }, waiting: { background: '#fffaeb', color: '#b54708' }, cancelled: { background: '#f2f4f7', color: '#667085' },
+  statusStack: { display: 'grid', gap: 5, justifyItems: 'end' }, revalidation: { padding: '6px 9px', borderRadius: 8, fontSize: 10, fontWeight: 800, whiteSpace: 'nowrap', background: '#fff7ed', color: '#c2410c', border: '1px solid #fdba74' },
+  status: { padding: '5px 8px', borderRadius: 999, fontSize: 9, fontWeight: 750, whiteSpace: 'nowrap' }, confirmed: { background: '#ecfdf3', color: '#027a48' }, waiting: { background: '#fffaeb', color: '#b54708' }, revalidationStatus: { background: '#fff7ed', color: '#c2410c' }, cancelled: { background: '#f2f4f7', color: '#667085' },
   empty: { display: 'grid', gap: 5, padding: 22, border: '1px solid #e4e7ec', borderRadius: 10, background: '#fff', color: '#667085', fontSize: 12 },
 };

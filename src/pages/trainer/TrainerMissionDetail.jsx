@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
+  getMyPendingMissionChange,
   getMyTrainerMissionById,
   getMyTrainerMissionHistory,
+  respondToMyMissionChange,
   withdrawFromMyMissionOption,
 } from '../../services/trainerProposalService';
 
@@ -41,6 +43,14 @@ function historyActionLabel(item) {
       'Formateur retiré de la mission',
     status_changed:
       'Statut modifié',
+    change_requested:
+      'Nouvelles conditions proposées par l’OF',
+    change_accepted:
+      'Nouvelles conditions acceptées',
+    change_refused:
+      'Nouvelles conditions refusées',
+    change_applied:
+      'Nouvelles conditions appliquées',
   };
 
   return (
@@ -110,21 +120,32 @@ export default function TrainerMissionDetail() {
   const [withdrawing,setWithdrawing]=useState(false);
   const [withdrawAvailability,setWithdrawAvailability]=useState({});
   const [withdrawComment,setWithdrawComment]=useState('');
+  const [pendingChange,setPendingChange]=useState(null);
+  const [changeComment,setChangeComment]=useState('');
+  const [changeSubmitting,setChangeSubmitting]=useState(false);
 
   useEffect(()=>{
     let active=true;
 
     (async()=>{
       try {
-        const [row, historyRows] =
-          await Promise.all([
-            getMyTrainerMissionById(id),
-            getMyTrainerMissionHistory(id),
-          ]);
+        const [
+          row,
+          historyRows,
+          pendingChangeRow,
+        ] = await Promise.all([
+          getMyTrainerMissionById(id),
+          getMyTrainerMissionHistory(id),
+          getMyPendingMissionChange(id),
+        ]);
 
         if(active) {
           setMission(row);
           setHistory(historyRows);
+          setPendingChange(pendingChangeRow);
+          setChangeComment(
+            pendingChangeRow?.response_comment || '',
+          );
         }
       } catch(e) {
         console.error(e);
@@ -146,6 +167,46 @@ export default function TrainerMissionDetail() {
       active=false;
     };
   },[id]);
+
+  const respondToChange = async (response) => {
+    if (!pendingChange) {
+      return;
+    }
+
+    setChangeSubmitting(true);
+    setError('');
+
+    try {
+      await respondToMyMissionChange({
+        requestId: pendingChange.request_id,
+        response,
+        comment: changeComment,
+      });
+
+      const [
+        missionRow,
+        historyRows,
+        pendingChangeRow,
+      ] = await Promise.all([
+        getMyTrainerMissionById(id),
+        getMyTrainerMissionHistory(id),
+        getMyPendingMissionChange(id),
+      ]);
+
+      setMission(missionRow);
+      setHistory(historyRows);
+      setPendingChange(pendingChangeRow);
+    } catch (changeError) {
+      console.error(changeError);
+      setError(
+        changeError?.message ||
+          'Impossible d’enregistrer votre réponse aux nouvelles conditions.',
+      );
+    } finally {
+      setChangeSubmitting(false);
+    }
+  };
+
   const openWithdraw = () => {
     const choices = {};
 
@@ -215,6 +276,63 @@ export default function TrainerMissionDetail() {
       {mission.offered_fee != null ? <Info icon="€" label="Rémunération" value={`${mission.offered_fee} €`}/> : null}
     </div></section>
     <section style={styles.card}><h2 style={styles.cardTitle}>Dates et horaires</h2>{dates.length ? <div style={styles.dateList}>{dates.map((item,index)=><div key={`${item.date}-${index}`} style={styles.dateRow}><strong>{formatDate(item.date)}</strong><span>{[item.heure_debut,item.heure_fin].filter(Boolean).join(' → ') || 'Horaires à confirmer'}</span></div>)}</div> : <span style={styles.muted}>Dates à confirmer.</span>}</section>
+    {pendingChange ? (
+      <section style={{...styles.card,...styles.changeCard}}>
+        <div style={styles.changeHeader}>
+          <div>
+            <p style={styles.changeEyebrow}>MODIFICATION À VALIDER</p>
+            <h2 style={styles.cardTitle}>L’OF propose de nouvelles conditions</h2>
+            <p style={styles.muted}>
+              Vos conditions actuelles restent valables tant que vous n’avez pas accepté cette modification.
+            </p>
+          </div>
+          <span style={styles.changeStatus}>
+            {pendingChange.response_status === 'pending'
+              ? 'Votre réponse est attendue'
+              : pendingChange.response_status === 'accepted'
+                ? 'Acceptée'
+                : 'Refusée'}
+          </span>
+        </div>
+
+        <MissionChangeDiff change={pendingChange} />
+
+        {pendingChange.response_status === 'pending' ? (
+          <>
+            <label style={styles.withdrawCommentField}>
+              <span>Commentaire facultatif à transmettre à l’OF</span>
+              <textarea
+                rows={3}
+                value={changeComment}
+                onChange={(event)=>setChangeComment(event.target.value)}
+                placeholder="Une précision sur votre décision…"
+                style={styles.withdrawTextarea}
+              />
+            </label>
+
+            <div style={styles.changeActions}>
+              <button
+                type="button"
+                onClick={()=>respondToChange('refused')}
+                disabled={changeSubmitting}
+                style={styles.changeRefuseButton}
+              >
+                Refuser les nouvelles conditions
+              </button>
+              <button
+                type="button"
+                onClick={()=>respondToChange('accepted')}
+                disabled={changeSubmitting}
+                style={styles.changeAcceptButton}
+              >
+                {changeSubmitting ? 'Enregistrement…' : 'Accepter les nouvelles conditions'}
+              </button>
+            </div>
+          </>
+        ) : null}
+      </section>
+    ) : null}
+
     {mission.mission_notes ? <section style={styles.card}><h2 style={styles.cardTitle}>Informations complémentaires</h2><p style={styles.notes}>{mission.mission_notes}</p></section> : null}
     {mission.response_comment ? <section style={styles.card}><h2 style={styles.cardTitle}>Votre réponse</h2><div style={styles.response}><span>Commentaire transmis à l’organisme de formation</span><p>{mission.response_comment}</p></div></section> : null}
     {mission.withdrawal_comment ? <section style={styles.card}><h2 style={styles.cardTitle}>Votre désistement</h2><div style={styles.response}><span>Commentaire transmis à l’organisme de formation</span><p>{mission.withdrawal_comment}</p></div></section> : null}
@@ -284,6 +402,12 @@ export default function TrainerMissionDetail() {
                 <span style={styles.historyActor}>
                   Par {historyActorLabel(item)}
                 </span>
+
+                {item.details?.comment ? (
+                  <span style={styles.historyComment}>
+                    Commentaire : « {item.details.comment} »
+                  </span>
+                ) : null}
               </div>
             </div>
           ))}
@@ -357,5 +481,83 @@ export default function TrainerMissionDetail() {
     ) : null}
   </div>;
 }
+
+function MissionChangeDiff({ change }) {
+  const previous = change?.previous_mission || {};
+  const proposed = change?.proposed_mission || {};
+  const rows = [];
+
+  const add = (label, before, after, formatter = (value) => value || 'Non renseigné') => {
+    const normalizedBefore = before == null ? '' : String(before);
+    const normalizedAfter = after == null ? '' : String(after);
+
+    if (normalizedBefore !== normalizedAfter) {
+      rows.push({
+        label,
+        before: formatter(before),
+        after: formatter(after),
+      });
+    }
+  };
+
+  add('Formation', previous.formation, proposed.formation);
+  add('Lieu / site', previous.lieu, proposed.lieu);
+  add('Adresse', previous.adresse, proposed.adresse);
+  add(
+    'Ville',
+    [previous.code_postal, previous.ville].filter(Boolean).join(' '),
+    [proposed.code_postal, proposed.ville].filter(Boolean).join(' '),
+  );
+  add(
+    'Rémunération',
+    previous.cout_formateur,
+    proposed.cout_formateur,
+    (value) => value == null || value === '' ? 'Non renseignée' : `${value} €`,
+  );
+
+  const previousDates = JSON.stringify(change?.previous_dates || []);
+  const proposedDates = JSON.stringify(change?.proposed_dates || []);
+
+  if (previousDates !== proposedDates) {
+    rows.push({
+      label: 'Dates et horaires',
+      before: formatChangeDates(change?.previous_dates || []),
+      after: formatChangeDates(change?.proposed_dates || []),
+    });
+  }
+
+  return (
+    <div style={styles.changeDiffList}>
+      {rows.length === 0 ? (
+        <span style={styles.muted}>Aucune différence essentielle détectée.</span>
+      ) : rows.map((row) => (
+        <div key={row.label} style={styles.changeDiffRow}>
+          <strong>{row.label}</strong>
+          <div style={styles.changeBefore}>Avant : {row.before}</div>
+          <div style={styles.changeAfter}>Proposé : {row.after}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function formatChangeDates(items) {
+  if (!Array.isArray(items) || items.length === 0) {
+    return 'Aucune date';
+  }
+
+  return items
+    .map((item) => {
+      const day = formatDate(item.date);
+      const hours = [item.heure_debut, item.heure_fin]
+        .filter(Boolean)
+        .map((value) => String(value).slice(0, 5))
+        .join(' → ');
+
+      return hours ? `${day} · ${hours}` : day;
+    })
+    .join(' ; ');
+}
+
 function Info({icon,label,value}) { return <div style={styles.info}><span style={styles.icon}>{icon}</span><div><span style={styles.label}>{label}</span><strong style={styles.value}>{value}</strong></div></div>; }
-const styles={ page:{width:'100%',maxWidth:1100,margin:'0 auto',paddingBottom:28}, header:{display:'flex',justifyContent:'space-between',marginBottom:14}, back:{color:'#3b82f6',fontSize:11,fontWeight:700,textDecoration:'none'}, title:{margin:'7px 0 3px',color:'#101828',fontSize:26}, subtitle:{margin:0,color:'#b54708',fontSize:11,fontWeight:700}, card:{marginBottom:10,padding:'15px 16px',border:'1px solid #e4e7ec',borderRadius:11,background:'#fff'}, cardTitle:{margin:'0 0 12px',fontSize:15,color:'#101828'}, grid:{display:'grid',gridTemplateColumns:'repeat(2,minmax(0,1fr))',gap:8}, info:{display:'flex',gap:10,padding:'10px 11px',border:'1px solid #eef1f5',borderRadius:9,background:'#f9fafb'},icon:{fontSize:17},label:{display:'block',color:'#667085',fontSize:9,fontWeight:800,textTransform:'uppercase'},value:{display:'block',marginTop:2,color:'#344054',fontSize:12},contactLink:{display:'inline-block',marginTop:4,color:'#2563eb',fontSize:10,fontWeight:750,textDecoration:'none'},dateList:{display:'grid',gap:6},dateRow:{display:'flex',justifyContent:'space-between',gap:12,padding:'8px 10px',borderRadius:8,background:'#f9fafb',color:'#475467',fontSize:11},notes:{margin:0,whiteSpace:'pre-line',color:'#475467',fontSize:11,lineHeight:1.5},response:{padding:'10px 11px',borderLeft:'3px solid #3b82f6',background:'#eff6ff',color:'#475467',fontSize:10},withdrawCard:{borderColor:'#fed7aa',background:'#fffaf5'},withdrawHeading:{display:'flex',justifyContent:'space-between',gap:16,alignItems:'center'},withdrawButton:{flexShrink:0,minHeight:34,padding:'0 11px',border:'1px solid #fdba74',borderRadius:7,background:'#fff7ed',color:'#c2410c',fontWeight:750,cursor:'pointer'},modalBackdrop:{position:'fixed',inset:0,zIndex:1000,display:'grid',placeItems:'center',padding:20,background:'rgba(15,23,42,.48)'},modal:{width:'min(620px,100%)',maxHeight:'85vh',overflow:'auto',padding:18,borderRadius:12,background:'#fff',boxShadow:'0 24px 70px rgba(15,23,42,.25)'},modalHeader:{display:'flex',justifyContent:'space-between',gap:16,paddingBottom:12,borderBottom:'1px solid #e4e7ec'},modalEyebrow:{margin:0,color:'#f97316',fontSize:9,fontWeight:800,letterSpacing:'.08em'},modalTitle:{margin:'4px 0',fontSize:19,color:'#101828'},modalText:{margin:0,color:'#667085',fontSize:11,lineHeight:1.45},modalClose:{width:32,height:32,border:'1px solid #d0d5dd',borderRadius:7,background:'#fff',fontSize:20,cursor:'pointer'},withdrawWarning:{display:'grid',gap:3,marginTop:14,padding:'10px 11px',border:'1px solid #fed7aa',borderRadius:8,background:'#fff7ed',color:'#9a3412',fontSize:10,lineHeight:1.45},withdrawCommentField:{display:'grid',gap:6,paddingTop:12,color:'#475467',fontSize:10,fontWeight:700},withdrawTextarea:{width:'100%',boxSizing:'border-box',padding:'8px 9px',border:'1px solid #d0d5dd',borderRadius:7,fontFamily:'inherit',fontSize:11,resize:'vertical'},withdrawDates:{display:'grid',gap:8,padding:'14px 0'},withdrawDateRow:{display:'grid',gridTemplateColumns:'minmax(0,1fr) 160px',gap:12,alignItems:'center',padding:'9px 10px',border:'1px solid #e4e7ec',borderRadius:8,color:'#344054',fontSize:11},withdrawSelect:{minHeight:34,padding:'6px 8px',border:'1px solid #d0d5dd',borderRadius:7,background:'#fff'},modalActions:{display:'flex',justifyContent:'flex-end',gap:8,paddingTop:12,borderTop:'1px solid #e4e7ec'},cancelButton:{minHeight:36,padding:'0 12px',border:'1px solid #d0d5dd',borderRadius:7,background:'#fff',color:'#344054',fontWeight:700,cursor:'pointer'},confirmWithdrawButton:{minHeight:36,padding:'0 12px',border:'1px solid #ea580c',borderRadius:7,background:'#ea580c',color:'#fff',fontWeight:750,cursor:'pointer'},futureCard:{borderStyle:'dashed'},historyIntro:{margin:'-4px 0 12px',color:'#667085',fontSize:10},historyList:{display:'grid',gap:8},historyItem:{display:'grid',gridTemplateColumns:'9px minmax(0,1fr)',gap:9,alignItems:'start'},historyDot:{width:8,height:8,marginTop:5,borderRadius:999,background:'#3b82f6'},historyContent:{display:'grid',gap:3,paddingBottom:8,borderBottom:'1px solid #f2f4f7'},historyTopline:{display:'flex',justifyContent:'space-between',flexWrap:'wrap',gap:8,color:'#344054',fontSize:10},historyActor:{color:'#667085',fontSize:10},muted:{margin:0,color:'#667085',fontSize:11},state:{display:'grid',gap:8,padding:24,color:'#667085'} };
+const styles={ page:{width:'100%',maxWidth:1100,margin:'0 auto',paddingBottom:28}, header:{display:'flex',justifyContent:'space-between',marginBottom:14}, back:{color:'#3b82f6',fontSize:11,fontWeight:700,textDecoration:'none'}, title:{margin:'7px 0 3px',color:'#101828',fontSize:26}, subtitle:{margin:0,color:'#b54708',fontSize:11,fontWeight:700}, card:{marginBottom:10,padding:'15px 16px',border:'1px solid #e4e7ec',borderRadius:11,background:'#fff'}, cardTitle:{margin:'0 0 12px',fontSize:15,color:'#101828'}, grid:{display:'grid',gridTemplateColumns:'repeat(2,minmax(0,1fr))',gap:8}, info:{display:'flex',gap:10,padding:'10px 11px',border:'1px solid #eef1f5',borderRadius:9,background:'#f9fafb'},icon:{fontSize:17},label:{display:'block',color:'#667085',fontSize:9,fontWeight:800,textTransform:'uppercase'},value:{display:'block',marginTop:2,color:'#344054',fontSize:12},contactLink:{display:'inline-block',marginTop:4,color:'#2563eb',fontSize:10,fontWeight:750,textDecoration:'none'},dateList:{display:'grid',gap:6},dateRow:{display:'flex',justifyContent:'space-between',gap:12,padding:'8px 10px',borderRadius:8,background:'#f9fafb',color:'#475467',fontSize:11},notes:{margin:0,whiteSpace:'pre-line',color:'#475467',fontSize:11,lineHeight:1.5},response:{padding:'10px 11px',borderLeft:'3px solid #3b82f6',background:'#eff6ff',color:'#475467',fontSize:10},withdrawCard:{borderColor:'#fed7aa',background:'#fffaf5'},withdrawHeading:{display:'flex',justifyContent:'space-between',gap:16,alignItems:'center'},withdrawButton:{flexShrink:0,minHeight:34,padding:'0 11px',border:'1px solid #fdba74',borderRadius:7,background:'#fff7ed',color:'#c2410c',fontWeight:750,cursor:'pointer'},modalBackdrop:{position:'fixed',inset:0,zIndex:1000,display:'grid',placeItems:'center',padding:20,background:'rgba(15,23,42,.48)'},modal:{width:'min(620px,100%)',maxHeight:'85vh',overflow:'auto',padding:18,borderRadius:12,background:'#fff',boxShadow:'0 24px 70px rgba(15,23,42,.25)'},modalHeader:{display:'flex',justifyContent:'space-between',gap:16,paddingBottom:12,borderBottom:'1px solid #e4e7ec'},modalEyebrow:{margin:0,color:'#f97316',fontSize:9,fontWeight:800,letterSpacing:'.08em'},modalTitle:{margin:'4px 0',fontSize:19,color:'#101828'},modalText:{margin:0,color:'#667085',fontSize:11,lineHeight:1.45},modalClose:{width:32,height:32,border:'1px solid #d0d5dd',borderRadius:7,background:'#fff',fontSize:20,cursor:'pointer'},withdrawWarning:{display:'grid',gap:3,marginTop:14,padding:'10px 11px',border:'1px solid #fed7aa',borderRadius:8,background:'#fff7ed',color:'#9a3412',fontSize:10,lineHeight:1.45},withdrawCommentField:{display:'grid',gap:6,paddingTop:12,color:'#475467',fontSize:10,fontWeight:700},withdrawTextarea:{width:'100%',boxSizing:'border-box',padding:'8px 9px',border:'1px solid #d0d5dd',borderRadius:7,fontFamily:'inherit',fontSize:11,resize:'vertical'},withdrawDates:{display:'grid',gap:8,padding:'14px 0'},withdrawDateRow:{display:'grid',gridTemplateColumns:'minmax(0,1fr) 160px',gap:12,alignItems:'center',padding:'9px 10px',border:'1px solid #e4e7ec',borderRadius:8,color:'#344054',fontSize:11},withdrawSelect:{minHeight:34,padding:'6px 8px',border:'1px solid #d0d5dd',borderRadius:7,background:'#fff'},modalActions:{display:'flex',justifyContent:'flex-end',gap:8,paddingTop:12,borderTop:'1px solid #e4e7ec'},cancelButton:{minHeight:36,padding:'0 12px',border:'1px solid #d0d5dd',borderRadius:7,background:'#fff',color:'#344054',fontWeight:700,cursor:'pointer'},confirmWithdrawButton:{minHeight:36,padding:'0 12px',border:'1px solid #ea580c',borderRadius:7,background:'#ea580c',color:'#fff',fontWeight:750,cursor:'pointer'},changeCard:{borderColor:'#fdb022',background:'#fffcf5'},changeHeader:{display:'flex',justifyContent:'space-between',gap:14,alignItems:'start',marginBottom:12},changeEyebrow:{margin:'0 0 4px',color:'#b54708',fontSize:9,fontWeight:800,letterSpacing:'.08em'},changeStatus:{padding:'5px 8px',borderRadius:999,background:'#fff7ed',color:'#b54708',fontSize:9,fontWeight:800},changeDiffList:{display:'grid',gap:7,marginTop:10},changeDiffRow:{padding:'9px 10px',border:'1px solid #fedf89',borderRadius:8,background:'#fff',fontSize:10},changeBefore:{marginTop:4,color:'#667085'},changeAfter:{marginTop:2,color:'#9a3412',fontWeight:700},changeActions:{display:'flex',justifyContent:'flex-end',gap:8,marginTop:12},changeRefuseButton:{minHeight:36,padding:'0 12px',border:'1px solid #f97066',borderRadius:7,background:'#fff',color:'#b42318',fontWeight:750,cursor:'pointer'},changeAcceptButton:{minHeight:36,padding:'0 12px',border:'1px solid #2563eb',borderRadius:7,background:'#2563eb',color:'#fff',fontWeight:750,cursor:'pointer'},futureCard:{borderStyle:'dashed'},historyIntro:{margin:'-4px 0 12px',color:'#667085',fontSize:10},historyList:{display:'grid',gap:8},historyItem:{display:'grid',gridTemplateColumns:'9px minmax(0,1fr)',gap:9,alignItems:'start'},historyDot:{width:8,height:8,marginTop:5,borderRadius:999,background:'#3b82f6'},historyContent:{display:'grid',gap:3,paddingBottom:8,borderBottom:'1px solid #f2f4f7'},historyTopline:{display:'flex',justifyContent:'space-between',flexWrap:'wrap',gap:8,color:'#344054',fontSize:10},historyActor:{color:'#667085',fontSize:10},historyComment:{color:'#475467',fontSize:10,fontStyle:'italic'},muted:{margin:0,color:'#667085',fontSize:11},state:{display:'grid',gap:8,padding:24,color:'#667085'} };

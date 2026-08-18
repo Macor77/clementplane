@@ -23,7 +23,6 @@ const VIEW_FILTERS = [
 
 const STATUS_FILTERS = [
   { id: 'all', label: 'Tous les statuts' },
-  { id: 'draft', label: 'Brouillon' },
   { id: 'to_fill', label: 'À pourvoir' },
   {
     id: 'trainer_available',
@@ -668,22 +667,7 @@ function MissionRow({
           Ouvrir
         </button>
 
-        {state.id === 'draft' ? (
-          <button
-            type="button"
-            onClick={(event) =>
-              onDelete(
-                event,
-                mission,
-              )
-            }
-            style={
-              styles.deleteButton
-            }
-          >
-            Supprimer
-          </button>
-        ) : null}
+
       </div>
     </article>
   );
@@ -734,6 +718,15 @@ function getMissionBusinessState(
   const relations =
     mission.mission_formateurs ||
     [];
+
+  if (mission.pending_change) {
+    return {
+      id: 'revalidation',
+      label: 'Revalidation en attente',
+      background: '#fff7ed',
+      color: '#c2410c',
+    };
+  }
 
   const hasAffected =
     relations.some(
@@ -793,18 +786,6 @@ function getMissionBusinessState(
     };
   }
 
-  if (
-    mission.statut === 'brouillon' &&
-    !hasWorkflowActivity
-  ) {
-    return {
-      id: 'draft',
-      label: 'Brouillon',
-      background: '#f2f4f7',
-      color: '#344054',
-    };
-  }
-
   return {
     id: 'to_fill',
     label: 'À pourvoir',
@@ -817,13 +798,16 @@ function getMissionActionState(
   mission,
   state,
 ) {
-  if (
-    state.id === 'draft'
-  ) {
+  if (state.id === 'revalidation') {
+    const pending = (mission.pending_change?.trainer_responses || []).filter(
+      (item) => item.response_status === 'pending',
+    );
+    const names = pending.map((item) => item.trainer_name).filter(Boolean);
     return {
-      label:
-        'Mission à finaliser avant lancement.',
-      tone: 'neutral',
+      label: names.length === 1
+        ? `${names[0]} doit valider les nouvelles conditions.`
+        : `${pending.length} formateurs doivent valider les nouvelles conditions.`,
+      tone: 'warning',
     };
   }
 

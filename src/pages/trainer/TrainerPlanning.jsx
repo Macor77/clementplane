@@ -929,6 +929,19 @@ export default function TrainerPlanning() {
                         </div>
                       ) : null}
 
+                      <Link
+                        to={`/formateur/missions/${item.missionId}`}
+                        className="button button--soft"
+                        style={{
+                          display: 'inline-flex',
+                          justifyContent: 'center',
+                          marginTop: 10,
+                          textDecoration: 'none',
+                        }}
+                      >
+                        Voir la mission
+                      </Link>
+
                     </article>
                   ),
                 )}

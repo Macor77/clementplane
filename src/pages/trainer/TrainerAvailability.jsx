@@ -1154,26 +1154,48 @@ export default function TrainerAvailability() {
 
 
                       {optionCommitments.length > 0 ? (
-                        <button
-                          type="button"
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            setOptionModalDay(iso);
-                          }}
-                          style={{
-                            minHeight: 28,
-                            marginTop: 6,
-                            border: '1px solid #facc15',
-                            borderRadius: 6,
-                            background: '#fff7d6',
-                            color: '#854d0e',
-                            fontSize: 9,
-                            fontWeight: 800,
-                            cursor: 'pointer',
-                          }}
-                        >
-                          {optionCommitments.length} option{optionCommitments.length > 1 ? 's' : ''}
-                        </button>
+                        <div style={{ display: 'grid', gap: 5, marginTop: 6 }}>
+                          <button
+                            type="button"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              setOptionModalDay(iso);
+                            }}
+                            style={{
+                              minHeight: 28,
+                              border: '1px solid #facc15',
+                              borderRadius: 6,
+                              background: '#fff7d6',
+                              color: '#854d0e',
+                              fontSize: 9,
+                              fontWeight: 800,
+                              cursor: 'pointer',
+                            }}
+                          >
+                            {optionCommitments.length} option{optionCommitments.length > 1 ? 's' : ''}
+                          </button>
+
+                          {optionCommitments.length === 1 && optionCommitments[0]?.missionId ? (
+                            <Link
+                              to={`/formateur/missions/${optionCommitments[0].missionId}`}
+                              onClick={(event) => event.stopPropagation()}
+                              style={{
+                                display: 'grid',
+                                placeItems: 'center',
+                                minHeight: 26,
+                                border: '1px solid #facc15',
+                                borderRadius: 6,
+                                background: '#fff',
+                                color: '#854d0e',
+                                fontSize: 8,
+                                fontWeight: 800,
+                                textDecoration: 'none',
+                              }}
+                            >
+                              Voir la mission
+                            </Link>
+                          ) : null}
+                        </div>
                       ) : null}
 
                       {locked ? (
@@ -1194,50 +1216,24 @@ export default function TrainerAvailability() {
                           </span>
 
                           {missionId ? (
-                            <button
-                              type="button"
-                              onClick={(
-                                event,
-                              ) =>
-                                openMission(
-                                  event,
-                                  missionId,
-                                )
-                              }
+                            <Link
+                              to={`/formateur/missions/${missionId}`}
+                              onClick={(event) => event.stopPropagation()}
                               style={{
-                                minHeight:
-                                  26,
-
-                                border:
-                                  '1px solid rgba(15,23,42,.16)',
-
-                                borderRadius:
-                                  6,
-
-                                background:
-                                  visibleStatus ===
-                                  'mission'
-                                    ? '#dbeafe'
-                                    : '#fff7d6',
-
-                                color:
-                                  visibleStatus ===
-                                  'mission'
-                                    ? '#1d4ed8'
-                                    : '#854d0e',
-
-                                fontSize:
-                                  8,
-
-                                fontWeight:
-                                  800,
-
-                                cursor:
-                                  'pointer',
+                                display: 'grid',
+                                placeItems: 'center',
+                                minHeight: 26,
+                                border: '1px solid rgba(15,23,42,.16)',
+                                borderRadius: 6,
+                                background: visibleStatus === 'mission' ? '#dbeafe' : '#fff7d6',
+                                color: visibleStatus === 'mission' ? '#1d4ed8' : '#854d0e',
+                                fontSize: 8,
+                                fontWeight: 800,
+                                textDecoration: 'none',
                               }}
                             >
                               Voir la mission
-                            </button>
+                            </Link>
                           ) : null}
                         </div>
                       ) : (

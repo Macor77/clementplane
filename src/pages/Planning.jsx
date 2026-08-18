@@ -252,6 +252,7 @@ function MissionCard({ occurrence, compact = false, onClick }) {
   const { mission, dateRow } = occurrence;
   const visualState = getMissionVisualState(mission);
   const trainer = getAssignedTrainer(mission);
+  const pendingRevalidation = getPendingRevalidationTrainer(mission);
 
   return (
     <button
@@ -277,7 +278,11 @@ function MissionCard({ occurrence, compact = false, onClick }) {
       </span>
       <span className="mission-calendar-card__trainer">
         <span aria-hidden="true">{trainer ? '●' : '○'}</span>
-        {trainer ? `${trainer.prenom || ''} ${trainer.nom || ''}`.trim() : 'Formateur à affecter'}
+        {pendingRevalidation
+          ? `${pendingRevalidation.trainer_name || 'Formateur'} · revalidation attendue`
+          : trainer
+            ? `${trainer.prenom || ''} ${trainer.nom || ''}`.trim()
+            : 'Formateur à affecter'}
       </span>
       {!compact && (mission.ville || mission.lieu) && (
         <span className="mission-calendar-card__location">
@@ -322,7 +327,23 @@ function compareOccurrences(left, right) {
   );
 }
 
+function getPendingRevalidationTrainer(mission) {
+  const pending = (mission.pending_change?.trainer_responses || []).find(
+    (item) =>
+      item.response_status === 'pending' &&
+      item.previous_status === 'affecte',
+  );
+
+  return pending || null;
+}
+
 function getAssignedTrainer(mission) {
+  // Une affectation antérieure n'est plus considérée comme confirmée
+  // tant que le formateur n'a pas revalidé les nouvelles conditions.
+  if (getPendingRevalidationTrainer(mission)) {
+    return null;
+  }
+
   const relation = (mission.mission_formateurs || []).find(
     (item) => item.statut === 'affecte',
   );
@@ -331,6 +352,10 @@ function getAssignedTrainer(mission) {
 }
 
 function getMissionVisualState(mission) {
+  if (mission.pending_change) {
+    return { tone: 'blocking', label: 'À affecter' };
+  }
+
   const trainer = getAssignedTrainer(mission);
 
   return trainer

@@ -70,9 +70,24 @@ export async function getMissions() {
     throw error;
   }
 
-  return (data || []).map(
-    sortMissionDates,
+  const missions = (data || []).map(sortMissionDates);
+
+  // Une revalidation en attente est une information métier de premier niveau
+  // dans la liste OF : elle doit être visible sans ouvrir la mission.
+  const pendingChanges = await Promise.all(
+    missions.map(async (mission) => {
+      try {
+        return await getPendingMissionChangeForOrganization(mission.id);
+      } catch {
+        return null;
+      }
+    }),
   );
+
+  return missions.map((mission, index) => ({
+    ...mission,
+    pending_change: pendingChanges[index],
+  }));
 }
 
 /**
@@ -358,6 +373,176 @@ export async function updateMission(
   };
 }
 
+
+
+/**
+ * Modifie une mission en respectant les engagements déjà pris.
+ *
+ * - Sans formateur ayant accepté / été affecté : modification directe.
+ * - Avec une option ou une affectation : les champs secondaires sont
+ *   enregistrés immédiatement, tandis que les conditions essentielles
+ *   sont soumises à revalidation du/des formateur(s).
+ */
+export async function updateMissionWithRevalidation(
+  id,
+  {
+    mission,
+    dates = [],
+  },
+) {
+  if (!id) {
+    throw new Error(
+      "L'identifiant de la mission est obligatoire.",
+    );
+  }
+
+  validateMission(mission, dates);
+
+  const currentMission =
+    await getMissionById(id);
+
+  const protectedRelations =
+    (
+      currentMission
+        .mission_formateurs || []
+    ).filter((item) =>
+      ['accepte', 'affecte'].includes(
+        item.statut,
+      ),
+    );
+
+  const normalizedMission =
+    cleanMissionPayload(mission);
+
+  const essentialChanged =
+    hasEssentialMissionChanges({
+      currentMission,
+      proposedMission:
+        normalizedMission,
+      proposedDates: dates,
+    });
+
+  if (
+    protectedRelations.length === 0 ||
+    !essentialChanged
+  ) {
+    const updatedMission =
+      await updateMission(id, {
+        mission,
+        dates,
+      });
+
+    return {
+      mission: updatedMission,
+      revalidationRequired: false,
+      requestId: null,
+    };
+  }
+
+  const immediateChanges = {
+    code_interne:
+      normalizedMission.code_interne,
+    client:
+      normalizedMission.client,
+    intitule:
+      normalizedMission.intitule,
+    competences:
+      normalizedMission.competences,
+    materiel:
+      normalizedMission.materiel,
+    prix_vente:
+      normalizedMission.prix_vente,
+    commentaire:
+      normalizedMission.commentaire,
+    statut:
+      normalizedMission.statut,
+  };
+
+  const proposedEssential = {
+    formation:
+      normalizedMission.formation,
+    lieu:
+      normalizedMission.lieu,
+    adresse:
+      normalizedMission.adresse,
+    code_postal:
+      normalizedMission.code_postal,
+    ville:
+      normalizedMission.ville,
+    cout_formateur:
+      normalizedMission.cout_formateur,
+  };
+
+  const proposedDates = dates.map(
+    (item) => ({
+      date: item.date,
+      heure_debut:
+        item.heure_debut || '09:00',
+      heure_fin:
+        item.heure_fin || '17:00',
+    }),
+  );
+
+  const { data, error } =
+    await supabase.rpc(
+      'request_mission_change',
+      {
+        p_mission_id: id,
+        p_immediate_changes:
+          immediateChanges,
+        p_proposed_mission:
+          proposedEssential,
+        p_proposed_dates:
+          proposedDates,
+      },
+    );
+
+  if (error) {
+    const message =
+      String(error?.message || '');
+
+    if (
+      message.includes(
+        'CHANGE_ALREADY_PENDING',
+      )
+    ) {
+      throw new Error(
+        'Une modification des conditions attend déjà la réponse du formateur. Attendez sa décision avant de proposer de nouvelles conditions.',
+      );
+    }
+
+    throw error;
+  }
+
+  return {
+    mission: currentMission,
+    revalidationRequired: true,
+    requestId: data,
+  };
+}
+
+export async function getPendingMissionChangeForOrganization(
+  missionId,
+) {
+  if (!missionId) {
+    return null;
+  }
+
+  const { data, error } =
+    await supabase.rpc(
+      'get_pending_mission_change_for_organization',
+      {
+        p_mission_id: missionId,
+      },
+    );
+
+  if (error) {
+    throw error;
+  }
+
+  return data?.[0] || null;
+}
+
 /**
  * Supprime une mission.
  *
@@ -424,7 +609,7 @@ export async function duplicateMission(id) {
       sourceMission.cout_formateur,
     commentaire:
       sourceMission.commentaire,
-    statut: 'brouillon',
+    statut: 'a_pourvoir',
   };
 
   const duplicatedDates = (
@@ -546,80 +731,35 @@ export async function updateMissionFormateurStatus(
   const now = new Date().toISOString();
 
   if (statut === 'affecte') {
+    const pendingChange = await getPendingMissionChangeForOrganization(missionId);
+    const trainerPending = (pendingChange?.trainer_responses || []).some(
+      (item) => item.trainer_id === formateurId && item.response_status === 'pending',
+    );
+    if (trainerPending) {
+      throw new Error('Ce formateur doit d’abord valider les nouvelles conditions de la mission avant de pouvoir être affecté.');
+    }
+
     await assertTrainerCanBeAffected({
       missionId,
       formateurId,
     });
 
-    const {
-      data: previousAffectedRows,
-      error: previousAffectedError,
-    } = await supabase
-      .from(MISSION_FORMATEURS_TABLE)
-      .select('formateur_id')
-      .eq('mission_id', missionId)
-      .eq('statut', 'affecte')
-      .neq(
-        'formateur_id',
-        formateurId,
-      );
-
-    if (previousAffectedError) {
-      throw previousAffectedError;
-    }
-
-    const previousTrainerIds = (
-      previousAffectedRows || []
-    ).map(
-      (row) => row.formateur_id,
+    const { data, error } = await supabase.rpc(
+      'assign_mission_trainer',
+      {
+        p_mission_id: missionId,
+        p_formateur_id: formateurId,
+      },
     );
 
-    const {
-      error: resetPreviousError,
-    } = await supabase
-      .from(MISSION_FORMATEURS_TABLE)
-      .update({
-        statut: 'accepte',
-        affecte_le: null,
-      })
-      .eq('mission_id', missionId)
-      .eq('statut', 'affecte')
-      .neq(
-        'formateur_id',
-        formateurId,
-      );
-
-    if (resetPreviousError) {
-      throw resetPreviousError;
+    if (error) {
+      throw error;
     }
 
-    /*
-     * Une mission ne peut être affectée qu'à un seul formateur.
-     * Dès qu'un formateur est confirmé, les autres propositions/options
-     * encore actives sur CETTE mission sont clôturées comme "mission pourvue".
-     */
-    const { error: closeOtherOptionsError } =
-      await supabase
-        .from(MISSION_FORMATEURS_TABLE)
-        .update({
-          statut: 'mission_pourvue',
-          affecte_le: null,
-        })
-        .eq('mission_id', missionId)
-        .neq('formateur_id', formateurId)
-        .in('statut', [
-          'selectionne',
-          'proposition_envoyee',
-          'accepte',
-        ]);
+    await syncMissionStatusWithAffectation(missionId);
+    await reconcileTrainerConflicts([formateurId]);
 
-    if (closeOtherOptionsError) {
-      throw closeOtherOptionsError;
-    }
-
-    await reconcileTrainerConflicts(
-      previousTrainerIds,
-    );
+    return Array.isArray(data) ? data[0] : data;
   }
 
   const statusPayload =
@@ -1092,8 +1232,110 @@ function cleanMissionPayload(mission) {
 
     statut:
       mission.statut ||
-      'brouillon',
+      'a_pourvoir',
   };
+}
+
+
+
+function hasEssentialMissionChanges({
+  currentMission,
+  proposedMission,
+  proposedDates,
+}) {
+  const normalize = (value) =>
+    value == null ? '' : String(value).trim();
+
+  const normalizeNumber = (value) =>
+    value == null || value === ''
+      ? null
+      : Number(value);
+
+  const currentEssential = {
+    formation:
+      normalize(currentMission.formation),
+    lieu:
+      normalize(currentMission.lieu),
+    adresse:
+      normalize(currentMission.adresse),
+    code_postal:
+      normalize(currentMission.code_postal),
+    ville:
+      normalize(currentMission.ville),
+    cout_formateur:
+      normalizeNumber(
+        currentMission.cout_formateur,
+      ),
+  };
+
+  const nextEssential = {
+    formation:
+      normalize(proposedMission.formation),
+    lieu:
+      normalize(proposedMission.lieu),
+    adresse:
+      normalize(proposedMission.adresse),
+    code_postal:
+      normalize(proposedMission.code_postal),
+    ville:
+      normalize(proposedMission.ville),
+    cout_formateur:
+      normalizeNumber(
+        proposedMission.cout_formateur,
+      ),
+  };
+
+  if (
+    JSON.stringify(currentEssential) !==
+    JSON.stringify(nextEssential)
+  ) {
+    return true;
+  }
+
+  const currentDates = (
+    currentMission.mission_dates || []
+  )
+    .map((item) => ({
+      date: item.date || '',
+      heure_debut:
+        normalizeTime(item.heure_debut),
+      heure_fin:
+        normalizeTime(item.heure_fin),
+    }))
+    .sort((a, b) =>
+      a.date.localeCompare(b.date),
+    );
+
+  const nextDates = (
+    proposedDates || []
+  )
+    .map((item) => ({
+      date: item.date || '',
+      heure_debut:
+        normalizeTime(
+          item.heure_debut || '09:00',
+        ),
+      heure_fin:
+        normalizeTime(
+          item.heure_fin || '17:00',
+        ),
+    }))
+    .sort((a, b) =>
+      a.date.localeCompare(b.date),
+    );
+
+  return (
+    JSON.stringify(currentDates) !==
+    JSON.stringify(nextDates)
+  );
+}
+
+function normalizeTime(value) {
+  if (!value) {
+    return '';
+  }
+
+  return String(value).slice(0, 5);
 }
 
 /**

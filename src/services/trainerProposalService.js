@@ -9,7 +9,29 @@ export async function getMyMissionProposals() {
     throw error;
   }
 
-  return data || [];
+  const rows = data || [];
+
+  // Une revalidation est une vraie action attendue du formateur.
+  // On l'attache donc directement aux propositions/missions afin que
+  // « Mes propositions » et « Mes missions » puissent la signaler.
+  const changes = await Promise.all(
+    rows.map(async (row) => {
+      if (!['accepte', 'affecte'].includes(row.status)) {
+        return null;
+      }
+
+      try {
+        return await getMyPendingMissionChange(row.mission_id);
+      } catch {
+        return null;
+      }
+    }),
+  );
+
+  return rows.map((row, index) => ({
+    ...row,
+    pending_change: changes[index],
+  }));
 }
 
 export async function respondToMyMissionProposal({
@@ -51,9 +73,7 @@ export async function respondToMyMissionProposal({
 }
 
 export async function getMyTrainerMissions() {
-  const rows = await getMyMissionProposals();
-
-  return rows.filter((row) =>
+  return (await getMyMissionProposals()).filter((row) =>
     ['accepte', 'affecte', 'annule'].includes(row.status),
   );
 }
@@ -193,4 +213,70 @@ export async function getMyMissionOrganizationContact(missionId) {
   }
 
   return data?.[0] || null;
+}
+
+export async function getMyMissionProposalHistory() {
+  const { data, error } = await supabase.rpc(
+    'get_my_mission_proposal_history',
+  );
+
+  if (error) {
+    throw error;
+  }
+
+  return data || [];
+}
+
+export async function getMyPendingMissionChange(
+  missionId,
+) {
+  if (!missionId) {
+    return null;
+  }
+
+  const { data, error } = await supabase.rpc(
+    'get_my_pending_mission_change',
+    {
+      p_mission_id: missionId,
+    },
+  );
+
+  if (error) {
+    throw error;
+  }
+
+  return data?.[0] || null;
+}
+
+export async function respondToMyMissionChange({
+  requestId,
+  response,
+  comment = '',
+}) {
+  if (!requestId) {
+    throw new Error(
+      "L'identifiant de la modification est obligatoire.",
+    );
+  }
+
+  if (!['accepted', 'refused'].includes(response)) {
+    throw new Error(
+      'Réponse de modification non reconnue.',
+    );
+  }
+
+  const { data, error } = await supabase.rpc(
+    'respond_to_my_mission_change',
+    {
+      p_request_id: requestId,
+      p_response: response,
+      p_comment: comment || '',
+    },
+  );
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
 }

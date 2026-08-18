@@ -15,6 +15,7 @@ import {
   deleteMission,
   getMissionById,
   getMissionTrainerHistory,
+  getPendingMissionChangeForOrganization,
   removeFormateurFromMission,
   selectFormateurForMission,
   updateMissionFormateurStatus,
@@ -90,6 +91,7 @@ export default function MissionDetail() {
   ] = useState(null);
 
   const [unassignTrainerId, setUnassignTrainerId] = useState(null);
+  const [pendingMissionChange, setPendingMissionChange] = useState(null);
 
   const loadMission =
     useCallback(async () => {
@@ -100,14 +102,19 @@ export default function MissionDetail() {
         const [
           data,
           historyRows,
+          pendingChangeRow,
         ] = await Promise.all([
           getMissionById(id),
           getMissionTrainerHistory(id),
+          getPendingMissionChangeForOrganization(id),
         ]);
 
         setMission(data);
         setMissionHistory(
           historyRows,
+        );
+        setPendingMissionChange(
+          pendingChangeRow,
         );
 
         setLocationDraft(
@@ -556,6 +563,7 @@ export default function MissionDetail() {
           affectedTrainer={affectedTrainer}
           missionId={id}
           onDelete={handleDelete}
+          pendingMissionChange={pendingMissionChange}
         />
 
         <main style={styles.mainColumn}>
@@ -613,6 +621,9 @@ export default function MissionDetail() {
             }
             onPrepareProposal={
               handlePrepareProposal
+            }
+            pendingMissionChange={
+              pendingMissionChange
             }
           />
 
@@ -683,6 +694,7 @@ function MissionInformation({
   affectedTrainer,
   missionId,
   onDelete,
+  pendingMissionChange,
 }) {
   const missionDates = [
     ...(mission.mission_dates || []),
@@ -718,6 +730,7 @@ function MissionInformation({
       affectedTrainer,
       acceptedTrainers,
       pendingProposals,
+      pendingMissionChange,
     });
 
   return (
@@ -784,9 +797,11 @@ function MissionInformation({
               : missionSituation.summary
           }
           detail={
-            affectedTrainer
-              ? 'Formateur affecté'
-              : missionSituation.detail
+            pendingMissionChange
+              ? missionSituation.detail
+              : affectedTrainer
+                ? 'Formateur affecté'
+                : missionSituation.detail
           }
         />
       </div>
@@ -901,6 +916,24 @@ function MissionInformation({
           </span>
         </div>
       )}
+
+      {pendingMissionChange ? (
+        <div style={styles.pendingChangeBox}>
+          <div>
+            <strong>Modification des conditions en attente</strong>
+            <span>
+              La mission a été modifiée. Les formateurs concernés doivent maintenant confirmer qu’ils acceptent toujours la mission avec ces nouvelles conditions.
+            </span>
+          </div>
+          <div style={styles.pendingChangeResponses}>
+            {(pendingMissionChange.trainer_responses || []).map((item) => (
+              <span key={item.mission_formateur_id}>
+                {item.trainer_name || 'Formateur'} : {formatChangeResponseStatus(item.response_status)}
+              </span>
+            ))}
+          </div>
+        </div>
+      ) : null}
 
       <div style={styles.missionActions}>
         <Link
@@ -1021,6 +1054,7 @@ function getMissionSituation({
   affectedTrainer,
   acceptedTrainers,
   pendingProposals,
+  pendingMissionChange,
 }) {
   if (
     mission.statut === 'annulee'
@@ -1055,6 +1089,37 @@ function getMissionSituation({
       detail: '',
       background: '#f4f3ff',
       color: '#5925dc',
+    };
+  }
+
+  if (pendingMissionChange) {
+    const pendingResponses = (pendingMissionChange.trainer_responses || []).filter(
+      (item) => item.response_status === 'pending',
+    );
+    const previousAffected = pendingResponses.find(
+      (item) => item.previous_status === 'affecte',
+    );
+    const firstPending = pendingResponses[0];
+    const trainerName = firstPending?.trainer_name || 'Formateur';
+
+    return {
+      label: 'Revalidation en attente',
+      secondary: 'Réponse du formateur attendue',
+      summary: previousAffected
+        ? (previousAffected.trainer_name || trainerName)
+        : trainerName,
+      detail: previousAffected
+        ? 'Affectation à reconfirmer'
+        : 'Acceptation à revalider',
+      background: '#fff7ed',
+      color: '#c2410c',
+      noticeTitle: 'Action requise : attendre la revalidation',
+      notice: previousAffected
+        ? `${previousAffected.trainer_name || 'Le formateur'} était affecté avant la modification. Son affectation doit maintenant être reconfirmée sur les nouvelles conditions.`
+        : `${trainerName} doit accepter les nouvelles conditions avant de pouvoir être affecté.`,
+      noticeBackground: '#fff7ed',
+      noticeBorder: '#fdba74',
+      noticeColor: '#9a3412',
     };
   }
 
@@ -1535,6 +1600,7 @@ function TrackedTrainers({
   onRemove,
   onStatusChange,
   onPrepareProposal,
+  pendingMissionChange,
 }) {
   const historyByTrainer =
     useMemo(() => {
@@ -1599,6 +1665,17 @@ function TrackedTrainers({
                 expandedHistoryTrainerId ===
                 missionTrainer.formateur_id;
 
+              const pendingChangeResponse =
+                (pendingMissionChange?.trainer_responses || []).find(
+                  (item) => item.trainer_id === missionTrainer.formateur_id,
+                ) || null;
+
+              const latestChangeResponse = trainerHistory
+                .find((item) =>
+                  ['change_accepted', 'change_refused'].includes(item.action) &&
+                  item.details?.comment
+                ) || null;
+
               return (
                 <div
                   key={missionTrainer.id}
@@ -1643,6 +1720,12 @@ function TrackedTrainers({
                         missionTrainer.id,
                         missionTrainer.formateur_id,
                       )
+                    }
+                    pendingChangeResponse={
+                      pendingChangeResponse
+                    }
+                    latestChangeResponse={
+                      latestChangeResponse
                     }
                   />
 
@@ -1777,6 +1860,14 @@ function getHistoryActionLabel(
       'Formateur retiré de la mission',
     status_changed:
       'Statut modifié',
+    change_requested:
+      'Modification des conditions proposée',
+    change_accepted:
+      'Modification acceptée par le formateur',
+    change_refused:
+      'Modification refusée par le formateur',
+    change_applied:
+      'Nouvelles conditions appliquées',
   };
 
   return (
@@ -1821,20 +1912,31 @@ function formatHistoryActor(
 function getHistoryDetail(
   item,
 ) {
+  const details = [];
+
   if (
     item.previous_status &&
     item.new_status &&
     item.previous_status !==
       item.new_status
   ) {
-    return `${formatHistoryStatus(
-      item.previous_status,
-    )} → ${formatHistoryStatus(
-      item.new_status,
-    )}`;
+    details.push(
+      `${formatHistoryStatus(
+        item.previous_status,
+      )} → ${formatHistoryStatus(
+        item.new_status,
+      )}`,
+    );
   }
 
-  return '';
+  const comment =
+    item.details?.comment?.trim?.() || '';
+
+  if (comment) {
+    details.push(`Commentaire : « ${comment} »`);
+  }
+
+  return details.join(' · ');
 }
 
 function formatHistoryStatus(
@@ -1890,6 +1992,8 @@ function TrackedTrainerRow({
   onRemove,
   onStatusChange,
   onPrepareProposal,
+  pendingChangeResponse,
+  latestChangeResponse,
 }) {
   const trainer =
     missionTrainer.trainer || {};
@@ -1898,10 +2002,11 @@ function TrackedTrainerRow({
     <article
       style={{
         ...styles.trackedTrainerRow,
-        ...(missionTrainer.statut ===
-        'affecte'
-          ? styles.affectedRow
-          : {}),
+        ...(pendingChangeResponse?.response_status === 'pending'
+          ? styles.revalidationRow
+          : missionTrainer.statut === 'affecte'
+            ? styles.affectedRow
+            : {}),
       }}
     >
       <div style={styles.trainerIdentity}>
@@ -1933,16 +2038,36 @@ function TrackedTrainerRow({
             )} km`}
       </span>
 
-      <TrainerMissionStatus
-        status={missionTrainer.statut}
-      />
+      {pendingChangeResponse?.response_status === 'pending' ? (
+        <span style={{ ...styles.badge, background: '#fff7ed', color: '#c2410c' }}>
+          Revalidation en attente
+        </span>
+      ) : (
+        <TrainerMissionStatus
+          status={missionTrainer.statut}
+        />
+      )}
 
       <div style={styles.trainerResponseColumn}>
         <span style={styles.timeline}>
-          {formatTimeline(
-            missionTrainer,
-          )}
+          {pendingChangeResponse?.response_status === 'pending'
+            ? 'Réponse aux nouvelles conditions attendue'
+            : formatTimeline(missionTrainer)}
         </span>
+
+        {pendingChangeResponse?.response_status === 'pending' ? (
+          <div style={styles.revalidationReason}>
+            <strong>Affectation impossible pour le moment</strong>
+            <span>Le formateur doit d’abord accepter les nouvelles conditions de la mission.</span>
+          </div>
+        ) : null}
+
+        {latestChangeResponse?.details?.comment ? (
+          <div style={styles.trainerResponseComment}>
+            <strong>Commentaire de revalidation</strong>
+            <span>{latestChangeResponse.details.comment}</span>
+          </div>
+        ) : null}
 
         {missionTrainer.response_comment &&
         ['accepte', 'affecte'].includes(missionTrainer.statut) ? (
@@ -2014,9 +2139,14 @@ function TrackedTrainerRow({
         {missionTrainer.statut ===
           'accepte' && (
           <ActionButton
-            label="Affecter"
+            label={
+              pendingChangeResponse?.response_status === 'pending'
+                ? 'Affectation en attente'
+                : 'Affecter'
+            }
             loading={loading}
             primary
+            disabled={pendingChangeResponse?.response_status === 'pending'}
             onClick={() =>
               onStatusChange('affecte')
             }
@@ -2236,6 +2366,16 @@ function ActionButton({
         : label}
     </button>
   );
+}
+
+function formatChangeResponseStatus(status) {
+  const labels = {
+    pending: 'Réponse attendue',
+    accepted: 'Acceptée',
+    refused: 'Refusée',
+  };
+
+  return labels[status] || status;
 }
 
 function MissionStatus({ status }) {
@@ -3088,6 +3228,20 @@ const baseStyles = {
     background: '#ffffff',
   },
 
+  revalidationRow: {
+    borderColor: '#fdba74',
+    background: '#fffcf5',
+  },
+  revalidationReason: {
+    display: 'grid',
+    gap: 2,
+    padding: '6px 8px',
+    borderRadius: 7,
+    background: '#fff7ed',
+    color: '#9a3412',
+    fontSize: 9,
+    lineHeight: 1.35,
+  },
   affectedRow: {
     border: '1px solid #9b8afb',
     background: '#f4f3ff',
@@ -3263,6 +3417,8 @@ const compactStyles = {
   commentLabel: { display: 'block', marginBottom: 2, color: '#667085', fontSize: 9, fontWeight: 750, letterSpacing: '.04em', textTransform: 'uppercase' },
   commentValue: { margin: 0, color: '#475467', fontSize: 11, lineHeight: 1.4, whiteSpace: 'pre-line' },
   missionNotice: { display: 'flex', flexWrap: 'wrap', gap: 5, padding: '8px 10px', border: '1px solid', borderRadius: 8, fontSize: 10, lineHeight: 1.4 },
+  pendingChangeBox: { display: 'grid', gap: 8, padding: '10px 11px', border: '1px solid #fdb022', borderRadius: 8, background: '#fffcf5', color: '#7a2e0e', fontSize: 10, lineHeight: 1.4 },
+  pendingChangeResponses: { display: 'flex', flexWrap: 'wrap', gap: 6 },
   missionActions: { display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 7, paddingTop: 2 },
   editMissionLink: { display: 'inline-flex', minHeight: 32, alignItems: 'center', padding: '0 10px', border: '1px solid #d0d5dd', borderRadius: 7, background: '#fff', color: '#344054', fontSize: 11, fontWeight: 650, textDecoration: 'none' },
   deleteMissionButton: { minHeight: 32, padding: '0 10px', border: '1px solid #fda29b', borderRadius: 7, background: '#fff', color: '#b42318', fontSize: 11, fontWeight: 650, cursor: 'pointer' },

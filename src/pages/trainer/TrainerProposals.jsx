@@ -7,6 +7,7 @@ import {
 import { Link } from 'react-router-dom';
 
 import {
+  getMyMissionProposalHistory,
   getMyMissionProposals,
   getMyTrainerHistory,
   respondToMyMissionProposal,
@@ -24,10 +25,18 @@ const HISTORY_STATUSES = [
   { value: 'mission_pourvue', label: 'Mission pourvue ailleurs' },
   { value: 'indisponible_affecte_ailleurs', label: 'Plus disponible' },
   { value: 'annule', label: 'Annulées' },
+  { value: 'retire_par_of', label: 'Retirées par l’OF' },
 ];
 
+function hasPendingRevalidation(proposal) {
+  return proposal.pending_change?.response_status === 'pending';
+}
+
 function getProposalCategory(proposal) {
-  if (proposal.status === 'proposition_envoyee') {
+  if (
+    proposal.status === 'proposition_envoyee' ||
+    hasPendingRevalidation(proposal)
+  ) {
     return 'pending';
   }
 
@@ -42,6 +51,10 @@ function getProposalCategory(proposal) {
 }
 
 function getStatusLabel(proposal) {
+  if (hasPendingRevalidation(proposal)) {
+    return 'Nouvelles conditions à valider';
+  }
+
   const labels = {
     proposition_envoyee: 'À répondre',
     refuse: 'Refusée',
@@ -50,12 +63,17 @@ function getStatusLabel(proposal) {
     annule: 'Annulée',
     mission_pourvue: 'Mission pourvue',
     desiste: 'Désistement',
+    retire_par_of: 'Retirée par l’OF',
   };
 
   return labels[proposal.status] || proposal.status;
 }
 
 function getStatusClass(proposal) {
+  if (hasPendingRevalidation(proposal)) {
+    return 'pending';
+  }
+
   const classes = {
     proposition_envoyee: 'pending',
     refuse: 'refused',
@@ -63,6 +81,7 @@ function getStatusClass(proposal) {
     annule: 'cancelled',
     mission_pourvue: 'cancelled',
     desiste: 'cancelled',
+    retire_par_of: 'cancelled',
   };
 
   return classes[proposal.status] || 'cancelled';
@@ -160,6 +179,10 @@ function historyActionLabel(item) {
     cancelled: 'Suivi annulé',
     removed: 'Formateur retiré',
     status_changed: 'Statut modifié',
+    change_requested: 'Nouvelles conditions proposées par l’OF',
+    change_accepted: 'Nouvelles conditions acceptées',
+    change_refused: 'Nouvelles conditions refusées',
+    change_applied: 'Nouvelles conditions appliquées',
   };
 
   return labels[item.action] || 'Action enregistrée';
@@ -186,6 +209,7 @@ function historyActor(item) {
 export default function TrainerProposals() {
   const [proposals, setProposals] = useState([]);
   const [history, setHistory] = useState([]);
+  const [proposalHistory, setProposalHistory] = useState([]);
   const [activeFilter, setActiveFilter] = useState('pending');
   const [historyStatus, setHistoryStatus] = useState('all');
   const [historyFrom, setHistoryFrom] = useState('');
@@ -201,13 +225,19 @@ export default function TrainerProposals() {
     setError('');
 
     try {
-      const [rows, historyRows] = await Promise.all([
+      const [
+        rows,
+        historyRows,
+        archivedProposals,
+      ] = await Promise.all([
         getMyMissionProposals(),
         getMyTrainerHistory(),
+        getMyMissionProposalHistory(),
       ]);
 
       setProposals(rows);
       setHistory(historyRows);
+      setProposalHistory(archivedProposals);
       setComments(
         Object.fromEntries(
           rows.map((proposal) => [
@@ -242,33 +272,67 @@ export default function TrainerProposals() {
     return map;
   }, [history]);
 
-  const counts = useMemo(() => {
-    const result = { pending: 0, history: 0 };
-
-    for (const proposal of proposals) {
-      const category = getProposalCategory(proposal);
-      if (Object.prototype.hasOwnProperty.call(result, category)) {
-        result[category] += 1;
-      }
-    }
-
-    return result;
-  }, [proposals]);
+  const counts = useMemo(
+    () => ({
+      pending: proposals.filter(
+        (proposal) =>
+          getProposalCategory(proposal) === 'pending',
+      ).length,
+      history: proposalHistory.length,
+    }),
+    [proposals, proposalHistory],
+  );
 
   const filteredProposals = useMemo(() => {
-    return proposals.filter((proposal) => {
-      if (getProposalCategory(proposal) !== activeFilter) return false;
-      if (activeFilter !== 'history') return true;
-      if (historyStatus !== 'all' && proposal.status !== historyStatus) return false;
+    const source =
+      activeFilter === 'history'
+        ? proposalHistory
+        : proposals.filter(
+            (proposal) =>
+              getProposalCategory(proposal) === 'pending',
+          );
 
-      const referenceDate = proposal.responded_at || proposal.proposed_at;
-      if (!referenceDate) return true;
-      const day = String(referenceDate).slice(0, 10);
-      if (historyFrom && day < historyFrom) return false;
-      if (historyTo && day > historyTo) return false;
+    return source.filter((proposal) => {
+      if (activeFilter !== 'history') {
+        return true;
+      }
+
+      if (
+        historyStatus !== 'all' &&
+        proposal.status !== historyStatus
+      ) {
+        return false;
+      }
+
+      const referenceDate =
+        proposal.responded_at ||
+        proposal.proposed_at;
+
+      if (!referenceDate) {
+        return true;
+      }
+
+      const day =
+        String(referenceDate).slice(0, 10);
+
+      if (historyFrom && day < historyFrom) {
+        return false;
+      }
+
+      if (historyTo && day > historyTo) {
+        return false;
+      }
+
       return true;
     });
-  }, [proposals, activeFilter, historyStatus, historyFrom, historyTo]);
+  }, [
+    proposals,
+    proposalHistory,
+    activeFilter,
+    historyStatus,
+    historyFrom,
+    historyTo,
+  ]);
 
   const submitResponse = async (proposal, response) => {
     const id = proposal.mission_formateur_id;
@@ -360,6 +424,7 @@ export default function TrainerProposals() {
           {filteredProposals.map((proposal) => {
             const id = proposal.mission_formateur_id;
             const expanded = expandedId === id;
+            const needsRevalidation = hasPendingRevalidation(proposal);
             const canRespond = proposal.status === 'proposition_envoyee';
             const place = [
               proposal.location,
@@ -416,16 +481,43 @@ export default function TrainerProposals() {
                     </div>
                   </div>
 
-                  <button
-                    type="button"
-                    className="button button--soft"
-                    onClick={() => setExpandedId(expanded ? null : id)}
-                  >
-                    {expanded ? 'Fermer' : 'Voir la proposition'}
-                  </button>
+                  {needsRevalidation ? (
+                    <Link
+                      className="button button--primary"
+                      to={`/formateur/missions/${proposal.mission_id}`}
+                    >
+                      Consulter la mission
+                    </Link>
+                  ) : (
+                    <button
+                      type="button"
+                      className="button button--soft"
+                      onClick={() => setExpandedId(expanded ? null : id)}
+                    >
+                      {expanded ? 'Fermer' : 'Voir la proposition'}
+                    </button>
+                  )}
                 </div>
 
-                {expanded ? (
+                {needsRevalidation ? (
+                  <div
+                    style={{
+                      margin: '0 20px 16px',
+                      padding: '10px 12px',
+                      border: '1px solid #fdba74',
+                      borderRadius: 9,
+                      background: '#fff7ed',
+                      color: '#9a3412',
+                      fontSize: 11,
+                      lineHeight: 1.45,
+                    }}
+                  >
+                    <strong>Votre réponse est attendue.</strong>{' '}
+                    L’organisme a modifié les conditions de cette mission. Ouvrez la fiche pour comparer les changements avant d’accepter ou de refuser.
+                  </div>
+                ) : null}
+
+                {expanded && !needsRevalidation ? (
                   <div className="trainer-proposal-detail">
                     {overlapOptions.length > 0 ? (
                       <div

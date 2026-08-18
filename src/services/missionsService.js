@@ -45,6 +45,7 @@ export async function getMissions() {
         proposal_expires_at,
         proposal_viewed_at,
         response_comment,
+        withdrawal_comment,
         created_at,
         trainer:trainers (
           id,
@@ -159,6 +160,7 @@ export async function getMissionById(id) {
         proposal_expires_at,
         proposal_viewed_at,
         response_comment,
+        withdrawal_comment,
         created_at,
         trainer:trainers (
           id,
@@ -1107,15 +1109,6 @@ function validateMission(
   ) {
     throw new Error(
       'Les informations de la mission sont obligatoires.',
-    );
-  }
-
-  if (
-    !mission.adresse ||
-    !mission.adresse.trim()
-  ) {
-    throw new Error(
-      'L’adresse de la mission est obligatoire.',
     );
   }
 

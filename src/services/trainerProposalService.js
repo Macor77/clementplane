@@ -124,6 +124,7 @@ export async function getMyTrainerMissionHistory(
 export async function withdrawFromMyMissionOption({
   missionFormateurId,
   availabilityByDay = {},
+  comment = '',
 }) {
   if (!missionFormateurId) {
     throw new Error(
@@ -138,6 +139,8 @@ export async function withdrawFromMyMissionOption({
         missionFormateurId,
       p_availability_by_day:
         availabilityByDay,
+      p_comment:
+        comment || '',
     },
   );
 
@@ -146,4 +149,48 @@ export async function withdrawFromMyMissionOption({
   }
 
   return data;
+}
+
+
+export async function getMyTrainerHistory() {
+  const { data, error } = await supabase
+    .from('mission_trainer_history')
+    .select(`
+      id,
+      mission_id,
+      trainer_id,
+      mission_formateur_id,
+      action,
+      previous_status,
+      new_status,
+      actor_type,
+      actor_display_name,
+      actor_organization_name,
+      details,
+      created_at
+    `)
+    .order('created_at', { ascending: true });
+
+  if (error) {
+    throw error;
+  }
+
+  return data || [];
+}
+
+export async function getMyMissionOrganizationContact(missionId) {
+  if (!missionId) {
+    throw new Error("L'identifiant de la mission est obligatoire.");
+  }
+
+  const { data, error } = await supabase.rpc(
+    'get_my_mission_organization_contact',
+    { p_mission_id: missionId },
+  );
+
+  if (error) {
+    throw error;
+  }
+
+  return data?.[0] || null;
 }

@@ -4,6 +4,8 @@ import {
   useState,
 } from 'react';
 
+import { Link } from 'react-router-dom';
+
 import {
   getMyMissionProposals,
 } from '../../services/trainerProposalService';
@@ -210,6 +212,14 @@ function getPlanningItems(
 
         client:
           proposal.client ||
+          '',
+
+        organizationId:
+          proposal.organization_id ||
+          null,
+
+        organizationName:
+          proposal.organization_name ||
           '',
 
         location:
@@ -725,6 +735,12 @@ export default function TrainerPlanning() {
                                     }
                                   </strong>
 
+                                  {item.organizationName ? (
+                                    <span style={{ fontSize: 8, opacity: .8 }}>
+                                      {item.organizationName}
+                                    </span>
+                                  ) : null}
+
                                 </div>
                               ),
                             )}
@@ -808,6 +824,19 @@ export default function TrainerPlanning() {
                         }
                       </h3>
 
+
+                      {item.organizationName ? (
+                        <div>
+                          <span>Organisme de formation</span>
+                          <strong>{item.organizationName}</strong>
+                          <Link
+                            to={`/formateur/missions/${item.missionId}/organisme`}
+                            style={{ color: '#2563eb', fontSize: 10, fontWeight: 750, textDecoration: 'none' }}
+                          >
+                            Voir le contact
+                          </Link>
+                        </div>
+                      ) : null}
 
                       {item.client ? (
                         <div>

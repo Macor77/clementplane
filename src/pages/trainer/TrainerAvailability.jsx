@@ -5,6 +5,8 @@ import {
   useState,
 } from 'react';
 
+import { Link } from 'react-router-dom';
+
 import {
   createMyAvailabilityNote,
   deleteMyAvailabilityNote,
@@ -276,6 +278,11 @@ export default function TrainerAvailability() {
     setMissionError,
   ] = useState('');
 
+  const [
+    optionModalDay,
+    setOptionModalDay,
+  ] = useState(null);
+
 
   const [
     noteDraft,
@@ -406,33 +413,24 @@ export default function TrainerAvailability() {
           const row of
           commitmentRows
         ) {
-          const currentCommitment =
-            commitmentMap[
-              row.day
-            ];
-
-          const nextCommitment = {
-            status:
-              row.status || '',
-
-            missionId:
-              row.mission_id || null,
-          };
-
-          /*
-           * Si plusieurs engagements existent le même jour,
-           * une mission affectée reste prioritaire sur une option.
-           */
-          if (
-            !currentCommitment ||
-            currentCommitment.status !== 'mission' ||
-            nextCommitment.status === 'mission'
-          ) {
-            commitmentMap[
-              row.day
-            ] =
-              nextCommitment;
+          if (!commitmentMap[row.day]) {
+            commitmentMap[row.day] = [];
           }
+
+          commitmentMap[row.day].push({
+            status: row.status || '',
+            missionId: row.mission_id || null,
+            missionFormateurId:
+              row.mission_formateur_id || null,
+            title:
+              row.mission_title ||
+              'Mission de formation',
+            organizationId:
+              row.organization_id || null,
+            organizationName:
+              row.organization_name ||
+              'Organisme de formation',
+          });
         }
 
 
@@ -540,10 +538,14 @@ export default function TrainerAvailability() {
       iso,
       nextStatus,
     ) => {
-      if (
-        commitments[iso] ||
-        savingDay
-      ) {
+      const hasConfirmedMission = (commitments[iso] || []).some(
+        (item) => item.status === 'mission',
+      );
+
+      // Une option n'empêche jamais le formateur de modifier
+      // sa disponibilité déclarée. Seule une mission confirmée
+      // verrouille la journée.
+      if (hasConfirmedMission || savingDay) {
         return;
       }
 
@@ -1028,30 +1030,38 @@ export default function TrainerAvailability() {
                     '';
 
 
-                  const commitment =
+                  const dayCommitments =
                     commitments[
                       iso
-                    ] || null;
+                    ] || [];
 
+                  const missionCommitment =
+                    dayCommitments.find(
+                      (item) =>
+                        item.status ===
+                        'mission',
+                    ) || null;
 
-                  const commitmentStatus =
-                    commitment?.status ||
-                    '';
-
+                  const optionCommitments =
+                    dayCommitments.filter(
+                      (item) =>
+                        item.status ===
+                        'option',
+                    );
 
                   const missionId =
-                    commitment?.missionId ||
+                    missionCommitment?.missionId ||
                     null;
 
-
+                  /* Une option n'écrase jamais la disponibilité déclarée. */
                   const visibleStatus =
-                    commitmentStatus ||
-                    declaredStatus;
-
+                    missionCommitment
+                      ? 'mission'
+                      : declaredStatus;
 
                   const locked =
                     Boolean(
-                      commitmentStatus,
+                      missionCommitment,
                     );
 
 
@@ -1142,6 +1152,29 @@ export default function TrainerAvailability() {
                         </span>
                       ) : null}
 
+
+                      {optionCommitments.length > 0 ? (
+                        <button
+                          type="button"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            setOptionModalDay(iso);
+                          }}
+                          style={{
+                            minHeight: 28,
+                            marginTop: 6,
+                            border: '1px solid #facc15',
+                            borderRadius: 6,
+                            background: '#fff7d6',
+                            color: '#854d0e',
+                            fontSize: 9,
+                            fontWeight: 800,
+                            cursor: 'pointer',
+                          }}
+                        >
+                          {optionCommitments.length} option{optionCommitments.length > 1 ? 's' : ''}
+                        </button>
+                      ) : null}
 
                       {locked ? (
                         <div
@@ -1645,6 +1678,65 @@ export default function TrainerAvailability() {
         </div>
       ) : null}
 
+
+      {optionModalDay ? (
+        <div
+          className="trainer-note-modal-backdrop"
+          onMouseDown={() => setOptionModalDay(null)}
+        >
+          <div
+            className="trainer-note-modal"
+            onMouseDown={(event) => event.stopPropagation()}
+          >
+            <div className="trainer-note-modal__heading">
+              <div>
+                <p className="page-eyebrow">OPTIONS</p>
+                <h2>{formatLongDate(optionModalDay)}</h2>
+              </div>
+              <button
+                type="button"
+                className="trainer-note-modal__close"
+                onClick={() => setOptionModalDay(null)}
+              >×</button>
+            </div>
+
+            <p style={{ margin: '0 0 12px', color: '#667085', fontSize: 11 }}>
+              Ces missions ont été acceptées mais aucun OF ne vous a encore affecté définitivement.
+            </p>
+
+            <div style={{ display: 'grid', gap: 8 }}>
+              {(commitments[optionModalDay] || [])
+                .filter((item) => item.status === 'option')
+                .map((item) => (
+                  <div
+                    key={`${item.missionId}-${item.missionFormateurId || ''}`}
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'minmax(0,1fr) auto',
+                      gap: 12,
+                      alignItems: 'center',
+                      padding: '10px 11px',
+                      border: '1px solid #e4e7ec',
+                      borderRadius: 8,
+                    }}
+                  >
+                    <div style={{ display: 'grid', gap: 3 }}>
+                      <strong style={{ color: '#101828', fontSize: 12 }}>{item.title}</strong>
+                      <span style={{ color: '#667085', fontSize: 10 }}>OF : {item.organizationName}</span>
+                    </div>
+                    <Link
+                      to={`/formateur/missions/${item.missionId}`}
+                      className="button button--soft"
+                      onClick={() => setOptionModalDay(null)}
+                    >
+                      Ouvrir
+                    </Link>
+                  </div>
+                ))}
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       {(loadingMission ||
         missionError ||

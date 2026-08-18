@@ -89,6 +89,8 @@ export default function MissionDetail() {
     setActionTrainerId,
   ] = useState(null);
 
+  const [unassignTrainerId, setUnassignTrainerId] = useState(null);
+
   const loadMission =
     useCallback(async () => {
       setLoading(true);
@@ -374,6 +376,14 @@ export default function MissionDetail() {
       }
     }
 
+    if (
+      status === 'accepte' &&
+      affectedTrainer?.formateur_id === trainerId
+    ) {
+      setUnassignTrainerId(trainerId);
+      return;
+    }
+
     setActionTrainerId(trainerId);
     setError('');
 
@@ -490,6 +500,20 @@ export default function MissionDetail() {
 
   return (
     <div style={styles.page}>
+      {unassignTrainerId ? (
+        <div style={styles.modalBackdrop}>
+          <div style={styles.confirmModal}>
+            <p style={styles.modalEyebrow}>AFFECTATION CONFIRMÉE</p>
+            <h2 style={styles.modalTitle}>Désaffecter ce formateur ?</h2>
+            <p style={styles.modalText}>Cette action retire une affectation déjà confirmée. La mission repassera à affecter.</p>
+            <div style={styles.modalWarning}><strong>Important</strong><span>Pensez à prévenir directement le formateur par téléphone, e-mail ou tout autre moyen habituel.</span></div>
+            <div style={styles.modalActions}>
+              <button type="button" style={styles.modalCancel} onClick={() => setUnassignTrainerId(null)}>Annuler</button>
+              <button type="button" style={styles.modalDanger} onClick={async () => { const trainerId = unassignTrainerId; setUnassignTrainerId(null); setActionTrainerId(trainerId); setError(''); try { await updateMissionFormateurStatus(id, trainerId, 'accepte'); await refresh(); } catch (actionError) { setError(actionError?.message || 'Impossible de retirer l’affectation.'); } finally { setActionTrainerId(null); } }}>Confirmer la désaffectation</button>
+            </div>
+          </div>
+        </div>
+      ) : null}
       <header style={styles.header}>
         <div>
           <div style={styles.breadcrumb}>
@@ -1728,9 +1752,11 @@ function getHistoryActionLabel(
     proposal_sent:
       'Proposition envoyée',
     accepted:
-      item.actor_type === 'organization'
-        ? 'Acceptation enregistrée au nom du formateur'
-        : 'Proposition acceptée',
+      item.previous_status === 'affecte'
+        ? 'Affectation retirée par l’OF'
+        : item.actor_type === 'organization'
+          ? 'Acceptation enregistrée au nom du formateur'
+          : 'Proposition acceptée',
     refused:
       item.actor_type === 'organization'
         ? 'Refus enregistré au nom du formateur'
@@ -1918,10 +1944,18 @@ function TrackedTrainerRow({
           )}
         </span>
 
-        {missionTrainer.response_comment ? (
+        {missionTrainer.response_comment &&
+        ['accepte', 'affecte'].includes(missionTrainer.statut) ? (
           <div style={styles.trainerResponseComment}>
             <strong>Commentaire du formateur</strong>
             <span>{missionTrainer.response_comment}</span>
+          </div>
+        ) : null}
+
+        {missionTrainer.withdrawal_comment ? (
+          <div style={styles.trainerResponseComment}>
+            <strong>Commentaire de désistement</strong>
+            <span>{missionTrainer.withdrawal_comment}</span>
           </div>
         ) : null}
       </div>
@@ -3259,6 +3293,15 @@ const compactStyles = {
   trainerIdentity: { display: 'grid', minWidth: 0, gap: 2, color: '#101828', fontSize: 12 },
   trainerResponseColumn: { display: 'grid', gap: 5, minWidth: 0 },
   trainerResponseComment: { display: 'grid', gap: 2, padding: '5px 7px', borderLeft: '2px solid #3b82f6', borderRadius: '0 6px 6px 0', background: '#eff6ff', color: '#475467', fontSize: 9, lineHeight: 1.35, overflowWrap: 'anywhere' },
+  modalBackdrop: { position: 'fixed', inset: 0, zIndex: 2000, display: 'grid', placeItems: 'center', padding: 20, background: 'rgba(15,23,42,.48)' },
+  confirmModal: { width: 'min(520px,100%)', padding: 20, borderRadius: 14, background: '#fff', boxShadow: '0 24px 70px rgba(15,23,42,.25)' },
+  modalEyebrow: { margin: 0, color: '#b42318', fontSize: 9, fontWeight: 800, letterSpacing: '.08em' },
+  modalTitle: { margin: '6px 0 8px', color: '#101828', fontSize: 20 },
+  modalText: { margin: 0, color: '#475467', fontSize: 11, lineHeight: 1.5 },
+  modalWarning: { display: 'grid', gap: 4, marginTop: 14, padding: '11px 12px', border: '1px solid #fed7aa', borderRadius: 9, background: '#fff7ed', color: '#9a3412', fontSize: 10, lineHeight: 1.45 },
+  modalActions: { display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 16, paddingTop: 14, borderTop: '1px solid #e4e7ec' },
+  modalCancel: { minHeight: 36, padding: '0 12px', border: '1px solid #d0d5dd', borderRadius: 7, background: '#fff', color: '#344054', fontWeight: 700, cursor: 'pointer' },
+  modalDanger: { minHeight: 36, padding: '0 12px', border: '1px solid #d92d20', borderRadius: 7, background: '#d92d20', color: '#fff', fontWeight: 750, cursor: 'pointer' },
   trainerMeta: { overflow: 'hidden', color: '#667085', fontSize: 10, textOverflow: 'ellipsis', whiteSpace: 'nowrap' },
   criteria: { display: 'grid', minWidth: 0, overflowWrap: 'anywhere', gap: 2, color: '#667085', fontSize: 10, lineHeight: 1.3 },
   actionButton: { minHeight: 29, padding: '4px 8px', border: '1px solid #d0d5dd', borderRadius: 6, background: '#fff', color: '#344054', fontSize: 10, fontWeight: 650 },

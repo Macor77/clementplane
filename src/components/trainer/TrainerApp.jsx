@@ -4,6 +4,7 @@ import TrainerDashboard from '../../pages/trainer/TrainerDashboard';
 import TrainerProposals from '../../pages/trainer/TrainerProposals';
 import TrainerMissions from '../../pages/trainer/TrainerMissions';
 import TrainerMissionDetail from '../../pages/trainer/TrainerMissionDetail';
+import TrainerOrganizationContact from '../../pages/trainer/TrainerOrganizationContact';
 import TrainerAvailability from '../../pages/trainer/TrainerAvailability';
 import TrainerPlanning from '../../pages/trainer/TrainerPlanning';
 import TrainerProfile from '../../pages/trainer/TrainerProfile';
@@ -203,6 +204,11 @@ export default function TrainerApp() {
           <Route
             path="/formateur/missions/:id"
             element={<TrainerMissionDetail />}
+          />
+
+          <Route
+            path="/formateur/missions/:id/organisme"
+            element={<TrainerOrganizationContact />}
           />
 
           <Route

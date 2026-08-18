@@ -15,7 +15,6 @@ import {
 } from '../services/missionsService';
 
 import CompetencyInput from '../components/CompetencyInput';
-import EquipmentInput from '../components/EquipmentInput';
 
 const EMPTY_MISSION = {
   client: '',
@@ -352,23 +351,17 @@ export default function MissionForm() {
 
             <Field
               label="Matériel requis"
-              help="Choisissez du matériel existant ou ajoutez une nouvelle référence."
+              help="Sépare les matériels avec un point-virgule."
             >
-              <EquipmentInput
-                label=""
-                values={parseInputToArray(
-                  mission.materiel,
-                )}
-                onChange={(values) =>
-                  setMission(
-                    (previousMission) => ({
-                      ...previousMission,
-                      materiel:
-                        values.join(' ; '),
-                    }),
-                  )
+              <input
+                type="text"
+                name="materiel"
+                value={mission.materiel}
+                onChange={
+                  handleMissionChange
                 }
-                placeholder="Rechercher ou ajouter du matériel…"
+                placeholder="Ex. Extincteurs ; Générateur de flammes"
+                style={styles.input}
               />
             </Field>
           </div>
@@ -397,8 +390,7 @@ export default function MissionForm() {
 
           <Field
             label="Adresse"
-            required
-            help="L’adresse, le code postal et la ville servent au calcul de proximité."
+            help="Facultative. Si elle n’est pas renseignée, Formaplane utilisera le code postal et la ville pour le calcul de proximité."
           >
             <input
               type="text"
@@ -407,8 +399,7 @@ export default function MissionForm() {
               onChange={
                 handleMissionChange
               }
-              placeholder="Ex. 10 rue de la Formation"
-              required
+              placeholder="Ex. 10 rue de la Formation (facultatif)"
               style={styles.input}
             />
           </Field>

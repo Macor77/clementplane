@@ -37,9 +37,14 @@ export default function Planning() {
     [currentMonth],
   );
 
-  const missionOccurrences = useMemo(
-    () => createMissionOccurrences(missions),
+  const activeMissions = useMemo(
+    () => missions.filter((mission) => mission.statut !== 'annulee'),
     [missions],
+  );
+
+  const missionOccurrences = useMemo(
+    () => createMissionOccurrences(activeMissions),
+    [activeMissions],
   );
 
   const occurrencesByDay = useMemo(() => {
@@ -152,11 +157,8 @@ export default function Planning() {
           {loading && <div className="calendar-loading">Chargement des missions…</div>}
 
           <div className="calendar-legend">
-            <LegendItem tone="complete" label="Complète" />
-            <LegendItem tone="warning" label="À vérifier" />
-            <LegendItem tone="blocking" label="Bloquante" />
-            <LegendItem tone="done" label="Terminée" />
-            <LegendItem tone="cancelled" label="Annulée" />
+            <LegendItem tone="complete" label="Affectée" />
+            <LegendItem tone="blocking" label="À affecter" />
           </div>
         </section>
 
@@ -194,11 +196,12 @@ export default function Planning() {
 
           <section className="panel-card">
             <h2>Synthèse du mois</h2>
+            <p className="section-subtitle" style={{ marginTop: -4, marginBottom: 10 }}>
+              Seules les missions ayant au moins une date dans le mois affiché sont comptées.
+            </p>
             <SummaryRow value={monthSummary.total} label="Missions ce mois" tone="blue" />
+            <SummaryRow value={monthSummary.assigned} label="Affectées" tone="green" />
             <SummaryRow value={monthSummary.unassigned} label="À affecter" tone="orange" />
-            <SummaryRow value={monthSummary.blocking} label="Bloquantes" tone="red" />
-            <SummaryRow value={monthSummary.incomplete} label="À vérifier" tone="amber" />
-            <SummaryRow value={monthSummary.done} label="Terminées" tone="green" />
           </section>
 
           <section className="panel-card">
@@ -328,33 +331,11 @@ function getAssignedTrainer(mission) {
 }
 
 function getMissionVisualState(mission) {
-  if (mission.statut === 'annulee') {
-    return { tone: 'cancelled', label: 'Annulée' };
-  }
-
-  if (mission.statut === 'realisee' || mission.statut === 'archivee') {
-    return { tone: 'done', label: 'Terminée' };
-  }
-
   const trainer = getAssignedTrainer(mission);
-  const missingBlocking = !trainer;
-  const missingInformation =
-    !mission.client ||
-    !(mission.formation || mission.intitule) ||
-    !(mission.ville || mission.lieu || mission.adresse) ||
-    (mission.mission_dates || []).some(
-      (dateRow) => !dateRow.heure_debut || !dateRow.heure_fin,
-    );
 
-  if (missingBlocking) {
-    return { tone: 'blocking', label: 'Formateur à affecter' };
-  }
-
-  if (missingInformation) {
-    return { tone: 'warning', label: 'À vérifier' };
-  }
-
-  return { tone: 'complete', label: 'Complète' };
+  return trainer
+    ? { tone: 'complete', label: 'Affectée' }
+    : { tone: 'blocking', label: 'À affecter' };
 }
 
 function summarizeMonth(occurrences) {
@@ -365,19 +346,12 @@ function summarizeMonth(occurrences) {
   }
 
   const values = [...missions.values()];
+  const assigned = values.filter((mission) => Boolean(getAssignedTrainer(mission))).length;
 
   return {
     total: values.length,
-    unassigned: values.filter((mission) => !getAssignedTrainer(mission)).length,
-    blocking: values.filter(
-      (mission) => getMissionVisualState(mission).tone === 'blocking',
-    ).length,
-    incomplete: values.filter(
-      (mission) => getMissionVisualState(mission).tone === 'warning',
-    ).length,
-    done: values.filter(
-      (mission) => getMissionVisualState(mission).tone === 'done',
-    ).length,
+    assigned,
+    unassigned: values.length - assigned,
   };
 }
 

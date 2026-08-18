@@ -92,6 +92,18 @@ export default function TrainerMissions() {
             <strong style={styles.period}>{formatPeriod(mission)}</strong>
             <div style={styles.meta}>
               <span>{mission.mission_title || 'Mission de formation'}</span>
+              {mission.organization_name ? (
+                <span style={styles.organization}>
+                  OF : <strong>{mission.organization_name}</strong>
+                  {' · '}
+                  <Link
+                    to={`/formateur/missions/${mission.mission_id}/organisme`}
+                    style={styles.organizationLink}
+                  >
+                    Voir le contact
+                  </Link>
+                </span>
+              ) : null}
               {mission.client ? <span>Client : {mission.client}</span> : null}
               {place ? <span>📍 {place}</span> : null}
             </div>
@@ -108,7 +120,7 @@ const styles = {
   page: { width: '100%', maxWidth: 1500, margin: '0 auto', paddingBottom: 28 },
   monthSection: { marginTop: 20 }, monthSeparator: { display: 'grid', gridTemplateColumns: 'auto 1fr', gap: 12, alignItems: 'center', marginBottom: 8, color: '#475467', fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.06em' },
   list: { display: 'grid', gap: 7 }, row: { display: 'grid', gridTemplateColumns: 'minmax(0,1fr) auto auto', gap: 14, alignItems: 'center', padding: '11px 13px', border: '1px solid #e4e7ec', borderRadius: 9, background: '#fff' },
-  main: { minWidth: 0, display: 'grid', gap: 5 }, period: { color: '#101828', fontSize: 12 }, meta: { display: 'flex', flexWrap: 'wrap', gap: '4px 12px', color: '#667085', fontSize: 10 },
+  main: { minWidth: 0, display: 'grid', gap: 5 }, organization: { color: '#344054' }, organizationLink: { color: '#2563eb', fontWeight: 750, textDecoration: 'none' }, period: { color: '#101828', fontSize: 12 }, meta: { display: 'flex', flexWrap: 'wrap', gap: '4px 12px', color: '#667085', fontSize: 10 },
   status: { padding: '5px 8px', borderRadius: 999, fontSize: 9, fontWeight: 750, whiteSpace: 'nowrap' }, confirmed: { background: '#ecfdf3', color: '#027a48' }, waiting: { background: '#fffaeb', color: '#b54708' }, cancelled: { background: '#f2f4f7', color: '#667085' },
   empty: { display: 'grid', gap: 5, padding: 22, border: '1px solid #e4e7ec', borderRadius: 10, background: '#fff', color: '#667085', fontSize: 12 },
 };

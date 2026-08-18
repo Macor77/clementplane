@@ -1,7 +1,7 @@
 ROADMAP - Formaplane
-Version : 9.0  
-Dernière mise à jour : 14/08/2026  
-Correspond au Sprint 9 et à la nouvelle planification pré-bêta de Formaplane.
+Version : 10.0  
+Dernière mise à jour : 18/08/2026  
+Correspond à la clôture du Sprint 10 et à la préparation du Sprint 11 de Formaplane.
 ---
 Vision
 Formaplane a pour ambition de devenir la plateforme de référence permettant aux organismes de formation de :
@@ -712,105 +712,114 @@ Formaplane dispose de son nom définitif, de ses domaines, de son infrastructure
 
 ---
 
-Sprint 10 — Préparation à la bêta
+Sprint 10 — Préparation à la bêta ✅
 
 Objectif
 
 Stabiliser les éléments structurels, la confidentialité des données et les parcours fondamentaux avant l'arrivée des premiers formateurs et organismes de formation pilotes.
 
-Ce sprint ne vise pas à rendre Formaplane parfait. Il vise à rendre la plateforme suffisamment fiable, simple et sécurisée pour être utilisée par de vrais utilisateurs.
-
-Axes prévus
+Réalisations
 
 Confidentialité et recherche des formateurs
-- supprimer la recherche trop permissive à partir de deux caractères ;
-- supprimer la recherche libre par prénom seul ;
-- définir une recherche suffisamment précise, notamment par identité et/ou adresse e-mail exacte ;
-- ne jamais exposer l'adresse e-mail d'un formateur à un OF qui n'est pas lié à lui ;
-- limiter les informations visibles avant la mise en relation ;
-- distinguer un formateur déjà partenaire, un formateur présent sur Formaplane et un formateur absent ;
-- permettre l'invitation d'un formateur absent ;
-- vérifier les règles RLS associées.
+- sécurisation de la recherche globale des formateurs ;
+- suppression des recherches trop permissives ;
+- limitation des informations exposées avant rattachement à un OF ;
+- renforcement des règles RLS ;
+- séparation des données communes et des données privées propres à chaque organisme ;
+- localisation privée par OF tant qu'un profil n'est pas revendiqué ;
+- après revendication, utilisation de la localisation globale déclarée par le formateur ;
+- possibilité pour plusieurs OF de travailler avec un même formateur sans exposer leurs informations privées respectives.
 
-Principe :
-> Formaplane ne doit pas devenir un annuaire permettant à un organisme de reconstituer le réseau de formateurs d'un autre organisme.
+Référentiels compétences et matériel
+- création d'un référentiel de compétences ;
+- création d'un référentiel de matériel ;
+- suggestions lors de la saisie ;
+- ajout contrôlé de nouvelles valeurs ;
+- normalisation de données historiques ;
+- réduction des doublons et variantes de saisie.
 
-Référentiel des compétences
-- remplacer progressivement la saisie totalement libre par une recherche avec suggestions ;
-- proposer les compétences déjà existantes ;
-- permettre l'ajout d'une compétence absente ;
-- éviter les doublons et variantes inutiles ;
-- préparer un référentiel Formaplane administrable ;
-- conserver la possibilité future de fusionner des doublons et gérer des synonymes.
+Géocodage et localisation
+- géocodage automatique des profils ;
+- relance du géocodage lors des modifications pertinentes ;
+- prise en charge de la localisation privée d'un formateur selon l'OF ;
+- création d'une mission possible avec ville + code postal obligatoires et adresse facultative ;
+- maintien du calcul de distance lorsque l'adresse précise n'est pas renseignée.
 
-Référentiel du matériel
-- appliquer la même logique que pour les compétences ;
-- suggestions automatiques ;
-- sélection dans le référentiel ;
-- ajout d'un matériel absent ;
-- prévention des doublons.
+Comptes et profils
+- amélioration de la gestion des informations de compte ;
+- sécurisation de la suppression de compte ;
+- protection des données métier appartenant aux organismes ;
+- amélioration de l'affichage du contexte utilisateur et de l'organisation ;
+- harmonisation des espaces OF et Formateur.
 
-Géocodage automatique
-- géocoder automatiquement une adresse lors de la création ou de la modification d'un formateur ;
-- supprimer toute manipulation technique dans le parcours normal ;
-- conserver la gestion des erreurs et les stratégies de fallback existantes ;
-- réserver les éventuels outils de correction manuelle à l'administration.
+Workflow propositions, options et affectations
+- stabilisation du cycle Proposition → Acceptation → Option → Affectation ;
+- gestion de plusieurs options concurrentes sur une même date ;
+- information du formateur lorsqu'il possède déjà une ou plusieurs options ;
+- clôture automatique des autres acceptations lorsqu'un formateur est affecté ;
+- statut « Mission pourvue ailleurs » et conservation dans l'historique ;
+- affectation atomique afin d'éviter les états intermédiaires incohérents ;
+- désistement d'une option avec commentaire ;
+- désaffectation par l'OF avec confirmation et rappel de prévenir directement le formateur ;
+- accès direct aux missions depuis les disponibilités et le planning du formateur.
 
-Gestion des profils
+Modification d'une mission et revalidation
+- identification des modifications de conditions essentielles ;
+- application immédiate des nouvelles conditions à la mission ;
+- passage du formateur en « Revalidation en attente » lorsqu'il avait accepté ou était affecté ;
+- blocage de l'affectation tant que la revalidation n'est pas obtenue ;
+- affichage clair des anciennes et nouvelles conditions ;
+- acceptation ou refus des nouvelles conditions par le formateur ;
+- restauration de l'affectation après acceptation lorsque le formateur était déjà affecté ;
+- retour de la mission en « À affecter » en cas de refus ;
+- signalement de la revalidation dans Mes missions et Mes propositions → À répondre.
 
-Espace OF :
-- permettre la modification du prénom ;
-- permettre la modification du nom ;
-- permettre la gestion des informations du compte ;
-- prévoir une procédure sécurisée pour modifier l'adresse e-mail.
+Historique et traçabilité
+- historique détaillé des propositions et actions ;
+- organisation de Mes propositions autour de « À répondre » et « Historique » ;
+- filtres par date et statut ;
+- conservation des propositions refusées, désistées, pourvues ailleurs ou clôturées ;
+- rattachement des commentaires aux événements correspondants ;
+- traçabilité des revalidations et des clôtures automatiques.
 
-Espace formateur :
-- permettre la modification du prénom ;
-- permettre la modification du nom ;
-- permettre la gestion des informations du compte ;
-- prévoir une procédure sécurisée pour modifier l'adresse e-mail ;
-- clarifier les informations relevant du compte et celles relevant du profil formateur.
+Planning OF
+- simplification de la synthèse mensuelle autour de trois indicateurs : Missions ce mois, Affectées, À affecter ;
+- harmonisation de la légende avec cette logique ;
+- retrait des missions annulées du planning ;
+- prise en compte des revalidations : une mission en attente de revalidation n'est pas considérée comme affectée.
 
-Suppression du compte
-- définir les règles de suppression d'un compte ;
-- distinguer compte utilisateur, profil formateur, relations avec les OF, missions et historique ;
-- ne jamais supprimer les données métier appartenant à un organisme lorsqu'un utilisateur ferme son compte ;
-- déterminer les données à supprimer, anonymiser ou conserver ;
-- prévoir au minimum une procédure claire de demande de suppression avant la bêta.
+Statuts des missions
+- suppression du statut historique « Brouillon » du parcours normal ;
+- création directe des nouvelles missions en « À pourvoir » ;
+- migration des anciennes missions encore en brouillon ;
+- stabilisation des statuts utilisés dans les workflows OF et Formateur.
 
-Espace formateur — propositions et missions
+Infrastructure et robustesse
+- documentation d'une procédure de diagnostic rapide pour les problèmes de port GitHub Codespaces ;
+- adaptation de Vite aux URLs de forwarding Codespaces ;
+- poursuite du durcissement des accès Supabase ;
+- recette fonctionnelle complète des principaux workflows avant clôture.
 
-Réorganiser « Mes propositions » autour des catégories :
-- À répondre ;
-- Option en attente ;
-- Acceptées ;
-- Refusées.
+Validation
 
-Règles :
-- ne plus afficher par défaut les propositions dont les dates sont expirées ;
-- conserver les anciennes propositions dans un historique ;
-- privilégier les missions futures et les actions nécessaires sur la page d'accueil formateur.
+Les scénarios suivants ont notamment été testés de bout en bout :
+- création d'une mission et affectation simple ;
+- plusieurs formateurs acceptant la même mission ;
+- options concurrentes ;
+- mission pourvue ailleurs ;
+- désistement du formateur ;
+- désaffectation par l'OF ;
+- modification d'une mission acceptée ou affectée ;
+- acceptation et refus des nouvelles conditions ;
+- historique et commentaires ;
+- planning et disponibilités côté formateur ;
+- planning et synthèse côté OF.
 
-Navigation OF
-- afficher clairement « Espace Organisme de Formation » ;
-- réorganiser le menu autour de : Accueil, Formateurs, Missions, Planning, Carte, Paramètres ;
-- placer la déconnexion en bas de la barre latérale ;
-- mieux afficher le nom de l'organisme et éviter les coupures ;
-- mieux afficher le statut et le contexte de l'utilisateur ;
-- harmoniser l'expérience avec l'espace formateur.
+Résultat
 
-Missions OF
-- revoir et stabiliser les statuts métier ;
-- gérer correctement les missions futures, passées, réalisées et annulées ;
-- prendre en compte les missions multi-dates ;
-- ajouter recherche, filtres et tris essentiels ;
-- préparer l'archivage des missions.
+Le Sprint 10 stabilise le cœur opérationnel de Formaplane avant bêta. Les règles de confidentialité, les référentiels, la gestion des comptes et surtout le cycle de vie des missions sont désormais suffisamment structurés pour passer à la couche de communication transactionnelle.
 
-L'affichage alternatif en cartes ou en lignes pourra être développé ultérieurement.
-
-Résultat attendu
-
-À la fin du Sprint 10, Formaplane doit pouvoir accueillir ses premiers utilisateurs pilotes sans exposer inutilement les données des formateurs et sans créer de dette importante dans les référentiels ou les parcours essentiels.
+Version de clôture : `v0.10.0`.
 
 ---
 
@@ -1144,7 +1153,9 @@ Priorité actuelle
 La prochaine étape est :
 
 ```text
-Sprint 10 — Préparation à la bêta
+Sprint 11 — Brevo et emails transactionnels
 ```
 
-Avant d'accélérer les emails, notifications et invitations, Formaplane doit stabiliser la confidentialité, les référentiels de données et les parcours fondamentaux qui seront utilisés par les premiers formateurs et organismes pilotes.
+Le cœur métier ayant été stabilisé pendant le Sprint 10, la priorité devient la mise en place d'une infrastructure d'emails transactionnels fiable : configuration de Brevo, authentification du domaine, modèles, journalisation et premiers emails liés aux parcours de mission et d'inscription.
+
+Le Sprint 12 restera consacré aux notifications et relances automatiques avant l'ouverture progressive de la bêta Formaplane.

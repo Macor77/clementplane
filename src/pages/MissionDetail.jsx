@@ -2103,6 +2103,9 @@ function TrackedTrainers({
                     latestChangeResponse={
                       latestChangeResponse
                     }
+                    trainerHistory={
+                      trainerHistory
+                    }
                   />
 
                   {historyOpen ? (
@@ -2248,6 +2251,16 @@ function getHistoryActionLabel(
       'Modification refusée par le formateur',
     change_applied:
       'Nouvelles conditions appliquées',
+    proposal_viewed:
+      'Proposition consultée',
+    email_delivered:
+      'E-mail délivré',
+    email_opened:
+      'E-mail ouvert',
+    email_clicked:
+      'Lien de proposition cliqué',
+    email_delivery_failed:
+      'Échec de délivrance de l’e-mail',
   };
 
   return (
@@ -2323,6 +2336,22 @@ function getHistoryDetail(
     );
   }
 
+  if (item.action === 'email_delivered') {
+    details.push('Le serveur de messagerie du destinataire a accepté l’e-mail.');
+  }
+
+  if (item.action === 'email_opened') {
+    details.push('Brevo a détecté l’ouverture de l’e-mail.');
+  }
+
+  if (item.action === 'email_clicked') {
+    details.push('Brevo a détecté un clic dans l’e-mail.');
+  }
+
+  if (item.action === 'email_delivery_failed' && item.details?.reason) {
+    details.push(`Motif : ${item.details.reason}`);
+  }
+
   const comment =
     item.details?.comment?.trim?.() ||
     item.details?.note?.trim?.() ||
@@ -2390,9 +2419,17 @@ function TrackedTrainerRow({
   onPrepareProposal,
   pendingChangeResponse,
   latestChangeResponse,
+  trainerHistory = [],
 }) {
   const trainer =
     missionTrainer.trainer || {};
+
+  const deliveredEvent = trainerHistory.find(
+    (item) => item.action === 'email_delivered',
+  );
+  const openedEvent = trainerHistory.find(
+    (item) => item.action === 'email_opened',
+  );
 
   return (
     <article
@@ -2450,6 +2487,26 @@ function TrackedTrainerRow({
             ? 'Réponse aux nouvelles conditions attendue'
             : formatTimeline(missionTrainer)}
         </span>
+
+        {deliveredEvent ? (
+          <span style={styles.timeline}>
+            E-mail délivré le {formatDateTime(deliveredEvent.created_at)}
+          </span>
+        ) : null}
+
+        {openedEvent ? (
+          <span style={styles.timeline}>
+            E-mail ouvert le {formatDateTime(openedEvent.created_at)}
+          </span>
+        ) : null}
+
+        {missionTrainer.proposal_viewed_at ? (
+          <span style={{ ...styles.timeline, color: '#2563eb', fontWeight: 700 }}>
+            Proposition consultée le {formatDateTime(missionTrainer.proposal_viewed_at)}
+          </span>
+        ) : missionTrainer.statut === 'proposition_envoyee' ? (
+          <span style={styles.timeline}>Proposition non consultée</span>
+        ) : null}
 
         {pendingChangeResponse?.response_status === 'pending' ? (
           <div style={styles.revalidationReason}>

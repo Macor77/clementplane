@@ -696,6 +696,13 @@ Deno.serve(async (req) => {
 
     logId = log.id;
 
+    // Permet au webhook Brevo de rattacher sans ambiguïté l'événement
+    // (délivré, bounce, etc.) au journal Formaplane correspondant.
+    emailPayload.headers = {
+      ...((emailPayload.headers as Record<string, string> | undefined) || {}),
+      'X-Mailin-custom': `formaplane_log_id:${logId}`,
+    };
+
     const brevoResponse = await fetch(BREVO_ENDPOINT, {
       method: 'POST',
       headers: {

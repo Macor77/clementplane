@@ -80,6 +80,44 @@ export async function respondToMissionProposal(
   return data;
 }
 
+
+export async function notifyOrganizationOfMissionResponse(
+  token,
+  response,
+) {
+  if (!token || !['accepte', 'refuse'].includes(response)) {
+    return null;
+  }
+
+  const { data, error } = await supabase.functions.invoke(
+    'notify-mission-response',
+    {
+      body: {
+        token,
+        response,
+      },
+    },
+  );
+
+  if (error) {
+    console.error(
+      "La réponse a été enregistrée, mais la notification e-mail à l'OF n'a pas pu être déclenchée :",
+      error,
+    );
+    return null;
+  }
+
+  if (!data?.success) {
+    console.error(
+      "La réponse a été enregistrée, mais la notification e-mail à l'OF a échoué :",
+      data?.message || 'Erreur inconnue.',
+    );
+    return null;
+  }
+
+  return data;
+}
+
 export function buildProposalUrl(token) {
   return `${window.location.origin}/proposition/${token}`;
 }

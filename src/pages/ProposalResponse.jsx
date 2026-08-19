@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 
 import {
   getPublicMissionProposal,
+  notifyOrganizationOfMissionResponse,
   respondToMissionProposal,
 } from '../services/proposalService';
 
@@ -60,6 +61,11 @@ export default function ProposalResponse() {
 
     try {
       await respondToMissionProposal(token, response, comment);
+
+      // La réponse métier est prioritaire : si la notification e-mail à l'OF
+      // échoue, on ne remet jamais en cause l'acceptation/refus du formateur.
+      await notifyOrganizationOfMissionResponse(token, response);
+
       const refreshed = await getPublicMissionProposal(token);
       setProposal(refreshed);
     } catch (submitError) {
@@ -175,7 +181,10 @@ function ResponseState({ proposal, expired }) {
   if (proposal.status === 'accepte') {
     return (
       <div style={styles.success}>
-        Votre acceptation a bien été transmise à l’organisme de formation.
+        <strong>Votre acceptation a bien été transmise à l’organisme de formation.</strong>
+        <div style={{ marginTop: 6, fontWeight: 500 }}>
+          L’organisme doit maintenant confirmer votre affectation à cette mission.
+        </div>
       </div>
     );
   }
@@ -183,7 +192,7 @@ function ResponseState({ proposal, expired }) {
   if (proposal.status === 'refuse') {
     return (
       <div style={styles.refused}>
-        Votre refus a bien été transmis à l’organisme de formation.
+        <strong>Votre refus a bien été transmis à l’organisme de formation.</strong>
       </div>
     );
   }

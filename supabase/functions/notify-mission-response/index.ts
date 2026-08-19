@@ -168,18 +168,61 @@ Deno.serve(async (req) => {
         ? 'mission_response_accepted'
         : 'mission_response_refused';
 
-    // Idempotence : recharger la page ou répéter l'appel ne renvoie
-    // jamais plusieurs fois le même e-mail pour la même réponse.
-    const { data: existingLog } = await admin
-      .from('email_logs')
-      .select('id, status')
-      .eq('email_type', emailType)
-      .eq('related_entity_type', 'mission_formateur')
-      .eq('related_entity_id', relation.id)
-      .in('status', ['pending', 'sent', 'delivered'])
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .maybeSingle();
+    // Idempotence limitée à la réponse actuellement enregistrée.
+    //
+    // Une même relation mission_formateur peut être réinitialisée puis
+    // recevoir une nouvelle réponse. Dans ce cas, relation.repondu_le change
+    // et un nouvel e-mail doit être envoyé.
+    //
+    // En revanche, si le navigateur répète l'appel pour exactement la même
+    // réponse (même statut + même repondu_le), on ne renvoie pas le mail.
+    const { data: existingLogs, error: existingLogsError } =
+      await admin
+        .from('email_logs')
+        .select('id, status, metadata')
+        .eq('email_type', emailType)
+        .eq('related_entity_type', 'mission_formateur')
+        .eq('related_entity_id', relation.id)
+        .in('status', ['pending', 'sent', 'delivered'])
+        .order('created_at', { ascending: false })
+        .limit(20);
+
+    if (existingLogsError) {
+      console.error(
+        'Impossible de vérifier les notifications existantes :',
+        existingLogsError,
+      );
+
+      return jsonResponse(
+        {
+          success: false,
+          message:
+            "Impossible de vérifier l'historique des notifications.",
+        },
+        500,
+      );
+    }
+
+    const currentRespondedAt = String(
+      relation.repondu_le || '',
+    );
+
+    const existingLog = (
+      Array.isArray(existingLogs)
+        ? existingLogs
+        : []
+    ).find((item) => {
+      const metadata =
+        item?.metadata &&
+        typeof item.metadata === 'object'
+          ? item.metadata
+          : {};
+
+      return (
+        String(metadata?.responded_at || '') ===
+        currentRespondedAt
+      );
+    });
 
     if (existingLog) {
       return jsonResponse({
@@ -422,7 +465,8 @@ Deno.serve(async (req) => {
     const safeRecipientFirstName = escapeHtml(
       recipientFirstName,
     );
-    const missionUrl = `${APP_URL}/missions/${mission.id}`;
+    const missionUrl =
+      `${APP_URL}/missions/${mission.id}?space=organization`;
     const safeMissionUrl = escapeHtml(missionUrl);
 
     const accepted =

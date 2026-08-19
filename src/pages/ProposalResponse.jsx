@@ -92,9 +92,22 @@ export default function ProposalResponse() {
         </div>
 
         <p style={styles.eyebrow}>PROPOSITION DE MISSION</p>
+
+        <div style={styles.issuerCard}>
+          <div style={styles.issuerIcon}>✓</div>
+          <div>
+            <div style={styles.issuerLabel}>Proposition émise par</div>
+            <div style={styles.issuerName}>
+              {proposal.organization_name || 'Organisme de formation'}
+            </div>
+            <div style={styles.issuerSubLabel}>Organisme de formation</div>
+          </div>
+        </div>
+
         <h1 style={styles.title}>{proposal.mission_title}</h1>
         <p style={styles.intro}>
-          Bonjour {proposal.trainer_first_name || ''}, une mission de formation vous est proposée.
+          Bonjour {proposal.trainer_first_name || ''}, une mission de formation vous est proposée par{' '}
+          <strong>{proposal.organization_name || 'un organisme de formation'}</strong>.
         </p>
 
         {error && <div style={styles.error}>{error}</div>}
@@ -111,10 +124,6 @@ export default function ProposalResponse() {
             ].filter(Boolean).join(' ')}
           />
           <Detail label="Dates et horaires" value={formatDates(proposal.dates)} multiline />
-          <Detail
-            label="Rémunération proposée"
-            value={proposal.offered_fee == null ? null : `${proposal.offered_fee} €`}
-          />
           <Detail label="Informations complémentaires" value={proposal.mission_notes} multiline />
         </section>
 
@@ -163,23 +172,117 @@ export default function ProposalResponse() {
 }
 
 function ResponseState({ proposal, expired }) {
-  if (expired && proposal.status === 'proposition_envoyee') {
-    return <div style={styles.expired}>Cette proposition a expiré. Contactez l’organisme de formation pour obtenir un nouveau lien.</div>;
-  }
-
   if (proposal.status === 'accepte') {
-    return <div style={styles.success}>Votre acceptation a bien été transmise à l’organisme de formation.</div>;
+    return (
+      <div style={styles.success}>
+        Votre acceptation a bien été transmise à l’organisme de formation.
+      </div>
+    );
   }
 
   if (proposal.status === 'refuse') {
-    return <div style={styles.refused}>Votre refus a bien été transmis à l’organisme de formation.</div>;
+    return (
+      <div style={styles.refused}>
+        Votre refus a bien été transmis à l’organisme de formation.
+      </div>
+    );
   }
 
   if (proposal.status === 'affecte') {
-    return <div style={styles.success}>Vous êtes affecté à cette mission.</div>;
+    return (
+      <div style={styles.success}>
+        Vous êtes affecté à cette mission.
+      </div>
+    );
   }
 
-  return <div style={styles.expired}>Cette proposition n’est plus ouverte à la réponse.</div>;
+  const specificMessage =
+    expired && proposal.status === 'proposition_envoyee'
+      ? 'La période de réponse associée à ce lien est terminée.'
+      : proposal.status === 'mission_pourvue'
+        ? 'La mission a déjà été pourvue et un autre formateur a été sélectionné.'
+        : proposal.status === 'annule'
+          ? 'La mission ou cette proposition a été annulée par l’organisme de formation.'
+          : proposal.status === 'selectionne'
+            ? 'Cette proposition a été retirée ou réinitialisée et n’est donc plus active.'
+            : null;
+
+  return (
+    <div style={styles.closedWrapper}>
+      <div style={styles.closedIntro}>
+        <div style={styles.closedIcon}>◷</div>
+
+        <div>
+          <h2 style={styles.closedTitle}>
+            Cette proposition n’est plus ouverte à la réponse
+          </h2>
+
+          <p style={styles.closedText}>
+            Malheureusement, cette proposition n’est plus disponible.
+            Cela peut arriver lorsque la mission a déjà été pourvue,
+            lorsqu’elle a été annulée, lorsque la période de réponse est
+            terminée ou lorsque la proposition a été retirée.
+          </p>
+
+          {specificMessage ? (
+            <div style={styles.closedSpecific}>
+              {specificMessage}
+            </div>
+          ) : null}
+        </div>
+      </div>
+
+      <div style={styles.closedReasons}>
+        <strong>Les raisons les plus fréquentes sont :</strong>
+        <ul style={styles.closedList}>
+          <li>la mission a déjà été pourvue ;</li>
+          <li>la mission a été annulée par l’organisme de formation ;</li>
+          <li>la période de réponse est terminée ;</li>
+          <li>la proposition a été retirée ou réinitialisée.</li>
+        </ul>
+      </div>
+
+      <div style={styles.contactCard}>
+        <div style={styles.contactTitle}>
+          Vous souhaitez plus d’informations ?
+        </div>
+
+        <p style={styles.contactText}>
+          N’hésitez pas à prendre contact directement avec l’organisme
+          de formation qui vous a adressé cette proposition.
+        </p>
+
+        <div style={styles.contactOrganization}>
+          {proposal.organization_name || 'Organisme de formation'}
+        </div>
+
+        {proposal.organization_contact_name ? (
+          <div style={styles.contactLine}>
+            {proposal.organization_contact_name}
+          </div>
+        ) : null}
+
+        {proposal.organization_contact_phone ? (
+          <div style={styles.contactLine}>
+            ☎ {proposal.organization_contact_phone}
+          </div>
+        ) : null}
+
+        {proposal.organization_contact_email ? (
+          <div style={styles.contactLine}>
+            ✉ {proposal.organization_contact_email}
+          </div>
+        ) : null}
+
+        {!proposal.organization_contact_phone &&
+        !proposal.organization_contact_email ? (
+          <div style={styles.contactLine}>
+            Utilisez votre moyen de contact habituel avec cet organisme.
+          </div>
+        ) : null}
+      </div>
+    </div>
+  );
 }
 
 function Detail({ label, value, multiline = false }) {
@@ -247,6 +350,42 @@ const styles = {
   brand: { fontSize: 25, fontWeight: 800, marginBottom: 28 },
   brandAccent: { color: '#2563eb' },
   eyebrow: { margin: 0, color: '#2563eb', fontSize: 12, fontWeight: 800, letterSpacing: 1.4 },
+  issuerCard: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 12,
+    margin: '16px 0 24px',
+    padding: '14px 16px',
+    border: '1px solid #bfdbfe',
+    borderRadius: 12,
+    background: '#f8fbff',
+  },
+  issuerIcon: {
+    display: 'grid',
+    placeItems: 'center',
+    width: 34,
+    height: 34,
+    borderRadius: 10,
+    background: '#2563eb',
+    color: '#fff',
+    fontWeight: 900,
+  },
+  issuerLabel: {
+    color: '#64748b',
+    fontSize: 12,
+  },
+  issuerName: {
+    marginTop: 1,
+    color: '#0f2747',
+    fontSize: 16,
+    fontWeight: 850,
+    textTransform: 'uppercase',
+  },
+  issuerSubLabel: {
+    marginTop: 1,
+    color: '#94a3b8',
+    fontSize: 11,
+  },
   title: { margin: '8px 0 10px', fontSize: 32, lineHeight: 1.15 },
   intro: { margin: '0 0 26px', color: '#667085', fontSize: 16 },
   details: { borderTop: '1px solid #eaecf0', borderBottom: '1px solid #eaecf0', padding: '10px 0', marginBottom: 24 },
@@ -265,5 +404,93 @@ const styles = {
   success: { padding: 16, background: '#ecfdf3', color: '#067647', borderRadius: 10, fontWeight: 700 },
   refused: { padding: 16, background: '#fef3f2', color: '#b42318', borderRadius: 10, fontWeight: 700 },
   expired: { padding: 16, background: '#fffaeb', color: '#b54708', borderRadius: 10, fontWeight: 700 },
+  closedWrapper: {
+    display: 'grid',
+    gap: 14,
+    marginTop: 4,
+  },
+  closedIntro: {
+    display: 'grid',
+    gridTemplateColumns: '52px 1fr',
+    gap: 14,
+    alignItems: 'start',
+    padding: '18px',
+    border: '1px solid #fed7aa',
+    borderRadius: 14,
+    background: '#fffaf0',
+  },
+  closedIcon: {
+    display: 'grid',
+    placeItems: 'center',
+    width: 52,
+    height: 52,
+    borderRadius: 999,
+    background: '#ffedd5',
+    color: '#ea580c',
+    fontSize: 26,
+    fontWeight: 900,
+  },
+  closedTitle: {
+    margin: 0,
+    color: '#0f2747',
+    fontSize: 20,
+    lineHeight: 1.25,
+  },
+  closedText: {
+    margin: '8px 0 0',
+    color: '#64748b',
+    fontSize: 13.5,
+    lineHeight: 1.55,
+  },
+  closedSpecific: {
+    marginTop: 10,
+    padding: '8px 10px',
+    borderRadius: 8,
+    background: '#fff7ed',
+    color: '#c2410c',
+    fontSize: 12,
+    fontWeight: 750,
+  },
+  closedReasons: {
+    padding: '14px 16px',
+    border: '1px solid #fed7aa',
+    borderRadius: 12,
+    background: '#fffdf8',
+    color: '#475569',
+    fontSize: 12.5,
+    lineHeight: 1.55,
+  },
+  closedList: {
+    margin: '8px 0 0 18px',
+    padding: 0,
+  },
+  contactCard: {
+    padding: '16px 18px',
+    border: '1px solid #bfdbfe',
+    borderRadius: 12,
+    background: '#f8fbff',
+  },
+  contactTitle: {
+    color: '#1d4ed8',
+    fontSize: 14,
+    fontWeight: 850,
+  },
+  contactText: {
+    margin: '5px 0 10px',
+    color: '#64748b',
+    fontSize: 12.5,
+    lineHeight: 1.5,
+  },
+  contactOrganization: {
+    color: '#0f2747',
+    fontSize: 14,
+    fontWeight: 850,
+    textTransform: 'uppercase',
+  },
+  contactLine: {
+    marginTop: 4,
+    color: '#475569',
+    fontSize: 12.5,
+  },
   footerNote: { margin: '22px 0 0', textAlign: 'center', color: '#98a2b3', fontSize: 13 },
 };

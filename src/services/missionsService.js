@@ -145,6 +145,33 @@ export async function getMissionTrainerHistory(
   return data || [];
 }
 
+
+export async function recordMissionProposalContact({
+  missionFormateurId,
+  channel,
+  isReminder = false,
+  note = '',
+}) {
+  if (!missionFormateurId || !channel) {
+    throw new Error(
+      'La proposition et le moyen de contact sont obligatoires.',
+    );
+  }
+
+  const { data, error } = await supabase.rpc(
+    'record_mission_proposal_contact',
+    {
+      p_mission_formateur_id: missionFormateurId,
+      p_channel: channel,
+      p_is_reminder: Boolean(isReminder),
+      p_note: note?.trim() || null,
+    },
+  );
+
+  if (error) throw error;
+  return data;
+}
+
 export async function getMissionById(id) {
   if (!id) {
     throw new Error(

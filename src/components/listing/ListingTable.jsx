@@ -19,6 +19,11 @@ export default function ListingTable(
     renderList,
     navigate,
     handleDelete,
+    handleInvite,
+    inviteBusyId,
+    invitationHistoryByTrainer,
+    isInvitationCoolingDown,
+    formatInvitationRelativeLabel,
     planningDate,
     onPreviousMonth,
     onNextMonth,
@@ -223,6 +228,31 @@ export default function ListingTable(
                           </span>
                         ) : null}
 
+                        <span
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            width: 'fit-content',
+                            marginTop: 3,
+                            gap: 5,
+                            fontSize: 11,
+                            fontWeight: 700,
+                            color: formateur.claimed ? '#15803d' : '#b45309',
+                          }}
+                        >
+                          <span
+                            aria-hidden="true"
+                            style={{
+                              width: 7,
+                              height: 7,
+                              borderRadius: '50%',
+                              background: formateur.claimed ? '#22c55e' : '#f59e0b',
+                              flex: '0 0 auto',
+                            }}
+                          />
+                          {formateur.claimed ? 'Revendiqué' : 'Non revendiqué'}
+                        </span>
+
 
                         <div className="trainer-cell__actions">
 
@@ -249,6 +279,42 @@ export default function ListingTable(
                             Modifier
                           </button>
 
+
+                          {!formateur.claimed && formateur.email ? (
+                            isInvitationCoolingDown?.(
+                              invitationHistoryByTrainer?.[formateur.id],
+                            ) ? (
+                              <button
+                                type="button"
+                                disabled
+                                title={
+                                  invitationHistoryByTrainer?.[formateur.id]?.sent_at
+                                    ? `Dernière invitation envoyée le ${new Date(
+                                        invitationHistoryByTrainer[formateur.id].sent_at,
+                                      ).toLocaleString('fr-FR')}. Une nouvelle invitation depuis le listing sera possible après 72 h. Vous pouvez toujours renvoyer une invitation depuis la fiche du formateur.`
+                                    : ''
+                                }
+                                style={{
+                                  opacity: 0.58,
+                                  cursor: 'not-allowed',
+                                }}
+                              >
+                                {formatInvitationRelativeLabel?.(
+                                  invitationHistoryByTrainer?.[formateur.id],
+                                ) || 'Invitation récente'}
+                              </button>
+                            ) : (
+                              <button
+                                type="button"
+                                disabled={inviteBusyId === formateur.id}
+                                onClick={() => handleInvite(formateur)}
+                              >
+                                {inviteBusyId === formateur.id
+                                  ? 'Envoi…'
+                                  : 'Inviter'}
+                              </button>
+                            )
+                          ) : null}
 
                           <button
                             type="button"

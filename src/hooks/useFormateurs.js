@@ -130,6 +130,11 @@ export default function useFormateurs({
 
               organizationTrainerId:
                 row.organizationTrainerId,
+
+              claimed:
+                Boolean(
+                  row.claimed,
+                ),
             }),
           );
 

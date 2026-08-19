@@ -9,6 +9,7 @@ import {
 
 import Listing from './pages/Listing';
 import TrainerSearch from './pages/TrainerSearch';
+import TrainerBulkImport from './pages/TrainerBulkImport';
 import FormateurForm from './pages/FormateurForm';
 import FormateurView from './pages/FormateurView';
 import Missions from './pages/Missions';
@@ -176,6 +177,11 @@ function OrganizationApp() {
             <Route
               path="/formateurs/recherche"
               element={<TrainerSearch />}
+            />
+
+            <Route
+              path="/formateurs/import"
+              element={<TrainerBulkImport />}
             />
 
             <Route

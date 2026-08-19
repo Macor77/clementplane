@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import ListingTable from '../components/listing/ListingTable';
@@ -12,6 +12,14 @@ import useDistances from '../hooks/useDistances';
 import usePlanningAvailability from '../hooks/usePlanningAvailability';
 
 import { useAuth } from '../context/AuthContext';
+import {
+  formatInvitationRelativeLabel,
+  getLatestSuccessfulInvitationByTrainer,
+  getTrainerInvitationHistory,
+  isInvitationCoolingDown,
+  sendTrainerClaimInvitation,
+} from '../services/emailService';
+import TrainerInvitationModal from '../components/TrainerInvitationModal';
 
 
 export default function Listing() {
@@ -78,6 +86,64 @@ export default function Listing() {
   ] = useState(
     () => new Date(),
   );
+
+  const [
+    inviteBusyId,
+    setInviteBusyId,
+  ] = useState(null);
+
+  const [
+    inviteMessage,
+    setInviteMessage,
+  ] = useState('');
+
+  const [
+    inviteError,
+    setInviteError,
+  ] = useState('');
+
+  const [
+    trainerToInvite,
+    setTrainerToInvite,
+  ] = useState(null);
+
+  const [
+    invitationHistoryByTrainer,
+    setInvitationHistoryByTrainer,
+  ] = useState({});
+
+
+  const refreshInvitationHistory =
+    useCallback(
+      async () => {
+        if (!currentOrganization?.id) {
+          setInvitationHistoryByTrainer({});
+          return;
+        }
+
+        try {
+          const history =
+            await getTrainerInvitationHistory({
+              organizationId: currentOrganization.id,
+            });
+
+          setInvitationHistoryByTrainer(
+            getLatestSuccessfulInvitationByTrainer(history),
+          );
+        } catch (error) {
+          console.error(
+            "Impossible de charger l'état des invitations :",
+            error,
+          );
+        }
+      },
+      [currentOrganization?.id],
+    );
+
+
+  useEffect(() => {
+    refreshInvitationHistory();
+  }, [refreshInvitationHistory]);
 
 
   const {
@@ -195,6 +261,64 @@ export default function Listing() {
     };
 
 
+  const handleInvite =
+    (formateur) => {
+      if (
+        !formateur?.id ||
+        !currentOrganization?.id ||
+        inviteBusyId
+      ) {
+        return;
+      }
+
+      setInviteMessage('');
+      setInviteError('');
+      setTrainerToInvite(formateur);
+    };
+
+
+  const handleConfirmInvite =
+    async () => {
+      const formateur = trainerToInvite;
+
+      if (
+        !formateur?.id ||
+        !currentOrganization?.id ||
+        inviteBusyId
+      ) {
+        return;
+      }
+
+      setInviteBusyId(formateur.id);
+      setInviteMessage('');
+      setInviteError('');
+
+      try {
+        await sendTrainerClaimInvitation({
+          trainerId: formateur.id,
+          organizationId: currentOrganization.id,
+        });
+
+        setInviteMessage(
+          `Invitation envoyée à ${formateur.email}.`,
+        );
+        setTrainerToInvite(null);
+        await refreshInvitationHistory();
+      } catch (error) {
+        console.error(
+          "Impossible d'envoyer l'invitation formateur :",
+          error,
+        );
+        setInviteError(
+          error?.message ||
+            "Impossible d'envoyer l'invitation pour le moment.",
+        );
+      } finally {
+        setInviteBusyId(null);
+      }
+    };
+
+
   const handleCalculateDistances =
     async () => {
       const normalizedPlace =
@@ -245,7 +369,46 @@ export default function Listing() {
             '/formateurs/recherche',
           )
         }
+        onImport={() =>
+          navigate(
+            '/formateurs/import',
+          )
+        }
       />
+
+
+      {formateurs.some((formateur) => !formateur.claimed) ? (
+        <div
+          style={{
+            marginBottom: 14,
+            padding: 16,
+            border: '1px solid #bfdbfe',
+            borderRadius: 12,
+            background: '#eff6ff',
+            color: '#334155',
+            lineHeight: 1.55,
+          }}
+        >
+          <strong style={{ color: '#1d4ed8' }}>
+            Invitez vos formateurs à rejoindre Formaplane
+          </strong>
+          <div style={{ marginTop: 6 }}>
+            Vous pouvez continuer à gérer vous-même leurs disponibilités, missions et informations, même sans compte formateur. Lorsqu’un formateur revendique sa fiche, il peut toutefois mettre à jour ses disponibilités et interagir directement avec vos propositions : les échanges et validations deviennent beaucoup plus fluides. L’invitation reste entièrement à votre choix.
+          </div>
+        </div>
+      ) : null}
+
+      {inviteMessage ? (
+        <div style={{ marginBottom: 14, padding: 12, border: '1px solid #bbf7d0', borderRadius: 8, background: '#f0fdf4', color: '#15803d', fontWeight: 700 }}>
+          {inviteMessage}
+        </div>
+      ) : null}
+
+      {inviteError ? (
+        <div style={{ marginBottom: 14, padding: 12, border: '1px solid #fecaca', borderRadius: 8, background: '#fef2f2', color: '#b91c1c', fontWeight: 700 }}>
+          {inviteError}
+        </div>
+      ) : null}
 
 
       {formateursError ? (
@@ -311,6 +474,22 @@ export default function Listing() {
       />
 
 
+      <TrainerInvitationModal
+        open={Boolean(trainerToInvite)}
+        trainerName={
+          trainerToInvite
+            ? [trainerToInvite.prenom, trainerToInvite.nom].filter(Boolean).join(' ')
+            : ''
+        }
+        trainerEmail={trainerToInvite?.email || ''}
+        sending={Boolean(inviteBusyId)}
+        onCancel={() => {
+          if (!inviteBusyId) setTrainerToInvite(null);
+        }}
+        onConfirm={handleConfirmInvite}
+      />
+
+
       <ListingTable
         filteredFormateurs={
           filteredFormateurs
@@ -332,6 +511,21 @@ export default function Listing() {
         }
         handleDelete={
           handleDelete
+        }
+        handleInvite={
+          handleInvite
+        }
+        inviteBusyId={
+          inviteBusyId
+        }
+        invitationHistoryByTrainer={
+          invitationHistoryByTrainer
+        }
+        isInvitationCoolingDown={
+          isInvitationCoolingDown
+        }
+        formatInvitationRelativeLabel={
+          formatInvitationRelativeLabel
         }
         planningDate={
           planningDate

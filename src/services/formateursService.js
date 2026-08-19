@@ -66,6 +66,7 @@ export async function getFormateurs(organizationId) {
           ? row.trainer.longitude
           : row.longitude,
         location_source: claimed ? 'trainer' : 'organization',
+        claimed,
         organizationTrainerId: row.id,
         organization_id: row.organization_id,
         statut: row.statut ?? 'Standard',

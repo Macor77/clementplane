@@ -19,10 +19,12 @@ import {
   removeFormateurFromMission,
   selectFormateurForMission,
   updateMissionFormateurStatus,
+  recordMissionProposalContact,
 } from '../services/missionsService';
 
 import { getMissionRecommendations } from '../services/missionMatchingService';
 import { prepareMissionProposal } from '../services/proposalService';
+import { sendMissionProposalEmail } from '../services/emailService';
 
 const INITIAL_FILTERS = {
   recherche: '',
@@ -85,6 +87,17 @@ export default function MissionDetail() {
   const [error, setError] =
     useState('');
 
+  const [actionNotice, setActionNotice] =
+    useState('');
+  const [proposalContactTarget, setProposalContactTarget] =
+    useState(null);
+  const [proposalContactChannel, setProposalContactChannel] =
+    useState('email');
+  const [proposalContactNote, setProposalContactNote] =
+    useState('');
+  const [proposalContactSending, setProposalContactSending] =
+    useState(false);
+
   const [
     actionTrainerId,
     setActionTrainerId,
@@ -97,6 +110,7 @@ export default function MissionDetail() {
     useCallback(async () => {
       setLoading(true);
       setError('');
+      setActionNotice('');
 
       try {
         const [
@@ -412,27 +426,100 @@ export default function MissionDetail() {
     }
   };
 
-  const handlePrepareProposal = async (missionTrainerId, trainerId) => {
+  const handlePrepareProposal = (
+    missionTrainerId,
+    trainerId,
+    isReminder = false,
+    trainerName = '',
+  ) => {
+    setProposalContactTarget({
+      missionTrainerId,
+      trainerId,
+      isReminder,
+      trainerName,
+    });
+    setProposalContactChannel('email');
+    setProposalContactNote('');
+    setError('');
+    setActionNotice('');
+  };
+
+  const handleConfirmProposalContact = async () => {
+    if (!proposalContactTarget || proposalContactSending) return;
+
+    const {
+      missionTrainerId,
+      trainerId,
+      isReminder,
+    } = proposalContactTarget;
+
+    setProposalContactSending(true);
     setActionTrainerId(trainerId);
     setError('');
+    setActionNotice('');
+
+    let proposalUrl = '';
 
     try {
       const { url } = await prepareMissionProposal(missionTrainerId);
+      proposalUrl = url;
 
-      if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(url);
-        window.alert('Le lien de proposition a été généré et copié dans le presse-papiers.');
-      } else {
-        window.prompt('Copie ce lien et envoie-le au formateur :', url);
+      if (proposalContactChannel === 'email') {
+        await sendMissionProposalEmail({
+          missionTrainerId,
+          isReminder,
+        });
       }
 
+      await recordMissionProposalContact({
+        missionFormateurId: missionTrainerId,
+        channel: proposalContactChannel,
+        isReminder,
+        note: proposalContactNote,
+      });
+
+      const channelLabels = {
+        email: 'e-mail',
+        sms: 'SMS',
+        whatsapp: 'WhatsApp',
+        phone: 'appel',
+        other: 'autre moyen',
+      };
+
+      setActionNotice(
+        isReminder
+          ? `Relance enregistrée par ${channelLabels[proposalContactChannel]}.`
+          : `Proposition enregistrée par ${channelLabels[proposalContactChannel]}.`,
+      );
+
+      setProposalContactTarget(null);
+      setProposalContactNote('');
       await refresh();
     } catch (actionError) {
-      setError(
-        actionError?.message ||
-          'Impossible de préparer la proposition.',
-      );
+      if (
+        proposalContactChannel === 'email' &&
+        proposalUrl &&
+        navigator.clipboard?.writeText
+      ) {
+        try {
+          await navigator.clipboard.writeText(proposalUrl);
+          setError(
+            `${actionError?.message || "Impossible d'envoyer la proposition par e-mail."} Le lien a été copié dans le presse-papiers.`,
+          );
+        } catch {
+          setError(
+            actionError?.message ||
+              "Impossible d'envoyer la proposition par e-mail.",
+          );
+        }
+      } else {
+        setError(
+          actionError?.message ||
+            "Impossible d'enregistrer cette proposition.",
+        );
+      }
     } finally {
+      setProposalContactSending(false);
       setActionTrainerId(null);
     }
   };
@@ -507,6 +594,276 @@ export default function MissionDetail() {
 
   return (
     <div style={styles.page}>
+      {proposalContactTarget ? (
+        <div style={styles.modalBackdrop}>
+          <div
+            style={{
+              width: 'min(560px, 100%)',
+              maxHeight: 'calc(100vh - 40px)',
+              overflowY: 'auto',
+              borderRadius: 16,
+              background: '#ffffff',
+              boxShadow: '0 28px 80px rgba(15,23,42,.28)',
+              border: '1px solid #e2e8f0',
+            }}
+          >
+            <div
+              style={{
+                padding: '20px 22px 16px',
+                borderBottom: '1px solid #edf1f5',
+                background: '#ffffff',
+                borderRadius: '16px 16px 0 0',
+              }}
+            >
+              <p style={{ ...styles.modalEyebrow, color: '#2563eb' }}>
+                {proposalContactTarget.isReminder
+                  ? 'RELANCER LE FORMATEUR'
+                  : 'PROPOSER LA MISSION'}
+              </p>
+
+              <h2
+                style={{
+                  ...styles.modalTitle,
+                  marginBottom: 6,
+                }}
+              >
+                {proposalContactTarget.isReminder
+                  ? `Relancer ${
+                      proposalContactTarget.trainerName || 'le formateur'
+                    }`
+                  : `Proposer la mission à ${
+                      proposalContactTarget.trainerName || 'ce formateur'
+                    }`}
+              </h2>
+
+              <p style={styles.modalText}>
+                {proposalContactTarget.isReminder
+                  ? 'Choisissez comment vous avez relancé — ou souhaitez relancer — le formateur. Cette action sera enregistrée dans l’historique.'
+                  : 'Choisissez comment vous proposez cette mission au formateur. Cette action sera enregistrée dans l’historique.'}
+              </p>
+            </div>
+
+            <div style={{ padding: '16px 22px 20px', background: '#ffffff' }}>
+              <div
+                style={{
+                  padding: '10px 11px',
+                  border: '1px solid #bfdbfe',
+                  borderRadius: 9,
+                  background: '#eff6ff',
+                  color: '#334155',
+                  fontSize: 10.5,
+                  lineHeight: 1.45,
+                }}
+              >
+                En fonction de votre choix, le formateur passera en attente de réponse et vous pourrez suivre l’avancement dans l’historique.
+              </div>
+
+            <div
+              style={{
+                marginTop: 14,
+                padding: '10px 11px',
+                border: '1px solid #bfdbfe',
+                borderRadius: 9,
+                background: '#eff6ff',
+              }}
+            >
+              <div
+                style={{
+                  marginBottom: 7,
+                  fontSize: 10.5,
+                  fontWeight: 800,
+                  color: '#1d4ed8',
+                  textTransform: 'uppercase',
+                  letterSpacing: '.5px',
+                }}
+              >
+                Envoyer maintenant avec Formaplane
+              </div>
+
+              <label
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 9,
+                  padding: '9px 10px',
+                  border:
+                    proposalContactChannel === 'email'
+                      ? '1px solid #60a5fa'
+                      : '1px solid #dbeafe',
+                  borderRadius: 8,
+                  background: '#ffffff',
+                  cursor: 'pointer',
+                  fontSize: 11.5,
+                  fontWeight: 700,
+                  color: '#334155',
+                }}
+              >
+                <input
+                  type="radio"
+                  name="proposal-contact-channel"
+                  value="email"
+                  checked={proposalContactChannel === 'email'}
+                  onChange={() => setProposalContactChannel('email')}
+                />
+                <span>
+                  {proposalContactTarget.isReminder
+                    ? 'Renvoyer immédiatement un e-mail via Formaplane'
+                    : 'Envoyer immédiatement la proposition par e-mail via Formaplane'}
+                  <span
+                    style={{
+                      display: 'block',
+                      marginTop: 2,
+                      color: '#64748b',
+                      fontSize: 10.5,
+                      fontWeight: 500,
+                    }}
+                  >
+                    L’e-mail sera envoyé dès que vous validerez cette fenêtre.
+                  </span>
+                </span>
+              </label>
+            </div>
+
+            <div
+              style={{
+                marginTop: 10,
+                padding: '10px 11px',
+                border: '1px solid #e2e8f0',
+                borderRadius: 9,
+                background: '#ffffff',
+              }}
+            >
+              <div
+                style={{
+                  marginBottom: 7,
+                  fontSize: 10.5,
+                  fontWeight: 800,
+                  color: '#64748b',
+                  textTransform: 'uppercase',
+                  letterSpacing: '.5px',
+                }}
+              >
+                {proposalContactTarget.isReminder
+                  ? 'J’ai déjà relancé le formateur autrement'
+                  : 'J’ai déjà contacté le formateur autrement'}
+              </div>
+
+              <p
+                style={{
+                  margin: '0 0 8px',
+                  color: '#64748b',
+                  fontSize: 10.5,
+                  lineHeight: 1.45,
+                }}
+              >
+                Ces choix n’envoient aucun message depuis Formaplane. Ils servent à enregistrer dans l’historique l’action que vous avez déjà réalisée.
+              </p>
+
+              <div style={{ display: 'grid', gap: 7 }}>
+                {[
+                  ['sms', proposalContactTarget.isReminder ? 'J’ai relancé par SMS' : 'J’ai envoyé un SMS au formateur'],
+                  ['whatsapp', proposalContactTarget.isReminder ? 'J’ai relancé par WhatsApp' : 'J’ai envoyé un message WhatsApp'],
+                  ['phone', proposalContactTarget.isReminder ? 'J’ai relancé par téléphone' : 'J’ai appelé le formateur'],
+                  ['other', 'Autre'],
+                ].map(([value, label]) => (
+                <label
+                  key={value}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 9,
+                    padding: '9px 10px',
+                    border: proposalContactChannel === value
+                      ? '1px solid #93c5fd'
+                      : '1px solid #e2e8f0',
+                    borderRadius: 8,
+                    background: proposalContactChannel === value
+                      ? '#eff6ff'
+                      : '#fff',
+                    cursor: 'pointer',
+                    fontSize: 11.5,
+                    fontWeight: 650,
+                    color: '#334155',
+                  }}
+                >
+                  <input
+                    type="radio"
+                    name="proposal-contact-channel"
+                    value={value}
+                    checked={proposalContactChannel === value}
+                    onChange={() => setProposalContactChannel(value)}
+                  />
+                  {label}
+                </label>
+              ))}
+              </div>
+            </div>
+
+            {proposalContactChannel === 'other' ? (
+              <label style={{ display: 'grid', gap: 6, marginTop: 12 }}>
+                <span style={{ fontSize: 10.5, fontWeight: 750, color: '#475569' }}>
+                  Moyen utilisé / précision
+                </span>
+                <input
+                  value={proposalContactNote}
+                  onChange={(event) => setProposalContactNote(event.target.value)}
+                  placeholder="Ex. LinkedIn, Teams, assistante…"
+                  style={{
+                    minHeight: 36,
+                    padding: '0 10px',
+                    border: '1px solid #d0d5dd',
+                    borderRadius: 7,
+                    font: 'inherit',
+                  }}
+                />
+              </label>
+            ) : null}
+
+              <div style={styles.modalActions}>
+                <button
+                  type="button"
+                  style={styles.modalCancel}
+                  disabled={proposalContactSending}
+                  onClick={() => setProposalContactTarget(null)}
+                >
+                  Annuler
+                </button>
+                <button
+                  type="button"
+                  style={{
+                    ...styles.modalDanger,
+                    borderColor: '#2563eb',
+                    background: '#2563eb',
+                  }}
+                  disabled={
+                    proposalContactSending ||
+                    (
+                      proposalContactChannel === 'other' &&
+                      !proposalContactNote.trim()
+                    )
+                  }
+                  onClick={handleConfirmProposalContact}
+                >
+                  {proposalContactSending
+                    ? 'Enregistrement…'
+                    : proposalContactChannel === 'email'
+                      ? (
+                          proposalContactTarget.isReminder
+                            ? 'Renvoyer l’e-mail maintenant'
+                            : 'Envoyer l’e-mail maintenant'
+                        )
+                      : (
+                          proposalContactTarget.isReminder
+                            ? 'Enregistrer la relance'
+                            : 'Marquer comme proposée'
+                        )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
       {unassignTrainerId ? (
         <div style={styles.modalBackdrop}>
           <div style={styles.confirmModal}>
@@ -554,6 +911,23 @@ export default function MissionDetail() {
       {error && (
         <div style={styles.error}>
           {error}
+        </div>
+      )}
+
+      {actionNotice && (
+        <div
+          style={{
+            marginBottom: 14,
+            padding: '10px 12px',
+            border: '1px solid #bbf7d0',
+            borderRadius: 8,
+            background: '#f0fdf4',
+            color: '#15803d',
+            fontSize: 12,
+            fontWeight: 700,
+          }}
+        >
+          ✓ {actionNotice}
         </div>
       )}
 
@@ -1715,10 +2089,12 @@ function TrackedTrainers({
                         status,
                       )
                     }
-                    onPrepareProposal={() =>
+                    onPrepareProposal={(isReminder = false) =>
                       onPrepareProposal(
                         missionTrainer.id,
                         missionTrainer.formateur_id,
+                        isReminder,
+                        formatTrainerName(missionTrainer.trainer),
                       )
                     }
                     pendingChangeResponse={
@@ -1833,7 +2209,11 @@ function getHistoryActionLabel(
     selected:
       'Formateur sélectionné',
     proposal_sent:
-      'Proposition envoyée',
+      'Proposition préparée',
+    proposal_contact:
+      item.details?.is_reminder
+        ? 'Relance enregistrée'
+        : 'Proposition transmise',
     accepted:
       item.previous_status === 'affecte'
         ? 'Affectation retirée par l’OF'
@@ -1929,8 +2309,24 @@ function getHistoryDetail(
     );
   }
 
+  const channelLabels = {
+    email: 'E-mail Formaplane',
+    sms: 'SMS',
+    whatsapp: 'WhatsApp',
+    phone: 'Appel',
+    other: 'Autre',
+  };
+
+  if (item.action === 'proposal_contact' && item.details?.channel) {
+    details.push(
+      `Canal : ${channelLabels[item.details.channel] || item.details.channel}`,
+    );
+  }
+
   const comment =
-    item.details?.comment?.trim?.() || '';
+    item.details?.comment?.trim?.() ||
+    item.details?.note?.trim?.() ||
+    '';
 
   if (comment) {
     details.push(`Commentaire : « ${comment} »`);
@@ -2070,7 +2466,7 @@ function TrackedTrainerRow({
         ) : null}
 
         {missionTrainer.response_comment &&
-        ['accepte', 'affecte'].includes(missionTrainer.statut) ? (
+        ['accepte', 'refuse', 'affecte'].includes(missionTrainer.statut) ? (
           <div style={styles.trainerResponseComment}>
             <strong>Commentaire du formateur</strong>
             <span>{missionTrainer.response_comment}</span>
@@ -2106,7 +2502,7 @@ function TrackedTrainerRow({
             label="Proposer"
             loading={loading}
             primary
-            onClick={onPrepareProposal}
+            onClick={() => onPrepareProposal(false)}
           />
         )}
 
@@ -2114,10 +2510,10 @@ function TrackedTrainerRow({
           'proposition_envoyee' && (
           <>
             <ActionButton
-              label="Copier le lien"
+              label="Relancer"
               loading={loading}
               primary
-              onClick={onPrepareProposal}
+              onClick={() => onPrepareProposal(true)}
             />
             <ActionButton
               label="Accepter"
@@ -2777,61 +3173,6 @@ function buildMissionLocationLabel(
   ]
     .filter(Boolean)
     .join(', ');
-}
-
-function formatFullLocation(mission) {
-  const address = [
-    mission.adresse,
-    [
-      mission.code_postal,
-      mission.ville,
-    ]
-      .filter(Boolean)
-      .join(' '),
-  ]
-    .filter(Boolean)
-    .join('\n');
-
-  const site = mission.lieu
-    ? `Site : ${mission.lieu}`
-    : '';
-
-  return [site, address]
-    .filter(Boolean)
-    .join('\n') ||
-    'Non renseigné';
-}
-
-function formatDatesAndHours(
-  dates = [],
-) {
-  if (dates.length === 0) {
-    return 'Non renseignées';
-  }
-
-  return [...dates]
-    .sort((first, second) =>
-      first.date.localeCompare(
-        second.date,
-      ),
-    )
-    .map(
-      (item) =>
-        `${formatDate(item.date)} · ${formatTime(
-          item.heure_debut,
-        )} – ${formatTime(
-          item.heure_fin,
-        )}`,
-    )
-    .join('\n');
-}
-
-function formatDate(value) {
-  return new Intl.DateTimeFormat(
-    'fr-FR',
-  ).format(
-    new Date(`${value}T12:00:00`),
-  );
 }
 
 function formatTime(value) {

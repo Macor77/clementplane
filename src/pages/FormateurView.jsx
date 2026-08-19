@@ -1,4 +1,5 @@
 import {
+  useCallback,
   useEffect,
   useMemo,
   useState,
@@ -29,6 +30,12 @@ import {
 } from '../services/formateursService';
 
 import { useAuth } from '../context/AuthContext';
+import {
+  getTrainerInvitationHistory,
+  isInvitationCoolingDown,
+  sendTrainerClaimInvitation,
+} from '../services/emailService';
+import TrainerInvitationModal from '../components/TrainerInvitationModal';
 
 
 function startOfMonth(date) {
@@ -287,6 +294,70 @@ export default function FormateurView() {
     error,
     setError,
   ] = useState(null);
+
+  const [
+    inviteSending,
+    setInviteSending,
+  ] = useState(false);
+
+  const [
+    inviteMessage,
+    setInviteMessage,
+  ] = useState('');
+
+  const [
+    inviteError,
+    setInviteError,
+  ] = useState('');
+
+  const [
+    inviteModalOpen,
+    setInviteModalOpen,
+  ] = useState(false);
+
+  const [
+    invitationHistory,
+    setInvitationHistory,
+  ] = useState([]);
+
+
+  const refreshInvitationHistory =
+    useCallback(
+      async () => {
+        if (!currentOrganization?.id || !trainer?.id) {
+          setInvitationHistory([]);
+          return;
+        }
+
+        try {
+          const history =
+            await getTrainerInvitationHistory({
+              organizationId: currentOrganization.id,
+              trainerId: trainer.id,
+            });
+
+          setInvitationHistory(history);
+        } catch (error) {
+          console.error(
+            "Impossible de charger l'historique des invitations :",
+            error,
+          );
+        }
+      },
+      [currentOrganization?.id, trainer?.id],
+    );
+
+
+  useEffect(() => {
+    refreshInvitationHistory();
+  }, [refreshInvitationHistory]);
+
+  const latestSuccessfulInvitation =
+    invitationHistory.find(
+      (entry) =>
+        entry.status === 'sent' &&
+        entry.sent_at,
+    ) || null;
 
 
   const [
@@ -813,6 +884,9 @@ export default function FormateurView() {
           data.adresse ??
           '',
 
+        claimed:
+          Boolean(data.user_id),
+
         created_at:
           data.created_at,
       });
@@ -917,6 +991,64 @@ export default function FormateurView() {
 
   const title =
     `${trainer.prenom} ${trainer.nom}`.trim();
+
+
+  const handleInviteTrainer =
+    () => {
+      if (
+        trainer.claimed ||
+        !trainer.email ||
+        !currentOrganization?.id ||
+        inviteSending
+      ) {
+        return;
+      }
+
+      setInviteMessage('');
+      setInviteError('');
+      setInviteModalOpen(true);
+    };
+
+
+  const handleConfirmInviteTrainer =
+    async () => {
+      if (
+        trainer.claimed ||
+        !trainer.email ||
+        !currentOrganization?.id ||
+        inviteSending
+      ) {
+        return;
+      }
+
+      setInviteSending(true);
+      setInviteMessage('');
+      setInviteError('');
+
+      try {
+        await sendTrainerClaimInvitation({
+          trainerId: trainer.id,
+          organizationId: currentOrganization.id,
+        });
+
+        setInviteMessage(
+          `Invitation envoyée à ${trainer.email}.`,
+        );
+        setInviteModalOpen(false);
+        await refreshInvitationHistory();
+      } catch (sendError) {
+        console.error(
+          "Impossible d'envoyer l'invitation formateur :",
+          sendError,
+        );
+        setInviteError(
+          sendError?.message ||
+            "Impossible d'envoyer l'invitation pour le moment.",
+        );
+      } finally {
+        setInviteSending(false);
+      }
+    };
 
 
   const saveAvailability =
@@ -1346,6 +1478,195 @@ export default function FormateurView() {
           }
         />
 
+      </div>
+
+      <TrainerInvitationModal
+        open={inviteModalOpen}
+        trainerName={title}
+        trainerEmail={trainer.email || ''}
+        sending={inviteSending}
+        recentInvitation={
+          isInvitationCoolingDown(latestSuccessfulInvitation)
+            ? latestSuccessfulInvitation
+            : null
+        }
+        onCancel={() => {
+          if (!inviteSending) setInviteModalOpen(false);
+        }}
+        onConfirm={handleConfirmInviteTrainer}
+      />
+
+      <div
+        style={{
+          borderTop: '1px solid #e5e7eb',
+          borderBottom: '1px solid #e5e7eb',
+          padding: '12px 0',
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 7,
+            fontSize: 13,
+            fontWeight: 800,
+            color: trainer.claimed ? '#15803d' : '#b45309',
+          }}
+        >
+          <span
+            aria-hidden="true"
+            style={{
+              width: 8,
+              height: 8,
+              borderRadius: '50%',
+              background: trainer.claimed ? '#22c55e' : '#f59e0b',
+              flex: '0 0 auto',
+            }}
+          />
+          {trainer.claimed ? 'Profil revendiqué' : 'Profil non revendiqué'}
+        </div>
+
+        {trainer.claimed ? (
+          <p
+            style={{
+              margin: '6px 0 0',
+              color: '#64748b',
+              lineHeight: 1.5,
+              fontSize: 13,
+              maxWidth: 900,
+            }}
+          >
+            Le formateur possède son propre espace Formaplane. Vos notes, tarifs et données internes restent propres à votre organisme.
+          </p>
+        ) : (
+          <>
+            <p
+              style={{
+                margin: '6px 0 10px',
+                color: '#64748b',
+                lineHeight: 1.5,
+                fontSize: 13,
+                maxWidth: 900,
+              }}
+            >
+              Vous pouvez continuer à gérer vous-même ses disponibilités, missions et informations. En l’invitant à revendiquer sa fiche, les mises à jour et validations deviennent plus fluides.
+            </p>
+
+            {!trainer.email ? (
+              <div
+                style={{
+                  color: '#b45309',
+                  fontWeight: 700,
+                  fontSize: 13,
+                }}
+              >
+                Ajoutez une adresse e-mail à cette fiche pour pouvoir envoyer une invitation.
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={handleInviteTrainer}
+                disabled={inviteSending}
+                style={{
+                  border: '1px solid #cbd5e1',
+                  background: '#fff',
+                  color: '#334155',
+                  borderRadius: 8,
+                  padding: '8px 12px',
+                  fontSize: 13,
+                  fontWeight: 700,
+                  cursor: inviteSending ? 'wait' : 'pointer',
+                }}
+              >
+                {inviteSending ? 'Envoi de l’invitation…' : 'Inviter à rejoindre Formaplane'}
+              </button>
+            )}
+
+            {inviteMessage ? (
+              <div style={{ marginTop: 8, color: '#15803d', fontWeight: 700, fontSize: 13 }}>
+                {inviteMessage}
+              </div>
+            ) : null}
+
+            {inviteError ? (
+              <div style={{ marginTop: 8, color: '#b42318', fontWeight: 700, fontSize: 13 }}>
+                {inviteError}
+              </div>
+            ) : null}
+
+            <div
+              style={{
+                marginTop: 18,
+                paddingTop: 14,
+                borderTop: '1px solid #e5e7eb',
+                maxWidth: 900,
+              }}
+            >
+              <div
+                style={{
+                  fontSize: 13,
+                  fontWeight: 800,
+                  color: '#334155',
+                  marginBottom: 8,
+                }}
+              >
+                Historique des invitations Formaplane
+              </div>
+
+              {invitationHistory.length === 0 ? (
+                <div style={{ color: '#94a3b8', fontSize: 13 }}>
+                  Aucune invitation envoyée pour le moment.
+                </div>
+              ) : (
+                <div style={{ display: 'grid', gap: 6 }}>
+                  {invitationHistory.map((entry) => {
+                    const eventDate =
+                      entry.sent_at ||
+                      entry.failed_at ||
+                      entry.created_at;
+
+                    return (
+                      <div
+                        key={entry.id}
+                        style={{
+                          display: 'flex',
+                          flexWrap: 'wrap',
+                          gap: '6px 10px',
+                          alignItems: 'center',
+                          fontSize: 13,
+                          color: '#64748b',
+                        }}
+                      >
+                        <span>
+                          {new Date(eventDate).toLocaleString('fr-FR')}
+                        </span>
+                        <span aria-hidden="true">•</span>
+                        <span>{entry.recipient_email}</span>
+                        <span
+                          style={{
+                            fontWeight: 700,
+                            color:
+                              entry.status === 'sent'
+                                ? '#15803d'
+                                : entry.status === 'failed'
+                                  ? '#b42318'
+                                  : '#64748b',
+                          }}
+                        >
+                          {entry.status === 'sent'
+                            ? 'Invitation envoyée'
+                            : entry.status === 'failed'
+                              ? 'Échec de l’envoi'
+                              : 'Envoi en cours'}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </>
+        )}
       </div>
 
 

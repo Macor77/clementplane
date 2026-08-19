@@ -1,6 +1,7 @@
 export default function ListingHeader({
   onAdd,
   onSearch,
+  onImport,
 }) {
   return (
     <div className="listing-page__header">
@@ -22,6 +23,14 @@ export default function ListingHeader({
           onClick={onSearch}
         >
           Rechercher un formateur
+        </button>
+
+        <button
+          type="button"
+          className="button button--compact"
+          onClick={onImport}
+        >
+          Importer des formateurs
         </button>
 
         <button

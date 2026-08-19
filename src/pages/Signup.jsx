@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 
 import { signUpTrainer } from '../services/authService';
 
@@ -10,13 +10,25 @@ export default function Signup() {
   const navigate =
     useNavigate();
 
+  const [searchParams] =
+    useSearchParams();
+
+  const invitedEmail =
+    String(searchParams.get('email') || '')
+      .trim()
+      .toLowerCase();
+
+  const isTrainerInvitation =
+    searchParams.get('invitation') === 'trainer' &&
+    Boolean(invitedEmail);
+
   const [
     form,
     setForm,
   ] = useState({
     firstName: '',
     lastName: '',
-    email: '',
+    email: invitedEmail,
     password: '',
     confirmPassword: '',
   });
@@ -199,6 +211,15 @@ export default function Signup() {
           vos propositions et vos missions.
         </p>
 
+        {isTrainerInvitation ? (
+          <div className="auth-alert" style={{ marginBottom: 18 }}>
+            <strong>Une fiche Formaplane existe déjà pour vous.</strong>
+            <div style={{ marginTop: 6 }}>
+              Créez votre compte avec l’adresse <strong>{invitedEmail}</strong>. Après confirmation, Formaplane vous proposera de revendiquer votre fiche existante.
+            </div>
+          </div>
+        ) : null}
+
 
         <form
           className="auth-form"
@@ -259,6 +280,9 @@ export default function Signup() {
                 updateField(
                   'email',
                 )
+              }
+              readOnly={
+                isTrainerInvitation
               }
               autoComplete="email"
               required

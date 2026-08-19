@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { updateCurrentUserProfile } from '../services/currentUserService';
 import { requestCurrentUserEmailChange } from '../services/authService';
 import { getMyAccountDeletionStatus, deleteMyAccount } from '../services/accountDeletionService';
+import { sendInfrastructureTestEmail } from '../services/emailService';
 
 export default function Settings() {
   const {
@@ -25,6 +26,9 @@ export default function Settings() {
   const [emailSaving, setEmailSaving] = useState(false);
   const [emailMessage, setEmailMessage] = useState('');
   const [emailError, setEmailError] = useState('');
+  const [testEmailSending, setTestEmailSending] = useState(false);
+  const [testEmailMessage, setTestEmailMessage] = useState('');
+  const [testEmailError, setTestEmailError] = useState('');
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleteConfirmation, setDeleteConfirmation] = useState('');
   const [deleteBusy, setDeleteBusy] = useState(false);
@@ -103,6 +107,29 @@ export default function Settings() {
       );
     } finally {
       setEmailSaving(false);
+    }
+  };
+
+  const handleTestEmail = async () => {
+    if (testEmailSending) return;
+
+    setTestEmailSending(true);
+    setTestEmailMessage('');
+    setTestEmailError('');
+
+    try {
+      const result = await sendInfrastructureTestEmail();
+      setTestEmailMessage(
+        `E-mail de test envoyé avec succès. Journal : ${result.logId}.`,
+      );
+    } catch (error) {
+      console.error("Test du moteur d'e-mails impossible :", error);
+      setTestEmailError(
+        error?.message ||
+          "Impossible d'envoyer l'e-mail de test pour le moment.",
+      );
+    } finally {
+      setTestEmailSending(false);
     }
   };
 
@@ -351,6 +378,49 @@ export default function Settings() {
             marginTop: '28px',
           }}
         >
+          <h3 style={{ marginTop: 0 }}>Test technique des e-mails</h3>
+
+          <p style={{ color: '#64748b', marginBottom: '18px' }}>
+            Ce bouton envoie un e-mail technique uniquement à l’adresse de votre compte connecté. Il sert à valider le moteur transactionnel centralisé de Formaplane.
+          </p>
+
+          {testEmailMessage ? (
+            <div style={{ color: '#15803d', fontWeight: 700, marginBottom: '12px' }}>
+              {testEmailMessage}
+            </div>
+          ) : null}
+
+          {testEmailError ? (
+            <div style={{ color: '#b42318', fontWeight: 700, marginBottom: '12px' }}>
+              {testEmailError}
+            </div>
+          ) : null}
+
+          <button
+            type="button"
+            onClick={handleTestEmail}
+            disabled={testEmailSending}
+            style={{
+              border: '1px solid #bfdbfe',
+              background: '#eff6ff',
+              color: '#1d4ed8',
+              borderRadius: '10px',
+              padding: '11px 16px',
+              fontWeight: 700,
+              cursor: testEmailSending ? 'wait' : 'pointer',
+            }}
+          >
+            {testEmailSending ? 'Envoi du test…' : 'Envoyer un e-mail de test'}
+          </button>
+        </div>
+
+        <div
+          style={{
+            borderTop: '1px solid #e5e7eb',
+            paddingTop: '24px',
+            marginTop: '28px',
+          }}
+        >
           <h3 style={{ marginTop: 0 }}>Session</h3>
 
           <p style={{ color: '#64748b', marginBottom: '18px' }}>
@@ -373,6 +443,7 @@ export default function Settings() {
             Se déconnecter
           </button>
         </div>
+
         <div style={{ borderTop: '1px solid #fecaca', paddingTop: '24px', marginTop: '28px' }}>
           <h3 style={{ marginTop: 0, color: '#b42318' }}>Zone de danger</h3>
           <p style={{ color: '#64748b', marginBottom: '18px' }}>La suppression ferme définitivement votre compte Formaplane. Elle ne supprime pas automatiquement les données métier appartenant à votre organisme. Si vous êtes le dernier utilisateur actif ou le dernier propriétaire de votre organisme, la suppression autonome sera bloquée.</p>

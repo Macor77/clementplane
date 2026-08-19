@@ -40,7 +40,14 @@ export function RequireAuth({ children }) {
 }
 
 export function RequireOrganization({ children }) {
-  const { isAuthenticated, memberships, currentOrganization, trainerProfile, loading } = useAuth();
+  const {
+    isAuthenticated,
+    memberships,
+    currentOrganization,
+    trainerProfile,
+    loading,
+  } = useAuth();
+
   const location = useLocation();
 
   if (loading) return <LoadingScreen />;
@@ -57,9 +64,40 @@ export function RequireOrganization({ children }) {
     );
   }
 
+  /*
+   * IMPORTANT — compte double casquette / lien profond OF
+   *
+   * Lorsqu'un utilisateur possède bien au moins une adhésion OF,
+   * `memberships` peut être disponible un très court instant avant
+   * que `currentOrganization` soit résolu par AuthContext.
+   *
+   * Dans ce cas il ne faut surtout pas rediriger vers l'espace
+   * Formateur : on attend simplement que l'organisation courante
+   * soit déterminée. Cela permet notamment de conserver les liens
+   * profonds du type :
+   *
+   * /missions/:id?space=organization
+   */
+  if (!currentOrganization && memberships.length > 0) {
+    return <LoadingScreen />;
+  }
+
   if (!currentOrganization) {
-    if (trainerProfile) return <Navigate to="/formateur/espace" replace />;
-    if (memberships.length === 0) return <Navigate to="/formateur/revendication" replace />;
+    if (trainerProfile) {
+      return (
+        <Navigate
+          to="/formateur/espace"
+          replace
+        />
+      );
+    }
+
+    return (
+      <Navigate
+        to="/formateur/revendication"
+        replace
+      />
+    );
   }
 
   return children;

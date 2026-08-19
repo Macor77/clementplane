@@ -25,7 +25,15 @@ export function RequireAuth({ children }) {
   if (loading) return <LoadingScreen />;
 
   if (!isAuthenticated) {
-    return <Navigate to="/connexion" replace state={{ from: location.pathname }} />;
+    return (
+      <Navigate
+        to="/connexion"
+        replace
+        state={{
+          from: `${location.pathname}${location.search}`,
+        }}
+      />
+    );
   }
 
   return children;
@@ -38,7 +46,15 @@ export function RequireOrganization({ children }) {
   if (loading) return <LoadingScreen />;
 
   if (!isAuthenticated) {
-    return <Navigate to="/connexion" replace state={{ from: location.pathname }} />;
+    return (
+      <Navigate
+        to="/connexion"
+        replace
+        state={{
+          from: `${location.pathname}${location.search}`,
+        }}
+      />
+    );
   }
 
   if (!currentOrganization) {

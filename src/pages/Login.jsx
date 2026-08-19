@@ -1,5 +1,9 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import {
+  Link,
+  useLocation,
+  useNavigate,
+} from 'react-router-dom';
 
 import { supabase } from '../lib/supabaseClient';
 import './Auth.css';
@@ -7,6 +11,7 @@ import './Auth.css';
 
 export default function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [email, setEmail] =
     useState('');
@@ -47,8 +52,14 @@ export default function Login() {
           throw signInError;
         }
 
+        const destination =
+          typeof location.state?.from === 'string' &&
+          location.state.from.startsWith('/')
+            ? location.state.from
+            : '/';
+
         navigate(
-          '/',
+          destination,
           {
             replace: true,
           },

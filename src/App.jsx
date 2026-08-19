@@ -270,11 +270,38 @@ function AccountRouter() {
       location.pathname,
     );
 
+  const requestedOrganizationSpace =
+    new URLSearchParams(
+      location.search,
+    ).get('space') === 'organization';
+
   useEffect(() => {
     let active = true;
 
     async function determineDestination() {
       if (loading || !user) {
+        return;
+      }
+
+      /*
+       * Lien profond explicitement destiné à l'espace OF.
+       *
+       * Exemple : lien reçu par e-mail après la réponse
+       * d'un formateur.
+       *
+       * Pour un utilisateur "double casquette", on force
+       * l'espace Organisme au lieu de le renvoyer vers
+       * son accueil Formateur.
+       */
+      if (
+        requestedOrganizationSpace &&
+        hasOrganization
+      ) {
+        sessionStorage.setItem(
+          ACTIVE_SPACE_KEY,
+          'organization',
+        );
+
         return;
       }
 
@@ -448,7 +475,9 @@ function AccountRouter() {
     hasOrganization,
     hasTrainer,
     trainerPersonalRoute,
+    requestedOrganizationSpace,
     location.pathname,
+    location.search,
     navigate,
   ]);
 

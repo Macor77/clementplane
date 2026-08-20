@@ -505,15 +505,20 @@ export default function TrainerMissionDetail() {
     {mission.response_comment ? <section style={styles.card}><h2 style={styles.cardTitle}>Votre réponse</h2><div style={styles.response}><span>Commentaire transmis à l’organisme de formation</span><p>{mission.response_comment}</p></div></section> : null}
     {mission.withdrawal_comment ? <section style={styles.card}><h2 style={styles.cardTitle}>Votre désistement</h2><div style={styles.response}><span>Commentaire transmis à l’organisme de formation</span><p>{mission.withdrawal_comment}</p></div></section> : null}
 
-    {mission.status === 'accepte' ? (
+    {['accepte', 'affecte'].includes(mission.status) ? (
       <section style={{...styles.card,...styles.withdrawCard}}>
         <div style={styles.withdrawHeading}>
           <div>
-            <h2 style={styles.cardTitle}>Se désister de cette option</h2>
+            <h2 style={styles.cardTitle}>
+              {mission.status === 'affecte'
+                ? 'Se désister de cette mission'
+                : 'Se désister de cette option'}
+            </h2>
+
             <p style={styles.muted}>
-              Tant que l’organisme ne vous a pas affecté définitivement,
-              vous pouvez retirer votre option. Cette action sera enregistrée
-              dans l’historique de la mission.
+              {mission.status === 'affecte'
+                ? 'Vous êtes actuellement affecté à cette mission. En cas de désistement, votre affectation sera retirée et l’organisme de formation sera immédiatement informé.'
+                : 'Vous pouvez retirer votre option tant que vous ne souhaitez plus maintenir votre accord. Cette action sera enregistrée dans l’historique de la mission.'}
             </p>
           </div>
 
@@ -627,9 +632,16 @@ export default function TrainerMissionDetail() {
           </div>
 
           <div style={styles.withdrawWarning}>
-            <strong>Prévenez également l’organisme de formation.</strong>
+            <strong>
+              {mission.status === 'affecte'
+                ? 'Votre affectation va être retirée.'
+                : 'Prévenez également l’organisme de formation.'}
+            </strong>
+
             <span>
-              Le désistement sera enregistré dans Formaplane, mais nous vous recommandons de prévenir clairement l’OF par téléphone, e-mail ou tout autre moyen habituel.
+              {mission.status === 'affecte'
+                ? 'Le désistement sera enregistré dans Formaplane, votre affectation sera libérée et l’OF sera automatiquement prévenu par e-mail. Nous vous recommandons aussi de le contacter directement si la mission est proche.'
+                : 'Le désistement sera enregistré dans Formaplane et l’OF sera automatiquement prévenu par e-mail. Vous pouvez également le contacter directement par votre moyen habituel.'}
             </span>
           </div>
 

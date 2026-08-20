@@ -654,6 +654,7 @@ const buildMissionWithdrawalOfEmail = ({
   missionTitle,
   comment,
   missionUrl,
+  wasAssigned,
 }: {
   recipientEmail: string;
   recipientFirstName: string;
@@ -661,6 +662,7 @@ const buildMissionWithdrawalOfEmail = ({
   missionTitle: string;
   comment: string;
   missionUrl: string;
+  wasAssigned: boolean;
 }) => ({
   sender: { name: SENDER_NAME, email: SENDER_EMAIL },
   to: [{ email: recipientEmail }],
@@ -672,7 +674,14 @@ const buildMissionWithdrawalOfEmail = ({
         <div style="font-size:20px;font-weight:800;margin-bottom:18px;">Formaplane</div>
         <h1 style="font-size:22px;margin:0 0 12px;">Un formateur s’est désisté</h1>
         <p>Bonjour ${escapeHtml(recipientFirstName || '')},</p>
-        <p><strong>${escapeHtml(trainerName)}</strong> s’est désisté de l’option qu’il avait acceptée pour la mission <strong>${escapeHtml(missionTitle)}</strong>.</p>
+        <p>
+          <strong>${escapeHtml(trainerName)}</strong>
+          ${
+            wasAssigned
+              ? `s’est désisté de la mission <strong>${escapeHtml(missionTitle)}</strong> sur laquelle il était affecté. La mission est désormais à réaffecter.`
+              : `s’est désisté de l’option qu’il avait acceptée pour la mission <strong>${escapeHtml(missionTitle)}</strong>.`
+          }
+        </p>
         ${comment ? `<div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;padding:14px;margin:18px 0;"><strong>Commentaire du formateur</strong><div style="margin-top:6px;">${escapeHtml(comment)}</div></div>` : ''}
         <a href="${escapeHtml(missionUrl)}" style="display:inline-block;background:#2563eb;color:#fff;text-decoration:none;font-weight:700;padding:12px 18px;border-radius:8px;">Voir la mission dans Formaplane</a>
       </div>
@@ -1448,12 +1457,25 @@ Deno.serve(async (req) => {
         .in('status',['pending','sent','delivered']).maybeSingle();
       if (existing.data?.id) return jsonResponse({ success:true, duplicate:true, recipientEmail });
 
+      const { data: withdrawalHistory } = await admin
+        .from('mission_trainer_history')
+        .select('previous_status, created_at')
+        .eq('mission_formateur_id', target.id)
+        .eq('action', 'withdrawn')
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      const wasAssigned =
+        withdrawalHistory?.previous_status === 'affecte';
+
       const payload=buildMissionWithdrawalOfEmail({
         recipientEmail, recipientFirstName,
         trainerName:[trainer?.prenom,trainer?.nom].filter(Boolean).join(' ') || 'Le formateur',
         missionTitle:String(mission.intitule || mission.formation || 'Mission de formation'),
         comment:String(target.withdrawal_comment || ''),
-        missionUrl:`${APP_URL}/missions/${mission.id}`,
+        missionUrl:`${APP_URL}/missions/${mission.id}?space=organization`,
+        wasAssigned,
       });
 
       const sent=await sendLoggedEmail(payload,{

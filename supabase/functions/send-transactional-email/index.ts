@@ -17,6 +17,7 @@ type EmailRequest = {
   organizationId?: string;
   missionTrainerId?: string;
   missionId?: string;
+  requestId?: string;
 };
 
 const jsonResponse = (body: Record<string, unknown>, status = 200) =>
@@ -417,6 +418,94 @@ const buildMissionAssignmentConfirmationEmail = ({
   };
 };
 
+const buildMissionChangeRevalidationEmail = ({
+  recipientEmail,
+  trainerFirstName,
+  organizationName,
+  missionTitle,
+  responseUrl,
+  previousStatus,
+  previousMission,
+  proposedMission,
+  previousDates,
+  proposedDates,
+}: {
+  recipientEmail: string;
+  trainerFirstName: string;
+  organizationName: string;
+  missionTitle: string;
+  responseUrl: string;
+  previousStatus: string;
+  previousMission: Record<string, unknown>;
+  proposedMission: Record<string, unknown>;
+  previousDates: Array<Record<string, unknown>>;
+  proposedDates: Array<Record<string, unknown>>;
+}) => {
+  const affected = previousStatus === 'affecte';
+  const rows: Array<{ label: string; before: string; after: string }> = [];
+  const add = (label: string, before: unknown, after: unknown) => {
+    const a = before == null ? '' : String(before);
+    const b = after == null ? '' : String(after);
+    if (a !== b) rows.push({ label, before: a || 'Non renseigné', after: b || 'Non renseigné' });
+  };
+  add('Formation', previousMission?.formation, proposedMission?.formation);
+  add('Lieu / site', previousMission?.lieu, proposedMission?.lieu);
+  add('Adresse', previousMission?.adresse, proposedMission?.adresse);
+  add(
+    'Ville',
+    [previousMission?.code_postal, previousMission?.ville].filter(Boolean).join(' '),
+    [proposedMission?.code_postal, proposedMission?.ville].filter(Boolean).join(' '),
+  );
+
+  const datesText = (items: Array<Record<string, unknown>>) =>
+    (items || []).map((item) => {
+      const day = formatMissionDate(String(item.date || ''));
+      const start = formatMissionTime(String(item.heure_debut || ''));
+      const end = formatMissionTime(String(item.heure_fin || ''));
+      return `${day}${start || end ? ` · ${start}${start && end ? ' – ' : ''}${end}` : ''}`;
+    }).join(' ; ') || 'Aucune date';
+
+  if (JSON.stringify(previousDates || []) !== JSON.stringify(proposedDates || [])) {
+    rows.push({ label: 'Dates et horaires', before: datesText(previousDates), after: datesText(proposedDates) });
+  }
+
+  const diffRows = rows.map((row) => `
+    <div style="padding:12px 0;border-bottom:1px solid #e8edf4;">
+      <div style="font-size:13px;font-weight:800;color:#0f2747;margin-bottom:5px;">${escapeHtml(row.label)}</div>
+      <div style="font-size:12px;color:#64748b;line-height:1.5;"><strong>Avant :</strong> ${escapeHtml(row.before)}</div>
+      <div style="font-size:12px;color:#1d4ed8;font-weight:700;line-height:1.5;"><strong>Maintenant :</strong> ${escapeHtml(row.after)}</div>
+    </div>
+  `).join('');
+
+  return {
+    sender: { name: SENDER_NAME, email: SENDER_EMAIL },
+    to: [{ email: recipientEmail }],
+    replyTo: { name: SENDER_NAME, email: SENDER_EMAIL },
+    subject: affected
+      ? 'Votre validation est requise — Une mission confirmée a été modifiée'
+      : 'Votre validation est requise — Une proposition de mission a été modifiée',
+    htmlContent: `
+      <div style="margin:0;padding:40px 20px;background:#f3f6fb;font-family:Arial,Helvetica,sans-serif;color:#0f2747;">
+        <div style="max-width:600px;margin:0 auto;background:#fff;border:1px solid #dbe3ef;border-radius:18px;padding:36px;box-sizing:border-box;">
+          <div style="font-size:24px;font-weight:800;margin-bottom:28px;">Formaplane</div>
+          <div style="font-size:12px;font-weight:800;letter-spacing:1.5px;color:#2563eb;text-transform:uppercase;margin-bottom:10px;">Modification de mission</div>
+          <h1 style="margin:0 0 14px;font-size:25px;line-height:1.25;">${escapeHtml(trainerFirstName || 'Bonjour')}, votre validation est requise</h1>
+          <p style="margin:0 0 18px;font-size:15px;line-height:1.6;color:#5b6b82;">
+            <strong>${escapeHtml(organizationName)}</strong> a modifié certaines conditions de ${affected ? 'la mission qui vous avait été confirmée' : 'la mission que vous aviez acceptée'} : <strong>${escapeHtml(missionTitle)}</strong>.
+          </p>
+          <div style="border:1px solid #dbe3ef;border-radius:12px;padding:16px;background:#f8fafc;margin-bottom:20px;">
+            <div style="font-size:16px;font-weight:800;margin-bottom:4px;">Ce qui change</div>
+            ${diffRows || '<div style="font-size:13px;color:#64748b;">Consultez Formaplane pour voir les nouvelles conditions.</div>'}
+          </div>
+          <p style="margin:0 0 20px;font-size:13px;line-height:1.6;color:#64748b;">Les éventuelles conditions tarifaires ne sont pas affichées dans cet e-mail. Consultez les modifications puis confirmez si vous maintenez votre accord.</p>
+          <a href="${escapeHtml(responseUrl)}" style="display:inline-block;padding:13px 20px;border-radius:9px;background:#2563eb;color:#fff;font-size:14px;font-weight:800;text-decoration:none;">Consulter les modifications et répondre</a>
+          <p style="margin:24px 0 0;font-size:11px;line-height:1.55;color:#94a3b8;">Vous pouvez répondre à cette demande même si vous ne possédez pas encore de compte Formaplane.</p>
+        </div>
+      </div>
+    `,
+  };
+};
+
 const buildInfrastructureTestEmail = (recipientEmail: string) => ({
   sender: { name: SENDER_NAME, email: SENDER_EMAIL },
   to: [{ email: recipientEmail }],
@@ -517,6 +606,46 @@ Deno.serve(async (req) => {
     const admin = createClient(supabaseUrl, supabaseServiceRoleKey, {
       auth: { autoRefreshToken: false, persistSession: false },
     });
+
+    const sendLoggedEmail = async (
+      payload: Record<string, unknown>,
+      logData: Record<string, unknown>,
+    ) => {
+      const { data: log, error: insertError } = await admin
+        .from('email_logs')
+        .insert(logData)
+        .select('id')
+        .single();
+
+      if (insertError || !log?.id) {
+        throw new Error('EMAIL_LOG_FAILED');
+      }
+
+      payload.headers = {
+        ...((payload.headers as Record<string, string> | undefined) || {}),
+        'X-Mailin-custom': `formaplane_log_id:${log.id}`,
+      };
+
+      const response = await fetch(BREVO_ENDPOINT, {
+        method: 'POST',
+        headers: { accept: 'application/json', 'api-key': brevoApiKey, 'content-type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      const raw = await response.text();
+      let provider: Record<string, unknown> = {};
+      try { provider = raw ? JSON.parse(raw) : {}; } catch { provider = {}; }
+
+      if (!response.ok) {
+        const message = typeof provider.message === 'string' ? provider.message.slice(0, 1000) : `Brevo ${response.status}`;
+        await admin.from('email_logs').update({ status:'failed', error_message:message, failed_at:new Date().toISOString() }).eq('id', log.id);
+        throw new Error('BREVO_REJECTED');
+      }
+
+      const providerMessageId = typeof provider.messageId === 'string' ? provider.messageId : null;
+      await admin.from('email_logs').update({ status:'sent', provider_message_id:providerMessageId, sent_at:new Date().toISOString(), error_message:null }).eq('id', log.id);
+      return { logId: log.id, providerMessageId };
+    };
 
     let emailPayload: Record<string, unknown>;
     let logPayload: Record<string, unknown>;
@@ -873,6 +1002,80 @@ Deno.serve(async (req) => {
             missionTrainer.proposal_expires_at || null,
         },
       };
+    } else if (body.type === 'mission_change_revalidation') {
+      const requestId = String(body.requestId || '').trim();
+      if (!requestId) return jsonResponse({ success:false, message:'La demande de revalidation est obligatoire.' }, 400);
+
+      const { data: request, error: requestError } = await admin
+        .from('mission_change_requests')
+        .select('id, mission_id, organization_id, status, previous_mission, proposed_mission, previous_dates, proposed_dates')
+        .eq('id', requestId)
+        .maybeSingle();
+      if (requestError || !request) return jsonResponse({ success:false, message:'Demande de revalidation introuvable.' }, 404);
+
+      const { data: membership } = await admin.from('organization_members').select('id')
+        .eq('organization_id', request.organization_id).eq('user_id', authData.user.id).eq('status','active').maybeSingle();
+      if (!membership) return jsonResponse({ success:false, message:"Vous n'avez pas accès à cette mission." }, 403);
+
+      const [{ data: mission }, { data: organization }, { data: targets, error: targetsError }] = await Promise.all([
+        admin.from('missions').select('id, intitule, formation').eq('id', request.mission_id).maybeSingle(),
+        admin.from('organizations').select('id, name, legal_name').eq('id', request.organization_id).maybeSingle(),
+        admin.from('mission_change_request_trainers').select('id, trainer_id, previous_status, response_status, public_response_token').eq('change_request_id', requestId).eq('response_status','pending'),
+      ]);
+      if (!mission || !organization || targetsError) return jsonResponse({ success:false, message:'Impossible de préparer les notifications.' }, 500);
+
+      const organizationName = String(organization.name || organization.legal_name || 'Organisme de formation');
+      const missionTitle = String(mission.intitule || mission.formation || 'Mission de formation');
+      const results = [];
+
+      for (const target of targets || []) {
+        const { data: trainer } = await admin.from('trainers').select('id, prenom, nom, email, user_id').eq('id', target.trainer_id).maybeSingle();
+        const recipientEmail = String(trainer?.email || '').trim().toLowerCase();
+        if (!trainer || !recipientEmail) {
+          results.push({ trainerId: target.trainer_id, success:false, reason:'missing_email' });
+          continue;
+        }
+
+        const token = target.public_response_token || crypto.randomUUID();
+        if (!target.public_response_token) {
+          const { error: tokenError } = await admin.from('mission_change_request_trainers')
+            .update({ public_response_token:token, public_link_created_at:new Date().toISOString() }).eq('id', target.id);
+          if (tokenError) {
+            results.push({ trainerId:trainer.id, success:false, reason:'token_failed' });
+            continue;
+          }
+        }
+
+        const responseUrl = `${APP_URL}/revalidation/${token}`;
+        const payload = buildMissionChangeRevalidationEmail({
+          recipientEmail,
+          trainerFirstName:String(trainer.prenom || ''),
+          organizationName,
+          missionTitle,
+          responseUrl,
+          previousStatus:String(target.previous_status || ''),
+          previousMission:(request.previous_mission || {}) as Record<string, unknown>,
+          proposedMission:(request.proposed_mission || {}) as Record<string, unknown>,
+          previousDates:(request.previous_dates || []) as Array<Record<string, unknown>>,
+          proposedDates:(request.proposed_dates || []) as Array<Record<string, unknown>>,
+        });
+        try {
+          const sent = await sendLoggedEmail(payload, {
+            email_type:'mission_change_revalidation', provider:'brevo', recipient_email:recipientEmail,
+            recipient_user_id:trainer.user_id || null, requested_by_user_id:authData.user.id,
+            organization_id:request.organization_id, related_entity_type:'mission_change_request', related_entity_id:request.id,
+            status:'pending', metadata:{ source:'mission_change_revalidation', mission_id:request.mission_id, trainer_id:trainer.id, trainer_name:[trainer.prenom,trainer.nom].filter(Boolean).join(' '), previous_status:target.previous_status },
+          });
+          results.push({ trainerId:trainer.id, success:true, ...sent });
+        } catch (sendError) {
+          console.error('Échec notification revalidation :', sendError);
+          results.push({ trainerId:trainer.id, success:false, reason:'send_failed' });
+        }
+      }
+
+      const sentCount = results.filter((item) => item.success).length;
+      const failedCount = results.length - sentCount;
+      return jsonResponse({ success: sentCount > 0 || results.length === 0, sentCount, failedCount, results });
     } else if (body.type === 'mission_assignment_confirmation') {
       const missionId = String(
         body.missionId || '',

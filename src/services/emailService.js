@@ -216,3 +216,36 @@ export async function sendMissionAssignmentConfirmation({
 
   return data;
 }
+
+
+export async function sendMissionChangeRevalidationEmails({ requestId }) {
+  if (!requestId) {
+    throw new Error("La demande de revalidation est obligatoire.");
+  }
+
+  const { data, error } = await supabase.functions.invoke(
+    'send-transactional-email',
+    {
+      body: {
+        type: 'mission_change_revalidation',
+        requestId,
+      },
+    },
+  );
+
+  if (error) {
+    console.error("Erreur d'appel du moteur d'e-mails :", error);
+    throw new Error(
+      "La mission a été modifiée, mais l'e-mail de revalidation n'a pas pu être envoyé.",
+    );
+  }
+
+  if (!data?.success) {
+    throw new Error(
+      data?.message ||
+        "La mission a été modifiée, mais l'e-mail de revalidation n'a pas pu être envoyé.",
+    );
+  }
+
+  return data;
+}

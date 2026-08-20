@@ -14,6 +14,8 @@ import {
   updateMissionWithRevalidation,
 } from '../services/missionsService';
 
+import { sendMissionChangeRevalidationEmails } from '../services/emailService';
+
 import CompetencyInput from '../components/CompetencyInput';
 
 const EMPTY_MISSION = {
@@ -202,6 +204,21 @@ export default function MissionForm() {
               dates,
             },
           );
+
+        if (result.revalidationRequired && result.requestId) {
+          try {
+            await sendMissionChangeRevalidationEmails({
+              requestId: result.requestId,
+            });
+          } catch (emailError) {
+            // La modification métier est déjà enregistrée : un échec e-mail
+            // ne doit jamais provoquer une seconde soumission de la mission.
+            console.error(
+              'Mission modifiée, mais notification de revalidation non envoyée :',
+              emailError,
+            );
+          }
+        }
 
         navigate(
           result.revalidationRequired

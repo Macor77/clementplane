@@ -22,6 +22,7 @@ import Planning from './pages/Planning';
 import MapPage from './pages/MapPage';
 import Settings from './pages/Settings';
 import ProposalResponse from './pages/ProposalResponse';
+import MissionChangeResponse from './pages/MissionChangeResponse';
 
 import Login from './pages/Login';
 import Signup from './pages/Signup';
@@ -543,6 +544,24 @@ function AccountRouter() {
 
 export default function App() {
   const location = useLocation();
+
+  /*
+   * Revalidation publique d'une modification de mission.
+   */
+  if (
+    location.pathname.startsWith(
+      '/revalidation/',
+    )
+  ) {
+    return (
+      <Routes>
+        <Route
+          path="/revalidation/:token"
+          element={<MissionChangeResponse />}
+        />
+      </Routes>
+    );
+  }
 
   /*
    * Proposition publique.

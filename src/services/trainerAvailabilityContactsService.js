@@ -12,25 +12,62 @@ const CONTACT_FIELDS = `
   updated_at
 `;
 
-async function enrichContactsWithReferenceStatus(rows) {
+async function enrichContacts(rows) {
   const contacts = rows || [];
   if (contacts.length === 0) return [];
 
-  const { data, error } = await supabase.rpc(
-    'get_my_availability_contact_reference_status',
-  );
+  const [
+    referenceResult,
+    shareResult,
+  ] = await Promise.all([
+    supabase.rpc(
+      'get_my_availability_contact_reference_status',
+    ),
+    supabase.rpc(
+      'get_my_availability_contact_last_share_status',
+    ),
+  ]);
 
-  if (error) {
-    console.error('Erreur de lecture du statut de référencement :', error);
+  if (referenceResult.error) {
+    console.error(
+      'Erreur de lecture du statut de référencement :',
+      referenceResult.error,
+    );
     throw new Error(
       "Impossible de vérifier si vous êtes référencé auprès de vos organismes.",
     );
   }
 
-  const statusByContactId = new Map(
-    (data || []).map((row) => [
+  if (shareResult.error) {
+    console.error(
+      'Erreur de lecture du dernier partage de disponibilités :',
+      shareResult.error,
+    );
+    throw new Error(
+      "Impossible de charger le statut de vos derniers partages.",
+    );
+  }
+
+  const referenceByContactId = new Map(
+    (referenceResult.data || []).map((row) => [
       row.contact_id,
       Boolean(row.is_referenced),
+    ]),
+  );
+
+  const shareByContactId = new Map(
+    (shareResult.data || []).map((row) => [
+      row.contact_id,
+      {
+        emailLogId: row.email_log_id || null,
+        status: row.delivery_status || '',
+        sentAt: row.sent_at || null,
+        deliveredAt: row.delivered_at || null,
+        failedAt: row.failed_at || null,
+        months: Array.isArray(row.shared_months)
+          ? row.shared_months
+          : [],
+      },
     ]),
   );
 
@@ -38,8 +75,10 @@ async function enrichContactsWithReferenceStatus(rows) {
     ...contact,
     is_referenced:
       contact.organization_id
-        ? Boolean(statusByContactId.get(contact.id))
+        ? Boolean(referenceByContactId.get(contact.id))
         : false,
+    last_share:
+      shareByContactId.get(contact.id) || null,
   }));
 }
 
@@ -55,7 +94,7 @@ export async function getMyAvailabilityContacts() {
     throw new Error("Impossible de charger votre carnet d'organismes.");
   }
 
-  return enrichContactsWithReferenceStatus(data || []);
+  return enrichContacts(data || []);
 }
 
 export async function createMyAvailabilityContact({
@@ -95,7 +134,7 @@ export async function createMyAvailabilityContact({
     throw new Error("Impossible d'ajouter cet organisme pour le moment.");
   }
 
-  const [enriched] = await enrichContactsWithReferenceStatus([data]);
+  const [enriched] = await enrichContacts([data]);
   return enriched;
 }
 
@@ -142,7 +181,7 @@ export async function updateMyAvailabilityContact({
     throw new Error("Impossible de modifier cet organisme pour le moment.");
   }
 
-  const [enriched] = await enrichContactsWithReferenceStatus([data]);
+  const [enriched] = await enrichContacts([data]);
   return enriched;
 }
 

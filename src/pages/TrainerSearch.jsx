@@ -1,9 +1,11 @@
 import {
+  useEffect,
   useState,
 } from 'react';
 
 import {
   useNavigate,
+  useSearchParams,
 } from 'react-router-dom';
 
 import {
@@ -19,6 +21,16 @@ import {
 export default function TrainerSearch() {
   const navigate =
     useNavigate();
+
+  const [
+    searchParams,
+  ] = useSearchParams();
+
+  const initialQuery =
+    String(
+      searchParams.get('q') ||
+      '',
+    ).trim();
 
   const {
     currentOrganization,
@@ -53,6 +65,12 @@ export default function TrainerSearch() {
     addingId,
     setAddingId,
   ] = useState(null);
+
+
+  const [
+    autoSearchDone,
+    setAutoSearchDone,
+  ] = useState(false);
 
 
   const validateSearch =
@@ -134,13 +152,11 @@ export default function TrainerSearch() {
     };
 
 
-  const handleSearch =
-    async (event) => {
-      event.preventDefault();
-
+  const runSearch =
+    async (value) => {
       const validation =
         validateSearch(
-          query,
+          value,
         );
 
       if (
@@ -197,6 +213,32 @@ export default function TrainerSearch() {
         setLoading(false);
       }
     };
+
+
+  const handleSearch =
+    async (event) => {
+      event.preventDefault();
+      await runSearch(query);
+    };
+
+
+  useEffect(() => {
+    if (
+      autoSearchDone ||
+      !initialQuery ||
+      !currentOrganization?.id
+    ) {
+      return;
+    }
+
+    setQuery(initialQuery);
+    setAutoSearchDone(true);
+    runSearch(initialQuery);
+  }, [
+    autoSearchDone,
+    initialQuery,
+    currentOrganization?.id,
+  ]);
 
 
   const handleAdd =

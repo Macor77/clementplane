@@ -17,6 +17,10 @@ import {
   getSharedDayState,
 } from '../../services/trainerAvailabilityShareService';
 
+import {
+  sendTrainerAvailabilityShareEmail,
+} from '../../services/emailService';
+
 
 const EMPTY_FORM = {
   organizationName: '',
@@ -24,6 +28,75 @@ const EMPTY_FORM = {
   email: '',
   phone: '',
 };
+
+
+function formatShareDate(value) {
+  if (!value) return '';
+
+  return new Intl.DateTimeFormat(
+    'fr-FR',
+    {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    },
+  ).format(new Date(value));
+}
+
+
+function formatSharedMonths(months = []) {
+  if (!Array.isArray(months) || months.length === 0) {
+    return '';
+  }
+
+  return months
+    .map((value) =>
+      monthLabelFromKey(value),
+    )
+    .join(', ');
+}
+
+
+function getDeliveryStatusPresentation(lastShare) {
+  if (!lastShare?.sentAt) {
+    return null;
+  }
+
+  const status =
+    String(lastShare.status || '');
+
+  if (status === 'delivered') {
+    return {
+      label: 'Délivré',
+      color: '#15803d',
+      background: '#dcfce7',
+    };
+  }
+
+  if (
+    [
+      'failed',
+      'soft_bounce',
+      'hard_bounce',
+      'blocked',
+      'invalid',
+    ].includes(status)
+  ) {
+    return {
+      label: 'Non délivré',
+      color: '#b42318',
+      background: '#fee2e2',
+    };
+  }
+
+  return {
+    label: 'En cours de livraison',
+    color: '#a16207',
+    background: '#fef3c7',
+  };
+}
 
 
 function pad(value) {
@@ -485,6 +558,32 @@ export default function TrainerAvailabilityShare() {
   ] = useState('');
 
 
+  const [
+    selectedContactIds,
+    setSelectedContactIds,
+  ] = useState([]);
+
+  const [
+    sendingShare,
+    setSendingShare,
+  ] = useState(false);
+
+  const [
+    sendConfirmOpen,
+    setSendConfirmOpen,
+  ] = useState(false);
+
+  const [
+    sendMessage,
+    setSendMessage,
+  ] = useState('');
+
+  const [
+    sendError,
+    setSendError,
+  ] = useState('');
+
+
   const previewContact =
     useMemo(
       () =>
@@ -511,6 +610,18 @@ export default function TrainerAvailabilityShare() {
 
         setContacts(
           rows,
+        );
+
+        setSelectedContactIds(
+          (current) =>
+            current.filter(
+              (contactId) =>
+                rows.some(
+                  (contact) =>
+                    contact.id ===
+                    contactId,
+                ),
+            ),
         );
 
         setPreviewContactId(
@@ -809,6 +920,16 @@ export default function TrainerAvailabilityShare() {
             ),
         );
 
+
+        setSelectedContactIds(
+          (current) =>
+            current.filter(
+              (id) =>
+                id !==
+                contact.id,
+            ),
+        );
+
         if (
           previewContactId ===
           contact.id
@@ -849,6 +970,138 @@ export default function TrainerAvailabilityShare() {
         setDeletingId(
           null,
         );
+      }
+    };
+
+
+  const toggleRecipient =
+    (contactId) => {
+      setSendMessage('');
+      setSendError('');
+
+      setSelectedContactIds(
+        (current) =>
+          current.includes(contactId)
+            ? current.filter(
+                (id) =>
+                  id !== contactId,
+              )
+            : [
+                ...current,
+                contactId,
+              ],
+      );
+    };
+
+
+  const selectedContacts =
+    contacts.filter(
+      (contact) =>
+        selectedContactIds.includes(
+          contact.id,
+        ),
+    );
+
+
+  const openSendConfirmation =
+    () => {
+      setSendMessage('');
+      setSendError('');
+
+      if (
+        selectedContactIds.length ===
+        0
+      ) {
+        setSendError(
+          'Sélectionnez au moins un contact destinataire.',
+        );
+        return;
+      }
+
+      if (
+        selectedMonths.length ===
+        0
+      ) {
+        setSendError(
+          'Sélectionnez au moins un mois à partager.',
+        );
+        return;
+      }
+
+      setSendConfirmOpen(
+        true,
+      );
+    };
+
+
+  const confirmSendShare =
+    async () => {
+      if (sendingShare) {
+        return;
+      }
+
+      setSendingShare(true);
+      setSendError('');
+      setSendMessage('');
+
+      let sentCount = 0;
+      const failures = [];
+
+      try {
+        for (
+          const contact of
+          selectedContacts
+        ) {
+          try {
+            await sendTrainerAvailabilityShareEmail({
+              contactId:
+                contact.id,
+              months:
+                selectedMonths
+                  .slice()
+                  .sort(),
+            });
+
+            sentCount += 1;
+          } catch (
+            contactError
+          ) {
+            failures.push(
+              `${contact.organization_name} : ${
+                contactError?.message ||
+                "échec de l'envoi"
+              }`,
+            );
+          }
+        }
+
+        setSendConfirmOpen(
+          false,
+        );
+
+        if (
+          sentCount > 0
+        ) {
+          setSendMessage(
+            `${sentCount} e-mail${
+              sentCount > 1
+                ? 's'
+                : ''
+            } transmis au service d'envoi. Le statut de livraison sera mis à jour dès le retour de Brevo.`,
+          );
+        }
+
+        if (
+          failures.length > 0
+        ) {
+          setSendError(
+            failures.join(' · '),
+          );
+        }
+
+        await loadContacts();
+      } finally {
+        setSendingShare(false);
       }
     };
 
@@ -1171,6 +1424,29 @@ export default function TrainerAvailabilityShare() {
         </p>
 
 
+        {contacts.length > 0 ? (
+          <div
+            style={{
+              marginTop: 8,
+            }}
+          >
+            <button
+              type="button"
+              className="button button--soft"
+              onClick={
+                loadContacts
+              }
+              style={{
+                padding: '6px 10px',
+                fontSize: 11,
+              }}
+            >
+              Actualiser les statuts de livraison
+            </button>
+          </div>
+        ) : null}
+
+
         {loading ? (
           <p
             style={{
@@ -1319,6 +1595,57 @@ export default function TrainerAvailabilityShare() {
                         }
                       </div>
                     ) : null}
+
+
+                    {contact.last_share?.sentAt ? (() => {
+                      const delivery =
+                        getDeliveryStatusPresentation(
+                          contact.last_share,
+                        );
+
+                      return (
+                        <div
+                          style={{
+                            marginTop: 8,
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 7,
+                            flexWrap: 'wrap',
+                            fontSize: 11,
+                            color: '#64748b',
+                          }}
+                        >
+                          <span>
+                            Dernier partage :{' '}
+                            <strong>
+                              {formatShareDate(
+                                contact.last_share.sentAt,
+                              )}
+                            </strong>
+                            {contact.last_share.months?.length
+                              ? ` · ${formatSharedMonths(
+                                  contact.last_share.months,
+                                )}`
+                              : ''}
+                          </span>
+
+                          {delivery ? (
+                            <span
+                              style={{
+                                display: 'inline-flex',
+                                padding: '3px 7px',
+                                borderRadius: 999,
+                                fontWeight: 800,
+                                color: delivery.color,
+                                background: delivery.background,
+                              }}
+                            >
+                              {delivery.label}
+                            </span>
+                          ) : null}
+                        </div>
+                      );
+                    })() : null}
                   </div>
 
                   <div
@@ -1404,6 +1731,89 @@ export default function TrainerAvailabilityShare() {
           </div>
         ) : (
           <>
+            <div
+              style={{
+                marginTop: 14,
+              }}
+            >
+              <div
+                style={{
+                  fontWeight: 800,
+                  marginBottom: 6,
+                }}
+              >
+                Destinataires
+              </div>
+
+              <div
+                style={{
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  gap: 7,
+                }}
+              >
+                {contacts.map(
+                  (contact) => {
+                    const selected =
+                      selectedContactIds.includes(
+                        contact.id,
+                      );
+
+                    return (
+                      <label
+                        key={
+                          contact.id
+                        }
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 6,
+                          padding: '7px 9px',
+                          borderRadius: 9,
+                          border: selected
+                            ? '1px solid #93c5fd'
+                            : '1px solid #e2e8f0',
+                          background: selected
+                            ? '#eff6ff'
+                            : '#ffffff',
+                          cursor: 'pointer',
+                          fontSize: 11,
+                          fontWeight: 700,
+                          color: '#334155',
+                        }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={
+                            selected
+                          }
+                          onChange={() =>
+                            toggleRecipient(
+                              contact.id,
+                            )
+                          }
+                        />
+
+                        {
+                          contact.organization_name
+                        }
+                      </label>
+                    );
+                  },
+                )}
+              </div>
+
+              <p
+                style={{
+                  margin: '6px 0 0',
+                  color: '#64748b',
+                  fontSize: 11,
+                }}
+              >
+                Chaque organisme recevra un e-mail individuel avec un planning personnalisé.
+              </p>
+            </div>
+
             <div
               style={{
                 display: 'grid',
@@ -1840,11 +2250,256 @@ export default function TrainerAvailabilityShare() {
                   </strong>{' '}
                   Lors de l'envoi à plusieurs organismes, Formaplane générera automatiquement la version adaptée à chaque destinataire.
                 </div>
+
+                <div
+                  style={{
+                    marginTop: 12,
+                    padding: '12px 14px',
+                    borderRadius: 12,
+                    border: '1px solid #e2e8f0',
+                    background: '#ffffff',
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      gap: 12,
+                      flexWrap: 'wrap',
+                    }}
+                  >
+                    <div>
+                      <strong>
+                        Prêt à partager
+                      </strong>
+
+                      <div
+                        style={{
+                          marginTop: 3,
+                          fontSize: 11,
+                          color: '#64748b',
+                        }}
+                      >
+                        {selectedContactIds.length}{' '}
+                        destinataire
+                        {selectedContactIds.length > 1
+                          ? 's'
+                          : ''}{' '}
+                        · {selectedMonths.length}{' '}
+                        mois sélectionné
+                        {selectedMonths.length > 1
+                          ? 's'
+                          : ''}
+                      </div>
+                    </div>
+
+                    <button
+                      className="button"
+                      type="button"
+                      onClick={
+                        openSendConfirmation
+                      }
+                      disabled={
+                        sendingShare
+                      }
+                    >
+                      Envoyer mes disponibilités
+                    </button>
+                  </div>
+
+                  {sendMessage ? (
+                    <div
+                      style={{
+                        marginTop: 9,
+                        color: '#15803d',
+                        fontSize: 11,
+                        fontWeight: 700,
+                      }}
+                    >
+                      {sendMessage}
+                    </div>
+                  ) : null}
+
+                  {sendError ? (
+                    <div
+                      style={{
+                        marginTop: 9,
+                        color: '#b42318',
+                        fontSize: 11,
+                        fontWeight: 700,
+                      }}
+                    >
+                      {sendError}
+                    </div>
+                  ) : null}
+                </div>
+
               </>
             ) : null}
           </>
         )}
       </div>
+
+
+      {sendConfirmOpen ? (
+        <div
+          role="presentation"
+          onMouseDown={(
+            event,
+          ) => {
+            if (
+              event.target ===
+                event.currentTarget &&
+              !sendingShare
+            ) {
+              setSendConfirmOpen(
+                false,
+              );
+            }
+          }}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 1000,
+            display: 'grid',
+            placeItems: 'center',
+            padding: 20,
+            background:
+              'rgba(15, 23, 42, 0.55)',
+          }}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="send-share-title"
+            style={{
+              width:
+                'min(100%, 500px)',
+              background: '#ffffff',
+              borderRadius: 16,
+              boxShadow:
+                '0 24px 70px rgba(15, 23, 42, 0.28)',
+              padding: 22,
+            }}
+          >
+            <p
+              className="page-eyebrow"
+              style={{
+                marginTop: 0,
+              }}
+            >
+              PARTAGE DES DISPONIBILITÉS
+            </p>
+
+            <h2
+              id="send-share-title"
+              style={{
+                marginTop: 6,
+              }}
+            >
+              Envoyer vos disponibilités ?
+            </h2>
+
+            <p
+              style={{
+                color: '#475569',
+                lineHeight: 1.55,
+                fontSize: 13,
+              }}
+            >
+              Formaplane va envoyer un e-mail individuel à{' '}
+              <strong>
+                {selectedContacts.length}{' '}
+                contact
+                {selectedContacts.length > 1
+                  ? 's'
+                  : ''}
+              </strong>
+              . Chaque organisme recevra uniquement la version du planning qui lui est destinée.
+            </p>
+
+            <div
+              style={{
+                padding: '10px 12px',
+                borderRadius: 10,
+                background: '#f8fafc',
+                border: '1px solid #e2e8f0',
+                fontSize: 11,
+                lineHeight: 1.55,
+                color: '#64748b',
+              }}
+            >
+              <div>
+                <strong>
+                  Destinataires :
+                </strong>{' '}
+                {selectedContacts
+                  .map(
+                    (contact) =>
+                      contact.organization_name,
+                  )
+                  .join(', ')}
+              </div>
+
+              <div
+                style={{
+                  marginTop: 4,
+                }}
+              >
+                <strong>
+                  Mois :
+                </strong>{' '}
+                {formatSharedMonths(
+                  selectedMonths
+                    .slice()
+                    .sort(),
+                )}
+              </div>
+            </div>
+
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'flex-end',
+                gap: 9,
+                flexWrap: 'wrap',
+                marginTop: 18,
+              }}
+            >
+              <button
+                className="button button--soft"
+                type="button"
+                onClick={() =>
+                  setSendConfirmOpen(
+                    false,
+                  )
+                }
+                disabled={
+                  sendingShare
+                }
+              >
+                Annuler
+              </button>
+
+              <button
+                className="button"
+                type="button"
+                onClick={
+                  confirmSendShare
+                }
+                disabled={
+                  sendingShare
+                }
+              >
+                {sendingShare
+                  ? 'Envoi…'
+                  : 'Confirmer l’envoi'}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
 
 
       {contactToDelete ? (

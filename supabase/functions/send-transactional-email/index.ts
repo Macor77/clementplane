@@ -18,6 +18,8 @@ type EmailRequest = {
   missionTrainerId?: string;
   missionId?: string;
   requestId?: string;
+  contactId?: string;
+  months?: string[];
 };
 
 const jsonResponse = (body: Record<string, unknown>, status = 200) =>
@@ -59,6 +61,348 @@ const formatMissionTime = (value: string | null | undefined) => {
 
   return String(value).slice(0, 5);
 };
+
+
+const availabilityMonthLabel = (monthKey: string) => {
+  const [year, month] = String(monthKey || '').split('-').map(Number);
+  if (!year || !month) return String(monthKey || '');
+
+  return new Intl.DateTimeFormat('fr-FR', {
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'Europe/Paris',
+  }).format(new Date(Date.UTC(year, month - 1, 1)));
+};
+
+const availabilityShareDateLabel = () =>
+  new Intl.DateTimeFormat('fr-FR', {
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'Europe/Paris',
+  }).format(new Date());
+
+const availabilityPad = (value: number) =>
+  String(value).padStart(2, '0');
+
+const availabilityIsoDay = (
+  year: number,
+  monthIndex: number,
+  day: number,
+) => `${year}-${availabilityPad(monthIndex + 1)}-${availabilityPad(day)}`;
+
+const availabilitySharedState = ({
+  day,
+  declaredByDay,
+  commitmentsByDay,
+  recipientOrganizationId,
+}: {
+  day: string;
+  declaredByDay: Record<string, string>;
+  commitmentsByDay: Record<string, Array<Record<string, unknown>>>;
+  recipientOrganizationId: string | null;
+}) => {
+  const declaredStatus = String(declaredByDay[day] || '');
+  const commitments = commitmentsByDay[day] || [];
+
+  const has = (status: string, sameOrganization?: boolean) =>
+    commitments.some((item) => {
+      if (String(item.status || '') !== status) return false;
+      if (sameOrganization === undefined) return true;
+      const same =
+        Boolean(recipientOrganizationId) &&
+        String(item.organization_id || '') === recipientOrganizationId;
+      return sameOrganization ? same : !same;
+    });
+
+  if (recipientOrganizationId && has('mission', true)) {
+    return {
+      label: 'Mission avec votre organisme',
+      tone: 'mission',
+      otherOptionsCount: 0,
+    };
+  }
+
+  if (has('mission')) {
+    return {
+      label: 'Indisponible',
+      tone: 'unavailable',
+      otherOptionsCount: 0,
+    };
+  }
+
+  if (declaredStatus === 'indispo') {
+    return {
+      label: 'Indisponible',
+      tone: 'unavailable',
+      otherOptionsCount: 0,
+    };
+  }
+
+  if (recipientOrganizationId && has('option', true)) {
+    return {
+      label: 'Option avec votre organisme',
+      tone: 'option',
+      otherOptionsCount: 0,
+    };
+  }
+
+  const otherOptionsCount = commitments.filter((item) => {
+    if (String(item.status || '') !== 'option') return false;
+    if (!recipientOrganizationId) return true;
+    return String(item.organization_id || '') !== recipientOrganizationId;
+  }).length;
+
+  if (declaredStatus === 'dispo') {
+    return {
+      label: 'Disponible',
+      tone: 'available',
+      otherOptionsCount,
+    };
+  }
+
+  return {
+    label: 'Non renseigné',
+    tone: 'unknown',
+    otherOptionsCount: 0,
+  };
+};
+
+const buildAvailabilityMonthHtml = ({
+  monthKey,
+  declaredByDay,
+  commitmentsByDay,
+  recipientOrganizationId,
+}: {
+  monthKey: string;
+  declaredByDay: Record<string, string>;
+  commitmentsByDay: Record<string, Array<Record<string, unknown>>>;
+  recipientOrganizationId: string | null;
+}) => {
+  const [year, monthNumber] = monthKey.split('-').map(Number);
+  const monthIndex = monthNumber - 1;
+  const first = new Date(Date.UTC(year, monthIndex, 1));
+  const daysInMonth = new Date(Date.UTC(year, monthIndex + 1, 0)).getUTCDate();
+  const leading = (first.getUTCDay() + 6) % 7;
+
+  const cells: string[] = [];
+
+  for (let index = 0; index < leading; index += 1) {
+    cells.push('<td style="width:14.285%;padding:3px;"></td>');
+  }
+
+  const palette: Record<string, { bg: string; border: string; color: string }> = {
+    available: { bg: '#f0fdf4', border: '#86efac', color: '#15803d' },
+    unavailable: { bg: '#fef2f2', border: '#fecaca', color: '#b42318' },
+    option: { bg: '#fffbeb', border: '#fde68a', color: '#a16207' },
+    mission: { bg: '#eff6ff', border: '#bfdbfe', color: '#1d4ed8' },
+    unknown: { bg: '#f8fafc', border: '#e2e8f0', color: '#64748b' },
+  };
+
+  for (let dayNumber = 1; dayNumber <= daysInMonth; dayNumber += 1) {
+    const day = availabilityIsoDay(year, monthIndex, dayNumber);
+    const state = availabilitySharedState({
+      day,
+      declaredByDay,
+      commitmentsByDay,
+      recipientOrganizationId,
+    });
+
+    const colors = palette[state.tone] || palette.unknown;
+    const warning =
+      state.otherOptionsCount > 0
+        ? `<div style="margin-top:4px;font-size:9px;line-height:1.2;color:#854d0e;font-weight:700;">
+            ⚠️ ${state.otherOptionsCount === 1
+              ? "1 autre organisme s'est positionné"
+              : `${state.otherOptionsCount} autres organismes se sont positionnés`}
+          </div>`
+        : '';
+
+    cells.push(`
+      <td style="width:14.285%;padding:3px;vertical-align:top;">
+        <div style="min-height:58px;border:1px solid ${colors.border};border-radius:8px;padding:6px;background:${colors.bg};box-sizing:border-box;">
+          <div style="font-size:11px;font-weight:800;color:#475569;">${dayNumber}</div>
+          <div style="margin-top:6px;font-size:10px;line-height:1.2;font-weight:800;color:${colors.color};">
+            ${escapeHtml(state.label)}
+          </div>
+          ${warning}
+        </div>
+      </td>
+    `);
+  }
+
+  while (cells.length % 7 !== 0) {
+    cells.push('<td style="width:14.285%;padding:3px;"></td>');
+  }
+
+  const rows: string[] = [];
+  for (let index = 0; index < cells.length; index += 7) {
+    rows.push(`<tr>${cells.slice(index, index + 7).join('')}</tr>`);
+  }
+
+  return `
+    <div style="margin-top:20px;border:1px solid #dbe3ef;border-radius:12px;padding:14px;background:#ffffff;">
+      <div style="margin-bottom:10px;font-size:16px;font-weight:800;color:#0f2747;text-transform:capitalize;">
+        ${escapeHtml(availabilityMonthLabel(monthKey))}
+      </div>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:separate;table-layout:fixed;">
+        <tr>
+          ${['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'].map((label) =>
+            `<td style="padding:3px;text-align:center;font-size:9px;font-weight:800;color:#64748b;">${label}</td>`
+          ).join('')}
+        </tr>
+        ${rows.join('')}
+      </table>
+    </div>
+  `;
+};
+
+const buildTrainerAvailabilityShareEmail = ({
+  recipientEmail,
+  contactName,
+  organizationName,
+  trainerName,
+  trainerEmail,
+  months,
+  declaredByDay,
+  commitmentsByDay,
+  recipientOrganizationId,
+  organizationRegistered,
+  trainerReferenced,
+  registeredCtaUrl,
+  signupUrl,
+}: {
+  recipientEmail: string;
+  contactName: string;
+  organizationName: string;
+  trainerName: string;
+  trainerEmail: string;
+  months: string[];
+  declaredByDay: Record<string, string>;
+  commitmentsByDay: Record<string, Array<Record<string, unknown>>>;
+  recipientOrganizationId: string | null;
+  organizationRegistered: boolean;
+  trainerReferenced: boolean;
+  registeredCtaUrl: string;
+  signupUrl: string;
+}) => {
+  const safeTrainerName = escapeHtml(trainerName);
+  const safeOrganizationName = escapeHtml(organizationName);
+  const safeContactName = escapeHtml(contactName);
+  const safeRegisteredCtaUrl = escapeHtml(registeredCtaUrl);
+  const safeSignupUrl = escapeHtml(signupUrl);
+  const communicatedAt = escapeHtml(availabilityShareDateLabel());
+
+  const calendars = months.map((monthKey) =>
+    buildAvailabilityMonthHtml({
+      monthKey,
+      declaredByDay,
+      commitmentsByDay,
+      recipientOrganizationId,
+    })
+  ).join('');
+
+  const monthSubject = months
+    .map((monthKey) => availabilityMonthLabel(monthKey))
+    .join(', ');
+
+  let ctaHtml = '';
+
+  if (organizationRegistered) {
+    const label = trainerReferenced
+      ? `Voir la fiche de ${safeTrainerName} sur Formaplane`
+      : `Retrouver ${safeTrainerName} et l’ajouter à mon réseau`;
+
+    ctaHtml = `
+      <a
+        href="${safeRegisteredCtaUrl}"
+        style="display:block;text-align:center;background:#2563eb;color:#ffffff;text-decoration:none;font-size:14px;font-weight:800;padding:13px 16px;border-radius:10px;margin-top:20px;"
+      >
+        ${label}
+      </a>
+    `;
+  } else {
+    ctaHtml = `
+      <div style="margin-top:22px;padding:16px;border:1px solid #dbeafe;border-radius:10px;background:#f8fbff;">
+        <div style="font-size:14px;font-weight:800;color:#1d4ed8;margin-bottom:6px;">
+          Simplifiez vos échanges avec vos formateurs
+        </div>
+        <div style="font-size:12px;line-height:1.55;color:#64748b;">
+          Formaplane permet aux organismes de retrouver leurs formateurs, consulter les disponibilités qu’ils partagent et gérer plus facilement propositions et missions.
+        </div>
+        <a
+          href="${safeSignupUrl}"
+          style="display:block;text-align:center;background:#2563eb;color:#ffffff;text-decoration:none;font-size:14px;font-weight:800;padding:12px 16px;border-radius:10px;margin-top:13px;"
+        >
+          Découvrir Formaplane et créer mon compte
+        </a>
+      </div>
+    `;
+  }
+
+  return {
+    sender: {
+      name: SENDER_NAME,
+      email: SENDER_EMAIL,
+    },
+    to: [{ email: recipientEmail }],
+    replyTo: trainerEmail
+      ? {
+          name: trainerName || SENDER_NAME,
+          email: trainerEmail,
+        }
+      : {
+          name: SENDER_NAME,
+          email: SENDER_EMAIL,
+        },
+    subject: `${trainerName} partage ses disponibilités — ${monthSubject}`,
+    htmlContent: `
+      <div style="margin:0;padding:30px 16px;background:#f3f6fb;font-family:Arial,Helvetica,sans-serif;color:#0f2747;">
+        <div style="max-width:640px;margin:0 auto;background:#ffffff;border:1px solid #dbe3ef;border-radius:18px;padding:28px;box-sizing:border-box;">
+          <div style="font-size:22px;font-weight:800;margin-bottom:24px;color:#0f2747;">Formaplane</div>
+
+          <div style="font-size:11px;font-weight:800;letter-spacing:1.4px;color:#2563eb;text-transform:uppercase;margin-bottom:8px;">
+            Disponibilités formateur
+          </div>
+
+          <h1 style="margin:0 0 12px;font-size:23px;line-height:1.25;color:#0f2747;">
+            ${safeTrainerName} partage ses disponibilités
+          </h1>
+
+          <p style="margin:0 0 8px;font-size:14px;line-height:1.6;color:#5b6b82;">
+            ${safeContactName ? `${safeContactName}, ` : ''}${safeTrainerName} vous transmet ses disponibilités pour les mois sélectionnés.
+          </p>
+
+          <p style="margin:0;font-size:12px;line-height:1.55;color:#64748b;">
+            Organisme destinataire : <strong>${safeOrganizationName}</strong>
+          </p>
+
+          <div style="margin-top:16px;padding:11px 13px;border-radius:10px;background:#f8fafc;border:1px solid #e2e8f0;font-size:11px;line-height:1.5;color:#64748b;">
+            <strong>Disponibilités communiquées le ${communicatedAt}.</strong>
+            Elles peuvent évoluer : rapprochez-vous directement du formateur pour les confirmer.
+          </div>
+
+          ${calendars}
+
+          <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:17px;font-size:10px;font-weight:700;">
+            <span style="color:#15803d;">● Disponible</span>
+            <span style="color:#a16207;">● Option avec votre organisme</span>
+            <span style="color:#1d4ed8;">● Mission avec votre organisme</span>
+            <span style="color:#b42318;">● Indisponible</span>
+            <span style="color:#64748b;">● Non renseigné</span>
+          </div>
+
+          ${ctaHtml}
+
+          <div style="margin-top:24px;padding-top:16px;border-top:1px solid #dbe3ef;font-size:10px;line-height:1.5;color:#94a3b8;">
+            Formaplane transmet les informations renseignées par le formateur. Pour confirmer une disponibilité, contactez directement ${safeTrainerName}.
+          </div>
+        </div>
+      </div>
+    `,
+  };
+};
+
 
 const buildMissionProposalEmail = ({
   recipientEmail,
@@ -938,6 +1282,209 @@ Deno.serve(async (req) => {
         requested_by_user_id: authData.user.id,
         status: 'pending',
         metadata: { source: 'settings_email_test' },
+      };
+    } else if (body.type === 'trainer_availability_share') {
+      const contactId = String(body.contactId || '').trim();
+      const requestedMonths = Array.isArray(body.months)
+        ? body.months.map((value) => String(value || '').trim())
+        : [];
+
+      const months = [...new Set(requestedMonths)]
+        .filter((value) => /^\d{4}-(0[1-9]|1[0-2])$/.test(value))
+        .sort();
+
+      if (!contactId || months.length === 0 || months.length > 6) {
+        return jsonResponse(
+          {
+            success: false,
+            message: 'Contact et mois de partage obligatoires.',
+          },
+          400,
+        );
+      }
+
+      const { data: trainer, error: trainerError } = await admin
+        .from('trainers')
+        .select('id, prenom, nom, email, user_id')
+        .eq('user_id', authData.user.id)
+        .maybeSingle();
+
+      if (trainerError || !trainer) {
+        return jsonResponse(
+          {
+            success: false,
+            message: 'Profil formateur introuvable.',
+          },
+          403,
+        );
+      }
+
+      const { data: contact, error: contactError } = await admin
+        .from('trainer_availability_contacts')
+        .select('id, trainer_id, organization_id, organization_name, contact_name, email')
+        .eq('id', contactId)
+        .eq('trainer_id', trainer.id)
+        .maybeSingle();
+
+      if (contactError || !contact) {
+        return jsonResponse(
+          {
+            success: false,
+            message: "Ce contact n'appartient pas à votre carnet.",
+          },
+          403,
+        );
+      }
+
+      const recipientEmail = String(contact.email || '').trim().toLowerCase();
+
+      if (!recipientEmail) {
+        return jsonResponse(
+          {
+            success: false,
+            message: "Ce contact n'a pas d'adresse e-mail valide.",
+          },
+          400,
+        );
+      }
+
+      const firstMonth = months[0];
+      const lastMonth = months[months.length - 1];
+      const [firstYear, firstMonthNumber] = firstMonth.split('-').map(Number);
+      const [lastYear, lastMonthNumber] = lastMonth.split('-').map(Number);
+
+      const startDay = `${firstYear}-${availabilityPad(firstMonthNumber)}-01`;
+      const lastDate = new Date(Date.UTC(lastYear, lastMonthNumber, 0));
+      const endDay = `${lastYear}-${availabilityPad(lastMonthNumber)}-${availabilityPad(lastDate.getUTCDate())}`;
+
+      const [
+        availabilityResult,
+        commitmentsResult,
+      ] = await Promise.all([
+        authenticatedClient.rpc(
+          'get_my_trainer_availability',
+          {
+            p_start_day: startDay,
+            p_end_day: endDay,
+          },
+        ),
+        authenticatedClient.rpc(
+          'get_my_trainer_commitments_with_mission',
+          {
+            p_start_day: startDay,
+            p_end_day: endDay,
+          },
+        ),
+      ]);
+
+      if (availabilityResult.error || commitmentsResult.error) {
+        console.error(
+          'Impossible de préparer les disponibilités :',
+          availabilityResult.error,
+          commitmentsResult.error,
+        );
+
+        return jsonResponse(
+          {
+            success: false,
+            message: "Impossible de préparer vos disponibilités pour l'envoi.",
+          },
+          500,
+        );
+      }
+
+      const declaredByDay: Record<string, string> = {};
+      for (const row of availabilityResult.data || []) {
+        declaredByDay[String(row.day || '')] = String(row.status || '');
+      }
+
+      const commitmentsByDay: Record<string, Array<Record<string, unknown>>> = {};
+      for (const row of commitmentsResult.data || []) {
+        const day = String(row.day || '');
+        if (!day) continue;
+        if (!commitmentsByDay[day]) commitmentsByDay[day] = [];
+        commitmentsByDay[day].push({
+          status: String(row.status || ''),
+          organization_id: row.organization_id || null,
+          mission_id: row.mission_id || null,
+          mission_formateur_id: row.mission_formateur_id || null,
+        });
+      }
+
+      const recipientOrganizationId = contact.organization_id
+        ? String(contact.organization_id)
+        : null;
+
+      let trainerReferenced = false;
+
+      if (recipientOrganizationId) {
+        const { data: relation } = await admin
+          .from('organization_trainers')
+          .select('id')
+          .eq('organization_id', recipientOrganizationId)
+          .eq('trainer_id', trainer.id)
+          .maybeSingle();
+
+        trainerReferenced = Boolean(relation);
+      }
+
+      const trainerName =
+        [trainer.prenom, trainer.nom]
+          .filter(Boolean)
+          .join(' ')
+          .trim() ||
+        'Votre formateur';
+
+      const trainerEmail =
+        String(trainer.email || authData.user.email || '')
+          .trim()
+          .toLowerCase();
+
+      const searchValue =
+        trainerEmail ||
+        trainerName;
+
+      const registeredCtaUrl =
+        recipientOrganizationId && trainerReferenced
+          ? `${APP_URL}/formateur/view/${trainer.id}`
+          : `${APP_URL}/formateurs/recherche?q=${encodeURIComponent(searchValue)}`;
+
+      emailPayload = buildTrainerAvailabilityShareEmail({
+        recipientEmail,
+        contactName: String(contact.contact_name || '').trim(),
+        organizationName: String(contact.organization_name || '').trim(),
+        trainerName,
+        trainerEmail,
+        months,
+        declaredByDay,
+        commitmentsByDay,
+        recipientOrganizationId,
+        organizationRegistered: Boolean(recipientOrganizationId),
+        trainerReferenced,
+        registeredCtaUrl,
+        signupUrl: `${APP_URL}/inscription-organisme`,
+      });
+
+      logPayload = {
+        email_type: 'trainer_availability_share',
+        provider: 'brevo',
+        recipient_email: recipientEmail,
+        recipient_user_id: null,
+        requested_by_user_id: authData.user.id,
+        organization_id: recipientOrganizationId,
+        related_entity_type: 'trainer_availability_contact',
+        related_entity_id: contact.id,
+        status: 'pending',
+        metadata: {
+          source: 'trainer_availability_share',
+          trainer_id: trainer.id,
+          trainer_name: trainerName,
+          contact_id: contact.id,
+          organization_name: contact.organization_name,
+          months,
+          organization_registered: Boolean(recipientOrganizationId),
+          trainer_referenced: trainerReferenced,
+        },
       };
     } else if (body.type === 'trainer_claim_invitation') {
       const trainerId = String(body.trainerId || '').trim();

@@ -360,3 +360,53 @@ export async function sendMissionUnassignmentNotification({
 
   return data;
 }
+
+
+
+export async function sendTrainerAvailabilityShareEmail({
+  contactId,
+  months,
+}) {
+  if (!contactId) {
+    throw new Error(
+      "Le contact destinataire est obligatoire.",
+    );
+  }
+
+  if (!Array.isArray(months) || months.length === 0) {
+    throw new Error(
+      "Sélectionnez au moins un mois à partager.",
+    );
+  }
+
+  const { data, error } = await supabase.functions.invoke(
+    'send-transactional-email',
+    {
+      body: {
+        type: 'trainer_availability_share',
+        contactId,
+        months,
+      },
+    },
+  );
+
+  if (error) {
+    console.error(
+      "Erreur d'appel du moteur d'e-mails :",
+      error,
+    );
+
+    throw new Error(
+      "Impossible d'envoyer vos disponibilités pour le moment.",
+    );
+  }
+
+  if (!data?.success) {
+    throw new Error(
+      data?.message ||
+        "Impossible d'envoyer vos disponibilités pour le moment.",
+    );
+  }
+
+  return data;
+}

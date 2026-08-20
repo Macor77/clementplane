@@ -584,6 +584,22 @@ export default function TrainerAvailabilityShare() {
   ] = useState('');
 
 
+  const [
+    commonShareMessage,
+    setCommonShareMessage,
+  ] = useState('');
+
+  const [
+    customizeMessages,
+    setCustomizeMessages,
+  ] = useState(false);
+
+  const [
+    customMessagesByContact,
+    setCustomMessagesByContact,
+  ] = useState({});
+
+
   const previewContact =
     useMemo(
       () =>
@@ -1053,6 +1069,15 @@ export default function TrainerAvailabilityShare() {
           selectedContacts
         ) {
           try {
+            const customMessage =
+              customizeMessages
+                ? String(
+                    customMessagesByContact[
+                      contact.id
+                    ] || '',
+                  ).trim()
+                : '';
+
             await sendTrainerAvailabilityShareEmail({
               contactId:
                 contact.id,
@@ -1060,6 +1085,9 @@ export default function TrainerAvailabilityShare() {
                 selectedMonths
                   .slice()
                   .sort(),
+              message:
+                customMessage ||
+                commonShareMessage.trim(),
             });
 
             sentCount += 1;
@@ -2262,6 +2290,227 @@ export default function TrainerAvailabilityShare() {
                 >
                   <div
                     style={{
+                      fontWeight: 800,
+                      marginBottom: 5,
+                    }}
+                  >
+                    Ajouter un message
+                    <span
+                      style={{
+                        marginLeft: 5,
+                        color: '#94a3b8',
+                        fontWeight: 600,
+                        fontSize: 11,
+                      }}
+                    >
+                      (facultatif)
+                    </span>
+                  </div>
+
+                  <p
+                    style={{
+                      margin: '0 0 8px',
+                      fontSize: 11,
+                      lineHeight: 1.45,
+                      color: '#64748b',
+                    }}
+                  >
+                    Ce message sera ajouté dans le corps de l'e-mail envoyé aux organismes sélectionnés.
+                  </p>
+
+                  <textarea
+                    value={
+                      commonShareMessage
+                    }
+                    onChange={(
+                      event,
+                    ) =>
+                      setCommonShareMessage(
+                        event.target.value,
+                      )
+                    }
+                    maxLength={1500}
+                    rows={3}
+                    placeholder="Ex. Je suis particulièrement disponible sur la deuxième quinzaine du mois. N'hésitez pas à me contacter."
+                    style={{
+                      width: '100%',
+                      boxSizing: 'border-box',
+                      resize: 'vertical',
+                    }}
+                  />
+
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      gap: 8,
+                      marginTop: 5,
+                      fontSize: 10,
+                      color: '#94a3b8',
+                    }}
+                  >
+                    <span>
+                      Message commun à tous les destinataires
+                    </span>
+                    <span>
+                      {commonShareMessage.length}/1500
+                    </span>
+                  </div>
+
+                  {selectedContactIds.length > 0 ? (
+                    <label
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 7,
+                        marginTop: 10,
+                        fontSize: 11,
+                        fontWeight: 700,
+                        color: '#475569',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={
+                          customizeMessages
+                        }
+                        onChange={(
+                          event,
+                        ) =>
+                          setCustomizeMessages(
+                            event.target.checked,
+                          )
+                        }
+                      />
+                      Personnaliser le message pour certains destinataires
+                    </label>
+                  ) : null}
+
+                  {customizeMessages &&
+                  selectedContacts.length >
+                    0 ? (
+                    <div
+                      style={{
+                        display: 'grid',
+                        gap: 9,
+                        marginTop: 10,
+                      }}
+                    >
+                      {selectedContacts.map(
+                        (contact) => (
+                          <div
+                            key={
+                              contact.id
+                            }
+                            style={{
+                              padding: 10,
+                              border:
+                                '1px solid #e2e8f0',
+                              borderRadius: 9,
+                              background:
+                                '#f8fafc',
+                            }}
+                          >
+                            <label
+                              style={{
+                                display:
+                                  'grid',
+                                gap: 5,
+                                fontSize:
+                                  11,
+                                fontWeight:
+                                  800,
+                                color:
+                                  '#334155',
+                              }}
+                            >
+                              {
+                                contact.organization_name
+                              }
+                              <textarea
+                                value={
+                                  customMessagesByContact[
+                                    contact.id
+                                  ] || ''
+                                }
+                                onChange={(
+                                  event,
+                                ) =>
+                                  setCustomMessagesByContact(
+                                    (
+                                      current,
+                                    ) => ({
+                                      ...current,
+                                      [
+                                        contact.id
+                                      ]:
+                                        event
+                                          .target
+                                          .value,
+                                    }),
+                                  )
+                                }
+                                maxLength={
+                                  1500
+                                }
+                                rows={2}
+                                placeholder={
+                                  commonShareMessage
+                                    ? 'Laissez vide pour utiliser le message commun.'
+                                    : 'Message spécifique à cet organisme.'
+                                }
+                                style={{
+                                  width:
+                                    '100%',
+                                  boxSizing:
+                                    'border-box',
+                                  resize:
+                                    'vertical',
+                                  background:
+                                    '#ffffff',
+                                }}
+                              />
+                            </label>
+
+                            <div
+                              style={{
+                                marginTop:
+                                  4,
+                                textAlign:
+                                  'right',
+                                fontSize:
+                                  9,
+                                color:
+                                  '#94a3b8',
+                              }}
+                            >
+                              {String(
+                                customMessagesByContact[
+                                  contact.id
+                                ] || '',
+                              ).length}
+                              /1500
+                            </div>
+                          </div>
+                        ),
+                      )}
+                    </div>
+                  ) : null}
+                </div>
+
+
+                <div
+                  style={{
+                    marginTop: 12,
+                    padding: '12px 14px',
+                    borderRadius: 12,
+                    border: '1px solid #e2e8f0',
+                    background: '#ffffff',
+                  }}
+                >
+                  <div
+                    style={{
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'space-between',
@@ -2456,6 +2705,33 @@ export default function TrainerAvailabilityShare() {
                     .sort(),
                 )}
               </div>
+
+              {commonShareMessage.trim() ||
+              (
+                customizeMessages &&
+                selectedContacts.some(
+                  (contact) =>
+                    String(
+                      customMessagesByContact[
+                        contact.id
+                      ] || '',
+                    ).trim(),
+                )
+              ) ? (
+                <div
+                  style={{
+                    marginTop: 4,
+                  }}
+                >
+                  <strong>
+                    Message :
+                  </strong>{' '}
+                  ajouté au partage
+                  {customizeMessages
+                    ? ' (personnalisé selon le destinataire si renseigné)'
+                    : ''}
+                </div>
+              ) : null}
             </div>
 
             <div

@@ -20,6 +20,7 @@ type EmailRequest = {
   requestId?: string;
   contactId?: string;
   months?: string[];
+  message?: string;
 };
 
 const jsonResponse = (body: Record<string, unknown>, status = 200) =>
@@ -271,6 +272,7 @@ const buildTrainerAvailabilityShareEmail = ({
   trainerReferenced,
   registeredCtaUrl,
   signupUrl,
+  trainerMessage,
 }: {
   recipientEmail: string;
   contactName: string;
@@ -285,12 +287,14 @@ const buildTrainerAvailabilityShareEmail = ({
   trainerReferenced: boolean;
   registeredCtaUrl: string;
   signupUrl: string;
+  trainerMessage: string;
 }) => {
   const safeTrainerName = escapeHtml(trainerName);
   const safeOrganizationName = escapeHtml(organizationName);
   const safeContactName = escapeHtml(contactName);
   const safeRegisteredCtaUrl = escapeHtml(registeredCtaUrl);
   const safeSignupUrl = escapeHtml(signupUrl);
+  const safeTrainerMessage = escapeHtml(trainerMessage || '');
   const communicatedAt = escapeHtml(availabilityShareDateLabel());
 
   const calendars = months.map((monthKey) =>
@@ -381,6 +385,21 @@ const buildTrainerAvailabilityShareEmail = ({
             <strong>Disponibilités communiquées le ${communicatedAt}.</strong>
             Elles peuvent évoluer : rapprochez-vous directement du formateur pour les confirmer.
           </div>
+
+          ${
+            safeTrainerMessage
+              ? `
+                <div style="margin-top:16px;padding:14px 16px;border-radius:10px;background:#fff;border:1px solid #dbe3ef;">
+                  <div style="font-size:11px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:#64748b;margin-bottom:2px;line-height:1.2;">
+                    Message de ${safeTrainerName}
+                  </div>
+                  <div style="font-size:13px;line-height:1.5;color:#334155;white-space:pre-line;margin-top:0;">
+                    ${safeTrainerMessage}
+                  </div>
+                </div>
+              `
+              : ''
+          }
 
           ${calendars}
 
@@ -1293,6 +1312,11 @@ Deno.serve(async (req) => {
         .filter((value) => /^\d{4}-(0[1-9]|1[0-2])$/.test(value))
         .sort();
 
+      const trainerMessage =
+        String(body.message || '')
+          .trim()
+          .slice(0, 1500);
+
       if (!contactId || months.length === 0 || months.length > 6) {
         return jsonResponse(
           {
@@ -1446,8 +1470,8 @@ Deno.serve(async (req) => {
 
       const registeredCtaUrl =
         recipientOrganizationId && trainerReferenced
-          ? `${APP_URL}/formateur/view/${trainer.id}`
-          : `${APP_URL}/formateurs/recherche?q=${encodeURIComponent(searchValue)}`;
+          ? `${APP_URL}/formateur/view/${trainer.id}?space=organization`
+          : `${APP_URL}/formateurs/recherche?q=${encodeURIComponent(searchValue)}&space=organization`;
 
       emailPayload = buildTrainerAvailabilityShareEmail({
         recipientEmail,
@@ -1463,6 +1487,7 @@ Deno.serve(async (req) => {
         trainerReferenced,
         registeredCtaUrl,
         signupUrl: `${APP_URL}/inscription-organisme`,
+        trainerMessage,
       });
 
       logPayload = {
@@ -1484,6 +1509,7 @@ Deno.serve(async (req) => {
           months,
           organization_registered: Boolean(recipientOrganizationId),
           trainer_referenced: trainerReferenced,
+          trainer_message: trainerMessage || null,
         },
       };
     } else if (body.type === 'trainer_claim_invitation') {

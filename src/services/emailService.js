@@ -366,6 +366,7 @@ export async function sendMissionUnassignmentNotification({
 export async function sendTrainerAvailabilityShareEmail({
   contactId,
   months,
+  message = '',
 }) {
   if (!contactId) {
     throw new Error(
@@ -386,6 +387,7 @@ export async function sendTrainerAvailabilityShareEmail({
         type: 'trainer_availability_share',
         contactId,
         months,
+        message: String(message || '').trim(),
       },
     },
   );

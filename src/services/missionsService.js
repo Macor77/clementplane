@@ -410,6 +410,55 @@ export async function updateMission(
  *   enregistrés immédiatement, tandis que les conditions essentielles
  *   sont soumises à revalidation du/des formateur(s).
  */
+export async function previewMissionRevalidation(
+  id,
+  {
+    mission,
+    dates = [],
+  },
+) {
+  if (!id) {
+    return {
+      revalidationRequired: false,
+      trainerCount: 0,
+    };
+  }
+
+  validateMission(mission, dates);
+
+  const currentMission =
+    await getMissionById(id);
+
+  const protectedRelations =
+    (
+      currentMission
+        .mission_formateurs || []
+    ).filter((item) =>
+      ['accepte', 'affecte'].includes(
+        item.statut,
+      ),
+    );
+
+  const normalizedMission =
+    cleanMissionPayload(mission);
+
+  const essentialChanged =
+    hasEssentialMissionChanges({
+      currentMission,
+      proposedMission:
+        normalizedMission,
+      proposedDates: dates,
+    });
+
+  return {
+    revalidationRequired:
+      protectedRelations.length > 0 &&
+      essentialChanged,
+    trainerCount:
+      protectedRelations.length,
+  };
+}
+
 export async function updateMissionWithRevalidation(
   id,
   {

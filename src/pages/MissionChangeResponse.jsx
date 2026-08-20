@@ -49,8 +49,17 @@ export default function MissionChangeResponse() {
   if (error && !change) return <State error>{error}</State>;
   if (!change) return <State error>Demande de validation introuvable.</State>;
 
-  const pending = change.response_status === 'pending' && change.request_status === 'pending';
-  const affected = change.previous_status === 'affecte';
+  const unavailable =
+    change.response_status === 'unavailable' ||
+    change.relation_status === 'mission_pourvue';
+
+  const pending =
+    !unavailable &&
+    change.response_status === 'pending' &&
+    change.request_status === 'pending';
+
+  const affected =
+    change.previous_status === 'affecte';
 
   return (
     <main style={styles.page}>
@@ -68,7 +77,18 @@ export default function MissionChangeResponse() {
 
         <MissionChangeDiff change={change} />
 
-        {pending ? (
+        {unavailable ? (
+          <section style={styles.unavailable}>
+            <strong>
+              Cette mission n’est plus disponible.
+            </strong>
+
+            <span>
+              Un autre formateur a depuis été affecté à cette mission.
+              Vous n’avez plus besoin de répondre à cette demande de revalidation.
+            </span>
+          </section>
+        ) : pending ? (
           <section style={styles.responseBox}>
             <label style={styles.label}>
               Commentaire facultatif à transmettre à l’OF
@@ -185,6 +205,7 @@ const styles = {
   feeNote:{margin:'12px 0 0',color:'#98a2b3',fontSize:10,lineHeight:1.5},responseBox:{marginTop:16,padding:17,border:'1px solid #bfdbfe',borderRadius:12,background:'#f8fbff'},
   label:{display:'grid',gap:7,color:'#475467',fontSize:11,fontWeight:750},textarea:{width:'100%',boxSizing:'border-box',padding:10,border:'1px solid #cbd5e1',borderRadius:8,fontFamily:'inherit',resize:'vertical'},
   actions:{display:'flex',justifyContent:'flex-end',flexWrap:'wrap',gap:8,marginTop:13},refuse:{minHeight:38,padding:'0 12px',border:'1px solid #f97066',borderRadius:8,background:'#fff',color:'#b42318',fontWeight:800,cursor:'pointer'},accept:{minHeight:38,padding:'0 12px',border:'1px solid #2563eb',borderRadius:8,background:'#2563eb',color:'#fff',fontWeight:800,cursor:'pointer'},
+  unavailable:{display:'grid',gap:5,marginTop:16,padding:15,border:'1px solid #fde68a',borderRadius:10,background:'#fffbeb',color:'#92400e',fontSize:12,lineHeight:1.55},
   success:{display:'grid',gap:5,marginTop:16,padding:15,borderRadius:10,background:'#ecfdf3',color:'#027a48',fontSize:12},refused:{display:'grid',gap:5,marginTop:16,padding:15,borderRadius:10,background:'#fef3f2',color:'#b42318',fontSize:12},
   accountInvite:{marginTop:16,padding:16,border:'1px solid #bfdbfe',borderRadius:12,background:'#f8fbff'},accountTitle:{display:'block',color:'#1d4ed8',fontSize:14},accountText:{margin:'6px 0 11px',color:'#52647d',fontSize:12,lineHeight:1.55},accountButton:{display:'inline-flex',alignItems:'center',minHeight:36,padding:'0 13px',borderRadius:8,background:'#2563eb',color:'#fff',fontSize:12,fontWeight:800,textDecoration:'none'},
   footer:{margin:'16px 0 0',color:'#98a2b3',fontSize:10,textAlign:'center'},error:{color:'#b42318',fontSize:11},muted:{color:'#667085',fontSize:12},state:{display:'grid',placeItems:'center',minHeight:'60vh',padding:24,color:'#667085'}

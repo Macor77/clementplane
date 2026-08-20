@@ -11,6 +11,7 @@ import {
 import {
   createMission,
   getMissionById,
+  previewMissionRevalidation,
   updateMissionWithRevalidation,
 } from '../services/missionsService';
 
@@ -56,6 +57,8 @@ export default function MissionForm() {
 
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [revalidationConfirm, setRevalidationConfirm] =
+    useState(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -188,9 +191,7 @@ export default function MissionForm() {
     );
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
+  const saveMission = async () => {
     setSaving(true);
     setError('');
 
@@ -205,14 +206,15 @@ export default function MissionForm() {
             },
           );
 
-        if (result.revalidationRequired && result.requestId) {
+        if (
+          result.revalidationRequired &&
+          result.requestId
+        ) {
           try {
             await sendMissionChangeRevalidationEmails({
               requestId: result.requestId,
             });
           } catch (emailError) {
-            // La modification métier est déjà enregistrée : un échec e-mail
-            // ne doit jamais provoquer une seconde soumission de la mission.
             console.error(
               'Mission modifiée, mais notification de revalidation non envoyée :',
               emailError,
@@ -252,6 +254,46 @@ export default function MissionForm() {
       );
     } finally {
       setSaving(false);
+      setRevalidationConfirm(null);
+    }
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    if (!isEditMode) {
+      await saveMission();
+      return;
+    }
+
+    setSaving(true);
+    setError('');
+
+    try {
+      const preview =
+        await previewMissionRevalidation(
+          id,
+          {
+            mission,
+            dates,
+          },
+        );
+
+      if (preview.revalidationRequired) {
+        setRevalidationConfirm(preview);
+        setSaving(false);
+        return;
+      }
+
+      setSaving(false);
+      await saveMission();
+    } catch (previewError) {
+      setSaving(false);
+
+      setError(
+        previewError?.message ||
+          'Impossible de vérifier les conséquences de cette modification.',
+      );
     }
   };
 
@@ -641,6 +683,76 @@ export default function MissionForm() {
           </button>
         </div>
       </form>
+
+      {revalidationConfirm ? (
+        <div style={styles.modalBackdrop}>
+          <section
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="revalidation-dialog-title"
+            style={styles.modalCard}
+          >
+            <p style={styles.modalEyebrow}>
+              MODIFICATION IMPORTANTE
+            </p>
+
+            <h2
+              id="revalidation-dialog-title"
+              style={styles.modalTitle}
+            >
+              Informer les formateurs concernés
+            </h2>
+
+            <p style={styles.modalText}>
+              Cette modification nécessite une nouvelle validation de{' '}
+              <strong>
+                {revalidationConfirm.trainerCount}{' '}
+                {revalidationConfirm.trainerCount > 1
+                  ? 'formateurs'
+                  : 'formateur'}
+              </strong>{' '}
+              ayant déjà accepté la mission ou étant affecté.
+            </p>
+
+            <div style={styles.modalInfo}>
+              <strong>E-mail Formaplane</strong>
+              <span>
+                Chaque formateur recevra les changements « Avant → Maintenant »
+                et un lien sécurisé pour accepter ou refuser les nouvelles conditions.
+              </span>
+            </div>
+
+            <p style={styles.modalHelp}>
+              L’envoi par e-mail permet aussi aux formateurs qui n’ont pas
+              encore de compte Formaplane de répondre.
+            </p>
+
+            <div style={styles.modalActions}>
+              <button
+                type="button"
+                onClick={() =>
+                  setRevalidationConfirm(null)
+                }
+                disabled={saving}
+                style={styles.secondaryButton}
+              >
+                Revenir aux modifications
+              </button>
+
+              <button
+                type="button"
+                onClick={saveMission}
+                disabled={saving}
+                style={styles.primaryButton}
+              >
+                {saving
+                  ? 'Enregistrement…'
+                  : 'Enregistrer et envoyer les e-mails'}
+              </button>
+            </div>
+          </section>
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -883,6 +995,75 @@ const styles = {
     color: '#344054',
     fontWeight: 600,
     cursor: 'pointer',
+  },
+
+  modalBackdrop: {
+    position: 'fixed',
+    inset: 0,
+    zIndex: 1000,
+    display: 'grid',
+    placeItems: 'center',
+    padding: 20,
+    background: 'rgba(15, 23, 42, 0.42)',
+  },
+
+  modalCard: {
+    width: 'min(560px, 100%)',
+    boxSizing: 'border-box',
+    padding: 24,
+    border: '1px solid #bfdbfe',
+    borderRadius: 16,
+    background: '#ffffff',
+    boxShadow:
+      '0 24px 70px rgba(15, 23, 42, 0.20)',
+  },
+
+  modalEyebrow: {
+    margin: '0 0 7px',
+    color: '#2563eb',
+    fontSize: 11,
+    fontWeight: 900,
+    letterSpacing: '.08em',
+  },
+
+  modalTitle: {
+    margin: '0 0 10px',
+    color: '#101828',
+    fontSize: 22,
+  },
+
+  modalText: {
+    margin: '0 0 16px',
+    color: '#667085',
+    fontSize: 14,
+    lineHeight: 1.6,
+  },
+
+  modalInfo: {
+    display: 'grid',
+    gap: 5,
+    padding: 15,
+    border: '1px solid #bfdbfe',
+    borderRadius: 10,
+    background: '#eff6ff',
+    color: '#475467',
+    fontSize: 13,
+    lineHeight: 1.55,
+  },
+
+  modalHelp: {
+    margin: '12px 0 0',
+    color: '#667085',
+    fontSize: 12,
+    lineHeight: 1.5,
+  },
+
+  modalActions: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    flexWrap: 'wrap',
+    gap: 10,
+    marginTop: 20,
   },
 
   removeButton: {

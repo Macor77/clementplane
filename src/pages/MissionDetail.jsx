@@ -20,6 +20,7 @@ import {
   selectFormateurForMission,
   updateMissionFormateurStatus,
   recordMissionProposalContact,
+  recordMissionAssignmentContact,
   cancelMission,
 } from '../services/missionsService';
 
@@ -27,6 +28,7 @@ import { getMissionRecommendations } from '../services/missionMatchingService';
 import { prepareMissionProposal } from '../services/proposalService';
 import {
   sendMissionAssignmentConfirmation,
+  sendMissionUnassignmentNotification,
   sendMissionProposalEmail,
   sendMissionCancellationEmails,
 } from '../services/emailService';
@@ -113,7 +115,15 @@ export default function MissionDetail() {
     setActionTrainerId,
   ] = useState(null);
 
-  const [unassignTrainerId, setUnassignTrainerId] = useState(null);
+  const [assignmentContactTarget, setAssignmentContactTarget] =
+    useState(null);
+  const [assignmentContactChannel, setAssignmentContactChannel] =
+    useState('email');
+  const [assignmentContactNote, setAssignmentContactNote] =
+    useState('');
+  const [assignmentContactSending, setAssignmentContactSending] =
+    useState(false);
+
   const [pendingMissionChange, setPendingMissionChange] = useState(null);
 
   const loadMission =
@@ -439,6 +449,128 @@ export default function MissionDetail() {
     }
   };
 
+  const prepareAssignmentContact = ({
+    trainerId,
+    action,
+  }) => {
+    setAssignmentContactTarget({
+      trainerId,
+      action,
+    });
+    setAssignmentContactChannel('email');
+    setAssignmentContactNote('');
+  };
+
+  const executeAssignmentContactAction = async () => {
+    if (!assignmentContactTarget) {
+      return;
+    }
+
+    const {
+      trainerId,
+      action,
+    } = assignmentContactTarget;
+
+    const isAssignment =
+      action === 'assign';
+
+    setAssignmentContactSending(true);
+    setActionTrainerId(trainerId);
+    setError('');
+    setActionNotice('');
+
+    try {
+      await updateMissionFormateurStatus(
+        id,
+        trainerId,
+        isAssignment
+          ? 'affecte'
+          : 'accepte',
+      );
+
+      let emailResult = null;
+
+      if (assignmentContactChannel === 'email') {
+        try {
+          emailResult = isAssignment
+            ? await sendMissionAssignmentConfirmation({
+                missionId: id,
+                trainerId,
+              })
+            : await sendMissionUnassignmentNotification({
+                missionId: id,
+                trainerId,
+              });
+        } catch (emailError) {
+          setError(
+            `${
+              emailError?.message ||
+              "Impossible d'envoyer l'e-mail d'information."
+            } ${
+              isAssignment
+                ? "L'affectation"
+                : 'La désaffectation'
+            } reste bien enregistrée dans Formaplane.`,
+          );
+        }
+      }
+
+      try {
+        await recordMissionAssignmentContact({
+          missionId: id,
+          trainerId,
+          action:
+            isAssignment
+              ? 'assignment'
+              : 'unassignment',
+          channel: assignmentContactChannel,
+          note: assignmentContactNote,
+        });
+      } catch (contactError) {
+        console.error(
+          'Action enregistrée mais canal de contact non historisé :',
+          contactError,
+        );
+      }
+
+      if (assignmentContactChannel === 'email') {
+        setActionNotice(
+          isAssignment
+            ? (
+                emailResult?.recipientEmail
+                  ? `Affectation confirmée. E-mail envoyé à ${emailResult.recipientEmail}.`
+                  : 'Affectation confirmée. E-mail envoyé au formateur.'
+              )
+            : 'Désaffectation confirmée. E-mail envoyé au formateur.',
+        );
+      } else {
+        setActionNotice(
+          isAssignment
+            ? 'Affectation confirmée. Le moyen utilisé pour informer le formateur a été enregistré.'
+            : 'Désaffectation confirmée. Le moyen utilisé pour informer le formateur a été enregistré.',
+        );
+      }
+
+      setAssignmentContactTarget(null);
+      setAssignmentContactChannel('email');
+      setAssignmentContactNote('');
+
+      await refresh();
+    } catch (actionError) {
+      setError(
+        actionError?.message ||
+          (
+            isAssignment
+              ? "Impossible d'affecter le formateur."
+              : "Impossible de retirer l'affectation."
+          ),
+      );
+    } finally {
+      setAssignmentContactSending(false);
+      setActionTrainerId(null);
+    }
+  };
+
   const handleStatusChange = async (
     trainerId,
     status,
@@ -458,11 +590,22 @@ export default function MissionDetail() {
       }
     }
 
+    if (status === 'affecte') {
+      prepareAssignmentContact({
+        trainerId,
+        action: 'assign',
+      });
+      return;
+    }
+
     if (
       status === 'accepte' &&
       affectedTrainer?.formateur_id === trainerId
     ) {
-      setUnassignTrainerId(trainerId);
+      prepareAssignmentContact({
+        trainerId,
+        action: 'unassign',
+      });
       return;
     }
 
@@ -476,33 +619,6 @@ export default function MissionDetail() {
         trainerId,
         status,
       );
-
-      if (status === 'affecte') {
-        try {
-          const emailResult =
-            await sendMissionAssignmentConfirmation({
-              missionId: id,
-              trainerId,
-            });
-
-          setActionNotice(
-            emailResult?.recipientEmail
-              ? `Affectation confirmée. E-mail de confirmation envoyé à ${emailResult.recipientEmail}.`
-              : 'Affectation confirmée. E-mail de confirmation envoyé au formateur.',
-          );
-        } catch (emailError) {
-          setActionNotice(
-            'Affectation confirmée.',
-          );
-
-          setError(
-            `${
-              emailError?.message ||
-              "Impossible d'envoyer l'e-mail de confirmation."
-            } L'affectation reste bien enregistrée dans Formaplane.`,
-          );
-        }
-      }
 
       await refresh();
     } catch (actionError) {
@@ -1059,20 +1175,178 @@ export default function MissionDetail() {
         </div>
       ) : null}
 
-      {unassignTrainerId ? (
+      {assignmentContactTarget ? (
         <div style={styles.modalBackdrop}>
           <div style={styles.confirmModal}>
-            <p style={styles.modalEyebrow}>AFFECTATION CONFIRMÉE</p>
-            <h2 style={styles.modalTitle}>Désaffecter ce formateur ?</h2>
-            <p style={styles.modalText}>Cette action retire une affectation déjà confirmée. La mission repassera à affecter.</p>
-            <div style={styles.modalWarning}><strong>Important</strong><span>Pensez à prévenir directement le formateur par téléphone, e-mail ou tout autre moyen habituel.</span></div>
+            <p style={styles.modalEyebrow}>
+              {assignmentContactTarget.action === 'assign'
+                ? 'CONFIRMER L’AFFECTATION'
+                : 'RETIRER L’AFFECTATION'}
+            </p>
+
+            <h2 style={styles.modalTitle}>
+              {assignmentContactTarget.action === 'assign'
+                ? 'Comment souhaitez-vous informer le formateur ?'
+                : 'Désaffecter ce formateur ?'}
+            </h2>
+
+            <p style={styles.modalText}>
+              {assignmentContactTarget.action === 'assign'
+                ? 'Le formateur va être officiellement affecté à cette mission.'
+                : 'Cette action retire une affectation déjà confirmée. La mission repassera à affecter.'}
+            </p>
+
+            <div style={styles.modalWarning}>
+              <strong>
+                Informer le formateur
+              </strong>
+
+              <span>
+                Choisissez l’e-mail Formaplane ou indiquez que vous
+                l’avez déjà prévenu par un autre moyen.
+              </span>
+            </div>
+
+            <div
+              style={{
+                display: 'grid',
+                gap: 7,
+                marginTop: 12,
+              }}
+            >
+              {[
+                [
+                  'email',
+                  'Envoyer immédiatement un e-mail via Formaplane',
+                ],
+                [
+                  'sms',
+                  'J’ai envoyé un SMS',
+                ],
+                [
+                  'whatsapp',
+                  'J’ai envoyé un message WhatsApp',
+                ],
+                [
+                  'phone',
+                  'J’ai appelé le formateur',
+                ],
+                [
+                  'other',
+                  'Autre',
+                ],
+              ].map(([value, label]) => (
+                <label
+                  key={value}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 9,
+                    padding: '9px 10px',
+                    border:
+                      assignmentContactChannel === value
+                        ? '1px solid #93c5fd'
+                        : '1px solid #e2e8f0',
+                    borderRadius: 8,
+                    background:
+                      assignmentContactChannel === value
+                        ? '#eff6ff'
+                        : '#fff',
+                    cursor: 'pointer',
+                    fontSize: 11.5,
+                    fontWeight: 650,
+                    color: '#334155',
+                  }}
+                >
+                  <input
+                    type="radio"
+                    name="assignment-contact-channel"
+                    checked={
+                      assignmentContactChannel === value
+                    }
+                    onChange={() =>
+                      setAssignmentContactChannel(value)
+                    }
+                  />
+
+                  {label}
+                </label>
+              ))}
+            </div>
+
+            {assignmentContactChannel === 'other' ? (
+              <input
+                value={assignmentContactNote}
+                onChange={(event) =>
+                  setAssignmentContactNote(
+                    event.target.value,
+                  )
+                }
+                placeholder="Précisez le moyen utilisé…"
+                style={{
+                  width: '100%',
+                  boxSizing: 'border-box',
+                  minHeight: 38,
+                  marginTop: 10,
+                  padding: '0 10px',
+                  border: '1px solid #d0d5dd',
+                  borderRadius: 8,
+                  font: 'inherit',
+                }}
+              />
+            ) : null}
+
             <div style={styles.modalActions}>
-              <button type="button" style={styles.modalCancel} onClick={() => setUnassignTrainerId(null)}>Annuler</button>
-              <button type="button" style={styles.modalDanger} onClick={async () => { const trainerId = unassignTrainerId; setUnassignTrainerId(null); setActionTrainerId(trainerId); setError(''); try { await updateMissionFormateurStatus(id, trainerId, 'accepte'); await refresh(); } catch (actionError) { setError(actionError?.message || 'Impossible de retirer l’affectation.'); } finally { setActionTrainerId(null); } }}>Confirmer la désaffectation</button>
+              <button
+                type="button"
+                style={styles.modalCancel}
+                disabled={assignmentContactSending}
+                onClick={() => {
+                  setAssignmentContactTarget(null);
+                  setAssignmentContactChannel('email');
+                  setAssignmentContactNote('');
+                }}
+              >
+                Annuler
+              </button>
+
+              <button
+                type="button"
+                style={
+                  assignmentContactTarget.action ===
+                  'assign'
+                    ? styles.modalPrimary
+                    : styles.modalDanger
+                }
+                disabled={
+                  assignmentContactSending ||
+                  (
+                    assignmentContactChannel === 'other' &&
+                    !assignmentContactNote.trim()
+                  )
+                }
+                onClick={executeAssignmentContactAction}
+              >
+                {assignmentContactSending
+                  ? 'Enregistrement…'
+                  : assignmentContactTarget.action ===
+                    'assign'
+                    ? (
+                        assignmentContactChannel === 'email'
+                          ? 'Affecter et envoyer l’e-mail'
+                          : 'Confirmer l’affectation'
+                      )
+                    : (
+                        assignmentContactChannel === 'email'
+                          ? 'Désaffecter et envoyer l’e-mail'
+                          : 'Confirmer la désaffectation'
+                      )}
+              </button>
             </div>
           </div>
         </div>
       ) : null}
+
       <header style={styles.header}>
         <div>
           <div style={styles.breadcrumb}>
@@ -4070,6 +4344,16 @@ const compactStyles = {
   modalWarning: { display: 'grid', gap: 4, marginTop: 14, padding: '11px 12px', border: '1px solid #fed7aa', borderRadius: 9, background: '#fff7ed', color: '#9a3412', fontSize: 10, lineHeight: 1.45 },
   modalActions: { display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 16, paddingTop: 14, borderTop: '1px solid #e4e7ec' },
   modalCancel: { minHeight: 36, padding: '0 12px', border: '1px solid #d0d5dd', borderRadius: 7, background: '#fff', color: '#344054', fontWeight: 700, cursor: 'pointer' },
+  modalPrimary: {
+    minHeight: 36,
+    padding: '0 13px',
+    border: '1px solid #2563eb',
+    borderRadius: 7,
+    background: '#2563eb',
+    color: '#fff',
+    fontWeight: 800,
+    cursor: 'pointer',
+  },
   modalDanger: { minHeight: 36, padding: '0 12px', border: '1px solid #d92d20', borderRadius: 7, background: '#d92d20', color: '#fff', fontWeight: 750, cursor: 'pointer' },
   trainerMeta: { overflow: 'hidden', color: '#667085', fontSize: 10, textOverflow: 'ellipsis', whiteSpace: 'nowrap' },
   criteria: { display: 'grid', minWidth: 0, overflowWrap: 'anywhere', gap: 2, color: '#667085', fontSize: 10, lineHeight: 1.3 },

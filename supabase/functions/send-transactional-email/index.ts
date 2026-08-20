@@ -680,6 +680,153 @@ const buildMissionWithdrawalOfEmail = ({
   `,
 });
 
+
+const buildMissionUnassignmentEmail = ({
+  recipientEmail,
+  trainerFirstName,
+  organizationName,
+  missionTitle,
+  formation,
+  client,
+  location,
+  dates,
+  missionUrl,
+}: {
+  recipientEmail: string;
+  trainerFirstName: string;
+  organizationName: string;
+  missionTitle: string;
+  formation: string;
+  client: string;
+  location: string;
+  dates: Array<{
+    date?: string;
+    heure_debut?: string | null;
+    heure_fin?: string | null;
+  }>;
+  missionUrl: string;
+}) => {
+  const rows = (dates || [])
+    .map((item) => {
+      const day = escapeHtml(
+        formatMissionDate(
+          item.date || '',
+        ),
+      );
+      const start = escapeHtml(
+        formatMissionTime(
+          item.heure_debut,
+        ),
+      );
+      const end = escapeHtml(
+        formatMissionTime(
+          item.heure_fin,
+        ),
+      );
+
+      return `
+        <div style="padding:7px 0;border-bottom:1px solid #edf1f5;">
+          <strong>${day}</strong>
+          ${
+            start || end
+              ? ` · ${start}${start && end ? ' – ' : ''}${end}`
+              : ''
+          }
+        </div>
+      `;
+    })
+    .join('');
+
+  return {
+    sender: {
+      name: SENDER_NAME,
+      email: SENDER_EMAIL,
+    },
+    to: [
+      {
+        email: recipientEmail,
+      },
+    ],
+    replyTo: {
+      name: SENDER_NAME,
+      email: SENDER_EMAIL,
+    },
+    subject:
+      `Votre affectation a été retirée — ${missionTitle}`,
+    htmlContent: `
+      <div style="font-family:Arial,sans-serif;background:#f6f8fb;padding:28px;color:#0f2747;">
+        <div style="max-width:640px;margin:auto;background:white;border-radius:14px;padding:28px;border:1px solid #e5eaf0;">
+          <div style="font-size:20px;font-weight:800;margin-bottom:18px;">
+            Formaplane
+          </div>
+
+          <div style="font-size:11px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;color:#b45309;margin-bottom:8px;">
+            AFFECTATION MODIFIÉE
+          </div>
+
+          <h1 style="font-size:22px;margin:0 0 12px;">
+            Votre affectation n’est plus confirmée
+          </h1>
+
+          <p>
+            Bonjour ${escapeHtml(trainerFirstName || '')},
+          </p>
+
+          <p style="line-height:1.6;color:#475569;">
+            <strong>${escapeHtml(organizationName)}</strong>
+            a retiré votre affectation à la mission ci-dessous.
+            La mission n’est donc plus confirmée pour vous.
+          </p>
+
+          <div style="background:#f8fafc;border-radius:10px;padding:16px;margin:18px 0;">
+            <strong>
+              ${escapeHtml(missionTitle || formation || 'Mission de formation')}
+            </strong>
+
+            <div style="margin-top:8px;">
+              Formation :
+              ${escapeHtml(formation || 'Non renseignée')}
+            </div>
+
+            <div>
+              Client :
+              ${escapeHtml(client || 'Non renseigné')}
+            </div>
+
+            <div>
+              Lieu :
+              ${escapeHtml(location || 'Non renseigné')}
+            </div>
+
+            <div style="margin-top:8px;">
+              ${rows}
+            </div>
+          </div>
+
+          <div style="margin:18px 0;padding:15px;border:1px solid #fde68a;border-radius:10px;background:#fffbeb;color:#854d0e;font-size:13px;line-height:1.55;">
+            Votre réponse précédente reste enregistrée dans Formaplane,
+            mais vous n’êtes plus le formateur officiellement affecté à cette mission.
+            Si nécessaire, rapprochez-vous directement de l’organisme de formation.
+          </div>
+
+          ${
+            missionUrl
+              ? `
+                <a
+                  href="${escapeHtml(missionUrl)}"
+                  style="display:inline-block;background:#2563eb;color:#fff;text-decoration:none;font-weight:700;padding:12px 18px;border-radius:8px;"
+                >
+                  Voir la mission dans Formaplane
+                </a>
+              `
+              : ''
+          }
+        </div>
+      </div>
+    `,
+  };
+};
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
@@ -1317,6 +1464,310 @@ Deno.serve(async (req) => {
         status:'pending', metadata:{ source:'mission_withdrawal_notification', mission_id:mission.id, trainer_id:target.formateur_id },
       });
       return jsonResponse({ success:Boolean(sent?.success), recipientEmail });
+
+    } else if (
+      body.type === 'mission_unassignment_notification'
+    ) {
+      const missionId =
+        String(body.missionId || '').trim();
+
+      const trainerId =
+        String(body.trainerId || '').trim();
+
+      if (!missionId || !trainerId) {
+        return jsonResponse(
+          {
+            success: false,
+            message:
+              'La mission et le formateur sont obligatoires.',
+          },
+          400,
+        );
+      }
+
+      const [
+        { data: mission, error: missionError },
+        { data: target, error: targetError },
+        { data: dates, error: datesError },
+      ] = await Promise.all([
+        admin
+          .from('missions')
+          .select(`
+            id,
+            organization_id,
+            intitule,
+            formation,
+            client,
+            lieu,
+            adresse,
+            code_postal,
+            ville
+          `)
+          .eq('id', missionId)
+          .maybeSingle(),
+
+        admin
+          .from('mission_formateurs')
+          .select(`
+            id,
+            formateur_id,
+            statut,
+            trainer:trainers(
+              id,
+              prenom,
+              nom,
+              email,
+              user_id
+            )
+          `)
+          .eq('mission_id', missionId)
+          .eq('formateur_id', trainerId)
+          .maybeSingle(),
+
+        admin
+          .from('mission_dates')
+          .select(
+            'date, heure_debut, heure_fin',
+          )
+          .eq('mission_id', missionId)
+          .order('date', {
+            ascending: true,
+          }),
+      ]);
+
+      if (
+        missionError ||
+        !mission ||
+        targetError ||
+        !target
+      ) {
+        return jsonResponse(
+          {
+            success: false,
+            message:
+              'Mission ou formateur introuvable.',
+          },
+          404,
+        );
+      }
+
+      if (datesError) {
+        return jsonResponse(
+          {
+            success: false,
+            message:
+              'Impossible de charger les dates de la mission.',
+          },
+          500,
+        );
+      }
+
+      const {
+        data: membership,
+      } = await admin
+        .from('organization_members')
+        .select('id')
+        .eq(
+          'organization_id',
+          mission.organization_id,
+        )
+        .eq(
+          'user_id',
+          authData.user.id,
+        )
+        .eq('status', 'active')
+        .maybeSingle();
+
+      if (!membership) {
+        return jsonResponse(
+          {
+            success: false,
+            message: 'Accès refusé.',
+          },
+          403,
+        );
+      }
+
+      if (target.statut !== 'accepte') {
+        return jsonResponse(
+          {
+            success: false,
+            message:
+              "La désaffectation doit être enregistrée avant l'envoi.",
+          },
+          409,
+        );
+      }
+
+      const trainer =
+        Array.isArray(target.trainer)
+          ? target.trainer[0]
+          : target.trainer;
+
+      const recipientEmail =
+        String(
+          trainer?.email || '',
+        )
+          .trim()
+          .toLowerCase();
+
+      if (!recipientEmail) {
+        return jsonResponse(
+          {
+            success: false,
+            message:
+              "Aucune adresse e-mail n'est renseignée pour ce formateur.",
+          },
+          409,
+        );
+      }
+
+      const {
+        data: organization,
+      } = await admin
+        .from('organizations')
+        .select('name, legal_name')
+        .eq(
+          'id',
+          mission.organization_id,
+        )
+        .maybeSingle();
+
+      const existing =
+        await admin
+          .from('email_logs')
+          .select('id')
+          .eq(
+            'email_type',
+            'mission_unassignment_notification',
+          )
+          .eq(
+            'related_entity_type',
+            'mission_formateur',
+          )
+          .eq(
+            'related_entity_id',
+            target.id,
+          )
+          .in(
+            'status',
+            [
+              'pending',
+              'sent',
+              'delivered',
+            ],
+          )
+          .order(
+            'created_at',
+            {
+              ascending: false,
+            },
+          )
+          .limit(1);
+
+      if (
+        Array.isArray(existing.data) &&
+        existing.data.length > 0
+      ) {
+        return jsonResponse({
+          success: true,
+          duplicate: true,
+          recipientEmail,
+        });
+      }
+
+      const location =
+        [
+          mission.adresse,
+          [
+            mission.code_postal,
+            mission.ville,
+          ]
+            .filter(Boolean)
+            .join(' '),
+        ]
+          .filter(Boolean)
+          .join(' — ') ||
+        mission.lieu ||
+        '';
+
+      const missionTitle =
+        String(
+          mission.intitule ||
+          mission.formation ||
+          'Mission de formation',
+        );
+
+      const trainerHasAccount =
+        Boolean(trainer?.user_id);
+
+      const payload =
+        buildMissionUnassignmentEmail({
+          recipientEmail,
+          trainerFirstName:
+            String(
+              trainer?.prenom || '',
+            ),
+          organizationName:
+            String(
+              organization?.name ||
+              organization?.legal_name ||
+              'Votre organisme de formation',
+            ),
+          missionTitle,
+          formation:
+            String(
+              mission.formation || '',
+            ),
+          client:
+            String(
+              mission.client || '',
+            ),
+          location,
+          dates:
+            dates || [],
+          missionUrl:
+            trainerHasAccount
+              ? `${APP_URL}/formateur/missions/${mission.id}?trainer=${trainer.id}`
+              : '',
+        });
+
+      const sent =
+        await sendLoggedEmail(
+          payload,
+          {
+            email_type:
+              'mission_unassignment_notification',
+            provider: 'brevo',
+            recipient_email:
+              recipientEmail,
+            recipient_user_id:
+              trainer?.user_id || null,
+            requested_by_user_id:
+              authData.user.id,
+            organization_id:
+              mission.organization_id,
+            related_entity_type:
+              'mission_formateur',
+            related_entity_id:
+              target.id,
+            status: 'pending',
+            metadata: {
+              source:
+                'mission_unassignment_notification',
+              mission_id:
+                mission.id,
+              trainer_id:
+                target.formateur_id,
+            },
+          },
+        );
+
+      return jsonResponse({
+        success:
+          Boolean(sent?.success),
+        recipientEmail,
+      });
 
     } else if (body.type === 'mission_assignment_confirmation') {
       const missionId = String(

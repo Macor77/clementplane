@@ -926,6 +926,43 @@ export async function cancelMission({
 }
 
 
+export async function recordMissionAssignmentContact({
+  missionId,
+  trainerId,
+  action,
+  channel,
+  note = '',
+}) {
+  if (
+    !missionId ||
+    !trainerId ||
+    !action ||
+    !channel
+  ) {
+    throw new Error(
+      'La mission, le formateur, l’action et le moyen de contact sont obligatoires.',
+    );
+  }
+
+  const { data, error } = await supabase.rpc(
+    'record_mission_assignment_contact',
+    {
+      p_mission_id: missionId,
+      p_trainer_id: trainerId,
+      p_action: action,
+      p_channel: channel,
+      p_note: note?.trim() || null,
+    },
+  );
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}
+
+
 export async function updateMissionFormateurComment(
   missionId,
   formateurId,

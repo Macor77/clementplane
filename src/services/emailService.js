@@ -317,3 +317,46 @@ export async function sendMissionWithdrawalNotification({
 
   return data;
 }
+
+
+export async function sendMissionUnassignmentNotification({
+  missionId,
+  trainerId,
+}) {
+  if (!missionId || !trainerId) {
+    throw new Error(
+      'La mission et le formateur sont obligatoires.',
+    );
+  }
+
+  const { data, error } = await supabase.functions.invoke(
+    'send-transactional-email',
+    {
+      body: {
+        type: 'mission_unassignment_notification',
+        missionId,
+        trainerId,
+      },
+    },
+  );
+
+  if (error) {
+    console.error(
+      "Erreur d'appel du moteur d'e-mails :",
+      error,
+    );
+
+    throw new Error(
+      "La désaffectation est enregistrée, mais l'e-mail d'information n'a pas pu être envoyé.",
+    );
+  }
+
+  if (!data?.success) {
+    throw new Error(
+      data?.message ||
+        "La désaffectation est enregistrée, mais l'e-mail d'information n'a pas pu être envoyé.",
+    );
+  }
+
+  return data;
+}

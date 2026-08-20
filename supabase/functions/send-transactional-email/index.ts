@@ -574,6 +574,7 @@ const buildMissionCancellationEmail = ({
   client,
   location,
   dates,
+  trainerHasAccount,
 }: {
   recipientEmail: string;
   trainerFirstName: string;
@@ -583,6 +584,7 @@ const buildMissionCancellationEmail = ({
   client: string;
   location: string;
   dates: Array<{ date?: string; heure_debut?: string | null; heure_fin?: string | null }>;
+  trainerHasAccount: boolean;
 }) => {
   const rows = (dates || []).map((item) => {
     const day = escapeHtml(formatMissionDate(item.date || ''));
@@ -610,7 +612,35 @@ const buildMissionCancellationEmail = ({
             <div>Lieu : ${escapeHtml(location || 'Non renseigné')}</div>
             <div style="margin-top:8px;">${rows}</div>
           </div>
-          <p style="font-size:13px;color:#64748b;">Si des dispositions avaient déjà été prises avec l’organisme, rapprochez-vous directement de lui pour les éventuelles suites administratives, logistiques ou contractuelles.</p>
+          ${
+            trainerHasAccount
+              ? `
+                <div style="margin:18px 0;padding:16px;border:1px solid #bfdbfe;border-radius:10px;background:#eff6ff;">
+                  <div style="font-size:14px;font-weight:800;color:#1d4ed8;margin-bottom:6px;">
+                    Vos disponibilités ont été mises à jour
+                  </div>
+                  <div style="font-size:13px;line-height:1.55;color:#475569;margin-bottom:12px;">
+                    Les dates de cette mission ont été automatiquement remises en
+                    <strong> Disponible </strong>
+                    dans votre espace Formaplane.
+                    Si votre disponibilité a changé, pensez à la modifier.
+                  </div>
+                  <a
+                    href="${APP_URL}/formateur/disponibilites"
+                    style="display:inline-block;background:#2563eb;color:#ffffff;text-decoration:none;font-size:13px;font-weight:800;padding:11px 15px;border-radius:8px;"
+                  >
+                    Vérifier mes disponibilités
+                  </a>
+                </div>
+              `
+              : ''
+          }
+
+          <p style="font-size:13px;color:#64748b;">
+            Si des dispositions avaient déjà été prises avec l’organisme,
+            rapprochez-vous directement de lui pour les éventuelles suites
+            administratives, logistiques ou contractuelles.
+          </p>
         </div>
       </div>
     `,
@@ -1213,6 +1243,7 @@ Deno.serve(async (req) => {
           client:String(mission.client || ''),
           location,
           dates:dates || [],
+          trainerHasAccount: Boolean(trainer?.user_id),
         });
 
         const sent = await sendLoggedEmail(payload, {

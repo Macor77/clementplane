@@ -169,3 +169,50 @@ export function getSharedDayState({
     otherOptionsCount: 0,
   };
 }
+
+
+export function getPublicSharedDayState({
+  day,
+  declaredByDay = {},
+  commitmentsByDay = {},
+}) {
+  const declaredStatus =
+    String(
+      declaredByDay?.[day] || '',
+    );
+
+  const commitments =
+    commitmentsByDay?.[day] || [];
+
+  const hasConfirmedMission =
+    commitments.some(
+      (item) =>
+        String(
+          item?.status || '',
+        ) === 'mission',
+    );
+
+  if (
+    hasConfirmedMission ||
+    declaredStatus === 'indispo'
+  ) {
+    return {
+      key: 'unavailable',
+      label: 'Indisponible',
+    };
+  }
+
+  if (
+    declaredStatus === 'dispo'
+  ) {
+    return {
+      key: 'available',
+      label: 'Disponible',
+    };
+  }
+
+  return {
+    key: 'unknown',
+    label: 'Non renseigné',
+  };
+}

@@ -15,11 +15,15 @@ import {
 import {
   getMyAvailabilitySharePreview,
   getSharedDayState,
+  getPublicSharedDayState,
 } from '../../services/trainerAvailabilityShareService';
 
 import {
   sendTrainerAvailabilityShareEmail,
 } from '../../services/emailService';
+
+import { useAuth } from '../../context/AuthContext';
+import { getMyTrainerProfile } from '../../services/trainerProfileService';
 
 
 const EMPTY_FORM = {
@@ -434,7 +438,768 @@ function SharedDay({
 }
 
 
+
+function publicMonthTitle(monthKey) {
+  const [year, month] =
+    String(monthKey || '')
+      .split('-')
+      .map(Number);
+
+  if (!year || !month) {
+    return '';
+  }
+
+  const label =
+    new Intl.DateTimeFormat(
+      'fr-FR',
+      {
+        month: 'long',
+        year: 'numeric',
+      },
+    ).format(
+      new Date(
+        year,
+        month - 1,
+        1,
+      ),
+    );
+
+  return (
+    label.charAt(0).toUpperCase() +
+    label.slice(1)
+  );
+}
+
+
+function buildPublicShareText({
+  trainerName,
+  monthKey,
+  skills = [],
+}) {
+  const month =
+    publicMonthTitle(
+      monthKey,
+    );
+
+  const selectedSkills =
+    Array.isArray(skills)
+      ? skills.filter(Boolean)
+      : [];
+
+  const skillsLine =
+    selectedSkills.length > 0
+      ? `🎓 J'interviens notamment en : ${selectedSkills.join(' · ')}`
+      : '';
+
+  return [
+    `📅 Mes disponibilités pour ${month}`,
+    '',
+    'Mes disponibilités évoluent. Mon planning aussi.',
+    `Retrouvez ci-dessous mes créneaux disponibles pour ${month}.`,
+    skillsLine,
+    '',
+    'Je partage désormais mon planning simplement avec mes organismes partenaires grâce à Formaplane.',
+    '',
+    'Formaplane — La plateforme qui connecte formateurs et organismes de formation.',
+    trainerName
+      ? `— ${trainerName}`
+      : '',
+  ]
+    .filter(
+      (line) =>
+        line !== null &&
+        line !== undefined,
+    )
+    .join('\n');
+}
+
+
+function getPublicCalendarDays(monthKey) {
+  const [year, month] =
+    String(monthKey || '')
+      .split('-')
+      .map(Number);
+
+  if (!year || !month) {
+    return [];
+  }
+
+  const first =
+    new Date(
+      year,
+      month - 1,
+      1,
+    );
+
+  const daysInMonth =
+    new Date(
+      year,
+      month,
+      0,
+    ).getDate();
+
+  const leading =
+    (first.getDay() + 6) %
+    7;
+
+  const cells = [];
+
+  for (
+    let index = 0;
+    index < leading;
+    index += 1
+  ) {
+    cells.push(null);
+  }
+
+  for (
+    let day = 1;
+    day <= daysInMonth;
+    day += 1
+  ) {
+    const iso =
+      `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
+    cells.push({
+      day,
+      iso,
+    });
+  }
+
+  while (
+    cells.length % 7 !== 0
+  ) {
+    cells.push(null);
+  }
+
+  return cells;
+}
+
+
+function roundedRect(
+  ctx,
+  x,
+  y,
+  width,
+  height,
+  radius,
+) {
+  const r =
+    Math.min(
+      radius,
+      width / 2,
+      height / 2,
+    );
+
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(
+    x + width,
+    y,
+    x + width,
+    y + height,
+    r,
+  );
+  ctx.arcTo(
+    x + width,
+    y + height,
+    x,
+    y + height,
+    r,
+  );
+  ctx.arcTo(
+    x,
+    y + height,
+    x,
+    y,
+    r,
+  );
+  ctx.arcTo(
+    x,
+    y,
+    x + width,
+    y,
+    r,
+  );
+  ctx.closePath();
+}
+
+
+function wrapCanvasText(
+  ctx,
+  text,
+  maxWidth,
+) {
+  const words =
+    String(text || '')
+      .split(/\s+/)
+      .filter(Boolean);
+
+  const lines = [];
+  let current = '';
+
+  words.forEach(
+    (word) => {
+      const candidate =
+        current
+          ? `${current} ${word}`
+          : word;
+
+      if (
+        ctx.measureText(
+          candidate,
+        ).width >
+          maxWidth &&
+        current
+      ) {
+        lines.push(
+          current,
+        );
+        current = word;
+      } else {
+        current =
+          candidate;
+      }
+    },
+  );
+
+  if (current) {
+    lines.push(current);
+  }
+
+  return lines;
+}
+
+
+async function loadBrandImage() {
+  return new Promise(
+    (resolve) => {
+      const image =
+        new Image();
+
+      image.onload =
+        () =>
+          resolve(image);
+
+      image.onerror =
+        () =>
+          resolve(null);
+
+      image.src =
+        '/brand/formaplane-logo.svg';
+    },
+  );
+}
+
+
+async function createPublicAvailabilityImage({
+  trainerName,
+  monthKey,
+  declaredByDay,
+  commitmentsByDay,
+  skills = [],
+}) {
+  const width = 1080;
+  const height = 1350;
+
+  const canvas =
+    document.createElement(
+      'canvas',
+    );
+
+  canvas.width = width;
+  canvas.height = height;
+
+  const ctx =
+    canvas.getContext(
+      '2d',
+    );
+
+  ctx.fillStyle =
+    '#f4f7fb';
+  ctx.fillRect(
+    0,
+    0,
+    width,
+    height,
+  );
+
+  const gradient =
+    ctx.createLinearGradient(
+      0,
+      0,
+      width,
+      0,
+    );
+
+  gradient.addColorStop(
+    0,
+    '#123b72',
+  );
+  gradient.addColorStop(
+    1,
+    '#2563eb',
+  );
+
+  ctx.fillStyle =
+    gradient;
+  ctx.fillRect(
+    0,
+    0,
+    width,
+    250,
+  );
+
+  const logo =
+    await loadBrandImage();
+
+  if (logo) {
+    ctx.drawImage(
+      logo,
+      70,
+      54,
+      270,
+      76,
+    );
+  } else {
+    ctx.fillStyle =
+      '#ffffff';
+    ctx.font =
+      '800 42px Arial';
+    ctx.fillText(
+      'Formaplane',
+      70,
+      105,
+    );
+  }
+
+  ctx.fillStyle =
+    '#dbeafe';
+  ctx.font =
+    '700 22px Arial';
+  ctx.fillText(
+    'MES DISPONIBILITÉS',
+    70,
+    175,
+  );
+
+  ctx.fillStyle =
+    '#ffffff';
+  ctx.font =
+    '800 42px Arial';
+  ctx.fillText(
+    publicMonthTitle(
+      monthKey,
+    ),
+    70,
+    225,
+  );
+
+  roundedRect(
+    ctx,
+    55,
+    285,
+    970,
+    820,
+    28,
+  );
+  ctx.fillStyle =
+    '#ffffff';
+  ctx.fill();
+
+  ctx.fillStyle =
+    '#0f2747';
+  ctx.font =
+    '800 34px Arial';
+  ctx.fillText(
+    trainerName ||
+      'Formateur',
+    90,
+    350,
+  );
+
+  ctx.fillStyle =
+    '#64748b';
+  ctx.font =
+    '500 20px Arial';
+  ctx.fillText(
+    'Voici mes disponibilités pour le mois.',
+    90,
+    385,
+  );
+
+  const selectedSkills =
+    Array.isArray(skills)
+      ? skills
+          .filter(Boolean)
+          .slice(0, 4)
+      : [];
+
+  if (selectedSkills.length > 0) {
+    let chipX = 90;
+    let chipY = 415;
+
+    ctx.font =
+      '700 15px Arial';
+
+    selectedSkills.forEach(
+      (skill) => {
+        const label =
+          String(skill);
+
+        const chipWidth =
+          Math.min(
+            260,
+            ctx.measureText(
+              label,
+            ).width + 30,
+          );
+
+        if (
+          chipX +
+            chipWidth >
+          990
+        ) {
+          chipX = 90;
+          chipY += 42;
+        }
+
+        roundedRect(
+          ctx,
+          chipX,
+          chipY,
+          chipWidth,
+          32,
+          16,
+        );
+
+        ctx.fillStyle =
+          '#eff6ff';
+        ctx.fill();
+
+        ctx.strokeStyle =
+          '#bfdbfe';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        ctx.fillStyle =
+          '#1d4ed8';
+        ctx.textAlign =
+          'center';
+
+        ctx.fillText(
+          label,
+          chipX +
+            chipWidth / 2,
+          chipY + 21,
+        );
+
+        chipX +=
+          chipWidth + 9;
+      },
+    );
+  }
+
+  const weekdays =
+    [
+      'LUN',
+      'MAR',
+      'MER',
+      'JEU',
+      'VEN',
+      'SAM',
+      'DIM',
+    ];
+
+  const gridX = 88;
+  const gridY =
+    selectedSkills.length > 0
+      ? 500
+      : 435;
+  const cellGap = 9;
+  const cellWidth = 122;
+  const cellHeight = 91;
+
+  ctx.font =
+    '800 16px Arial';
+  ctx.textAlign =
+    'center';
+
+  weekdays.forEach(
+    (label, index) => {
+      ctx.fillStyle =
+        '#64748b';
+      ctx.fillText(
+        label,
+        gridX +
+          index *
+            (cellWidth +
+              cellGap) +
+          cellWidth / 2,
+        gridY,
+      );
+    },
+  );
+
+  const cells =
+    getPublicCalendarDays(
+      monthKey,
+    );
+
+  const palette = {
+    available: {
+      background:
+        '#dcfce7',
+      border:
+        '#86efac',
+      text:
+        '#15803d',
+    },
+    unavailable: {
+      background:
+        '#fee2e2',
+      border:
+        '#fecaca',
+      text:
+        '#b42318',
+    },
+    unknown: {
+      background:
+        '#f1f5f9',
+      border:
+        '#e2e8f0',
+      text:
+        '#64748b',
+    },
+  };
+
+  cells.forEach(
+    (cell, index) => {
+      if (!cell) {
+        return;
+      }
+
+      const column =
+        index % 7;
+      const row =
+        Math.floor(
+          index / 7,
+        );
+
+      const x =
+        gridX +
+        column *
+          (cellWidth +
+            cellGap);
+
+      const y =
+        gridY +
+        28 +
+        row *
+          (cellHeight +
+            cellGap);
+
+      const state =
+        getPublicSharedDayState({
+          day:
+            cell.iso,
+          declaredByDay,
+          commitmentsByDay,
+        });
+
+      const colors =
+        palette[
+          state.key
+        ] ||
+        palette.unknown;
+
+      roundedRect(
+        ctx,
+        x,
+        y,
+        cellWidth,
+        cellHeight,
+        14,
+      );
+
+      ctx.fillStyle =
+        colors.background;
+      ctx.fill();
+
+      ctx.strokeStyle =
+        colors.border;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.textAlign =
+        'left';
+      ctx.fillStyle =
+        '#475569';
+      ctx.font =
+        '800 18px Arial';
+      ctx.fillText(
+        String(
+          cell.day,
+        ),
+        x + 12,
+        y + 25,
+      );
+
+      ctx.fillStyle =
+        colors.text;
+      ctx.font =
+        '800 14px Arial';
+
+      const lines =
+        wrapCanvasText(
+          ctx,
+          state.label,
+          cellWidth -
+            24,
+        );
+
+      lines
+        .slice(0, 2)
+        .forEach(
+          (
+            line,
+            lineIndex,
+          ) => {
+            ctx.fillText(
+              line,
+              x + 12,
+              y +
+                54 +
+                lineIndex *
+                  17,
+            );
+          },
+        );
+    },
+  );
+
+  ctx.textAlign =
+    'left';
+
+  const legendY =
+    1055;
+
+  [
+    [
+      '#15803d',
+      'Disponible',
+    ],
+    [
+      '#b42318',
+      'Indisponible',
+    ],
+    [
+      '#64748b',
+      'Non renseigné',
+    ],
+  ].forEach(
+    (
+      [
+        color,
+        label,
+      ],
+      index,
+    ) => {
+      const x =
+        100 +
+        index * 285;
+
+      ctx.fillStyle =
+        color;
+      ctx.beginPath();
+      ctx.arc(
+        x,
+        legendY,
+        7,
+        0,
+        Math.PI * 2,
+      );
+      ctx.fill();
+
+      ctx.fillStyle =
+        '#475569';
+      ctx.font =
+        '700 16px Arial';
+      ctx.fillText(
+        label,
+        x + 16,
+        legendY + 5,
+      );
+    },
+  );
+
+  ctx.fillStyle =
+    '#0f2747';
+  ctx.font =
+    '800 27px Arial';
+
+  const hookLines =
+    wrapCanvasText(
+      ctx,
+      'Mes disponibilités évoluent. Mon planning aussi.',
+      880,
+    );
+
+  hookLines.forEach(
+    (
+      line,
+      index,
+    ) => {
+      ctx.fillText(
+        line,
+        90,
+        1170 +
+          index * 34,
+      );
+    },
+  );
+
+  ctx.fillStyle =
+    '#2563eb';
+  ctx.font =
+    '700 19px Arial';
+  ctx.fillText(
+    'Je les partage simplement avec Formaplane.',
+    90,
+    1245,
+  );
+
+  ctx.fillStyle =
+    '#64748b';
+  ctx.font =
+    '600 16px Arial';
+  ctx.fillText(
+    'Formaplane — La plateforme qui connecte formateurs et organismes de formation.',
+    90,
+    1290,
+  );
+
+  return canvas;
+}
+
+
 export default function TrainerAvailabilityShare() {
+  const {
+    profile,
+    trainerProfile,
+  } = useAuth();
+
+  const publicTrainerName =
+    [trainerProfile?.prenom, trainerProfile?.nom]
+      .filter(Boolean)
+      .join(' ')
+      .trim() ||
+    [profile?.first_name, profile?.last_name]
+      .filter(Boolean)
+      .join(' ')
+      .trim() ||
+    'Formateur';
+
   const [
     contacts,
     setContacts,
@@ -600,6 +1365,50 @@ export default function TrainerAvailabilityShare() {
   ] = useState({});
 
 
+  const [
+    publicShareMonth,
+    setPublicShareMonth,
+  ] = useState(
+    () => monthKey(new Date()),
+  );
+
+  const [
+    publicShareLoading,
+    setPublicShareLoading,
+  ] = useState(false);
+
+  const [
+    publicShareMessage,
+    setPublicShareMessage,
+  ] = useState('');
+
+  const [
+    publicShareError,
+    setPublicShareError,
+  ] = useState('');
+
+
+  const [
+    publicSkills,
+    setPublicSkills,
+  ] = useState([]);
+
+  const [
+    selectedPublicSkills,
+    setSelectedPublicSkills,
+  ] = useState([]);
+
+  const [
+    publicPostText,
+    setPublicPostText,
+  ] = useState('');
+
+  const [
+    publicPostTextDirty,
+    setPublicPostTextDirty,
+  ] = useState(false);
+
+
   const previewContact =
     useMemo(
       () =>
@@ -660,6 +1469,73 @@ export default function TrainerAvailabilityShare() {
   useEffect(() => {
     loadContacts();
   }, [loadContacts]);
+
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadPublicProfile() {
+      try {
+        const trainer =
+          await getMyTrainerProfile();
+
+        if (!active) {
+          return;
+        }
+
+        const skills =
+          Array.isArray(
+            trainer?.competences,
+          )
+            ? trainer.competences
+            : Array.isArray(
+                trainer?.skills,
+              )
+              ? trainer.skills
+              : [];
+
+        setPublicSkills(
+          skills.filter(Boolean),
+        );
+      } catch (profileError) {
+        console.error(
+          'Chargement des compétences impossible :',
+          profileError,
+        );
+      }
+    }
+
+    loadPublicProfile();
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+
+  useEffect(() => {
+    if (
+      publicPostTextDirty
+    ) {
+      return;
+    }
+
+    setPublicPostText(
+      buildPublicShareText({
+        trainerName:
+          publicTrainerName,
+        monthKey:
+          publicShareMonth,
+        skills:
+          selectedPublicSkills,
+      }),
+    );
+  }, [
+    publicPostTextDirty,
+    publicTrainerName,
+    publicShareMonth,
+    selectedPublicSkills,
+  ]);
 
 
   const loadPreview =
@@ -1130,6 +2006,316 @@ export default function TrainerAvailabilityShare() {
         await loadContacts();
       } finally {
         setSendingShare(false);
+      }
+    };
+
+
+  const togglePublicSkill =
+    (skill) => {
+      setSelectedPublicSkills(
+        (current) => {
+          if (
+            current.includes(
+              skill,
+            )
+          ) {
+            return current.filter(
+              (item) =>
+                item !== skill,
+            );
+          }
+
+          if (
+            current.length >=
+            4
+          ) {
+            setPublicShareError(
+              'Vous pouvez mettre en avant jusqu’à 4 compétences sur le visuel.',
+            );
+
+            return current;
+          }
+
+          setPublicShareError(
+            '',
+          );
+
+          return [
+            ...current,
+            skill,
+          ];
+        },
+      );
+    };
+
+
+  const resetPublicPostText =
+    () => {
+      setPublicPostTextDirty(
+        false,
+      );
+
+      setPublicPostText(
+        buildPublicShareText({
+          trainerName:
+            publicTrainerName,
+          monthKey:
+            publicShareMonth,
+          skills:
+            selectedPublicSkills,
+        }),
+      );
+    };
+
+
+  const getPublicShareData =
+    async () => {
+      if (
+        !publicShareMonth
+      ) {
+        throw new Error(
+          'Sélectionnez un mois.',
+        );
+      }
+
+      const range =
+        getMonthRangeFromKeys([
+          publicShareMonth,
+        ]);
+
+      if (!range) {
+        throw new Error(
+          'Le mois sélectionné est invalide.',
+        );
+      }
+
+      const data =
+        await getMyAvailabilitySharePreview({
+          ...range,
+          organizationId: null,
+        });
+
+      return {
+        trainerName:
+          publicTrainerName,
+        availabilityByDay:
+          data.availabilityByDay || {},
+        commitmentsByDay:
+          data.commitmentsByDay || {},
+      };
+    };
+
+
+  const downloadPublicShareVisual =
+    async () => {
+      setPublicShareLoading(
+        true,
+      );
+      setPublicShareMessage(
+        '',
+      );
+      setPublicShareError(
+        '',
+      );
+
+      try {
+        const data =
+          await getPublicShareData();
+
+        const canvas =
+          await createPublicAvailabilityImage({
+            trainerName:
+              data.trainerName ||
+              '',
+            monthKey:
+              publicShareMonth,
+            declaredByDay:
+              data.availabilityByDay ||
+              {},
+            commitmentsByDay:
+              data.commitmentsByDay ||
+              {},
+            skills:
+              selectedPublicSkills,
+          });
+
+        const link =
+          document.createElement(
+            'a',
+          );
+
+        link.download =
+          `formaplane-disponibilites-${publicShareMonth}.png`;
+
+        link.href =
+          canvas.toDataURL(
+            'image/png',
+          );
+
+        link.click();
+
+        setPublicShareMessage(
+          'Le visuel est prêt.',
+        );
+      } catch (
+        shareError
+      ) {
+        console.error(
+          'Erreur génération visuel public :',
+          shareError,
+        );
+
+        setPublicShareError(
+          shareError?.message ||
+            'Impossible de générer le visuel.',
+        );
+      } finally {
+        setPublicShareLoading(
+          false,
+        );
+      }
+    };
+
+
+  const copyPublicShareText =
+    async () => {
+      setPublicShareMessage(
+        '',
+      );
+      setPublicShareError(
+        '',
+      );
+
+      try {
+        const data =
+          await getPublicShareData();
+
+        await navigator.clipboard.writeText(
+          publicPostText,
+        );
+
+        setPublicShareMessage(
+          'Texte de publication copié.',
+        );
+      } catch (
+        shareError
+      ) {
+        setPublicShareError(
+          shareError?.message ||
+            'Impossible de copier le texte.',
+        );
+      }
+    };
+
+
+  const nativePublicShare =
+    async () => {
+      setPublicShareLoading(
+        true,
+      );
+      setPublicShareMessage(
+        '',
+      );
+      setPublicShareError(
+        '',
+      );
+
+      try {
+        const data =
+          await getPublicShareData();
+
+        const canvas =
+          await createPublicAvailabilityImage({
+            trainerName:
+              data.trainerName ||
+              '',
+            monthKey:
+              publicShareMonth,
+            declaredByDay:
+              data.availabilityByDay ||
+              {},
+            commitmentsByDay:
+              data.commitmentsByDay ||
+              {},
+            skills:
+              selectedPublicSkills,
+          });
+
+        const blob =
+          await new Promise(
+            (resolve) =>
+              canvas.toBlob(
+                resolve,
+                'image/png',
+              ),
+          );
+
+        const file =
+          new File(
+            [
+              blob,
+            ],
+            `formaplane-disponibilites-${publicShareMonth}.png`,
+            {
+              type:
+                'image/png',
+            },
+          );
+
+        const text =
+          publicPostText;
+
+        if (
+          navigator.share &&
+          (
+            !navigator.canShare ||
+            navigator.canShare({
+              files: [
+                file,
+              ],
+            })
+          )
+        ) {
+          await navigator.share({
+            title:
+              'Mes disponibilités Formaplane',
+            text,
+            files: [
+              file,
+            ],
+          });
+
+          setPublicShareMessage(
+            'Partage ouvert.',
+          );
+          return;
+        }
+
+        await navigator.clipboard.writeText(
+          text,
+        );
+
+        setPublicShareMessage(
+          "Le partage direct n'est pas disponible sur cet appareil. Le texte a été copié ; téléchargez aussi le visuel.",
+        );
+      } catch (
+        shareError
+      ) {
+        if (
+          shareError?.name ===
+          'AbortError'
+        ) {
+          return;
+        }
+
+        setPublicShareError(
+          shareError?.message ||
+            'Impossible de préparer le partage.',
+        );
+      } finally {
+        setPublicShareLoading(
+          false,
+        );
       }
     };
 
@@ -2589,6 +3775,378 @@ export default function TrainerAvailabilityShare() {
           </>
         )}
       </div>
+
+
+      <section
+        className="card"
+        style={{
+          marginTop: 14,
+        }}
+      >
+        <p
+          className="page-eyebrow"
+          style={{
+            marginTop: 0,
+          }}
+        >
+          PARTAGE PUBLIC
+        </p>
+
+        <h2
+          style={{
+            marginBottom: 6,
+          }}
+        >
+          Partager sur les réseaux sociaux
+        </h2>
+
+        <p
+          style={{
+            margin:
+              '0 0 12px',
+            color:
+              '#64748b',
+            fontSize: 12,
+            lineHeight: 1.5,
+          }}
+        >
+          Créez un visuel professionnel de vos disponibilités à publier sur LinkedIn, Facebook, Instagram, TikTok ou ailleurs. Aucune information sur les organismes ou les options en cours n'est affichée publiquement.
+        </p>
+
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns:
+              'minmax(180px, 260px) 1fr',
+            gap: 14,
+            alignItems: 'end',
+          }}
+        >
+          <label
+            style={{
+              display: 'grid',
+              gap: 5,
+              fontSize: 11,
+              fontWeight: 800,
+              color: '#334155',
+            }}
+          >
+            Mois à partager
+            <input
+              type="month"
+              value={
+                publicShareMonth
+              }
+              onChange={(
+                event,
+              ) =>
+                setPublicShareMonth(
+                  event.target.value,
+                )
+              }
+            />
+          </label>
+
+          <div
+            style={{
+              padding:
+                '10px 12px',
+              borderRadius: 10,
+              background:
+                '#f8fbff',
+              border:
+                '1px solid #dbeafe',
+              color:
+                '#475569',
+              fontSize: 11,
+              lineHeight: 1.45,
+            }}
+          >
+            <strong>
+              Mes disponibilités évoluent. Mon planning aussi.
+            </strong>{' '}
+            Je les partage simplement avec Formaplane.
+          </div>
+        </div>
+
+        <div
+          style={{
+            marginTop: 12,
+          }}
+        >
+          <div
+            style={{
+              fontWeight: 800,
+              marginBottom: 5,
+              fontSize: 11,
+              color: '#334155',
+            }}
+          >
+            Compétences à mettre en avant
+          </div>
+
+          {publicSkills.length > 0 ? (
+            <>
+              <div
+                style={{
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  gap: 7,
+                }}
+              >
+                {publicSkills.map(
+                  (skill) => {
+                    const selected =
+                      selectedPublicSkills.includes(
+                        skill,
+                      );
+
+                    return (
+                      <label
+                        key={
+                          skill
+                        }
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 6,
+                          padding: '6px 8px',
+                          borderRadius: 9,
+                          border: selected
+                            ? '1px solid #93c5fd'
+                            : '1px solid #e2e8f0',
+                          background: selected
+                            ? '#eff6ff'
+                            : '#ffffff',
+                          cursor: 'pointer',
+                          fontSize: 10.5,
+                          fontWeight: 700,
+                          color: '#334155',
+                        }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={
+                            selected
+                          }
+                          onChange={() =>
+                            togglePublicSkill(
+                              skill,
+                            )
+                          }
+                        />
+                        {
+                          skill
+                        }
+                      </label>
+                    );
+                  },
+                )}
+              </div>
+
+              <div
+                style={{
+                  marginTop: 5,
+                  fontSize: 9.5,
+                  color: '#94a3b8',
+                }}
+              >
+                Jusqu'à 4 compétences peuvent apparaître sur le visuel. Votre sélection concerne uniquement cette publication.
+              </div>
+            </>
+          ) : (
+            <div
+              style={{
+                padding: '8px 10px',
+                borderRadius: 9,
+                background: '#f8fafc',
+                border: '1px solid #e2e8f0',
+                fontSize: 10.5,
+                color: '#64748b',
+              }}
+            >
+              Aucune compétence n'est renseignée sur votre profil Formaplane.
+            </div>
+          )}
+        </div>
+
+        <div
+          style={{
+            marginTop: 12,
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 8,
+              marginBottom: 5,
+            }}
+          >
+            <div
+              style={{
+                fontWeight: 800,
+                fontSize: 11,
+                color: '#334155',
+              }}
+            >
+              Texte de la publication
+            </div>
+
+            <button
+              type="button"
+              className="button button--soft"
+              onClick={
+                resetPublicPostText
+              }
+              style={{
+                padding: '5px 8px',
+                fontSize: 9.5,
+              }}
+            >
+              Réinitialiser le texte proposé
+            </button>
+          </div>
+
+          <textarea
+            value={
+              publicPostText
+            }
+            onChange={(
+              event,
+            ) => {
+              setPublicPostText(
+                event.target.value,
+              );
+              setPublicPostTextDirty(
+                true,
+              );
+              setPublicShareMessage(
+                '',
+              );
+              setPublicShareError(
+                '',
+              );
+            }}
+            rows={7}
+            style={{
+              width: '100%',
+              boxSizing: 'border-box',
+              resize: 'vertical',
+              fontSize: 11,
+              lineHeight: 1.5,
+            }}
+          />
+
+          <div
+            style={{
+              marginTop: 4,
+              fontSize: 9.5,
+              color: '#94a3b8',
+            }}
+          >
+            Formaplane propose un texte de départ, mais vous pouvez le modifier librement avant de le copier ou de le partager.
+          </div>
+        </div>
+
+        <div
+          style={{
+            display: 'flex',
+            gap: 8,
+            flexWrap: 'wrap',
+            marginTop: 12,
+          }}
+        >
+          <button
+            type="button"
+            className="button"
+            onClick={
+              downloadPublicShareVisual
+            }
+            disabled={
+              publicShareLoading
+            }
+          >
+            {publicShareLoading
+              ? 'Préparation…'
+              : 'Télécharger le visuel'}
+          </button>
+
+          <button
+            type="button"
+            className="button button--soft"
+            onClick={
+              copyPublicShareText
+            }
+            disabled={
+              publicShareLoading
+            }
+          >
+            Copier le texte de publication
+          </button>
+
+          {'share' in navigator ? (
+            <button
+              type="button"
+              className="button button--soft"
+              onClick={
+                nativePublicShare
+              }
+              disabled={
+                publicShareLoading
+              }
+            >
+              Partager
+            </button>
+          ) : null}
+        </div>
+
+        <p
+          style={{
+            margin:
+              '10px 0 0',
+            color:
+              '#94a3b8',
+            fontSize: 10,
+            lineHeight: 1.45,
+          }}
+        >
+          Les missions confirmées apparaissent comme indisponibles. Les options posées par des organismes restent privées et ne sont jamais mentionnées sur le visuel public.
+        </p>
+
+        {publicShareMessage ? (
+          <div
+            style={{
+              marginTop: 8,
+              color:
+                '#15803d',
+              fontSize: 11,
+              fontWeight: 700,
+            }}
+          >
+            {
+              publicShareMessage
+            }
+          </div>
+        ) : null}
+
+        {publicShareError ? (
+          <div
+            style={{
+              marginTop: 8,
+              color:
+                '#b42318',
+              fontSize: 11,
+              fontWeight: 700,
+            }}
+          >
+            {
+              publicShareError
+            }
+          </div>
+        ) : null}
+      </section>
 
 
       {sendConfirmOpen ? (

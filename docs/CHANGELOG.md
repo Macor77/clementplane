@@ -448,3 +448,60 @@ Les parcours critiques ont été testés de bout en bout :
 - canaux externes sans envoi automatique d'e-mail Formaplane.
 
 Résultat : recette fonctionnelle validée avant clôture du Sprint 11.
+
+------------------------------------------------------------------------
+
+# Sprint 12 — Partage des disponibilités formateur (Terminé)
+
+Version de clôture prévue : **v0.12.0**.
+
+## Carnet de contacts OF
+
+- Création d'un carnet de contacts propre à chaque formateur.
+- Ajout et suppression de contacts.
+- Sélection d'un ou plusieurs destinataires avant partage.
+- Distinction entre OF inscrits sur Formaplane et contacts externes.
+- Affichage du statut de référencement du formateur dans le réseau de l'OF.
+
+## Sélection et aperçu
+
+- Sélection d'un ou plusieurs mois à communiquer.
+- Exploitation des disponibilités réelles du planning.
+- Aperçu avant envoi.
+- Présentation adaptée au destinataire : Disponible, Indisponible, Option avec votre organisme et signalement neutre d'options auprès d'autres organismes.
+
+## E-mails de partage
+
+- Envoi via l'infrastructure transactionnelle Formaplane / Brevo.
+- Planning directement visible dans l'e-mail.
+- Message facultatif commun à tous les OF.
+- Message personnalisable contact par contact.
+- Liens adaptés aux OF inscrits vers la fiche ou la recherche du formateur.
+- Invitation à découvrir Formaplane pour les OF non inscrits.
+- Consultation des disponibilités sans obligation de créer un compte.
+
+## Historique et délivrabilité
+
+- Journalisation des partages dans `email_logs`.
+- Conservation du destinataire et des mois partagés.
+- Affichage du dernier partage par contact.
+- Suivi de l'état d'envoi et de délivrabilité Brevo.
+- Conservation de la date de délivrance lorsque disponible.
+
+## Partage public
+
+- Sélection d'un mois pour une publication publique.
+- Génération d'un visuel aux couleurs de Formaplane.
+- Mise en avant de Formaplane dans le contenu généré.
+- Texte de publication proposé puis librement modifiable.
+- Sélection des compétences à mettre en avant.
+- Intégration des compétences sélectionnées au visuel et au texte.
+
+## Recette
+
+Les parcours de partage privé et public ont été testés fonctionnellement. Les liens profonds, les messages personnalisés, la délivrabilité, l'historique des mois partagés, le texte modifiable, la sélection des compétences et la génération du visuel ont été validés.
+
+# Prochaine étape
+
+Sprint 13 — Tutos, explications, FAQ & transparence produit.
+

@@ -249,3 +249,71 @@ export async function sendMissionChangeRevalidationEmails({ requestId }) {
 
   return data;
 }
+
+
+export async function sendMissionCancellationEmails({ missionId }) {
+  if (!missionId) {
+    throw new Error('La mission est obligatoire.');
+  }
+
+  const { data, error } = await supabase.functions.invoke(
+    'send-transactional-email',
+    {
+      body: {
+        type: 'mission_cancellation',
+        missionId,
+      },
+    },
+  );
+
+  if (error) {
+    console.error("Erreur d'appel du moteur d'e-mails :", error);
+    throw new Error(
+      "La mission a été annulée, mais les e-mails d'annulation n'ont pas pu être envoyés.",
+    );
+  }
+
+  if (!data?.success) {
+    throw new Error(
+      data?.message ||
+        "La mission a été annulée, mais les e-mails d'annulation n'ont pas pu être envoyés.",
+    );
+  }
+
+  return data;
+}
+
+
+export async function sendMissionWithdrawalNotification({
+  missionFormateurId,
+}) {
+  if (!missionFormateurId) {
+    throw new Error("L'option est obligatoire.");
+  }
+
+  const { data, error } = await supabase.functions.invoke(
+    'send-transactional-email',
+    {
+      body: {
+        type: 'mission_withdrawal_notification',
+        missionTrainerId: missionFormateurId,
+      },
+    },
+  );
+
+  if (error) {
+    console.error("Erreur d'appel du moteur d'e-mails :", error);
+    throw new Error(
+      "Le désistement est enregistré, mais l'organisme n'a pas pu être prévenu par e-mail.",
+    );
+  }
+
+  if (!data?.success) {
+    throw new Error(
+      data?.message ||
+        "Le désistement est enregistré, mais l'organisme n'a pas pu être prévenu par e-mail.",
+    );
+  }
+
+  return data;
+}

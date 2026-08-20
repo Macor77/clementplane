@@ -898,6 +898,34 @@ export async function updateMissionFormateurStatus(
 /**
  * Met à jour le commentaire associé à un formateur.
  */
+export async function cancelMission({
+  missionId,
+  channel,
+  note = '',
+}) {
+  if (!missionId || !channel) {
+    throw new Error(
+      'La mission et le moyen d’information sont obligatoires.',
+    );
+  }
+
+  const { data, error } = await supabase.rpc(
+    'cancel_mission_with_trainers',
+    {
+      p_mission_id: missionId,
+      p_channel: channel,
+      p_note: note?.trim() || null,
+    },
+  );
+
+  if (error) {
+    throw error;
+  }
+
+  return data?.[0] || data || null;
+}
+
+
 export async function updateMissionFormateurComment(
   missionId,
   formateurId,

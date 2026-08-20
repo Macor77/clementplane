@@ -564,6 +564,92 @@ const buildTrainerClaimInvitationEmail = ({
   };
 };
 
+
+const buildMissionCancellationEmail = ({
+  recipientEmail,
+  trainerFirstName,
+  organizationName,
+  missionTitle,
+  formation,
+  client,
+  location,
+  dates,
+}: {
+  recipientEmail: string;
+  trainerFirstName: string;
+  organizationName: string;
+  missionTitle: string;
+  formation: string;
+  client: string;
+  location: string;
+  dates: Array<{ date?: string; heure_debut?: string | null; heure_fin?: string | null }>;
+}) => {
+  const rows = (dates || []).map((item) => {
+    const day = escapeHtml(formatMissionDate(item.date || ''));
+    const start = escapeHtml(formatMissionTime(item.heure_debut));
+    const end = escapeHtml(formatMissionTime(item.heure_fin));
+    return `<div style="padding:7px 0;border-bottom:1px solid #edf1f5;"><strong>${day}</strong>${start || end ? ` · ${start}${start && end ? ' – ' : ''}${end}` : ''}</div>`;
+  }).join('');
+
+  return {
+    sender: { name: SENDER_NAME, email: SENDER_EMAIL },
+    to: [{ email: recipientEmail }],
+    replyTo: { name: SENDER_NAME, email: SENDER_EMAIL },
+    subject: `Mission annulée — ${missionTitle || formation || 'Mission de formation'}`,
+    htmlContent: `
+      <div style="font-family:Arial,sans-serif;background:#f6f8fb;padding:28px;color:#0f2747;">
+        <div style="max-width:640px;margin:auto;background:white;border-radius:14px;padding:28px;border:1px solid #e5eaf0;">
+          <div style="font-size:20px;font-weight:800;margin-bottom:18px;">Formaplane</div>
+          <h1 style="font-size:22px;margin:0 0 12px;color:#b42318;">Cette mission a été annulée</h1>
+          <p>Bonjour ${escapeHtml(trainerFirstName || '')},</p>
+          <p><strong>${escapeHtml(organizationName)}</strong> vous informe que la mission ci-dessous est annulée. Aucune action n’est attendue de votre part.</p>
+          <div style="background:#f8fafc;border-radius:10px;padding:16px;margin:18px 0;">
+            <strong>${escapeHtml(missionTitle || formation || 'Mission de formation')}</strong>
+            <div style="margin-top:8px;">Formation : ${escapeHtml(formation || 'Non renseignée')}</div>
+            <div>Client : ${escapeHtml(client || 'Non renseigné')}</div>
+            <div>Lieu : ${escapeHtml(location || 'Non renseigné')}</div>
+            <div style="margin-top:8px;">${rows}</div>
+          </div>
+          <p style="font-size:13px;color:#64748b;">Si des dispositions avaient déjà été prises avec l’organisme, rapprochez-vous directement de lui pour les éventuelles suites administratives, logistiques ou contractuelles.</p>
+        </div>
+      </div>
+    `,
+  };
+};
+
+const buildMissionWithdrawalOfEmail = ({
+  recipientEmail,
+  recipientFirstName,
+  trainerName,
+  missionTitle,
+  comment,
+  missionUrl,
+}: {
+  recipientEmail: string;
+  recipientFirstName: string;
+  trainerName: string;
+  missionTitle: string;
+  comment: string;
+  missionUrl: string;
+}) => ({
+  sender: { name: SENDER_NAME, email: SENDER_EMAIL },
+  to: [{ email: recipientEmail }],
+  replyTo: { name: SENDER_NAME, email: SENDER_EMAIL },
+  subject: `Désistement formateur — ${missionTitle}`,
+  htmlContent: `
+    <div style="font-family:Arial,sans-serif;background:#f6f8fb;padding:28px;color:#0f2747;">
+      <div style="max-width:640px;margin:auto;background:white;border-radius:14px;padding:28px;border:1px solid #e5eaf0;">
+        <div style="font-size:20px;font-weight:800;margin-bottom:18px;">Formaplane</div>
+        <h1 style="font-size:22px;margin:0 0 12px;">Un formateur s’est désisté</h1>
+        <p>Bonjour ${escapeHtml(recipientFirstName || '')},</p>
+        <p><strong>${escapeHtml(trainerName)}</strong> s’est désisté de l’option qu’il avait acceptée pour la mission <strong>${escapeHtml(missionTitle)}</strong>.</p>
+        ${comment ? `<div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;padding:14px;margin:18px 0;"><strong>Commentaire du formateur</strong><div style="margin-top:6px;">${escapeHtml(comment)}</div></div>` : ''}
+        <a href="${escapeHtml(missionUrl)}" style="display:inline-block;background:#2563eb;color:#fff;text-decoration:none;font-weight:700;padding:12px 18px;border-radius:8px;">Voir la mission dans Formaplane</a>
+      </div>
+    </div>
+  `,
+});
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
@@ -1076,6 +1162,131 @@ Deno.serve(async (req) => {
       const sentCount = results.filter((item) => item.success).length;
       const failedCount = results.length - sentCount;
       return jsonResponse({ success: sentCount > 0 || results.length === 0, sentCount, failedCount, results });
+    } else if (body.type === 'mission_cancellation') {
+      const missionId = String(body.missionId || '').trim();
+      if (!missionId) return jsonResponse({ success:false, message:'Mission obligatoire.' },400);
+
+      const { data: mission } = await admin.from('missions')
+        .select('id, organization_id, intitule, formation, client, lieu, adresse, code_postal, ville, statut')
+        .eq('id', missionId).maybeSingle();
+      if (!mission || mission.statut !== 'annulee') {
+        return jsonResponse({ success:false, message:"La mission doit être annulée avant l'envoi." },409);
+      }
+
+      const { data: membership } = await admin.from('organization_members')
+        .select('id').eq('organization_id', mission.organization_id)
+        .eq('user_id', authData.user.id).eq('status','active').maybeSingle();
+      if (!membership) return jsonResponse({ success:false, message:'Accès refusé.' },403);
+
+      const [{ data: organization }, { data: dates }, { data: targets }] = await Promise.all([
+        admin.from('organizations').select('name, legal_name').eq('id',mission.organization_id).maybeSingle(),
+        admin.from('mission_dates').select('date, heure_debut, heure_fin').eq('mission_id',missionId).order('date'),
+        admin.from('mission_formateurs').select('id, formateur_id, statut, trainer:trainers(id, prenom, nom, email, user_id)').eq('mission_id',missionId).eq('statut','annule'),
+      ]);
+
+      const results = [];
+      for (const target of (targets || [])) {
+        const trainer = Array.isArray(target.trainer) ? target.trainer[0] : target.trainer;
+        const recipientEmail = String(trainer?.email || '').trim().toLowerCase();
+        if (!recipientEmail) {
+          results.push({ trainerId: target.formateur_id, success:false, reason:'missing_email' });
+          continue;
+        }
+
+        const existing = await admin.from('email_logs').select('id')
+          .eq('email_type','mission_cancellation')
+          .eq('related_entity_type','mission_formateur')
+          .eq('related_entity_id',target.id)
+          .in('status',['pending','sent','delivered']).maybeSingle();
+        if (existing.data?.id) {
+          results.push({ trainerId: target.formateur_id, success:true, duplicate:true });
+          continue;
+        }
+
+        const location = [mission.adresse, [mission.code_postal,mission.ville].filter(Boolean).join(' ')].filter(Boolean).join(' — ') || mission.lieu || '';
+        const payload = buildMissionCancellationEmail({
+          recipientEmail,
+          trainerFirstName:String(trainer?.prenom || ''),
+          organizationName:String(organization?.name || organization?.legal_name || 'Votre organisme de formation'),
+          missionTitle:String(mission.intitule || mission.formation || 'Mission de formation'),
+          formation:String(mission.formation || ''),
+          client:String(mission.client || ''),
+          location,
+          dates:dates || [],
+        });
+
+        const sent = await sendLoggedEmail(payload, {
+          email_type:'mission_cancellation', provider:'brevo',
+          recipient_email:recipientEmail, recipient_user_id:trainer?.user_id || null,
+          requested_by_user_id:authData.user.id, organization_id:mission.organization_id,
+          related_entity_type:'mission_formateur', related_entity_id:target.id,
+          status:'pending', metadata:{ source:'mission_cancellation', mission_id:missionId, trainer_id:target.formateur_id },
+        });
+        results.push({ trainerId:target.formateur_id, success:Boolean(sent?.success) });
+      }
+
+      const sentCount = results.filter((item)=>item.success).length;
+      return jsonResponse({ success:true, sentCount, failedCount:results.length-sentCount, results });
+
+    } else if (body.type === 'mission_withdrawal_notification') {
+      const missionTrainerId = String(body.missionTrainerId || '').trim();
+      if (!missionTrainerId) return jsonResponse({ success:false, message:'Option obligatoire.' },400);
+
+      const { data: target } = await admin.from('mission_formateurs')
+        .select('id, mission_id, formateur_id, statut, withdrawal_comment, trainer:trainers(id, prenom, nom, user_id)')
+        .eq('id',missionTrainerId).maybeSingle();
+      const trainer = Array.isArray(target?.trainer) ? target.trainer[0] : target?.trainer;
+      if (!target || target.statut !== 'desiste' || trainer?.user_id !== authData.user.id) {
+        return jsonResponse({ success:false, message:'Désistement introuvable ou accès refusé.' },403);
+      }
+
+      const { data: mission } = await admin.from('missions')
+        .select('id, organization_id, intitule, formation').eq('id',target.mission_id).maybeSingle();
+      if (!mission) return jsonResponse({ success:false, message:'Mission introuvable.' },404);
+
+      const { data: members } = await admin.from('organization_members')
+        .select('user_id, role, joined_at, created_at').eq('organization_id',mission.organization_id).eq('status','active');
+
+      const ordered = [...(members || [])].sort((a,b) => {
+        const rank=(r:string)=>r==='owner'?0:r==='admin'?1:2;
+        return rank(String(a.role||''))-rank(String(b.role||'')) ||
+          new Date(a.joined_at||a.created_at||0).getTime()-new Date(b.joined_at||b.created_at||0).getTime();
+      });
+
+      let recipientEmail=''; let recipientUserId=''; let recipientFirstName='';
+      for (const member of ordered) {
+        const [{ data:userResult }, { data:profile }] = await Promise.all([
+          admin.auth.admin.getUserById(String(member.user_id)),
+          admin.from('profiles').select('first_name').eq('id',member.user_id).maybeSingle(),
+        ]);
+        const email=String(userResult?.user?.email||'').trim().toLowerCase();
+        if (email) { recipientEmail=email; recipientUserId=String(member.user_id); recipientFirstName=String(profile?.first_name||''); break; }
+      }
+      if (!recipientEmail) return jsonResponse({ success:false, message:'Aucun destinataire OF trouvé.' },409);
+
+      const existing = await admin.from('email_logs').select('id')
+        .eq('email_type','mission_withdrawal_notification')
+        .eq('related_entity_type','mission_formateur').eq('related_entity_id',target.id)
+        .in('status',['pending','sent','delivered']).maybeSingle();
+      if (existing.data?.id) return jsonResponse({ success:true, duplicate:true, recipientEmail });
+
+      const payload=buildMissionWithdrawalOfEmail({
+        recipientEmail, recipientFirstName,
+        trainerName:[trainer?.prenom,trainer?.nom].filter(Boolean).join(' ') || 'Le formateur',
+        missionTitle:String(mission.intitule || mission.formation || 'Mission de formation'),
+        comment:String(target.withdrawal_comment || ''),
+        missionUrl:`${APP_URL}/missions/${mission.id}`,
+      });
+
+      const sent=await sendLoggedEmail(payload,{
+        email_type:'mission_withdrawal_notification', provider:'brevo',
+        recipient_email:recipientEmail, recipient_user_id:recipientUserId,
+        requested_by_user_id:authData.user.id, organization_id:mission.organization_id,
+        related_entity_type:'mission_formateur', related_entity_id:target.id,
+        status:'pending', metadata:{ source:'mission_withdrawal_notification', mission_id:mission.id, trainer_id:target.formateur_id },
+      });
+      return jsonResponse({ success:Boolean(sent?.success), recipientEmail });
+
     } else if (body.type === 'mission_assignment_confirmation') {
       const missionId = String(
         body.missionId || '',

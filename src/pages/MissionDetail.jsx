@@ -20,6 +20,7 @@ import {
   selectFormateurForMission,
   updateMissionFormateurStatus,
   recordMissionProposalContact,
+  cancelMission,
 } from '../services/missionsService';
 
 import { getMissionRecommendations } from '../services/missionMatchingService';
@@ -27,6 +28,7 @@ import { prepareMissionProposal } from '../services/proposalService';
 import {
   sendMissionAssignmentConfirmation,
   sendMissionProposalEmail,
+  sendMissionCancellationEmails,
 } from '../services/emailService';
 
 const INITIAL_FILTERS = {
@@ -43,6 +45,11 @@ export default function MissionDetail() {
 
   const [mission, setMission] =
     useState(null);
+
+  const [cancelMissionOpen, setCancelMissionOpen] = useState(false);
+  const [cancelMissionChannel, setCancelMissionChannel] = useState('email');
+  const [cancelMissionNote, setCancelMissionNote] = useState('');
+  const [cancelMissionSending, setCancelMissionSending] = useState(false);
 
   const [
     missionHistory,
@@ -357,6 +364,57 @@ export default function MissionDetail() {
       setActionTrainerId(null);
     }
   };
+
+  const handleCancelMission = async () => {
+    setCancelMissionSending(true);
+    setError('');
+    setActionNotice('');
+
+    try {
+      await cancelMission({
+        missionId: id,
+        channel: cancelMissionChannel,
+        note: cancelMissionNote,
+      });
+
+      if (cancelMissionChannel === 'email') {
+        try {
+          const result = await sendMissionCancellationEmails({
+            missionId: id,
+          });
+
+          setActionNotice(
+            result?.sentCount
+              ? `Mission annulée. ${result.sentCount} e-mail${result.sentCount > 1 ? 's' : ''} d’annulation envoyé${result.sentCount > 1 ? 's' : ''}.`
+              : 'Mission annulée.',
+          );
+        } catch (emailError) {
+          setActionNotice('Mission annulée.');
+          setError(
+            emailError?.message ||
+              "La mission est annulée, mais les e-mails n'ont pas pu être envoyés.",
+          );
+        }
+      } else {
+        setActionNotice(
+          'Mission annulée. Le moyen utilisé pour prévenir les formateurs a été enregistré.',
+        );
+      }
+
+      setCancelMissionOpen(false);
+      setCancelMissionChannel('email');
+      setCancelMissionNote('');
+      await refresh();
+    } catch (cancelError) {
+      setError(
+        cancelError?.message ||
+          "Impossible d'annuler la mission.",
+      );
+    } finally {
+      setCancelMissionSending(false);
+    }
+  };
+
 
   const handleRemove = async (
     trainerId,
@@ -895,6 +953,112 @@ export default function MissionDetail() {
         </div>
       ) : null}
 
+      {cancelMissionOpen ? (
+        <div style={styles.modalBackdrop}>
+          <div style={styles.confirmModal}>
+            <p style={styles.modalEyebrow}>ANNULATION DE LA MISSION</p>
+            <h2 style={styles.modalTitle}>Annuler cette mission ?</h2>
+            <p style={styles.modalText}>
+              La mission sera retirée des engagements actifs des formateurs.
+              Les propositions, options et affectations encore actives seront clôturées.
+            </p>
+
+            <div style={styles.modalWarning}>
+              <strong>Comment les formateurs sont-ils prévenus ?</strong>
+              <span>
+                Choisissez l’e-mail Formaplane ou indiquez que vous les avez déjà prévenus autrement.
+              </span>
+            </div>
+
+            <div style={{ display: 'grid', gap: 7, marginTop: 12 }}>
+              {[
+                ['email', 'Envoyer immédiatement un e-mail via Formaplane'],
+                ['sms', 'J’ai envoyé un SMS'],
+                ['whatsapp', 'J’ai envoyé un message WhatsApp'],
+                ['phone', 'J’ai appelé les formateurs'],
+                ['other', 'Autre'],
+              ].map(([value, label]) => (
+                <label
+                  key={value}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 9,
+                    padding: '9px 10px',
+                    border: cancelMissionChannel === value
+                      ? '1px solid #93c5fd'
+                      : '1px solid #e2e8f0',
+                    borderRadius: 8,
+                    background: cancelMissionChannel === value
+                      ? '#eff6ff'
+                      : '#fff',
+                    cursor: 'pointer',
+                    fontSize: 11.5,
+                    fontWeight: 650,
+                    color: '#334155',
+                  }}
+                >
+                  <input
+                    type="radio"
+                    name="cancel-mission-channel"
+                    checked={cancelMissionChannel === value}
+                    onChange={() => setCancelMissionChannel(value)}
+                  />
+                  {label}
+                </label>
+              ))}
+            </div>
+
+            {cancelMissionChannel === 'other' ? (
+              <input
+                value={cancelMissionNote}
+                onChange={(event) => setCancelMissionNote(event.target.value)}
+                placeholder="Précisez le moyen utilisé…"
+                style={{
+                  width: '100%',
+                  boxSizing: 'border-box',
+                  minHeight: 38,
+                  marginTop: 10,
+                  padding: '0 10px',
+                  border: '1px solid #d0d5dd',
+                  borderRadius: 8,
+                  font: 'inherit',
+                }}
+              />
+            ) : null}
+
+            <div style={styles.modalActions}>
+              <button
+                type="button"
+                style={styles.modalCancel}
+                disabled={cancelMissionSending}
+                onClick={() => setCancelMissionOpen(false)}
+              >
+                Revenir
+              </button>
+              <button
+                type="button"
+                style={styles.modalDanger}
+                disabled={
+                  cancelMissionSending ||
+                  (
+                    cancelMissionChannel === 'other' &&
+                    !cancelMissionNote.trim()
+                  )
+                }
+                onClick={handleCancelMission}
+              >
+                {cancelMissionSending
+                  ? 'Annulation…'
+                  : cancelMissionChannel === 'email'
+                    ? 'Annuler et envoyer les e-mails'
+                    : 'Confirmer l’annulation'}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
       {unassignTrainerId ? (
         <div style={styles.modalBackdrop}>
           <div style={styles.confirmModal}>
@@ -968,6 +1132,7 @@ export default function MissionDetail() {
           affectedTrainer={affectedTrainer}
           missionId={id}
           onDelete={handleDelete}
+          onCancel={() => setCancelMissionOpen(true)}
           pendingMissionChange={pendingMissionChange}
         />
 
@@ -1099,6 +1264,7 @@ function MissionInformation({
   affectedTrainer,
   missionId,
   onDelete,
+  onCancel,
   pendingMissionChange,
 }) {
   const missionDates = [
@@ -1341,12 +1507,24 @@ function MissionInformation({
       ) : null}
 
       <div style={styles.missionActions}>
-        <Link
-          to={`/missions/edit/${missionId}`}
-          style={styles.editMissionLink}
-        >
-          Modifier la mission
-        </Link>
+        {mission.statut !== 'annulee' ? (
+          <>
+            <Link
+              to={`/missions/edit/${missionId}`}
+              style={styles.editMissionLink}
+            >
+              Modifier la mission
+            </Link>
+
+            <button
+              type="button"
+              onClick={onCancel}
+              style={styles.deleteMissionButton}
+            >
+              Annuler la mission
+            </button>
+          </>
+        ) : null}
 
         <button
           type="button"

@@ -8,6 +8,7 @@ import {
   withdrawFromMyMissionOption,
 } from '../../services/trainerProposalService';
 import { useAuth } from '../../context/AuthContext';
+import { sendMissionWithdrawalNotification } from '../../services/emailService';
 
 function formatDate(value) { if (!value) return ''; return new Intl.DateTimeFormat('fr-FR', { weekday:'long', day:'numeric', month:'long', year:'numeric' }).format(new Date(`${value}T12:00:00`)); }
 function statusLabel(status) { return ({ proposition_envoyee:'Proposition à traiter', accepte:'Acceptée · en attente de confirmation OF', affecte:'Mission confirmée', refuse:'Refusée', annule:'Annulée', indisponible_affecte_ailleurs:'Plus disponible · mission confirmée ailleurs', mission_pourvue:'Mission pourvue', desiste:'Désistement' })[status] || status; }
@@ -271,6 +272,18 @@ export default function TrainerMissionDetail() {
         comment:
           withdrawComment,
       });
+
+      try {
+        await sendMissionWithdrawalNotification({
+          missionFormateurId:
+            mission.mission_formateur_id,
+        });
+      } catch (notificationError) {
+        console.error(
+          'Désistement enregistré, notification OF non envoyée :',
+          notificationError,
+        );
+      }
 
       navigate('/formateur/missions', {
         replace: true,

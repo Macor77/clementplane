@@ -1,10 +1,22 @@
-import { useCallback, useEffect, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
+
 import {
   createMyAvailabilityContact,
   deleteMyAvailabilityContact,
   getMyAvailabilityContacts,
   updateMyAvailabilityContact,
 } from '../../services/trainerAvailabilityContactsService';
+
+import {
+  getMyAvailabilitySharePreview,
+  getSharedDayState,
+} from '../../services/trainerAvailabilityShareService';
+
 
 const EMPTY_FORM = {
   organizationName: '',
@@ -13,13 +25,206 @@ const EMPTY_FORM = {
   phone: '',
 };
 
-function StatusBadge({ children, tone = 'neutral' }) {
-  const palette = {
-    success: { background: '#dcfce7', color: '#15803d' },
-    info: { background: '#dbeafe', color: '#1d4ed8' },
-    neutral: { background: '#f1f5f9', color: '#64748b' },
+
+function pad(value) {
+  return String(value).padStart(2, '0');
+}
+
+
+function toISODate(date) {
+  return [
+    date.getFullYear(),
+    pad(date.getMonth() + 1),
+    pad(date.getDate()),
+  ].join('-');
+}
+
+
+function monthKey(date) {
+  return [
+    date.getFullYear(),
+    pad(date.getMonth() + 1),
+  ].join('-');
+}
+
+
+function monthDateFromKey(value) {
+  const [
+    year,
+    month,
+  ] = String(value)
+    .split('-')
+    .map(Number);
+
+  return new Date(
+    year,
+    month - 1,
+    1,
+  );
+}
+
+
+function monthLabelFromKey(value) {
+  return new Intl.DateTimeFormat(
+    'fr-FR',
+    {
+      month: 'long',
+      year: 'numeric',
+    },
+  ).format(
+    monthDateFromKey(value),
+  );
+}
+
+
+function getMonthRangeFromKeys(keys) {
+  if (!keys.length) {
+    return null;
+  }
+
+  const ordered =
+    [...keys].sort();
+
+  const first =
+    monthDateFromKey(
+      ordered[0],
+    );
+
+  const last =
+    monthDateFromKey(
+      ordered[
+        ordered.length - 1
+      ],
+    );
+
+  return {
+    startDay:
+      toISODate(
+        new Date(
+          first.getFullYear(),
+          first.getMonth(),
+          1,
+        ),
+      ),
+
+    endDay:
+      toISODate(
+        new Date(
+          last.getFullYear(),
+          last.getMonth() + 1,
+          0,
+        ),
+      ),
   };
-  const colors = palette[tone] || palette.neutral;
+}
+
+
+function getMonthMatrix(monthKeyValue) {
+  const refDate =
+    monthDateFromKey(
+      monthKeyValue,
+    );
+
+  const year =
+    refDate.getFullYear();
+
+  const month =
+    refDate.getMonth();
+
+  const first =
+    new Date(
+      year,
+      month,
+      1,
+    );
+
+  const last =
+    new Date(
+      year,
+      month + 1,
+      0,
+    );
+
+  const start =
+    new Date(first);
+
+  const startOffset =
+    (first.getDay() + 6) % 7;
+
+  start.setDate(
+    first.getDate() -
+      startOffset,
+  );
+
+  const end =
+    new Date(last);
+
+  const endOffset =
+    (last.getDay() + 6) % 7;
+
+  end.setDate(
+    last.getDate() +
+      (6 - endOffset),
+  );
+
+  const days = [];
+
+  const cursor =
+    new Date(start);
+
+  while (cursor <= end) {
+    days.push(
+      new Date(cursor),
+    );
+
+    cursor.setDate(
+      cursor.getDate() + 1,
+    );
+  }
+
+  const weeks = [];
+
+  for (
+    let index = 0;
+    index < days.length;
+    index += 7
+  ) {
+    weeks.push(
+      days.slice(
+        index,
+        index + 7,
+      ),
+    );
+  }
+
+  return weeks;
+}
+
+
+function StatusBadge({
+  children,
+  tone = 'neutral',
+}) {
+  const palette = {
+    success: {
+      background: '#dcfce7',
+      color: '#15803d',
+    },
+
+    info: {
+      background: '#dbeafe',
+      color: '#1d4ed8',
+    },
+
+    neutral: {
+      background: '#f1f5f9',
+      color: '#64748b',
+    },
+  };
+
+  const colors =
+    palette[tone] ||
+    palette.neutral;
 
   return (
     <span
@@ -38,62 +243,407 @@ function StatusBadge({ children, tone = 'neutral' }) {
   );
 }
 
-export default function TrainerAvailabilityShare() {
-  const [contacts, setContacts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [message, setMessage] = useState('');
-  const [form, setForm] = useState(EMPTY_FORM);
-  const [editingId, setEditingId] = useState(null);
-  const [saving, setSaving] = useState(false);
-  const [deletingId, setDeletingId] = useState(null);
-  const [contactToDelete, setContactToDelete] = useState(null);
 
-  const loadContacts = useCallback(async () => {
-    setLoading(true);
-    setError('');
-    try {
-      setContacts(await getMyAvailabilityContacts());
-    } catch (loadError) {
-      setError(
-        loadError?.message ||
-          "Impossible de charger votre carnet d'organismes.",
+function SharedDay({
+  date,
+  currentMonth,
+  state,
+}) {
+  const inMonth =
+    date.getMonth() ===
+    currentMonth;
+
+  if (!inMonth) {
+    return (
+      <div
+        style={{
+          minHeight: 66,
+          borderRadius: 10,
+          background: '#f8fafc',
+          opacity: 0.42,
+        }}
+      />
+    );
+  }
+
+
+  const palettes = {
+    available: {
+      background: '#f0fdf4',
+      border: '#86efac',
+      color: '#15803d',
+    },
+
+    unavailable: {
+      background: '#fef2f2',
+      border: '#fecaca',
+      color: '#b42318',
+    },
+
+    option: {
+      background: '#fffbeb',
+      border: '#fde68a',
+      color: '#a16207',
+    },
+
+    mission: {
+      background: '#eff6ff',
+      border: '#bfdbfe',
+      color: '#1d4ed8',
+    },
+
+    unknown: {
+      background: '#f8fafc',
+      border: '#e2e8f0',
+      color: '#64748b',
+    },
+  };
+
+
+  const palette =
+    palettes[state.tone] ||
+    palettes.unknown;
+
+
+  return (
+    <div
+      style={{
+        minHeight: 66,
+        border:
+          `1px solid ${palette.border}`,
+        borderRadius: 10,
+        padding: 7,
+        background:
+          palette.background,
+        boxSizing: 'border-box',
+      }}
+    >
+      <div
+        style={{
+          fontSize: 12,
+          fontWeight: 800,
+          color: '#475569',
+        }}
+      >
+        {date.getDate()}
+      </div>
+
+      <div
+        style={{
+          marginTop: 6,
+          fontSize: 11,
+          lineHeight: 1.25,
+          fontWeight: 800,
+          color: palette.color,
+        }}
+      >
+        {state.label}
+      </div>
+
+      {state.otherOptionsCount > 0 ? (
+        <div
+          style={{
+            marginTop: 4,
+            fontSize: 9.5,
+            lineHeight: 1.3,
+            color: '#854d0e',
+            fontWeight: 700,
+          }}
+        >
+          ⚠️{' '}
+          {state.otherOptionsCount === 1
+            ? "1 autre organisme s'est positionné"
+            : `${state.otherOptionsCount} autres organismes se sont positionnés`}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+
+export default function TrainerAvailabilityShare() {
+  const [
+    contacts,
+    setContacts,
+  ] = useState([]);
+
+  const [
+    loading,
+    setLoading,
+  ] = useState(true);
+
+  const [
+    error,
+    setError,
+  ] = useState('');
+
+  const [
+    message,
+    setMessage,
+  ] = useState('');
+
+  const [
+    form,
+    setForm,
+  ] = useState(
+    EMPTY_FORM,
+  );
+
+  const [
+    editingId,
+    setEditingId,
+  ] = useState(null);
+
+  const [
+    saving,
+    setSaving,
+  ] = useState(false);
+
+  const [
+    deletingId,
+    setDeletingId,
+  ] = useState(null);
+
+  const [
+    contactToDelete,
+    setContactToDelete,
+  ] = useState(null);
+
+
+  const monthChoices =
+    useMemo(() => {
+      const current =
+        new Date();
+
+      return Array.from(
+        {
+          length: 6,
+        },
+        (
+          _,
+          index,
+        ) => {
+          const date =
+            new Date(
+              current.getFullYear(),
+              current.getMonth() +
+                index,
+              1,
+            );
+
+          return {
+            key:
+              monthKey(date),
+
+            label:
+              new Intl.DateTimeFormat(
+                'fr-FR',
+                {
+                  month: 'long',
+                  year: 'numeric',
+                },
+              ).format(
+                date,
+              ),
+          };
+        },
       );
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+    }, []);
+
+
+  const [
+    selectedMonths,
+    setSelectedMonths,
+  ] = useState(
+    () => [
+      monthKey(
+        new Date(),
+      ),
+    ],
+  );
+
+
+  const [
+    previewContactId,
+    setPreviewContactId,
+  ] = useState('');
+
+
+  const [
+    previewData,
+    setPreviewData,
+  ] = useState(null);
+
+  const [
+    previewLoading,
+    setPreviewLoading,
+  ] = useState(false);
+
+  const [
+    previewError,
+    setPreviewError,
+  ] = useState('');
+
+
+  const previewContact =
+    useMemo(
+      () =>
+        contacts.find(
+          (contact) =>
+            contact.id ===
+            previewContactId,
+        ) || null,
+      [
+        contacts,
+        previewContactId,
+      ],
+    );
+
+
+  const loadContacts =
+    useCallback(async () => {
+      setLoading(true);
+      setError('');
+
+      try {
+        const rows =
+          await getMyAvailabilityContacts();
+
+        setContacts(
+          rows,
+        );
+
+        setPreviewContactId(
+          (current) =>
+            current ||
+            rows?.[0]?.id ||
+            '',
+        );
+      } catch (loadError) {
+        setError(
+          loadError?.message ||
+            "Impossible de charger votre carnet d'organismes.",
+        );
+      } finally {
+        setLoading(false);
+      }
+    }, []);
+
 
   useEffect(() => {
     loadContacts();
   }, [loadContacts]);
 
+
+  const loadPreview =
+    useCallback(async () => {
+      if (
+        !previewContact ||
+        selectedMonths.length === 0
+      ) {
+        setPreviewData(null);
+        return;
+      }
+
+      const range =
+        getMonthRangeFromKeys(
+          selectedMonths,
+        );
+
+      if (!range) {
+        setPreviewData(null);
+        return;
+      }
+
+      setPreviewLoading(true);
+      setPreviewError('');
+
+      try {
+        const data =
+          await getMyAvailabilitySharePreview({
+            ...range,
+            organizationId:
+              previewContact.organization_id,
+          });
+
+        setPreviewData(data);
+      } catch (loadError) {
+        console.error(
+          'Préparation de l’aperçu impossible :',
+          loadError,
+        );
+
+        setPreviewError(
+          "Impossible de préparer l'aperçu de vos disponibilités.",
+        );
+      } finally {
+        setPreviewLoading(false);
+      }
+    }, [
+      previewContact,
+      selectedMonths,
+    ]);
+
+
+  useEffect(() => {
+    loadPreview();
+  }, [loadPreview]);
+
+
   const resetForm = () => {
-    setForm(EMPTY_FORM);
+    setForm(
+      EMPTY_FORM,
+    );
+
     setEditingId(null);
     setError('');
   };
 
+
   const change = (event) => {
-    setForm((previous) => ({
-      ...previous,
-      [event.target.name]: event.target.value,
-    }));
+    setForm(
+      (previous) => ({
+        ...previous,
+        [
+          event.target.name
+        ]:
+          event.target.value,
+      }),
+    );
+
     setError('');
     setMessage('');
   };
 
-  const sortContacts = (rows) =>
-    [...rows].sort((a, b) =>
-      String(a.organization_name || '').localeCompare(
-        String(b.organization_name || ''),
-        'fr',
-      ),
-    );
 
-  const submit = async (event) => {
+  const sortContacts =
+    (rows) =>
+      [...rows].sort(
+        (
+          first,
+          second,
+        ) =>
+          String(
+            first.organization_name ||
+              '',
+          ).localeCompare(
+            String(
+              second.organization_name ||
+                '',
+            ),
+            'fr',
+          ),
+      );
+
+
+  const submit = async (
+    event,
+  ) => {
     event.preventDefault();
-    if (saving) return;
+
+    if (saving) {
+      return;
+    }
 
     setSaving(true);
     setError('');
@@ -101,23 +651,58 @@ export default function TrainerAvailabilityShare() {
 
     try {
       if (editingId) {
-        const updated = await updateMyAvailabilityContact({
-          contactId: editingId,
-          ...form,
-        });
-        setContacts((rows) =>
-          sortContacts(
-            rows.map((row) => (row.id === editingId ? updated : row)),
-          ),
+        const updated =
+          await updateMyAvailabilityContact({
+            contactId:
+              editingId,
+            ...form,
+          });
+
+        setContacts(
+          (rows) =>
+            sortContacts(
+              rows.map(
+                (row) =>
+                  row.id ===
+                  editingId
+                    ? updated
+                    : row,
+              ),
+            ),
         );
-        setMessage('Le contact a bien été modifié.');
+
+        setMessage(
+          'Le contact a bien été modifié.',
+        );
       } else {
-        const created = await createMyAvailabilityContact(form);
-        setContacts((rows) => sortContacts([...rows, created]));
-        setMessage("L'organisme a bien été ajouté à votre carnet.");
+        const created =
+          await createMyAvailabilityContact(
+            form,
+          );
+
+        setContacts(
+          (rows) =>
+            sortContacts([
+              ...rows,
+              created,
+            ]),
+        );
+
+        setPreviewContactId(
+          (current) =>
+            current ||
+            created.id,
+        );
+
+        setMessage(
+          "L'organisme a bien été ajouté à votre carnet.",
+        );
       }
 
-      setForm(EMPTY_FORM);
+      setForm(
+        EMPTY_FORM,
+      );
+
       setEditingId(null);
     } catch (saveError) {
       setError(
@@ -129,149 +714,412 @@ export default function TrainerAvailabilityShare() {
     }
   };
 
-  const edit = (contact) => {
-    setEditingId(contact.id);
+
+  const edit = (
+    contact,
+  ) => {
+    setEditingId(
+      contact.id,
+    );
+
     setForm({
-      organizationName: contact.organization_name || '',
-      contactName: contact.contact_name || '',
-      email: contact.email || '',
-      phone: contact.phone || '',
+      organizationName:
+        contact.organization_name ||
+        '',
+
+      contactName:
+        contact.contact_name ||
+        '',
+
+      email:
+        contact.email || '',
+
+      phone:
+        contact.phone || '',
     });
-    setError('');
-    setMessage('');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
 
-  const askDelete = (contact) => {
-    if (deletingId) return;
-    setContactToDelete(contact);
-    setError('');
-    setMessage('');
-  };
-
-  const cancelDelete = () => {
-    if (deletingId) return;
-    setContactToDelete(null);
-  };
-
-  const confirmDelete = async () => {
-    const contact = contactToDelete;
-    if (!contact?.id || deletingId) return;
-
-    setDeletingId(contact.id);
     setError('');
     setMessage('');
 
-    try {
-      await deleteMyAvailabilityContact(contact.id);
-      setContacts((rows) => rows.filter((row) => row.id !== contact.id));
-      if (editingId === contact.id) resetForm();
-      setContactToDelete(null);
-      setMessage('Le contact a bien été supprimé.');
-    } catch (deleteError) {
-      setError(
-        deleteError?.message ||
-          'Impossible de supprimer ce contact.',
-      );
-    } finally {
-      setDeletingId(null);
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+  };
+
+
+  const askDelete = (
+    contact,
+  ) => {
+    if (deletingId) {
+      return;
     }
+
+    setContactToDelete(
+      contact,
+    );
+
+    setError('');
+    setMessage('');
   };
+
+
+  const cancelDelete =
+    () => {
+      if (deletingId) {
+        return;
+      }
+
+      setContactToDelete(
+        null,
+      );
+    };
+
+
+  const confirmDelete =
+    async () => {
+      const contact =
+        contactToDelete;
+
+      if (
+        !contact?.id ||
+        deletingId
+      ) {
+        return;
+      }
+
+      setDeletingId(
+        contact.id,
+      );
+
+      setError('');
+      setMessage('');
+
+      try {
+        await deleteMyAvailabilityContact(
+          contact.id,
+        );
+
+        setContacts(
+          (rows) =>
+            rows.filter(
+              (row) =>
+                row.id !==
+                contact.id,
+            ),
+        );
+
+        if (
+          previewContactId ===
+          contact.id
+        ) {
+          const replacement =
+            contacts.find(
+              (row) =>
+                row.id !==
+                contact.id,
+            );
+
+          setPreviewContactId(
+            replacement?.id ||
+            '',
+          );
+        }
+
+        if (
+          editingId ===
+          contact.id
+        ) {
+          resetForm();
+        }
+
+        setContactToDelete(
+          null,
+        );
+
+        setMessage(
+          'Le contact a bien été supprimé.',
+        );
+      } catch (deleteError) {
+        setError(
+          deleteError?.message ||
+            'Impossible de supprimer ce contact.',
+        );
+      } finally {
+        setDeletingId(
+          null,
+        );
+      }
+    };
+
+
+  const toggleMonth =
+    (key) => {
+      setPreviewError('');
+
+      setSelectedMonths(
+        (current) => {
+          if (
+            current.includes(
+              key,
+            )
+          ) {
+            if (
+              current.length ===
+              1
+            ) {
+              return current;
+            }
+
+            return current.filter(
+              (item) =>
+                item !== key,
+            );
+          }
+
+          return [
+            ...current,
+            key,
+          ].sort();
+        },
+      );
+    };
+
+
+  const unknownDaysCount =
+    useMemo(() => {
+      if (!previewData) {
+        return 0;
+      }
+
+      let count = 0;
+
+      for (
+        const selectedMonth of
+        selectedMonths
+      ) {
+        const matrix =
+          getMonthMatrix(
+            selectedMonth,
+          );
+
+        const currentMonth =
+          monthDateFromKey(
+            selectedMonth,
+          ).getMonth();
+
+        for (
+          const week of matrix
+        ) {
+          for (
+            const date of week
+          ) {
+            if (
+              date.getMonth() !==
+              currentMonth
+            ) {
+              continue;
+            }
+
+            const state =
+              getSharedDayState({
+                day:
+                  toISODate(
+                    date,
+                  ),
+
+                ...previewData,
+              });
+
+            if (
+              state.key ===
+              'unknown'
+            ) {
+              count += 1;
+            }
+          }
+        }
+      }
+
+      return count;
+    }, [
+      previewData,
+      selectedMonths,
+    ]);
+
 
   return (
     <div className="page-container">
       <div className="page-heading">
         <div>
-          <p className="page-eyebrow">PARTAGE DES DISPONIBILITÉS</p>
-          <h1>Partager mes disponibilités</h1>
+          <p className="page-eyebrow">
+            PARTAGE DES DISPONIBILITÉS
+          </p>
+
+          <h1>
+            Partager mes disponibilités
+          </h1>
+
           <p>
-            Gérez les organismes avec lesquels vous souhaitez partager votre planning.
+            Gérez vos contacts, choisissez les mois à partager et prévisualisez exactement ce que chaque organisme verra.
           </p>
         </div>
       </div>
 
+
       <div className="panel-card">
-        <h2>Mon carnet d'organismes</h2>
+        <h2>
+          Mon carnet d'organismes
+        </h2>
+
         <p>
-          Ajoutez vos contacts OF. Formaplane vous indique si l'organisme
-          possède déjà un compte et, lorsqu'il est inscrit, s'il vous a déjà
-          ajouté à son réseau de formateurs.
+          Ajoutez vos contacts OF. Formaplane vous indique si l'organisme possède déjà un compte et, lorsqu'il est inscrit, s'il vous a déjà ajouté à son réseau de formateurs.
         </p>
 
-        <form onSubmit={submit} style={{ marginTop: 20 }}>
+
+        <form
+          onSubmit={
+            submit
+          }
+          style={{
+            marginTop: 14,
+          }}
+        >
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-              gap: 14,
+              gridTemplateColumns:
+                'repeat(auto-fit, minmax(220px, 1fr))',
+              gap: 10,
             }}
           >
-            <label style={{ display: 'grid', gap: 6, fontWeight: 700 }}>
+            <label
+              style={{
+                display: 'grid',
+                gap: 5,
+                fontWeight: 700,
+              }}
+            >
               Organisme de formation
               <input
                 name="organizationName"
-                value={form.organizationName}
-                onChange={change}
+                value={
+                  form.organizationName
+                }
+                onChange={
+                  change
+                }
                 placeholder="Ex. Alter Prévention"
                 required
               />
             </label>
 
-            <label style={{ display: 'grid', gap: 6, fontWeight: 700 }}>
+            <label
+              style={{
+                display: 'grid',
+                gap: 5,
+                fontWeight: 700,
+              }}
+            >
               Nom du contact
               <input
                 name="contactName"
-                value={form.contactName}
-                onChange={change}
+                value={
+                  form.contactName
+                }
+                onChange={
+                  change
+                }
                 placeholder="Ex. Sophie Martin"
               />
             </label>
 
-            <label style={{ display: 'grid', gap: 6, fontWeight: 700 }}>
+            <label
+              style={{
+                display: 'grid',
+                gap: 5,
+                fontWeight: 700,
+              }}
+            >
               Adresse e-mail
               <input
                 type="email"
                 name="email"
-                value={form.email}
-                onChange={change}
+                value={
+                  form.email
+                }
+                onChange={
+                  change
+                }
                 placeholder="contact@organisme.fr"
                 required
               />
             </label>
 
-            <label style={{ display: 'grid', gap: 6, fontWeight: 700 }}>
+            <label
+              style={{
+                display: 'grid',
+                gap: 5,
+                fontWeight: 700,
+              }}
+            >
               Téléphone
               <input
                 type="tel"
                 name="phone"
-                value={form.phone}
-                onChange={change}
+                value={
+                  form.phone
+                }
+                onChange={
+                  change
+                }
                 placeholder="Optionnel"
               />
             </label>
           </div>
 
+
           {error ? (
-            <div style={{ marginTop: 14, color: '#b42318', fontWeight: 700 }}>
+            <div
+              style={{
+                marginTop: 14,
+                color: '#b42318',
+                fontWeight: 700,
+              }}
+            >
               {error}
             </div>
           ) : null}
 
+
           {message ? (
-            <div style={{ marginTop: 14, color: '#15803d', fontWeight: 700 }}>
+            <div
+              style={{
+                marginTop: 14,
+                color: '#15803d',
+                fontWeight: 700,
+              }}
+            >
               {message}
             </div>
           ) : null}
+
 
           <div
             style={{
               display: 'flex',
               gap: 10,
               flexWrap: 'wrap',
-              marginTop: 18,
+              marginTop: 12,
             }}
           >
-            <button className="button" type="submit" disabled={saving}>
+            <button
+              className="button"
+              type="submit"
+              disabled={
+                saving
+              }
+            >
               {saving
                 ? 'Enregistrement…'
                 : editingId
@@ -283,7 +1131,9 @@ export default function TrainerAvailabilityShare() {
               <button
                 className="button button--soft"
                 type="button"
-                onClick={resetForm}
+                onClick={
+                  resetForm
+                }
               >
                 Annuler
               </button>
@@ -292,22 +1142,58 @@ export default function TrainerAvailabilityShare() {
         </form>
       </div>
 
-      <div className="panel-card" style={{ marginTop: 20 }}>
-        <h2 style={{ marginBottom: 4 }}>Mes contacts</h2>
-        <p style={{ margin: 0 }}>
-          {contacts.length} contact{contacts.length > 1 ? 's' : ''}
+
+      <div
+        className="panel-card"
+        style={{
+          marginTop: 14,
+        }}
+      >
+        <h2
+          style={{
+            marginBottom: 4,
+          }}
+        >
+          Mes contacts
+        </h2>
+
+        <p
+          style={{
+            margin: 0,
+          }}
+        >
+          {contacts.length}{' '}
+          contact
+          {contacts.length >
+          1
+            ? 's'
+            : ''}
         </p>
 
-        {loading ? <p style={{ marginTop: 18 }}>Chargement du carnet…</p> : null}
 
-        {!loading && contacts.length === 0 ? (
+        {loading ? (
+          <p
+            style={{
+              marginTop: 12,
+            }}
+          >
+            Chargement du carnet…
+          </p>
+        ) : null}
+
+
+        {!loading &&
+        contacts.length ===
+          0 ? (
           <div
             style={{
-              marginTop: 18,
+              marginTop: 12,
               padding: 18,
-              border: '1px dashed #cbd5e1',
+              border:
+                '1px dashed #cbd5e1',
               borderRadius: 12,
-              background: '#f8fafc',
+              background:
+                '#f8fafc',
               color: '#64748b',
             }}
           >
@@ -315,104 +1201,675 @@ export default function TrainerAvailabilityShare() {
           </div>
         ) : null}
 
-        {!loading && contacts.length > 0 ? (
-          <div style={{ display: 'grid', gap: 12, marginTop: 18 }}>
-            {contacts.map((contact) => (
-              <div
-                key={contact.id}
-                style={{
-                  border: '1px solid #e2e8f0',
-                  borderRadius: 12,
-                  padding: 16,
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  gap: 16,
-                  flexWrap: 'wrap',
-                  background: '#fff',
-                }}
-              >
-                <div>
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 8,
-                      flexWrap: 'wrap',
-                    }}
-                  >
-                    <strong>{contact.organization_name}</strong>
-                    <StatusBadge tone={contact.organization_id ? 'success' : 'neutral'}>
-                      {contact.organization_id
-                        ? 'Inscrit sur Formaplane'
-                        : 'Non inscrit'}
-                    </StatusBadge>
 
-                    {contact.organization_id ? (
-                      <StatusBadge tone={contact.is_referenced ? 'info' : 'neutral'}>
-                        {contact.is_referenced
-                          ? 'Vous êtes dans son réseau'
-                          : 'Pas encore dans son réseau'}
+        {!loading &&
+        contacts.length >
+          0 ? (
+          <div
+            style={{
+              display: 'grid',
+              gap: 12,
+              marginTop: 12,
+            }}
+          >
+            {contacts.map(
+              (contact) => (
+                <div
+                  key={
+                    contact.id
+                  }
+                  style={{
+                    border:
+                      '1px solid #e2e8f0',
+                    borderRadius: 12,
+                    padding: 12,
+                    display: 'flex',
+                    justifyContent:
+                      'space-between',
+                    alignItems:
+                      'center',
+                    gap: 16,
+                    flexWrap:
+                      'wrap',
+                    background: '#fff',
+                  }}
+                >
+                  <div>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems:
+                          'center',
+                        gap: 5,
+                        flexWrap:
+                          'wrap',
+                      }}
+                    >
+                      <strong>
+                        {
+                          contact.organization_name
+                        }
+                      </strong>
+
+                      <StatusBadge
+                        tone={
+                          contact.organization_id
+                            ? 'success'
+                            : 'neutral'
+                        }
+                      >
+                        {contact.organization_id
+                          ? 'Inscrit sur Formaplane'
+                          : 'Non inscrit'}
                       </StatusBadge>
+
+                      {contact.organization_id ? (
+                        <StatusBadge
+                          tone={
+                            contact.is_referenced
+                              ? 'info'
+                              : 'neutral'
+                          }
+                        >
+                          {contact.is_referenced
+                            ? 'Vous êtes dans son réseau'
+                            : 'Pas encore dans son réseau'}
+                        </StatusBadge>
+                      ) : null}
+                    </div>
+
+                    {contact.contact_name ? (
+                      <div
+                        style={{
+                          marginTop: 6,
+                          color:
+                            '#475569',
+                        }}
+                      >
+                        {
+                          contact.contact_name
+                        }
+                      </div>
+                    ) : null}
+
+                    <div
+                      style={{
+                        marginTop: 4,
+                        color:
+                          '#64748b',
+                        fontSize: 14,
+                      }}
+                    >
+                      {
+                        contact.email
+                      }
+                    </div>
+
+                    {contact.phone ? (
+                      <div
+                        style={{
+                          marginTop: 2,
+                          color:
+                            '#64748b',
+                          fontSize: 14,
+                        }}
+                      >
+                        {
+                          contact.phone
+                        }
+                      </div>
                     ) : null}
                   </div>
 
-                  {contact.contact_name ? (
-                    <div style={{ marginTop: 6, color: '#475569' }}>
-                      {contact.contact_name}
-                    </div>
-                  ) : null}
+                  <div
+                    style={{
+                      display: 'flex',
+                      gap: 5,
+                    }}
+                  >
+                    <button
+                      className="button button--soft"
+                      type="button"
+                      onClick={() =>
+                        edit(
+                          contact,
+                        )
+                      }
+                    >
+                      Modifier
+                    </button>
 
-                  <div style={{ marginTop: 4, color: '#64748b', fontSize: 14 }}>
-                    {contact.email}
+                    <button
+                      className="button button--soft"
+                      type="button"
+                      disabled={
+                        deletingId ===
+                        contact.id
+                      }
+                      onClick={() =>
+                        askDelete(
+                          contact,
+                        )
+                      }
+                      style={{
+                        color:
+                          '#b42318',
+                      }}
+                    >
+                      Supprimer
+                    </button>
                   </div>
-
-                  {contact.phone ? (
-                    <div style={{ marginTop: 2, color: '#64748b', fontSize: 14 }}>
-                      {contact.phone}
-                    </div>
-                  ) : null}
                 </div>
-
-                <div style={{ display: 'flex', gap: 8 }}>
-                  <button
-                    className="button button--soft"
-                    type="button"
-                    onClick={() => edit(contact)}
-                  >
-                    Modifier
-                  </button>
-
-                  <button
-                    className="button button--soft"
-                    type="button"
-                    disabled={deletingId === contact.id}
-                    onClick={() => askDelete(contact)}
-                    style={{ color: '#b42318' }}
-                  >
-                    Supprimer
-                  </button>
-                </div>
-              </div>
-            ))}
+              ),
+            )}
           </div>
         ) : null}
       </div>
 
+
+      <div
+        className="panel-card"
+        style={{
+          marginTop: 14,
+        }}
+      >
+        <p className="page-eyebrow">
+          PRÉPARER LE PARTAGE
+        </p>
+
+        <h2>
+          Choisir les mois et prévisualiser
+        </h2>
+
+        <p>
+          L'aperçu est personnalisé pour l'organisme sélectionné. Une mission ou une option avec cet organisme est donc identifiée sans révéler l'activité avec vos autres partenaires.
+        </p>
+
+
+        {contacts.length ===
+        0 ? (
+          <div
+            style={{
+              marginTop: 12,
+              padding: 18,
+              border:
+                '1px dashed #cbd5e1',
+              borderRadius: 12,
+              background:
+                '#f8fafc',
+              color: '#64748b',
+            }}
+          >
+            Ajoutez au moins un organisme à votre carnet pour préparer un partage.
+          </div>
+        ) : (
+          <>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns:
+                  'minmax(240px, 1fr) minmax(300px, 2fr)',
+                gap: 14,
+                marginTop: 14,
+              }}
+            >
+              <div>
+                <label
+                  style={{
+                    display: 'grid',
+                    gap: 7,
+                    fontWeight: 700,
+                  }}
+                >
+                  Aperçu pour
+                  <select
+                    value={
+                      previewContactId
+                    }
+                    onChange={(
+                      event,
+                    ) =>
+                      setPreviewContactId(
+                        event.target.value,
+                      )
+                    }
+                  >
+                    {contacts.map(
+                      (contact) => (
+                        <option
+                          key={
+                            contact.id
+                          }
+                          value={
+                            contact.id
+                          }
+                        >
+                          {
+                            contact.organization_name
+                          }
+                          {contact.contact_name
+                            ? ` — ${contact.contact_name}`
+                            : ''}
+                        </option>
+                      ),
+                    )}
+                  </select>
+                </label>
+              </div>
+
+
+              <div>
+                <div
+                  style={{
+                    fontWeight: 700,
+                    marginBottom: 5,
+                  }}
+                >
+                  Mois à partager
+                </div>
+
+                <div
+                  style={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    gap: 5,
+                  }}
+                >
+                  {monthChoices.map(
+                    (choice) => {
+                      const selected =
+                        selectedMonths.includes(
+                          choice.key,
+                        );
+
+                      return (
+                        <button
+                          key={
+                            choice.key
+                          }
+                          className={
+                            selected
+                              ? 'button'
+                              : 'button button--soft'
+                          }
+                          type="button"
+                          onClick={() =>
+                            toggleMonth(
+                              choice.key,
+                            )
+                          }
+                          style={{
+                            textTransform:
+                              'capitalize',
+                          }}
+                        >
+                          {
+                            choice.label
+                          }
+                        </button>
+                      );
+                    },
+                  )}
+                </div>
+
+                <p
+                  style={{
+                    margin:
+                      '6px 0 0',
+                    fontSize: 12,
+                    color:
+                      '#64748b',
+                  }}
+                >
+                  Vous pouvez sélectionner plusieurs mois. Au moins un mois doit rester sélectionné.
+                </p>
+              </div>
+            </div>
+
+
+            <div
+              style={{
+                marginTop: 14,
+                padding:
+                  '10px 12px',
+                borderRadius: 12,
+                background:
+                  '#f8fafc',
+                border:
+                  '1px solid #e2e8f0',
+                fontSize: 13,
+                lineHeight: 1.55,
+                color: '#475569',
+              }}
+            >
+              <strong>
+                Confidentialité :
+              </strong>{' '}
+              les missions effectuées pour un autre organisme apparaissent uniquement comme « Indisponible ». Les options des autres organismes ne sont jamais identifiées nominativement.
+            </div>
+
+
+            {previewError ? (
+              <div
+                style={{
+                  marginTop: 16,
+                  color: '#b42318',
+                  fontWeight: 700,
+                }}
+              >
+                {
+                  previewError
+                }
+              </div>
+            ) : null}
+
+
+            {previewLoading ? (
+              <p
+                style={{
+                  marginTop: 12,
+                }}
+              >
+                Préparation de l'aperçu…
+              </p>
+            ) : null}
+
+
+            {!previewLoading &&
+            previewData ? (
+              <>
+                {unknownDaysCount >
+                0 ? (
+                  <div
+                    style={{
+                      marginTop: 12,
+                      padding:
+                        '10px 12px',
+                      borderRadius: 10,
+                      border:
+                        '1px solid #fde68a',
+                      background:
+                        '#fffbeb',
+                      color:
+                        '#854d0e',
+                      fontSize: 13,
+                      lineHeight: 1.5,
+                    }}
+                  >
+                    ⚠️{' '}
+                    <strong>
+                      {unknownDaysCount}{' '}
+                      jour
+                      {unknownDaysCount >
+                      1
+                        ? 's'
+                        : ''}{' '}
+                      non renseigné
+                      {unknownDaysCount >
+                      1
+                        ? 's'
+                        : ''}
+                    </strong>{' '}
+                    sur la période sélectionnée. Ils restent visibles dans cet aperçu afin d'éviter de présenter une disponibilité qui n'a pas été déclarée.
+                  </div>
+                ) : null}
+
+
+                <div
+                  style={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    gap: 10,
+                    marginTop: 12,
+                    padding:
+                      '12px 0',
+                    fontSize: 12,
+                    fontWeight: 700,
+                  }}
+                >
+                  <span
+                    style={{
+                      color:
+                        '#15803d',
+                    }}
+                  >
+                    ● Disponible
+                  </span>
+
+                  <span
+                    style={{
+                      color:
+                        '#a16207',
+                    }}
+                  >
+                    ● Option avec votre organisme
+                  </span>
+
+                  <span
+                    style={{
+                      color:
+                        '#1d4ed8',
+                    }}
+                  >
+                    ● Mission avec votre organisme
+                  </span>
+
+                  <span
+                    style={{
+                      color:
+                        '#b42318',
+                    }}
+                  >
+                    ● Indisponible
+                  </span>
+
+                  <span
+                    style={{
+                      color:
+                        '#64748b',
+                    }}
+                  >
+                    ● Non renseigné
+                  </span>
+                </div>
+
+
+                <div
+                  style={{
+                    display: 'grid',
+                    gap: 18,
+                    marginTop: 6,
+                  }}
+                >
+                  {selectedMonths
+                    .slice()
+                    .sort()
+                    .map(
+                      (
+                        selectedMonth,
+                      ) => {
+                        const monthDate =
+                          monthDateFromKey(
+                            selectedMonth,
+                          );
+
+                        const currentMonth =
+                          monthDate.getMonth();
+
+                        const matrix =
+                          getMonthMatrix(
+                            selectedMonth,
+                          );
+
+                        return (
+                          <section
+                            key={
+                              selectedMonth
+                            }
+                            style={{
+                              border:
+                                '1px solid #e2e8f0',
+                              borderRadius:
+                                14,
+                              padding: 12,
+                              background:
+                                '#ffffff',
+                            }}
+                          >
+                            <h3
+                              style={{
+                                margin:
+                                  '0 0 10px',
+                                textTransform:
+                                  'capitalize',
+                              }}
+                            >
+                              {monthLabelFromKey(
+                                selectedMonth,
+                              )}
+                            </h3>
+
+                            <div
+                              style={{
+                                display:
+                                  'grid',
+                                gridTemplateColumns:
+                                  'repeat(7, minmax(0, 1fr))',
+                                gap: 5,
+                              }}
+                            >
+                              {[
+                                'Lun',
+                                'Mar',
+                                'Mer',
+                                'Jeu',
+                                'Ven',
+                                'Sam',
+                                'Dim',
+                              ].map(
+                                (
+                                  label,
+                                ) => (
+                                  <div
+                                    key={
+                                      label
+                                    }
+                                    style={{
+                                      textAlign:
+                                        'center',
+                                      color:
+                                        '#64748b',
+                                      fontWeight:
+                                        800,
+                                      fontSize:
+                                        11,
+                                      padding:
+                                        '2px 0',
+                                    }}
+                                  >
+                                    {
+                                      label
+                                    }
+                                  </div>
+                                ),
+                              )}
+
+
+                              {matrix.flat().map(
+                                (
+                                  date,
+                                  index,
+                                ) => {
+                                  const iso =
+                                    toISODate(
+                                      date,
+                                    );
+
+                                  const state =
+                                    getSharedDayState({
+                                      day:
+                                        iso,
+                                      ...previewData,
+                                    });
+
+                                  return (
+                                    <SharedDay
+                                      key={`${iso}-${index}`}
+                                      date={
+                                        date
+                                      }
+                                      currentMonth={
+                                        currentMonth
+                                      }
+                                      state={
+                                        state
+                                      }
+                                    />
+                                  );
+                                },
+                              )}
+                            </div>
+                          </section>
+                        );
+                      },
+                    )}
+                </div>
+
+
+                <div
+                  style={{
+                    marginTop: 12,
+                    padding:
+                      '14px 16px',
+                    borderRadius: 12,
+                    border:
+                      '1px solid #dbeafe',
+                    background:
+                      '#f8fbff',
+                    color:
+                      '#475569',
+                    fontSize: 13,
+                    lineHeight: 1.55,
+                  }}
+                >
+                  <strong>
+                    Aperçu personnalisé pour{' '}
+                    {
+                      previewContact?.organization_name
+                    }.
+                  </strong>{' '}
+                  Lors de l'envoi à plusieurs organismes, Formaplane générera automatiquement la version adaptée à chaque destinataire.
+                </div>
+              </>
+            ) : null}
+          </>
+        )}
+      </div>
+
+
       {contactToDelete ? (
         <div
           role="presentation"
-          onMouseDown={(event) => {
-            if (event.target === event.currentTarget) cancelDelete();
+          onMouseDown={(
+            event,
+          ) => {
+            if (
+              event.target ===
+              event.currentTarget
+            ) {
+              cancelDelete();
+            }
           }}
           style={{
             position: 'fixed',
             inset: 0,
             zIndex: 1000,
             display: 'grid',
-            placeItems: 'center',
+            placeItems:
+              'center',
             padding: 20,
-            background: 'rgba(15, 23, 42, 0.55)',
+            background:
+              'rgba(15, 23, 42, 0.55)',
           }}
         >
           <div
@@ -420,50 +1877,93 @@ export default function TrainerAvailabilityShare() {
             aria-modal="true"
             aria-labelledby="delete-contact-title"
             style={{
-              width: 'min(100%, 480px)',
-              background: '#ffffff',
+              width:
+                'min(100%, 480px)',
+              background:
+                '#ffffff',
               borderRadius: 16,
-              boxShadow: '0 24px 70px rgba(15, 23, 42, 0.28)',
+              boxShadow:
+                '0 24px 70px rgba(15, 23, 42, 0.28)',
               padding: 24,
             }}
           >
-            <p className="page-eyebrow" style={{ marginTop: 0 }}>
+            <p
+              className="page-eyebrow"
+              style={{
+                marginTop: 0,
+              }}
+            >
               CARNET D'ORGANISMES
             </p>
-            <h2 id="delete-contact-title" style={{ marginTop: 6 }}>
+
+            <h2
+              id="delete-contact-title"
+              style={{
+                marginTop: 6,
+              }}
+            >
               Supprimer ce contact ?
             </h2>
-            <p style={{ color: '#475569', lineHeight: 1.55 }}>
-              <strong>{contactToDelete.organization_name}</strong> sera retiré
-              de votre carnet. Cette action ne supprime aucun compte Formaplane
-              et ne modifie pas votre éventuel référencement auprès de cet organisme.
+
+            <p
+              style={{
+                color: '#475569',
+                lineHeight: 1.55,
+              }}
+            >
+              <strong>
+                {
+                  contactToDelete.organization_name
+                }
+              </strong>{' '}
+              sera retiré de votre carnet. Cette action ne supprime aucun compte Formaplane et ne modifie pas votre éventuel référencement auprès de cet organisme.
             </p>
 
             <div
               style={{
                 display: 'flex',
-                justifyContent: 'flex-end',
+                justifyContent:
+                  'flex-end',
                 gap: 10,
-                flexWrap: 'wrap',
+                flexWrap:
+                  'wrap',
                 marginTop: 22,
               }}
             >
               <button
                 className="button button--soft"
                 type="button"
-                onClick={cancelDelete}
-                disabled={Boolean(deletingId)}
+                onClick={
+                  cancelDelete
+                }
+                disabled={
+                  Boolean(
+                    deletingId,
+                  )
+                }
               >
                 Annuler
               </button>
+
               <button
                 className="button"
                 type="button"
-                onClick={confirmDelete}
-                disabled={Boolean(deletingId)}
-                style={{ background: '#b42318' }}
+                onClick={
+                  confirmDelete
+                }
+                disabled={
+                  Boolean(
+                    deletingId,
+                  )
+                }
+                style={{
+                  background:
+                    '#b42318',
+                }}
               >
-                {deletingId ? 'Suppression…' : 'Supprimer'}
+                {deletingId
+                  ? 'Suppression…'
+                  : 'Supprimer'}
               </button>
             </div>
           </div>

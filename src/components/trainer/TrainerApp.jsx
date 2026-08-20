@@ -7,6 +7,7 @@ import TrainerMissionDetail from '../../pages/trainer/TrainerMissionDetail';
 import TrainerOrganizationContact from '../../pages/trainer/TrainerOrganizationContact';
 import TrainerAvailability from '../../pages/trainer/TrainerAvailability';
 import TrainerPlanning from '../../pages/trainer/TrainerPlanning';
+import TrainerAvailabilityShare from '../../pages/trainer/TrainerAvailabilityShare';
 import TrainerProfile from '../../pages/trainer/TrainerProfile';
 import TrainerSettings from '../../pages/trainer/TrainerSettings';
 
@@ -35,6 +36,11 @@ const navigationItems = [
     to: '/formateur/disponibilites',
     label: 'Mes disponibilités',
     icon: '▦',
+  },
+  {
+    to: '/formateur/partage-disponibilites',
+    label: 'Partager mes disponibilités',
+    icon: '↗',
   },
   {
     to: '/formateur/planning',
@@ -214,6 +220,11 @@ export default function TrainerApp() {
           <Route
             path="/formateur/disponibilites"
             element={<TrainerAvailability />}
+          />
+
+          <Route
+            path="/formateur/partage-disponibilites"
+            element={<TrainerAvailabilityShare />}
           />
 
           <Route

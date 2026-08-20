@@ -101,6 +101,7 @@ function isTrainerPersonalPath(pathname) {
     pathname === '/formateur/missions' ||
     pathname.startsWith('/formateur/missions/') ||
     pathname === '/formateur/disponibilites' ||
+    pathname === '/formateur/partage-disponibilites' ||
     pathname === '/formateur/planning' ||
     pathname === '/formateur/profil' ||
     pathname === '/formateur/parametres'

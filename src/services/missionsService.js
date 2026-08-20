@@ -172,6 +172,34 @@ export async function recordMissionProposalContact({
   return data;
 }
 
+export async function recordMissionChangeContact({
+  requestId,
+  channel,
+  note = '',
+}) {
+  if (!requestId || !channel) {
+    throw new Error(
+      'La demande de revalidation et le moyen de contact sont obligatoires.',
+    );
+  }
+
+  const { data, error } = await supabase.rpc(
+    'record_mission_change_contact',
+    {
+      p_request_id: requestId,
+      p_channel: channel,
+      p_note: note?.trim() || null,
+    },
+  );
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}
+
+
 export async function getMissionById(id) {
   if (!id) {
     throw new Error(

@@ -12,6 +12,7 @@ import {
   createMission,
   getMissionById,
   previewMissionRevalidation,
+  recordMissionChangeContact,
   updateMissionWithRevalidation,
 } from '../services/missionsService';
 
@@ -59,6 +60,10 @@ export default function MissionForm() {
   const [error, setError] = useState('');
   const [revalidationConfirm, setRevalidationConfirm] =
     useState(null);
+  const [revalidationContactChannel, setRevalidationContactChannel] =
+    useState('email');
+  const [revalidationContactNote, setRevalidationContactNote] =
+    useState('');
 
   useEffect(() => {
     let cancelled = false;
@@ -210,14 +215,29 @@ export default function MissionForm() {
           result.revalidationRequired &&
           result.requestId
         ) {
+          if (revalidationContactChannel === 'email') {
+            try {
+              await sendMissionChangeRevalidationEmails({
+                requestId: result.requestId,
+              });
+            } catch (emailError) {
+              console.error(
+                'Mission modifiée, mais notification de revalidation non envoyée :',
+                emailError,
+              );
+            }
+          }
+
           try {
-            await sendMissionChangeRevalidationEmails({
+            await recordMissionChangeContact({
               requestId: result.requestId,
+              channel: revalidationContactChannel,
+              note: revalidationContactNote,
             });
-          } catch (emailError) {
+          } catch (contactError) {
             console.error(
-              'Mission modifiée, mais notification de revalidation non envoyée :',
-              emailError,
+              'Modification enregistrée, mais le moyen de contact n’a pas pu être ajouté à l’historique :',
+              contactError,
             );
           }
         }
@@ -255,6 +275,8 @@ export default function MissionForm() {
     } finally {
       setSaving(false);
       setRevalidationConfirm(null);
+      setRevalidationContactChannel('email');
+      setRevalidationContactNote('');
     }
   };
 
@@ -280,6 +302,8 @@ export default function MissionForm() {
         );
 
       if (preview.revalidationRequired) {
+        setRevalidationContactChannel('email');
+        setRevalidationContactNote('');
         setRevalidationConfirm(preview);
         setSaving(false);
         return;
@@ -714,18 +738,107 @@ export default function MissionForm() {
               ayant déjà accepté la mission ou étant affecté.
             </p>
 
-            <div style={styles.modalInfo}>
-              <strong>E-mail Formaplane</strong>
-              <span>
-                Chaque formateur recevra les changements « Avant → Maintenant »
-                et un lien sécurisé pour accepter ou refuser les nouvelles conditions.
-              </span>
+            <div style={styles.channelGroup}>
+              <div style={styles.channelGroupTitle}>
+                Envoyer maintenant avec Formaplane
+              </div>
+
+              <label
+                style={{
+                  ...styles.channelOption,
+                  ...(revalidationContactChannel === 'email'
+                    ? styles.channelOptionSelected
+                    : {}),
+                }}
+              >
+                <input
+                  type="radio"
+                  name="revalidation-contact-channel"
+                  value="email"
+                  checked={revalidationContactChannel === 'email'}
+                  onChange={() =>
+                    setRevalidationContactChannel('email')
+                  }
+                />
+
+                <span>
+                  <strong>
+                    Envoyer immédiatement un e-mail via Formaplane
+                  </strong>
+
+                  <span style={styles.channelOptionHelp}>
+                    Chaque formateur recevra les changements
+                    « Avant → Maintenant » et un lien sécurisé
+                    pour accepter ou refuser.
+                  </span>
+                </span>
+              </label>
             </div>
 
-            <p style={styles.modalHelp}>
-              L’envoi par e-mail permet aussi aux formateurs qui n’ont pas
-              encore de compte Formaplane de répondre.
-            </p>
+            <div style={styles.channelGroupSecondary}>
+              <div style={styles.channelGroupTitleSecondary}>
+                J’ai déjà informé les formateurs autrement
+              </div>
+
+              <p style={styles.channelExplanation}>
+                Ces choix n’envoient aucun message depuis Formaplane.
+                Ils enregistrent simplement le moyen utilisé dans l’historique.
+              </p>
+
+              <div style={styles.channelList}>
+                {[
+                  ['sms', 'J’ai envoyé un SMS'],
+                  ['whatsapp', 'J’ai envoyé un message WhatsApp'],
+                  ['phone', 'J’ai appelé les formateurs'],
+                  ['other', 'Autre'],
+                ].map(([value, label]) => (
+                  <label
+                    key={value}
+                    style={{
+                      ...styles.channelOption,
+                      ...(revalidationContactChannel === value
+                        ? styles.channelOptionSelected
+                        : {}),
+                    }}
+                  >
+                    <input
+                      type="radio"
+                      name="revalidation-contact-channel"
+                      value={value}
+                      checked={revalidationContactChannel === value}
+                      onChange={() =>
+                        setRevalidationContactChannel(value)
+                      }
+                    />
+                    {label}
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {revalidationContactChannel === 'other' ? (
+              <label style={styles.channelOtherField}>
+                <span>
+                  Moyen utilisé / précision
+                </span>
+
+                <input
+                  value={revalidationContactNote}
+                  onChange={(event) =>
+                    setRevalidationContactNote(event.target.value)
+                  }
+                  placeholder="Ex. Teams, LinkedIn, assistante…"
+                  style={styles.channelOtherInput}
+                />
+              </label>
+            ) : null}
+
+            {revalidationContactChannel === 'email' ? (
+              <p style={styles.modalHelp}>
+                L’e-mail Formaplane permet également aux formateurs
+                qui n’ont pas encore de compte de répondre.
+              </p>
+            ) : null}
 
             <div style={styles.modalActions}>
               <button
@@ -742,12 +855,20 @@ export default function MissionForm() {
               <button
                 type="button"
                 onClick={saveMission}
-                disabled={saving}
+                disabled={
+                  saving ||
+                  (
+                    revalidationContactChannel === 'other' &&
+                    !revalidationContactNote.trim()
+                  )
+                }
                 style={styles.primaryButton}
               >
                 {saving
                   ? 'Enregistrement…'
-                  : 'Enregistrer et envoyer les e-mails'}
+                  : revalidationContactChannel === 'email'
+                    ? 'Enregistrer et envoyer les e-mails'
+                    : 'Enregistrer la modification'}
               </button>
             </div>
           </section>
@@ -1056,6 +1177,96 @@ const styles = {
     color: '#667085',
     fontSize: 12,
     lineHeight: 1.5,
+  },
+
+  channelGroup: {
+    padding: 12,
+    border: '1px solid #bfdbfe',
+    borderRadius: 10,
+    background: '#eff6ff',
+  },
+
+  channelGroupSecondary: {
+    marginTop: 10,
+    padding: 12,
+    border: '1px solid #e2e8f0',
+    borderRadius: 10,
+    background: '#ffffff',
+  },
+
+  channelGroupTitle: {
+    marginBottom: 8,
+    color: '#1d4ed8',
+    fontSize: 11,
+    fontWeight: 850,
+    textTransform: 'uppercase',
+    letterSpacing: '.5px',
+  },
+
+  channelGroupTitleSecondary: {
+    marginBottom: 6,
+    color: '#64748b',
+    fontSize: 11,
+    fontWeight: 850,
+    textTransform: 'uppercase',
+    letterSpacing: '.5px',
+  },
+
+  channelExplanation: {
+    margin: '0 0 8px',
+    color: '#64748b',
+    fontSize: 11,
+    lineHeight: 1.45,
+  },
+
+  channelList: {
+    display: 'grid',
+    gap: 7,
+  },
+
+  channelOption: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 9,
+    padding: '9px 10px',
+    border: '1px solid #dbeafe',
+    borderRadius: 8,
+    background: '#ffffff',
+    cursor: 'pointer',
+    color: '#334155',
+    fontSize: 12,
+    fontWeight: 650,
+  },
+
+  channelOptionSelected: {
+    border: '1px solid #60a5fa',
+    background: '#f8fbff',
+  },
+
+  channelOptionHelp: {
+    display: 'block',
+    marginTop: 3,
+    color: '#64748b',
+    fontSize: 10.5,
+    fontWeight: 500,
+    lineHeight: 1.4,
+  },
+
+  channelOtherField: {
+    display: 'grid',
+    gap: 6,
+    marginTop: 10,
+    color: '#475569',
+    fontSize: 11,
+    fontWeight: 750,
+  },
+
+  channelOtherInput: {
+    minHeight: 38,
+    padding: '0 10px',
+    border: '1px solid #d0d5dd',
+    borderRadius: 8,
+    font: 'inherit',
   },
 
   modalActions: {

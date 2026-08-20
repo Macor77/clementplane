@@ -2260,6 +2260,8 @@ function getHistoryActionLabel(
         : 'Proposition refusée',
     assigned:
       'Affectation confirmée',
+    mission_pourvue:
+      'Mission pourvue',
     reset:
       'Suivi réinitialisé',
     unavailable_elsewhere:
@@ -2455,6 +2457,10 @@ function TrackedTrainerRow({
   const trainer =
     missionTrainer.trainer || {};
 
+  const revalidationPending =
+    missionTrainer.statut !== 'mission_pourvue' &&
+    pendingChangeResponse?.response_status === 'pending';
+
   const deliveredEvent = trainerHistory.find(
     (item) => item.action === 'email_delivered',
   );
@@ -2466,7 +2472,7 @@ function TrackedTrainerRow({
     <article
       style={{
         ...styles.trackedTrainerRow,
-        ...(pendingChangeResponse?.response_status === 'pending'
+        ...(revalidationPending
           ? styles.revalidationRow
           : missionTrainer.statut === 'affecte'
             ? styles.affectedRow
@@ -2502,7 +2508,7 @@ function TrackedTrainerRow({
             )} km`}
       </span>
 
-      {pendingChangeResponse?.response_status === 'pending' ? (
+      {revalidationPending ? (
         <span style={{ ...styles.badge, background: '#fff7ed', color: '#c2410c' }}>
           Revalidation en attente
         </span>
@@ -2514,7 +2520,7 @@ function TrackedTrainerRow({
 
       <div style={styles.trainerResponseColumn}>
         <span style={styles.timeline}>
-          {pendingChangeResponse?.response_status === 'pending'
+          {revalidationPending
             ? 'Réponse aux nouvelles conditions attendue'
             : formatTimeline(missionTrainer)}
         </span>
@@ -2539,7 +2545,7 @@ function TrackedTrainerRow({
           <span style={styles.timeline}>Proposition non consultée</span>
         ) : null}
 
-        {pendingChangeResponse?.response_status === 'pending' ? (
+        {revalidationPending ? (
           <div style={styles.revalidationReason}>
             <strong>Affectation impossible pour le moment</strong>
             <span>Le formateur doit d’abord accepter les nouvelles conditions de la mission.</span>
@@ -2624,13 +2630,13 @@ function TrackedTrainerRow({
           'accepte' && (
           <ActionButton
             label={
-              pendingChangeResponse?.response_status === 'pending'
+              revalidationPending
                 ? 'Affectation en attente'
                 : 'Affecter'
             }
             loading={loading}
             primary
-            disabled={pendingChangeResponse?.response_status === 'pending'}
+            disabled={revalidationPending}
             onClick={() =>
               onStatusChange('affecte')
             }

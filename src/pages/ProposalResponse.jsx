@@ -187,28 +187,22 @@ export default function ProposalResponse() {
 function CreateTrainerAccountInvite() {
   return (
     <aside style={styles.accountInvite}>
-      <div style={styles.accountInviteIcon} aria-hidden="true">
-        F
-      </div>
+      <strong style={styles.accountInviteTitle}>
+        Retrouvez vos missions dans votre espace Formaplane
+      </strong>
 
-      <div style={styles.accountInviteContent}>
-        <strong style={styles.accountInviteTitle}>
-          Retrouvez vos missions dans votre espace Formaplane
-        </strong>
+      <p style={styles.accountInviteText}>
+        Créez gratuitement votre compte formateur pour renseigner
+        vos disponibilités une seule fois, les partager avec vos
+        organismes partenaires et retrouver vos propositions et missions.
+      </p>
 
-        <p style={styles.accountInviteText}>
-          Créez gratuitement votre compte formateur pour renseigner
-          vos disponibilités une seule fois, les partager avec vos
-          organismes partenaires et retrouver vos propositions et missions.
-        </p>
-
-        <Link
-          to="/inscription?invitation=trainer"
-          style={styles.accountInviteButton}
-        >
-          Créer mon espace formateur
-        </Link>
-      </div>
+      <Link
+        to="/inscription?invitation=trainer"
+        style={styles.accountInviteButton}
+      >
+        Créer mon espace formateur
+      </Link>
     </aside>
   );
 }
@@ -449,27 +443,11 @@ const styles = {
   success: { padding: 16, background: '#ecfdf3', color: '#067647', borderRadius: 10, fontWeight: 700 },
   refused: { padding: 16, background: '#fef3f2', color: '#b42318', borderRadius: 10, fontWeight: 700 },
   accountInvite: {
-    display: 'grid',
-    gridTemplateColumns: '38px minmax(0, 1fr)',
-    gap: 12,
     marginTop: 16,
     padding: 16,
     border: '1px solid #bfdbfe',
     borderRadius: 12,
     background: '#f8fbff',
-  },
-  accountInviteIcon: {
-    display: 'grid',
-    placeItems: 'center',
-    width: 34,
-    height: 34,
-    borderRadius: 10,
-    background: '#2563eb',
-    color: '#ffffff',
-    fontWeight: 900,
-  },
-  accountInviteContent: {
-    minWidth: 0,
   },
   accountInviteTitle: {
     display: 'block',

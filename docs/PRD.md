@@ -206,3 +206,42 @@ Formaplane n'est plus seulement un gestionnaire interne de fiches formateurs. Le
 Le formateur possède son propre espace pour gérer ses disponibilités, propositions, missions, profil et réponses aux revalidations. L'architecture multi-organismes protège les données propres à chaque OF tout en permettant la prévention globale des conflits de planning.
 
 Le prochain enjeu produit est de rendre ces workflows utilisables sans surveillance manuelle grâce aux communications transactionnelles et notifications avant l'ouverture de la bêta.
+
+# État produit après le Sprint 11
+
+Formaplane couvre désormais le cycle opérationnel principal entre organismes de formation et formateurs indépendants :
+
+- constitution et gestion d'un réseau de formateurs ;
+- recherche et recommandation ;
+- gestion des disponibilités ;
+- création et suivi des missions ;
+- propositions envoyées à plusieurs formateurs ;
+- acceptation et refus ;
+- affectation et désaffectation ;
+- modifications importantes et revalidation ;
+- annulation ;
+- désistement du formateur, y compris après affectation ;
+- historique des actions et commentaires ;
+- communications transactionnelles ;
+- parcours adaptés aux formateurs avec ou sans compte ;
+- planning OF et planning formateur.
+
+Le produit entre désormais dans une phase où l'enjeu n'est plus seulement de compléter le cœur du workflow mission, mais aussi de favoriser son adoption, son autonomie d'utilisation, sa fiabilité et son pilotage.
+
+# Priorités produit validées après le Sprint 11
+
+## Sprint 12 — Partage des disponibilités formateur
+
+Permettre au formateur de partager directement ses disponibilités avec son réseau d'OF, qu'ils disposent ou non d'un compte Formaplane.
+
+## Sprint 13 — Tutos, explications, FAQ & transparence produit
+
+Rendre l'application compréhensible et autonome grâce à l'aide contextuelle, aux tutoriels, à la FAQ, à l'affichage de version et à une roadmap publique simplifiée.
+
+## Sprint 14 — Tests automatisés & surveillance
+
+Sécuriser les workflows critiques, les permissions et les fonctions backend, et mettre en place une surveillance adaptée avant l'élargissement de l'usage.
+
+## Sprint 15 — Dashboard Admin & statistiques d'utilisation
+
+Donner à l'administration Formaplane une vision de l'inscription, de l'activité, de l'adoption des fonctionnalités et des principaux indicateurs d'usage.

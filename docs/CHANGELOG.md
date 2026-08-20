@@ -379,3 +379,72 @@ Les parcours principaux ont été rejoués et validés : proposition simple, opt
 # Prochaine étape
 
 Sprint 11 — Brevo et e-mails transactionnels.
+
+# Sprint 11 — Communications transactionnelles et consolidation des workflows métier (Terminé)
+
+## Infrastructure e-mail
+
+- Mise en place et consolidation des e-mails transactionnels Formaplane.
+- Déploiement des fonctions Supabase nécessaires aux notifications métier.
+- Harmonisation des e-mails envoyés aux formateurs et aux organismes de formation.
+- Liens d'action et liens profonds vers les missions concernées.
+- Gestion différenciée des destinataires disposant déjà d'un compte Formaplane et des destinataires externes.
+- Invitation à créer un compte lorsque le destinataire n'est pas encore inscrit.
+
+## Propositions de mission
+
+- Envoi d'une proposition par E-mail Formaplane ou déclaration d'une information transmise par un autre canal.
+- Acceptation ou refus possible depuis un lien public pour un formateur sans compte.
+- Notification de l'OF après réponse du formateur.
+- Commentaires de réponse conservés dans le workflow.
+- Une mission déjà pourvue ne peut plus être acceptée depuis un ancien lien.
+
+## Affectation et désaffectation
+
+- L'OF choisit le canal utilisé pour informer le formateur.
+- E-mail Formaplane proposé par défaut, avec possibilité d'utiliser un canal externe.
+- Notification d'affectation adaptée au statut de compte du formateur.
+- Désaffectation avec information du formateur et conservation de la cohérence métier.
+- Les autres options sont clôturées lorsqu'un formateur est affecté.
+
+## Modification importante et revalidation
+
+- Les modifications importantes d'une mission engagée déclenchent une revalidation des formateurs concernés.
+- L'OF choisit le canal d'information.
+- Présentation des nouvelles conditions au formateur.
+- Acceptation ou refus depuis Formaplane ou depuis un parcours public lorsque nécessaire.
+- Notification de l'OF après réponse.
+- Lorsqu'un formateur est finalement affecté, les autres demandes de revalidation deviennent non actionnables et la mission est indiquée comme pourvue.
+
+## Annulation
+
+- Workflow d'annulation consolidé.
+- Information du formateur selon le canal choisi.
+- E-mail d'annulation enrichi pour les formateurs ayant un compte.
+- Remise en cohérence du planning et des disponibilités après annulation.
+
+## Désistement formateur
+
+- Désistement possible depuis une option acceptée.
+- Désistement également possible après affectation.
+- Commentaire facultatif.
+- Notification de l'OF.
+- Si le formateur affecté se désiste, son affectation est libérée et la mission redevient à pourvoir lorsque son état le permet.
+- Le bouton du mail OF ouvre directement la mission concernée.
+
+## Recette Sprint 11.9
+
+Les parcours critiques ont été testés de bout en bout :
+
+- proposition à un formateur avec compte ;
+- proposition à un formateur sans compte ;
+- acceptation et refus ;
+- affectation et désaffectation ;
+- modification importante acceptée ou refusée ;
+- annulation d'une mission ;
+- désistement avant et après affectation ;
+- plusieurs formateurs intéressés puis mission pourvue ;
+- liens contenus dans les e-mails ;
+- canaux externes sans envoi automatique d'e-mail Formaplane.
+
+Résultat : recette fonctionnelle validée avant clôture du Sprint 11.

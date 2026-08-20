@@ -173,3 +173,29 @@ Le planning sert à piloter l'activité opérationnelle. Une mission annulée do
 ## Décision 19 — Suppression du statut Brouillon
 
 Une mission créée est immédiatement une mission métier **À pourvoir**. Le statut `brouillon` est supprimé du modèle afin d'éviter un parcours parallèle sans utilité opérationnelle.
+
+# Décisions Sprint 11
+
+## Décision 20 — L'action métier et le canal de communication sont distincts
+
+L'OF doit pouvoir enregistrer une action dans Formaplane tout en choisissant comment le destinataire sera informé. L'E-mail Formaplane est proposé par défaut lorsqu'il est pertinent, mais un canal externe peut être déclaré.
+
+## Décision 21 — Un formateur sans compte peut répondre aux sollicitations prévues pour lui
+
+La création d'un compte ne doit pas être un préalable systématique à l'acceptation ou au refus d'une proposition ou d'une revalidation. Le parcours public reste limité à l'action autorisée.
+
+## Décision 22 — Les e-mails doivent ramener au contexte métier
+
+Lorsqu'un utilisateur possède un espace Formaplane, les boutons d'e-mail doivent viser la mission ou la page utile plutôt qu'un accueil générique.
+
+## Décision 23 — Une mission pourvue ferme les autres engagements concurrents
+
+Dès qu'un formateur est affecté, les autres formateurs ne doivent plus pouvoir accepter ou revalider une place devenue indisponible.
+
+## Décision 24 — Le formateur peut se désister même après affectation
+
+Un formateur doit pouvoir signaler son désistement depuis Formaplane qu'il soit encore en option ou déjà affecté. Un désistement après affectation libère la mission afin que l'OF puisse la réaffecter.
+
+## Décision 25 — Les communications doivent favoriser l'adoption sans bloquer le métier
+
+Lorsqu'un destinataire n'a pas encore de compte, Formaplane peut l'inviter à créer son espace après l'action principale, sans rendre cette inscription obligatoire pour traiter la sollicitation.

@@ -280,3 +280,36 @@ Les statuts SQL autorisés de `missions` sont désormais :
 ## Sécurité
 
 Le Sprint 10 renforce les RLS et les RPC de recherche/édition afin qu'un OF n'accède qu'aux données qui lui sont destinées. Les engagements externes restent utilisables pour prévenir les conflits de planning sans exposer les informations métier d'un autre organisme.
+
+# Évolutions de la base — Sprint 11
+
+## Revalidation des modifications
+
+Le modèle utilise les structures `mission_change_requests` et `mission_change_request_trainers` pour suivre une modification importante et la réponse individuelle des formateurs concernés.
+
+Une revalidation conserve notamment :
+- la mission concernée ;
+- l'organisme ;
+- l'auteur de la demande ;
+- les valeurs précédentes ;
+- les nouvelles valeurs ;
+- les anciennes et nouvelles dates ;
+- l'état de réponse de chaque formateur.
+
+## Historique
+
+`mission_trainer_history` reste la trace métier des actions importantes entre une mission et un formateur. Le Sprint 11 renforce son rôle pour les changements de conditions, réponses, désistements et commentaires associés.
+
+## Statuts et clôture
+
+L'affectation d'un formateur clôt fonctionnellement les autres candidatures/options incompatibles avec une mission désormais pourvue.
+
+Le désistement d'un formateur affecté fait passer sa relation au statut `desiste`, libère l'affectation et peut remettre la mission au statut `a_pourvoir`.
+
+## Canaux de contact
+
+Les migrations du Sprint 11 ajoutent les informations nécessaires pour distinguer les communications effectuées par Formaplane des informations transmises par un autre canal. Le canal de communication ne remplace pas le statut métier de la mission ou de la relation formateur/mission.
+
+## Sécurité des réponses publiques
+
+Les parcours destinés aux formateurs sans compte utilisent des fonctions dédiées et un périmètre de données limité. Les RPC authentifiées restent utilisées pour les actions propres aux utilisateurs connectés.

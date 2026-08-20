@@ -1,3 +1,226 @@
+# ROADMAP - Formaplane
+
+> Mise à jour : fin du Sprint 11 — 20 août 2026
+
+## Vision
+
+Formaplane est une application de gestion des relations entre organismes de formation et formateurs indépendants. Le cœur produit permet désormais de gérer le réseau formateurs, les disponibilités, les missions, les propositions, les affectations et les principaux événements qui surviennent pendant la vie d'une mission.
+
+La priorité après le Sprint 11 est de transformer ce cœur métier en produit plus diffusible : partage des disponibilités, autonomie utilisateur, fiabilité technique et pilotage de l'usage.
+
+---
+
+# État actuel
+
+## Sprints 1 à 10 — Socle produit et préparation bêta
+
+Terminés.
+
+Ils ont notamment construit le socle React/Vite/Supabase, le réseau formateurs, les disponibilités, le moteur de missions, le planning, les comptes et espaces, le multi-organismes, l'identité Formaplane et la consolidation métier préparatoire à la bêta.
+
+## Sprint 11 — Communications transactionnelles & workflows métier
+
+**Statut : TERMINÉ — recette fonctionnelle validée.**
+
+### Objectif
+
+Finaliser les communications et les interactions OF ↔ formateurs autour du cycle de vie d'une mission.
+
+### Livré
+
+- e-mails transactionnels Formaplane ;
+- prise en charge des formateurs avec ou sans compte ;
+- propositions, acceptations et refus ;
+- notifications OF ;
+- choix du canal de communication lorsque pertinent ;
+- affectation et désaffectation ;
+- modification importante d'une mission et revalidation ;
+- clôture des réponses devenues impossibles lorsqu'une mission est pourvue ;
+- annulation ;
+- désistement d'une option ;
+- désistement après affectation ;
+- liens profonds depuis les e-mails ;
+- cohérence planning / disponibilités / statuts ;
+- recette de bout en bout des principaux scénarios.
+
+---
+
+# Sprint 12 — Partage des disponibilités formateur
+
+**Statut : À FAIRE**
+
+## Objectif
+
+Permettre à un formateur d'utiliser Formaplane pour partager facilement ses disponibilités avec un ou plusieurs organismes de formation, y compris lorsque ces organismes ne possèdent pas encore de compte.
+
+## Périmètre validé
+
+### Carnet de contacts OF du formateur
+
+- liste de contacts propre à chaque formateur ;
+- ajout et suppression de contacts ;
+- possibilité de sélectionner un ou plusieurs contacts avant un partage ;
+- identification visible des OF disposant déjà d'un compte Formaplane ;
+- identification visible des OF externes à Formaplane.
+
+### Sélection des disponibilités à partager
+
+- sélection préalable d'un ou plusieurs mois ;
+- utilisation des disponibilités réellement enregistrées dans le planning du formateur ;
+- aperçu suffisamment clair avant l'envoi.
+
+### E-mail de partage
+
+L'OF reçoit un e-mail présentant directement une vue claire des disponibilités du formateur pour le ou les mois sélectionnés.
+
+L'objectif est que le destinataire puisse comprendre les disponibilités sans être obligé de créer un compte ou d'ouvrir Formaplane.
+
+### OF déjà inscrit
+
+Le mail contient un bouton permettant d'ouvrir directement la fiche du formateur dans Formaplane, dans le contexte de l'OF connecté.
+
+### OF non inscrit
+
+Le mail contient une invitation courte à découvrir Formaplane et à créer un compte, avec une explication synthétique de l'intérêt du service.
+
+La création d'un compte ne doit pas être nécessaire pour consulter les disponibilités reçues dans le mail.
+
+### Historique des partages
+
+Conserver au minimum :
+- la date du partage ;
+- les destinataires ;
+- la période / les mois partagés.
+
+Cet historique doit permettre au formateur de savoir quand et à qui il a communiqué ses disponibilités.
+
+## Enjeu produit
+
+Cette fonctionnalité apporte une valeur directe aux formateurs et peut devenir un mécanisme d'acquisition organique : un formateur utilisant Formaplane peut faire découvrir naturellement le produit aux OF avec lesquels il travaille.
+
+---
+
+# Sprint 13 — Tutos, explications, FAQ & transparence produit
+
+**Statut : À FAIRE**
+
+## Objectif
+
+Permettre à un nouvel utilisateur de comprendre Formaplane et ses conséquences métier sans accompagnement systématique.
+
+## Périmètre validé
+
+- explications contextuelles sur les pages et actions qui le nécessitent ;
+- explication de ce qui va se produire avant les actions importantes ;
+- menu dédié **Tutos / Explications** ;
+- couverture des principales fonctionnalités ;
+- FAQ ;
+- affichage de la version actuellement déployée ;
+- présentation accessible des fonctionnalités existantes ;
+- roadmap publique simplifiée présentant les fonctionnalités existantes, les idées et les évolutions envisagées.
+
+## Enjeu produit
+
+Préparer l'élargissement de la bêta en réduisant les incompréhensions et le besoin d'assistance individuelle.
+
+---
+
+# Sprint 14 — Tests automatisés & surveillance
+
+**Statut : À FAIRE**
+
+## Objectif
+
+Sécuriser techniquement les parcours critiques avant d'augmenter le nombre d'utilisateurs.
+
+## Périmètre cible
+
+- tests automatisés des workflows métier critiques ;
+- tests des principaux parcours OF ;
+- tests des principaux parcours formateur ;
+- tests des réponses publiques sans compte ;
+- contrôles des RPC et des règles de sécurité / RLS ;
+- contrôles des Edge Functions ;
+- tests des communications transactionnelles critiques ;
+- surveillance des erreurs frontend et backend ;
+- surveillance des fonctions et traitements sensibles ;
+- alertes exploitables lorsqu'un dysfonctionnement important apparaît.
+
+## Enjeu produit
+
+Éviter qu'une régression sur un workflow déjà validé soit découverte uniquement par un utilisateur bêta.
+
+---
+
+# Sprint 15 — Dashboard Admin & statistiques d'utilisation
+
+**Statut : À FAIRE**
+
+## Objectif
+
+Créer directement dans Formaplane un espace d'administration permettant de comprendre l'utilisation réelle du produit.
+
+## Périmètre cible
+
+Le dashboard devra permettre de suivre notamment :
+- nombre d'utilisateurs inscrits ;
+- nombre d'organismes de formation ;
+- nombre de formateurs ;
+- évolution des inscriptions ;
+- activité des utilisateurs ;
+- missions créées ;
+- propositions et réponses ;
+- affectations ;
+- utilisation des communications ;
+- utilisation du partage des disponibilités ;
+- adoption des principales fonctionnalités ;
+- indicateurs techniques ou erreurs utiles au pilotage lorsque pertinent.
+
+Les métriques exactes seront précisées au démarrage du sprint en fonction des données réellement disponibles et des besoins apparus pendant la bêta.
+
+## Distinction importante
+
+Ce dashboard est un **outil d'administration de Formaplane**. Il ne doit pas être confondu avec de futures statistiques métier destinées aux organismes de formation.
+
+---
+
+# Jalon après le Sprint 15
+
+À la fin du Sprint 15, Formaplane doit disposer :
+- d'un cœur métier complet et testé manuellement ;
+- de communications transactionnelles opérationnelles ;
+- d'un mécanisme de partage des disponibilités pouvant favoriser l'acquisition ;
+- d'une aide utilisateur intégrée ;
+- d'une couverture automatisée des parcours critiques ;
+- d'outils internes pour observer l'utilisation de la bêta.
+
+À partir de ce jalon, l'ordre des développements suivants devra être fortement influencé par les retours et les usages réels des premiers utilisateurs.
+
+---
+
+# Pistes pour les Sprints 16+
+
+Ces sujets restent pertinents mais leur ordre n'est pas figé :
+
+- améliorations UX et productivité ;
+- réseau et collaboration entre utilisateurs ;
+- gestion plus avancée des équipes / utilisateurs d'un OF ;
+- statistiques métier destinées aux OF ;
+- documents et pièces liées aux missions ;
+- intégrations calendrier ;
+- communications SMS ;
+- automatisations et relances avancées ;
+- fonctionnalités assistées par IA ;
+- autres besoins identifiés pendant la bêta.
+
+La règle de priorisation après le Sprint 15 sera : **retours utilisateurs + fréquence du besoin + valeur métier + risque technique**.
+
+---
+
+# Archive — ancienne roadmap
+
+La roadmap ci-dessous est conservée comme historique de planification. Ses numéros et priorités futures sont remplacés par la roadmap ci-dessus.
+
 ROADMAP - Formaplane
 Version : 10.0  
 Dernière mise à jour : 18/08/2026  

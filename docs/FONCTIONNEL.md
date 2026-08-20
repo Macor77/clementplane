@@ -372,3 +372,49 @@ Le planning OF se concentre sur les états réellement utiles à la coordination
 ## Suppression du brouillon
 
 Le statut **Brouillon** n'est plus utilisé. Une mission nouvellement créée entre directement dans le workflow **À pourvoir**.
+
+# Évolutions Sprint 11 — Communications et workflows transactionnels
+
+## Principe de communication
+
+Formaplane distingue l'action métier de son canal d'information. Lorsqu'une action nécessite de prévenir un formateur, l'OF peut utiliser l'E-mail Formaplane, proposé par défaut, ou indiquer qu'il informe le formateur par un autre moyen lorsque le workflow le permet.
+
+Le choix d'un canal externe n'empêche pas l'enregistrement de l'action métier et ne doit pas déclencher d'e-mail Formaplane.
+
+## Formateurs avec ou sans compte
+
+Les workflows importants restent accessibles aux formateurs qui ne possèdent pas encore de compte. Les liens publics permettent notamment de répondre aux propositions et aux demandes de revalidation prévues pour eux.
+
+Après leur action, une invitation synthétique leur permet de découvrir Formaplane et de créer leur espace formateur.
+
+Lorsqu'un formateur possède déjà un compte, les e-mails privilégient les liens vers son espace et les pages concernées.
+
+## Proposition, réponse et affectation
+
+Une proposition n'est pas une affectation. Plusieurs formateurs peuvent accepter une même mission tant qu'aucun n'est définitivement affecté.
+
+Après réponse du formateur, l'OF est informé. Lorsqu'un formateur est affecté, les autres options deviennent non actionnables et sont présentées comme mission pourvue.
+
+L'affectation et la désaffectation intègrent désormais le choix du canal d'information.
+
+## Modification importante d'une mission
+
+Une mission déjà engagée peut être modifiée immédiatement, mais certaines modifications imposent de redemander l'accord des formateurs concernés.
+
+Le formateur peut accepter ou refuser les nouvelles conditions. Un refus retire son engagement. Lorsqu'un formateur est affecté, les autres revalidations encore ouvertes sont clôturées fonctionnellement et ne doivent plus être présentées comme en attente.
+
+## Annulation
+
+L'annulation conserve l'historique de la mission tout en retirant ses effets actifs. Le formateur est informé selon le canal choisi. Les disponibilités et le planning sont remis en cohérence avec la disparition de l'engagement.
+
+## Désistement
+
+Le formateur peut se désister :
+- d'une option qu'il avait acceptée ;
+- d'une mission sur laquelle il est déjà affecté.
+
+Dans le second cas, l'affectation est libérée et la mission redevient à pourvoir lorsque son statut le permet. L'OF reçoit une notification et peut ouvrir directement la mission depuis le mail.
+
+## Principe des liens e-mail
+
+Un e-mail transactionnel doit conduire vers l'action ou l'objet métier concerné, et non vers une page d'accueil générique lorsque le contexte permet un lien direct.

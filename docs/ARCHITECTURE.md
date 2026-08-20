@@ -561,3 +561,34 @@ Le projet contient une Edge Function `delete-account` et un service `accountDele
 # État architectural après le Sprint 10
 
 Formaplane dispose désormais d'un socle pré-bêta multi-organismes : authentification, espaces OF/formateur, confidentialité renforcée, réseau partagé, référentiels, workflow mission traçable, revalidation et prévention des doubles affectations. Le Sprint 11 peut se concentrer sur les e-mails transactionnels sans remettre en cause ce socle.
+
+# Évolutions Sprint 11 — Couche transactionnelle et parcours publics
+
+## Architecture des communications
+
+Les communications métier reposent désormais sur :
+- le frontend React/Vite pour déclencher les actions et recueillir le choix de canal ;
+- Supabase pour la persistance, les RPC métier et la sécurité ;
+- des Supabase Edge Functions pour les notifications transactionnelles ;
+- le service d'envoi d'e-mails configuré pour Formaplane ;
+- Vercel pour l'application web publique.
+
+Le déclenchement d'un e-mail est séparé autant que possible de l'enregistrement de l'action métier : une erreur d'e-mail ne doit pas annuler une décision métier déjà enregistrée.
+
+## Parcours publics sécurisés
+
+Certains destinataires ne disposent pas encore de compte Formaplane. Des parcours publics dédiés permettent de répondre aux propositions ou aux demandes de revalidation prévues à cet effet, sans exposer le reste des données de l'application.
+
+Les liens et fonctions publiques doivent rester limités au contexte nécessaire à l'action et utiliser les mécanismes de sécurité prévus par les migrations/RPC correspondantes.
+
+## Revalidation
+
+Le sous-système de revalidation s'appuie sur les demandes de modification de mission et leurs destinataires formateurs. La mission peut être mise à jour tandis que l'engagement de chaque formateur est revalidé séparément.
+
+## Notifications OF
+
+Les réponses et désistements peuvent déclencher une notification vers l'organisme concerné. Les liens profonds utilisent l'identifiant de mission afin de ramener l'utilisateur au bon contexte métier.
+
+## État architectural après le Sprint 11
+
+Formaplane dispose maintenant d'un workflow complet OF ↔ formateur couvrant proposition, réponse, affectation, désaffectation, modification importante, revalidation, annulation et désistement, avec prise en charge des utilisateurs inscrits et de certains parcours publics pour les destinataires non inscrits.

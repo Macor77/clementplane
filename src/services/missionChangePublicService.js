@@ -31,5 +31,30 @@ export async function respondToPublicMissionChange(token, response, comment = ''
   );
 
   if (error) throw error;
+
+  try {
+    const { error: notifyError } = await supabase.functions.invoke(
+      'notify-mission-change-response',
+      {
+        body: {
+          token,
+          response,
+        },
+      },
+    );
+
+    if (notifyError) {
+      console.error(
+        "La réponse a été enregistrée mais la notification à l'OF a échoué :",
+        notifyError,
+      );
+    }
+  } catch (notifyError) {
+    console.error(
+      "La réponse a été enregistrée mais la notification à l'OF a échoué :",
+      notifyError,
+    );
+  }
+
   return data;
 }

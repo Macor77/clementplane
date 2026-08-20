@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
 import {
   getPublicMissionProposal,
@@ -166,7 +166,14 @@ export default function ProposalResponse() {
             </div>
           </>
         ) : (
-          <ResponseState proposal={proposal} expired={expired} />
+          <>
+            <ResponseState proposal={proposal} expired={expired} />
+
+            {['accepte', 'refuse'].includes(proposal.status) &&
+            !proposal.trainer_has_account ? (
+              <CreateTrainerAccountInvite />
+            ) : null}
+          </>
         )}
 
         <p style={styles.footerNote}>
@@ -174,6 +181,35 @@ export default function ProposalResponse() {
         </p>
       </main>
     </div>
+  );
+}
+
+function CreateTrainerAccountInvite() {
+  return (
+    <aside style={styles.accountInvite}>
+      <div style={styles.accountInviteIcon} aria-hidden="true">
+        F
+      </div>
+
+      <div style={styles.accountInviteContent}>
+        <strong style={styles.accountInviteTitle}>
+          Retrouvez vos missions dans votre espace Formaplane
+        </strong>
+
+        <p style={styles.accountInviteText}>
+          Créez gratuitement votre compte formateur pour renseigner
+          vos disponibilités une seule fois, les partager avec vos
+          organismes partenaires et retrouver vos propositions et missions.
+        </p>
+
+        <Link
+          to="/inscription?invitation=trainer"
+          style={styles.accountInviteButton}
+        >
+          Créer mon espace formateur
+        </Link>
+      </div>
+    </aside>
   );
 }
 
@@ -412,6 +448,54 @@ const styles = {
   loading: { padding: 14, color: '#475467' },
   success: { padding: 16, background: '#ecfdf3', color: '#067647', borderRadius: 10, fontWeight: 700 },
   refused: { padding: 16, background: '#fef3f2', color: '#b42318', borderRadius: 10, fontWeight: 700 },
+  accountInvite: {
+    display: 'grid',
+    gridTemplateColumns: '38px minmax(0, 1fr)',
+    gap: 12,
+    marginTop: 16,
+    padding: 16,
+    border: '1px solid #bfdbfe',
+    borderRadius: 12,
+    background: '#f8fbff',
+  },
+  accountInviteIcon: {
+    display: 'grid',
+    placeItems: 'center',
+    width: 34,
+    height: 34,
+    borderRadius: 10,
+    background: '#2563eb',
+    color: '#ffffff',
+    fontWeight: 900,
+  },
+  accountInviteContent: {
+    minWidth: 0,
+  },
+  accountInviteTitle: {
+    display: 'block',
+    color: '#1d4ed8',
+    fontSize: 14,
+    lineHeight: 1.35,
+  },
+  accountInviteText: {
+    margin: '6px 0 11px',
+    color: '#52647d',
+    fontSize: 12,
+    lineHeight: 1.55,
+    fontWeight: 500,
+  },
+  accountInviteButton: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    minHeight: 36,
+    padding: '0 13px',
+    borderRadius: 8,
+    background: '#2563eb',
+    color: '#ffffff',
+    fontSize: 12,
+    fontWeight: 800,
+    textDecoration: 'none',
+  },
   expired: { padding: 16, background: '#fffaeb', color: '#b54708', borderRadius: 10, fontWeight: 700 },
   closedWrapper: {
     display: 'grid',

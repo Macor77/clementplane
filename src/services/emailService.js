@@ -173,3 +173,46 @@ export async function sendMissionProposalEmail({
 
   return data;
 }
+
+
+export async function sendMissionAssignmentConfirmation({
+  missionId,
+  trainerId,
+}) {
+  if (!missionId || !trainerId) {
+    throw new Error(
+      'La mission et le formateur sont obligatoires.',
+    );
+  }
+
+  const { data, error } = await supabase.functions.invoke(
+    'send-transactional-email',
+    {
+      body: {
+        type: 'mission_assignment_confirmation',
+        missionId,
+        trainerId,
+      },
+    },
+  );
+
+  if (error) {
+    console.error(
+      "Erreur d'appel du moteur d'e-mails :",
+      error,
+    );
+
+    throw new Error(
+      "Impossible d'envoyer l'e-mail de confirmation d'affectation pour le moment.",
+    );
+  }
+
+  if (!data?.success) {
+    throw new Error(
+      data?.message ||
+        "Impossible d'envoyer l'e-mail de confirmation d'affectation pour le moment.",
+    );
+  }
+
+  return data;
+}

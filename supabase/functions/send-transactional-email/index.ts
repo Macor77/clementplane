@@ -16,6 +16,7 @@ type EmailRequest = {
   trainerId?: string;
   organizationId?: string;
   missionTrainerId?: string;
+  missionId?: string;
 };
 
 const jsonResponse = (body: Record<string, unknown>, status = 200) =>
@@ -216,6 +217,199 @@ const buildMissionProposalEmail = ({
           <div style="margin-top:26px;padding-top:18px;border-top:1px solid #dbe3ef;font-size:11px;line-height:1.5;color:#94a3b8;">
             Formaplane<br />
             Facilitez vos disponibilités, propositions et missions avec vos organismes partenaires.
+          </div>
+        </div>
+      </div>
+    `,
+  };
+};
+
+
+const buildMissionAssignmentConfirmationEmail = ({
+  recipientEmail,
+  trainerFirstName,
+  organizationName,
+  organizationContactName,
+  organizationContactEmail,
+  organizationContactPhone,
+  trainerHasAccount,
+  trainerMissionUrl,
+  missionTitle,
+  formation,
+  client,
+  location,
+  dates,
+}: {
+  recipientEmail: string;
+  trainerFirstName: string;
+  organizationName: string;
+  organizationContactName: string;
+  organizationContactEmail: string;
+  organizationContactPhone: string;
+  trainerHasAccount: boolean;
+  trainerMissionUrl: string;
+  missionTitle: string;
+  formation: string;
+  client: string;
+  location: string;
+  dates: Array<{
+    date?: string;
+    heure_debut?: string | null;
+    heure_fin?: string | null;
+  }>;
+}) => {
+  const safeTrainerFirstName = escapeHtml(
+    trainerFirstName || 'Bonjour',
+  );
+  const safeOrganizationName = escapeHtml(organizationName);
+  const safeContactName = escapeHtml(organizationContactName);
+  const safeContactEmail = escapeHtml(organizationContactEmail);
+  const safeContactPhone = escapeHtml(organizationContactPhone);
+  const safeTrainerMissionUrl = escapeHtml(trainerMissionUrl);
+  const safeMissionTitle = escapeHtml(
+    missionTitle || formation || 'Mission de formation',
+  );
+  const safeFormation = escapeHtml(formation || 'Non renseignée');
+  const safeClient = escapeHtml(client || 'Non renseigné');
+  const safeLocation = escapeHtml(location || 'Non renseigné');
+
+  const dateRows = (dates || [])
+    .map((item) => {
+      const day = escapeHtml(formatMissionDate(item.date || ''));
+      const start = escapeHtml(formatMissionTime(item.heure_debut));
+      const end = escapeHtml(formatMissionTime(item.heure_fin));
+      const hours =
+        start && end
+          ? `${start} – ${end}`
+          : start || end || '';
+
+      return `
+        <div style="padding:7px 0;border-bottom:1px solid #edf1f5;">
+          <strong style="color:#0f2747;">${day}</strong>
+          ${hours ? `<span style="color:#64748b;"> · ${hours}</span>` : ''}
+        </div>
+      `;
+    })
+    .join('');
+
+  const contactLines = [
+    safeContactName
+      ? `<div><strong>Contact :</strong> ${safeContactName}</div>`
+      : '',
+    safeContactEmail
+      ? `<div><strong>E-mail :</strong> ${safeContactEmail}</div>`
+      : '',
+    safeContactPhone
+      ? `<div><strong>Téléphone :</strong> ${safeContactPhone}</div>`
+      : '',
+  ]
+    .filter(Boolean)
+    .join('');
+
+  return {
+    sender: {
+      name: SENDER_NAME,
+      email: SENDER_EMAIL,
+    },
+    to: [{ email: recipientEmail }],
+    replyTo: organizationContactEmail
+      ? {
+          name: organizationContactName || organizationName,
+          email: organizationContactEmail,
+        }
+      : {
+          name: SENDER_NAME,
+          email: SENDER_EMAIL,
+        },
+    subject: `${organizationName} confirme votre affectation à une mission`,
+    htmlContent: `
+      <div style="margin:0;padding:40px 20px;background-color:#f3f6fb;font-family:Arial,Helvetica,sans-serif;color:#0f2747;">
+        <div style="max-width:600px;margin:0 auto;background-color:#ffffff;border:1px solid #dbe3ef;border-radius:18px;padding:36px;box-sizing:border-box;">
+          <div style="font-size:24px;font-weight:800;margin-bottom:28px;color:#0f2747;">Formaplane</div>
+
+          <div style="font-size:12px;font-weight:800;letter-spacing:1.5px;color:#15803d;text-transform:uppercase;margin-bottom:10px;">
+            Mission confirmée
+          </div>
+
+          <h1 style="margin:0 0 14px 0;font-size:25px;line-height:1.25;color:#0f2747;">
+            ${safeTrainerFirstName}, votre affectation est confirmée
+          </h1>
+
+          <p style="margin:0 0 20px 0;font-size:15px;line-height:1.6;color:#5b6b82;">
+            ${safeOrganizationName} vous confirme officiellement sur la mission ci-dessous.
+          </p>
+
+          <div style="border:1px solid #dbe3ef;border-radius:12px;padding:18px;margin-bottom:18px;background:#f8fafc;">
+            <div style="font-size:18px;font-weight:800;color:#0f2747;margin-bottom:12px;">
+              ${safeMissionTitle}
+            </div>
+
+            <div style="font-size:14px;line-height:1.7;color:#475569;">
+              <div><strong>Formation :</strong> ${safeFormation}</div>
+              <div><strong>Client :</strong> ${safeClient}</div>
+              <div><strong>Lieu :</strong> ${safeLocation}</div>
+            </div>
+
+            ${
+              dateRows
+                ? `<div style="margin-top:12px;font-size:13px;line-height:1.5;">${dateRows}</div>`
+                : ''
+            }
+          </div>
+
+          <div style="margin-bottom:18px;padding:16px 17px;border:1px solid #bfdbfe;border-radius:12px;background:#eff6ff;">
+            <div style="font-size:14px;font-weight:800;color:#1d4ed8;margin-bottom:6px;">
+              À présent, rapprochez-vous directement de l’organisme de formation
+            </div>
+
+            <div style="font-size:13px;line-height:1.6;color:#475569;">
+              Formaplane confirme la planification et votre affectation à cette mission.
+              Pour préparer concrètement l’intervention, il est important de vous rapprocher directement de
+              <strong> ${safeOrganizationName}</strong> afin de convenir ensemble des modalités
+              <strong> logistiques, organisationnelles et administratives</strong> :
+              accès au site, horaires pratiques, matériel ou supports nécessaires, documents,
+              convention ou contrat, éléments administratifs et toute autre information utile.
+            </div>
+
+            <div style="margin-top:9px;font-size:13px;line-height:1.6;color:#475569;">
+              Ces échanges ainsi que la gestion du dossier se font directement entre vous et l’organisme de formation,
+              en dehors de Formaplane.
+            </div>
+          </div>
+
+          ${
+            contactLines
+              ? `
+                <div style="margin-bottom:20px;padding:14px 16px;border:1px solid #e2e8f0;border-radius:10px;background:#ffffff;font-size:13px;line-height:1.65;color:#475569;">
+                  <div style="margin-bottom:5px;font-size:12px;font-weight:800;color:#64748b;text-transform:uppercase;">
+                    Votre contact chez ${safeOrganizationName}
+                  </div>
+                  ${contactLines}
+                </div>
+              `
+              : ''
+          }
+
+          ${
+            trainerHasAccount
+              ? `
+                <a
+                  href="${safeTrainerMissionUrl}"
+                  style="display:block;text-align:center;background:#2563eb;color:#ffffff;text-decoration:none;font-size:15px;font-weight:800;padding:14px 18px;border-radius:10px;"
+                >
+                  Voir ma mission dans Formaplane
+                </a>
+
+                <p style="margin:12px 0 0;font-size:12px;line-height:1.55;color:#64748b;text-align:center;">
+                  Vous retrouverez également cette mission dans votre espace formateur.
+                </p>
+              `
+              : ''
+          }
+
+          <div style="margin-top:26px;padding-top:18px;border-top:1px solid #dbe3ef;font-size:11px;line-height:1.5;color:#94a3b8;">
+            Formaplane<br />
+            La mission est planifiée dans Formaplane ; sa préparation opérationnelle se poursuit directement avec votre organisme partenaire.
           </div>
         </div>
       </div>
@@ -677,6 +871,354 @@ Deno.serve(async (req) => {
           organization_name: organizationName,
           proposal_expires_at:
             missionTrainer.proposal_expires_at || null,
+        },
+      };
+    } else if (body.type === 'mission_assignment_confirmation') {
+      const missionId = String(
+        body.missionId || '',
+      ).trim();
+      const trainerId = String(
+        body.trainerId || '',
+      ).trim();
+
+      if (!missionId || !trainerId) {
+        return jsonResponse(
+          {
+            success: false,
+            message:
+              'La mission et le formateur sont obligatoires.',
+          },
+          400,
+        );
+      }
+
+      const { data: missionTrainer, error: missionTrainerError } =
+        await admin
+          .from('mission_formateurs')
+          .select(`
+            id,
+            mission_id,
+            formateur_id,
+            statut,
+            affecte_le
+          `)
+          .eq('mission_id', missionId)
+          .eq('formateur_id', trainerId)
+          .maybeSingle();
+
+      if (missionTrainerError || !missionTrainer) {
+        return jsonResponse(
+          {
+            success: false,
+            message: 'Affectation introuvable.',
+          },
+          404,
+        );
+      }
+
+      if (
+        missionTrainer.statut !== 'affecte' ||
+        !missionTrainer.affecte_le
+      ) {
+        return jsonResponse(
+          {
+            success: false,
+            message:
+              "Le formateur doit être affecté avant l'envoi de la confirmation.",
+          },
+          409,
+        );
+      }
+
+      const [
+        { data: mission, error: missionError },
+        { data: trainer, error: trainerError },
+        { data: dates, error: datesError },
+      ] = await Promise.all([
+        admin
+          .from('missions')
+          .select(`
+            id,
+            organization_id,
+            intitule,
+            formation,
+            client,
+            lieu,
+            adresse,
+            code_postal,
+            ville
+          `)
+          .eq('id', missionId)
+          .maybeSingle(),
+
+        admin
+          .from('trainers')
+          .select('id, prenom, nom, email, user_id')
+          .eq('id', trainerId)
+          .maybeSingle(),
+
+        admin
+          .from('mission_dates')
+          .select('date, heure_debut, heure_fin')
+          .eq('mission_id', missionId)
+          .order('date', { ascending: true })
+          .order('heure_debut', { ascending: true }),
+      ]);
+
+      if (missionError || !mission) {
+        return jsonResponse(
+          {
+            success: false,
+            message: 'Mission introuvable.',
+          },
+          404,
+        );
+      }
+
+      if (trainerError || !trainer) {
+        return jsonResponse(
+          {
+            success: false,
+            message: 'Fiche formateur introuvable.',
+          },
+          404,
+        );
+      }
+
+      if (datesError) {
+        return jsonResponse(
+          {
+            success: false,
+            message:
+              "Impossible de charger les dates de la mission.",
+          },
+          500,
+        );
+      }
+
+      const organizationId = String(
+        mission.organization_id || '',
+      ).trim();
+
+      const { data: membership, error: membershipError } =
+        await admin
+          .from('organization_members')
+          .select('id')
+          .eq('organization_id', organizationId)
+          .eq('user_id', authData.user.id)
+          .eq('status', 'active')
+          .maybeSingle();
+
+      if (membershipError || !membership) {
+        return jsonResponse(
+          {
+            success: false,
+            message: "Vous n'avez pas accès à cette mission.",
+          },
+          403,
+        );
+      }
+
+      const { data: organization, error: organizationError } =
+        await admin
+          .from('organizations')
+          .select('id, name, legal_name')
+          .eq('id', organizationId)
+          .maybeSingle();
+
+      if (organizationError || !organization) {
+        return jsonResponse(
+          {
+            success: false,
+            message: 'Organisme introuvable.',
+          },
+          404,
+        );
+      }
+
+      const recipientEmail = String(
+        trainer.email || '',
+      )
+        .trim()
+        .toLowerCase();
+
+      if (!recipientEmail) {
+        return jsonResponse(
+          {
+            success: false,
+            message:
+              "Ajoutez une adresse e-mail à la fiche du formateur pour lui envoyer la confirmation.",
+          },
+          400,
+        );
+      }
+
+      const assignmentAt = String(
+        missionTrainer.affecte_le,
+      );
+
+      const { data: existingLogs, error: existingLogsError } =
+        await admin
+          .from('email_logs')
+          .select('id, status, metadata')
+          .eq(
+            'email_type',
+            'mission_assignment_confirmation',
+          )
+          .eq(
+            'related_entity_type',
+            'mission_formateur',
+          )
+          .eq(
+            'related_entity_id',
+            missionTrainer.id,
+          )
+          .in(
+            'status',
+            ['pending', 'sent', 'delivered'],
+          )
+          .order('created_at', { ascending: false })
+          .limit(20);
+
+      if (existingLogsError) {
+        return jsonResponse(
+          {
+            success: false,
+            message:
+              "Impossible de vérifier l'historique des confirmations.",
+          },
+          500,
+        );
+      }
+
+      const duplicateLog = (
+        Array.isArray(existingLogs)
+          ? existingLogs
+          : []
+      ).find((item) => {
+        const metadata =
+          item?.metadata &&
+          typeof item.metadata === 'object'
+            ? item.metadata
+            : {};
+
+        return (
+          String(metadata?.assignment_at || '') ===
+          assignmentAt
+        );
+      });
+
+      if (duplicateLog) {
+        return jsonResponse({
+          success: true,
+          duplicate: true,
+          logId: duplicateLog.id,
+          recipientEmail,
+        });
+      }
+
+      const organizationName = String(
+        organization.name ||
+          organization.legal_name ||
+          'Votre organisme de formation partenaire',
+      ).trim();
+
+      const { data: senderProfile } = await admin
+        .from('profiles')
+        .select('first_name, last_name, phone')
+        .eq('id', authData.user.id)
+        .maybeSingle();
+
+      const organizationContactName = [
+        senderProfile?.first_name,
+        senderProfile?.last_name,
+      ]
+        .filter(Boolean)
+        .join(' ')
+        .trim();
+
+      const organizationContactEmail = String(
+        authData.user.email || '',
+      )
+        .trim()
+        .toLowerCase();
+
+      const organizationContactPhone = String(
+        senderProfile?.phone || '',
+      ).trim();
+
+      const location = [
+        mission.adresse,
+        [mission.code_postal, mission.ville]
+          .filter(Boolean)
+          .join(' '),
+      ]
+        .filter(Boolean)
+        .join(' — ') || mission.lieu || '';
+
+      const trainerMissionUrl =
+        `${APP_URL}/formateur/missions/${mission.id}?trainer=${trainer.id}`;
+
+      emailPayload =
+        buildMissionAssignmentConfirmationEmail({
+          recipientEmail,
+          trainerFirstName: String(
+            trainer.prenom || '',
+          ).trim(),
+          organizationName,
+          organizationContactName,
+          organizationContactEmail,
+          organizationContactPhone,
+          trainerHasAccount: Boolean(
+            trainer.user_id,
+          ),
+          trainerMissionUrl,
+          missionTitle: String(
+            mission.intitule ||
+              mission.formation ||
+              'Mission de formation',
+          ).trim(),
+          formation: String(
+            mission.formation || '',
+          ).trim(),
+          client: String(
+            mission.client || '',
+          ).trim(),
+          location,
+          dates: Array.isArray(dates)
+            ? dates
+            : [],
+        });
+
+      logPayload = {
+        email_type:
+          'mission_assignment_confirmation',
+        provider: 'brevo',
+        recipient_email: recipientEmail,
+        recipient_user_id:
+          trainer.user_id || null,
+        requested_by_user_id:
+          authData.user.id,
+        organization_id: organizationId,
+        related_entity_type:
+          'mission_formateur',
+        related_entity_id:
+          missionTrainer.id,
+        status: 'pending',
+        metadata: {
+          source:
+            'mission_assignment_confirmation',
+          mission_id: mission.id,
+          trainer_id: trainer.id,
+          trainer_name: [
+            trainer.prenom,
+            trainer.nom,
+          ]
+            .filter(Boolean)
+            .join(' '),
+          organization_name:
+            organizationName,
+          assignment_at: assignmentAt,
         },
       };
     } else {

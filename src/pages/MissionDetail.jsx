@@ -24,7 +24,10 @@ import {
 
 import { getMissionRecommendations } from '../services/missionMatchingService';
 import { prepareMissionProposal } from '../services/proposalService';
-import { sendMissionProposalEmail } from '../services/emailService';
+import {
+  sendMissionAssignmentConfirmation,
+  sendMissionProposalEmail,
+} from '../services/emailService';
 
 const INITIAL_FILTERS = {
   recherche: '',
@@ -407,6 +410,7 @@ export default function MissionDetail() {
 
     setActionTrainerId(trainerId);
     setError('');
+    setActionNotice('');
 
     try {
       await updateMissionFormateurStatus(
@@ -414,6 +418,33 @@ export default function MissionDetail() {
         trainerId,
         status,
       );
+
+      if (status === 'affecte') {
+        try {
+          const emailResult =
+            await sendMissionAssignmentConfirmation({
+              missionId: id,
+              trainerId,
+            });
+
+          setActionNotice(
+            emailResult?.recipientEmail
+              ? `Affectation confirmée. E-mail de confirmation envoyé à ${emailResult.recipientEmail}.`
+              : 'Affectation confirmée. E-mail de confirmation envoyé au formateur.',
+          );
+        } catch (emailError) {
+          setActionNotice(
+            'Affectation confirmée.',
+          );
+
+          setError(
+            `${
+              emailError?.message ||
+              "Impossible d'envoyer l'e-mail de confirmation."
+            } L'affectation reste bien enregistrée dans Formaplane.`,
+          );
+        }
+      }
 
       await refresh();
     } catch (actionError) {

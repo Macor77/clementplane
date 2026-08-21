@@ -1,5 +1,49 @@
 # CHANGELOG - Formaplane
 
+## v0.16.0 — Sprint 16 — Landing page / site public Formaplane — 21 août 2026
+
+### Ajouté
+- nouvelle landing page publique Formaplane ;
+- proposition de valeur et parcours de lecture distincts pour les organismes de formation et les formateurs indépendants ;
+- sections dédiées aux fonctionnalités principales, au fonctionnement général, à la confidentialité, à la FAQ et au contact ;
+- navigation interne du hero vers les contenus OF et Formateur ;
+- sélecteur de création de compte OF / Formateur avec explication du fonctionnement en double profil ;
+- intégration de trois schémas pédagogiques et de cinq captures produit validées.
+
+### Présentation produit et UX
+- mise en avant des disponibilités partagées, de la recherche ciblée, du réseau privé, des propositions de mission et du planning synchronisé ;
+- présentation du parcours formateur avec propositions reçues et planning centralisé ;
+- présentation du suivi d'une mission côté OF jusqu'à l'affectation ;
+- clarification de la confidentialité des réseaux propres à chaque organisme ;
+- responsive desktop / mobile validé sur l'ensemble de la landing ;
+- vérification des CTA, liens, FAQ, modale de création de compte et parcours d'inscription ;
+- correction des deux CTA principaux afin qu'ils mènent aux sections OF / Formateur plutôt qu'à l'inscription immédiate.
+
+### Contact public et mini-CRM
+- remplacement du bloc de contact provisoire par un formulaire public réel ;
+- collecte du prénom, du nom, de l'e-mail, du profil et du message ;
+- nouvelle Edge Function `submit-public-contact` pour traiter les demandes côté serveur ;
+- validation serveur des champs et ajout de garde-fous anti-spam ;
+- raccordement au socle `support_requests` créé au Sprint 15 ;
+- distinction des demandes provenant de l'application (`source = app`) et de la landing (`source = public`) ;
+- conservation du fonctionnement sécurisé des demandes authentifiées existantes ;
+- notification Brevo vers `contact@formaplane.fr` avec `replyTo` vers le demandeur ;
+- journalisation des notifications publiques dans `email_logs`.
+
+### Recette
+Validés en conditions réelles :
+- affichage desktop de la landing ;
+- responsive mobile sur l'ensemble des sections ;
+- navigation OF / Formateur depuis le hero ;
+- parcours de connexion et de création de compte ;
+- fonctionnement de la FAQ ;
+- envoi du formulaire public ;
+- création de la demande dans `support_requests` avec `source = public` ;
+- réception de la notification e-mail Brevo ;
+- `npm run build` : réussi.
+
+---
+
 ## v0.15.0 — Sprint 15 — Découvrir Formaplane : tutos, FAQ & contact — 21 août 2026
 
 ### Ajouté
@@ -647,5 +691,5 @@ Les parcours de partage privé et public ont été testés fonctionnellement. Le
 
 # Prochaine étape
 
-Sprint 13 — Tutos, explications, FAQ & transparence produit.
+Sprint 17 — Dashboard Admin, mini-CRM & statistiques d'utilisation.
 

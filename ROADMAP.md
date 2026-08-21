@@ -489,31 +489,65 @@ Rendre Formaplane plus autonome, réduire l'accompagnement individuel et prépar
 
 ---
 
-## Sprint 16 — Landing page / site public Formaplane 🔜
+## Sprint 16 — Landing page / site public Formaplane ✅
 
-### Objectif
-Créer la vitrine publique de Formaplane à partir d'un produit et d'un discours désormais stabilisés.
+### Objectif atteint
+Créer une vitrine publique crédible de Formaplane à partir du produit, des contenus pédagogiques et du discours stabilisés au Sprint 15.
 
-### Principe
-Le Sprint 15 explique Formaplane à quelqu'un qui l'utilise déjà. Le Sprint 16 doit expliquer Formaplane à quelqu'un qui ne connaît pas encore la plateforme.
+### Réalisé
 
-Les contenus, formulations, captures et éléments pédagogiques produits au Sprint 15 seront réutilisés autant que possible.
+#### Landing page publique
+- création d'une page d'accueil publique dédiée à Formaplane ;
+- proposition de valeur centrée sur la collaboration entre organismes de formation et formateurs indépendants ;
+- parcours de lecture distincts pour les OF et les formateurs ;
+- navigation interne depuis le hero vers les sections correspondant au profil choisi ;
+- appels à la connexion et à l'inscription positionnés aux étapes pertinentes ;
+- explication du fonctionnement général de Formaplane sans transformer la landing page en documentation technique.
 
-### Périmètre cible
-- page d'accueil publique ;
-- proposition de valeur ;
-- bénéfices distincts pour OF et formateurs ;
-- présentation des principales fonctionnalités ;
-- captures de la version la plus récente de l'application ;
-- explication du fonctionnement général ;
-- éléments de confiance et de transparence ;
-- appels à l'inscription / connexion ;
-- FAQ publique adaptée ;
-- formulaire de contact ;
-- raccordement au même socle mini-CRM que le Sprint 15 ;
-- responsive mobile / desktop ;
-- bases SEO ;
-- intégration cohérente avec `formaplane.fr` et l'identité visuelle.
+#### Présentation du produit
+- mise en avant des disponibilités partagées, de la recherche ciblée, du réseau privé, des propositions de mission, du planning synchronisé et du profil professionnel ;
+- intégration de captures réelles et validées de l'application ;
+- intégration de schémas pédagogiques dédiés à la synchronisation OF / formateur, au réseau privé et à la recherche d'un formateur ;
+- présentation du parcours côté formateur : propositions reçues et planning centralisé ;
+- présentation du suivi d'une mission côté OF jusqu'à l'affectation ;
+- explication claire de la confidentialité des réseaux OF.
+
+#### Création de compte et double profil
+- correction des parcours de création de compte depuis la landing page ;
+- ajout d'un sélecteur OF / Formateur depuis le bouton « Créer un compte » ;
+- explication du fonctionnement « double casquette » ;
+- utilisation de la même adresse e-mail comme lien entre les profils OF et Formateur d'un même utilisateur.
+
+#### FAQ et contact public
+- réutilisation d'une sélection de la FAQ du Sprint 15 adaptée à un visiteur public ;
+- création d'un vrai formulaire de contact public : prénom, nom, e-mail, profil et message ;
+- validation des données côté navigateur et côté serveur ;
+- ajout de garde-fous anti-spam dédiés au formulaire public ;
+- création d'une Edge Function `submit-public-contact` ;
+- enregistrement des demandes publiques dans le même socle `support_requests` que les demandes provenant de l'application ;
+- distinction explicite des origines `public` et `app` ;
+- notification Brevo vers `contact@formaplane.fr` avec réponse possible directement au demandeur ;
+- journalisation de la notification dans `email_logs` ;
+- conservation des règles de sécurité du support authentifié existant.
+
+#### Responsive et recette
+- adaptation desktop et mobile de l'ensemble de la landing page ;
+- contrôle du header, des CTA, captures, schémas, FAQ, formulaire, modale et footer sur format mobile ;
+- vérification des liens et appels à l'action ;
+- correction des CTA du hero afin qu'ils mènent aux sections OF / Formateur de la landing ;
+- test réel du formulaire public ;
+- création de la demande vérifiée dans `support_requests` avec `source = public` ;
+- notification e-mail Brevo reçue ;
+- build de production réussi.
+
+### Visuels intégrés
+- `public/landing/diagrams/01-synchronisation-formateur-of.png` ;
+- `public/landing/diagrams/02-reseau-prive-of.png` ;
+- `public/landing/diagrams/03-recherche-formateur.png` ;
+- cinq captures produit validées dans `public/landing/screenshots/`.
+
+### Version
+`v0.16.0`
 
 ### Enjeu produit
 Donner à Formaplane une présence publique crédible et transformer les visites issues des invitations, partages et recommandations en découverte réelle du produit.
@@ -642,9 +676,7 @@ Un sprint est terminé lorsque :
 # Priorité actuelle
 
 ```text
-v0.15.0 — Sprint 15 officiellement clôturé
-↓
-Sprint 16 — Landing page / site public Formaplane
+v0.16.0 — Sprint 16 officiellement clôturé
 ↓
 Sprint 17 — Dashboard Admin, mini-CRM & statistiques d'utilisation
 ↓

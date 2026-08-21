@@ -10,6 +10,7 @@ import TrainerPlanning from '../../pages/trainer/TrainerPlanning';
 import TrainerAvailabilityShare from '../../pages/trainer/TrainerAvailabilityShare';
 import TrainerProfile from '../../pages/trainer/TrainerProfile';
 import TrainerSettings from '../../pages/trainer/TrainerSettings';
+import DiscoverFormaplane from '../../pages/DiscoverFormaplane';
 
 import { useAuth } from '../../context/AuthContext';
 
@@ -51,6 +52,16 @@ const navigationItems = [
     to: '/formateur/profil',
     label: 'Mon profil',
     icon: '♙',
+  },
+  {
+    to: '/formateur/decouvrir',
+    label: 'Découvrir Formaplane',
+    icon: '?',
+  },
+  {
+    to: '/formateur/decouvrir#contact',
+    label: 'Nous contacter',
+    icon: '✉',
   },
   {
     to: '/formateur/parametres',
@@ -235,6 +246,11 @@ export default function TrainerApp() {
           <Route
             path="/formateur/profil"
             element={<TrainerProfile />}
+          />
+
+          <Route
+            path="/formateur/decouvrir"
+            element={<DiscoverFormaplane audience="trainer" />}
           />
 
           <Route

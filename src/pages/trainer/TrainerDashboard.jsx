@@ -109,7 +109,7 @@ function hasCurrentOrFutureDate(proposal) {
 }
 
 
-function isPastMission(proposal) {
+function _isPastMission(proposal) {
   return !hasCurrentOrFutureDate(proposal);
 }
 

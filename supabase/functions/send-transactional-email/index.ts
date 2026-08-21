@@ -18,6 +18,7 @@ type EmailRequest = {
   missionTrainerId?: string;
   missionId?: string;
   requestId?: string;
+  supportRequestId?: string;
   contactId?: string;
   months?: string[];
   message?: string;
@@ -1441,7 +1442,125 @@ Deno.serve(async (req) => {
     let logPayload: Record<string, unknown>;
     let precreatedLogId: string | null = null;
 
-    if (body.type === 'infrastructure_test') {
+    if (body.type === 'support_request_notification') {
+      const supportRequestId = String(body.supportRequestId || '').trim();
+
+      if (!supportRequestId) {
+        return jsonResponse({ success: false, message: 'Demande de support obligatoire.' }, 400);
+      }
+
+      const { data: supportRequest, error: supportRequestError } = await admin
+        .from('support_requests')
+        .select(`
+          id,
+          requester_user_id,
+          requester_email,
+          requester_first_name,
+          requester_last_name,
+          requester_profile,
+          audience,
+          organization_id,
+          trainer_id,
+          category_key,
+          category,
+          message,
+          app_version,
+          created_at
+        `)
+        .eq('id', supportRequestId)
+        .single();
+
+      if (supportRequestError || !supportRequest) {
+        return jsonResponse({ success: false, message: 'Demande de support introuvable.' }, 404);
+      }
+
+      if (supportRequest.requester_user_id !== authData.user.id) {
+        return jsonResponse({ success: false, message: 'Accès refusé.' }, 403);
+      }
+
+      let organizationName = '';
+      if (supportRequest.organization_id) {
+        const { data: organization } = await admin
+          .from('organizations')
+          .select('name')
+          .eq('id', supportRequest.organization_id)
+          .maybeSingle();
+        organizationName = String(organization?.name || '').trim();
+      }
+
+      const requesterName = [
+        supportRequest.requester_first_name,
+        supportRequest.requester_last_name,
+      ].filter(Boolean).join(' ').trim() || 'Utilisateur Formaplane';
+
+      const contextLabel = supportRequest.audience === 'trainer'
+        ? 'Formateur'
+        : organizationName || 'Organisme de Formation';
+
+      const requesterProfileLabel = supportRequest.requester_profile === 'both'
+        ? 'Organisme de Formation + Formateur'
+        : supportRequest.requester_profile === 'trainer'
+          ? 'Formateur'
+          : 'Organisme de Formation';
+
+      emailPayload = {
+        sender: {
+          name: SENDER_NAME,
+          email: SENDER_EMAIL,
+        },
+        to: [{ email: SENDER_EMAIL }],
+        replyTo: {
+          email: supportRequest.requester_email,
+          name: requesterName,
+        },
+        subject: `[Support Formaplane] ${String(supportRequest.category || 'Nouvelle demande')}`,
+        htmlContent: `
+          <div style="font-family:Arial,sans-serif;background:#f5f7fb;padding:24px;color:#0f172a;">
+            <div style="max-width:720px;margin:0 auto;background:#fff;border:1px solid #dbe3ef;border-radius:14px;padding:24px;">
+              <div style="font-size:12px;font-weight:800;letter-spacing:.06em;color:#2563eb;text-transform:uppercase;margin-bottom:8px;">
+                Nouvelle demande Formaplane
+              </div>
+              <h1 style="font-size:22px;line-height:1.3;margin:0 0 18px;">
+                ${escapeHtml(String(supportRequest.category || 'Demande'))}
+              </h1>
+              <div style="font-size:14px;line-height:1.65;color:#334155;">
+                <p><strong>Demandeur :</strong> ${escapeHtml(requesterName)}</p>
+                <p><strong>Profil :</strong> ${escapeHtml(requesterProfileLabel)}</p>
+                <p><strong>E-mail :</strong> ${escapeHtml(String(supportRequest.requester_email || ''))}</p>
+                <p><strong>Contexte :</strong> ${escapeHtml(contextLabel)}</p>
+                <p><strong>Version :</strong> ${escapeHtml(String(supportRequest.app_version || 'Non renseignée'))}</p>
+                <div style="margin-top:18px;padding:16px;border-radius:10px;background:#f8fafc;border:1px solid #e2e8f0;white-space:pre-wrap;">
+                  ${escapeHtml(String(supportRequest.message || ''))}
+                </div>
+                <p style="margin-top:18px;color:#64748b;font-size:12px;">
+                  Référence : ${escapeHtml(String(supportRequest.id))}
+                </p>
+              </div>
+            </div>
+          </div>
+        `,
+      };
+
+      logPayload = {
+        email_type: 'support_request_notification',
+        provider: 'brevo',
+        recipient_email: SENDER_EMAIL,
+        recipient_user_id: null,
+        requested_by_user_id: authData.user.id,
+        related_entity_type: 'support_request',
+        related_entity_id: supportRequest.id,
+        status: 'pending',
+        metadata: {
+          source: 'discover_formaplane_contact',
+          category: supportRequest.category,
+          category_key: supportRequest.category_key,
+          requester_profile: supportRequest.requester_profile,
+          audience: supportRequest.audience,
+          organization_id: supportRequest.organization_id,
+          trainer_id: supportRequest.trainer_id,
+        },
+      };
+    } else if (body.type === 'infrastructure_test') {
       const recipientEmail = String(authData.user.email || '').trim().toLowerCase();
 
       if (!recipientEmail) {

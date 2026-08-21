@@ -21,6 +21,7 @@ import Dashboard from './pages/Dashboard';
 import Planning from './pages/Planning';
 import MapPage from './pages/MapPage';
 import Settings from './pages/Settings';
+import DiscoverFormaplane from './pages/DiscoverFormaplane';
 import ProposalResponse from './pages/ProposalResponse';
 import MissionChangeResponse from './pages/MissionChangeResponse';
 
@@ -76,6 +77,16 @@ const navigationItems = [
     icon: '⌖',
   },
   {
+    to: '/decouvrir',
+    label: 'Découvrir Formaplane',
+    icon: '?',
+  },
+  {
+    to: '/decouvrir#contact',
+    label: 'Nous contacter',
+    icon: '✉',
+  },
+  {
     to: '/parametres',
     label: 'Paramètres',
     icon: '⚙',
@@ -104,6 +115,7 @@ function isTrainerPersonalPath(pathname) {
     pathname === '/formateur/partage-disponibilites' ||
     pathname === '/formateur/planning' ||
     pathname === '/formateur/profil' ||
+    pathname === '/formateur/decouvrir' ||
     pathname === '/formateur/parametres'
   );
 }
@@ -224,6 +236,11 @@ function OrganizationApp() {
             <Route
               path="/carte"
               element={<MapPage />}
+            />
+
+            <Route
+              path="/decouvrir"
+              element={<DiscoverFormaplane audience="organization" />}
             />
 
             <Route

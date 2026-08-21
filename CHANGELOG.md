@@ -1,5 +1,62 @@
 # CHANGELOG - Formaplane
 
+## v0.15.0 — Sprint 15 — Découvrir Formaplane : tutos, FAQ & contact — 21 août 2026
+
+### Ajouté
+- nouvelle rubrique **« Découvrir Formaplane »** dans les espaces Organisme de Formation et Formateur ;
+- présentation pédagogique des bénéfices concrets de Formaplane selon le profil utilisateur ;
+- guides pas à pas dédiés aux principaux parcours OF et formateur ;
+- FAQ contextualisée avec recherche par mot-clé ;
+- bloc de transparence produit avec version publiée et évolutions envisagées ;
+- accès **« Nous contacter »** directement visible dans les deux menus ;
+- formulaire de contact intégré à Formaplane sans ouverture de messagerie externe.
+
+### Contact et suivi des demandes
+- enregistrement des demandes utilisateur dans Supabase avant l’envoi de la notification e-mail ;
+- notification automatique vers `contact@formaplane.fr` ;
+- conservation du demandeur, de son e-mail, de son profil réel (OF, Formateur ou double profil), du contexte d’envoi, de l’organisme ou du formateur concerné, de la catégorie, du message et de la version Formaplane ;
+- catégories structurées pour préparer le futur outil de pilotage : question générale, problème technique, compte, suggestion d’amélioration, confidentialité / données et autre demande ;
+- préparation des champs de suivi futurs : statut, priorité, tags, attribution, notes internes et dates de traitement ;
+- reprise et catégorisation des demandes déjà enregistrées.
+
+### UX et pédagogie
+- mise en avant du planning partagé et actualisé en temps réel afin de limiter les échanges par e-mail, SMS ou WhatsApp ;
+- explication du parcours complet d’une mission côté OF : création, recherche selon disponibilités / distance / compétences, proposition, réponse du formateur et affectation ;
+- clarification du caractère privé du réseau de formateurs propre à chaque organisme ;
+- explication de la mise à jour automatique des indisponibilités lorsqu’une mission est affectée ;
+- présentation adaptée du profil formateur afin de ne pas laisser penser aux OF qu’ils alimentent une base accessible à leurs concurrents ;
+- guides présentés comme des parcours pas à pas et non comme des vidéos ;
+- roadmap publique simplifiée centrée sur les évolutions utiles aux utilisateurs.
+
+### Évolutions envisagées affichées
+- amélioration continue de l’expérience utilisateur ;
+- optimisation de Formaplane sur mobile ;
+- enrichissement des fiches formateurs : expériences, compétences, formations et informations professionnelles ;
+- stockage et partage maîtrisé des documents de référencement : CV, NDA, avis SIREN et autres justificatifs ;
+- messagerie interne OF / formateur autour des sessions de formation ;
+- amélioration du parcours de recherche, proposition et affectation des missions ;
+- évolutions régulières issues des retours utilisateurs.
+
+### Sécurité et données
+- création des demandes via une fonction serveur afin que l’identité et les rattachements soient déterminés côté Supabase ;
+- règles RLS limitant la lecture des demandes à leur propre demandeur dans l’espace utilisateur ;
+- catégories normalisées par clé technique pour éviter une dépendance aux libellés visibles ;
+- stockage structuré prévu pour le futur Dashboard Admin / mini-CRM sans exposer les données internes aux utilisateurs.
+
+### Recette
+Validés en conditions réelles :
+- accès « Découvrir Formaplane » côté OF et côté Formateur ;
+- guides, FAQ, transparence produit et roadmap publique ;
+- accès direct « Nous contacter » depuis les deux menus ;
+- enregistrement des demandes en base ;
+- réception des notifications sur `contact@formaplane.fr` ;
+- distinction du contexte OF / Formateur ;
+- affichage du profil réel de l’utilisateur dans la notification ;
+- `npm run lint` : 0 erreur, 2 warnings React Hooks connus ;
+- `npm run build` : réussi.
+
+---
+
 ## v0.14.0 — Sprint 14 — Harmonisation des e-mails côté OF — 21 août 2026
 
 ### Ajouté

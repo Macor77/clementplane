@@ -518,7 +518,6 @@ export default function Missions() {
 function MissionRow({
   mission,
   onOpen,
-  onDelete,
 }) {
   const state =
     getMissionBusinessState(
@@ -751,19 +750,6 @@ function getMissionBusinessState(
         item.statut === 'accepte',
     );
 
-  const hasWorkflowActivity =
-    relations.some(
-      (item) =>
-        [
-          'proposition_envoyee',
-          'accepte',
-          'refuse',
-          'affecte',
-          'indisponible_affecte_ailleurs',
-        ].includes(
-          item.statut,
-        ),
-    );
 
   const isPast =
     getMissionTemporalState(

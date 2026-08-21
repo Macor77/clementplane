@@ -13,10 +13,6 @@ import {
 } from '../services/geocodingService';
 import './Auth.css';
 
-function formatLocation(candidate) {
-  return [candidate.code_postal, candidate.ville].filter(Boolean).join(' ') || 'Localisation non renseignée';
-}
-
 function friendlyError(error) {
   const message = error?.message || '';
   if (message.includes('TRAINER_PROFILE_ALREADY_CLAIMED')) {

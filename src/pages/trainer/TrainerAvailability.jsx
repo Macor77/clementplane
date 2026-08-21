@@ -667,7 +667,7 @@ export default function TrainerAvailability() {
     };
 
 
-  const openMission =
+  const _openMission =
     async (
       event,
       missionId,

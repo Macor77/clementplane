@@ -1,7 +1,7 @@
 # ROADMAP — Formaplane
 
 > Mise à jour : après clôture officielle du Sprint 14 — 21 août 2026  
-> Version actuelle : `v0.14.0`
+> Version actuelle : `v0.15.0`
 
 ## Vision
 
@@ -416,7 +416,7 @@ Rassurer les utilisateurs OF sur les communications envoyées en leur nom, empê
 
 ---
 
-## Sprint 15 — Découvrir Formaplane — Tutos, FAQ & contact 🔜
+## Sprint 15 — Découvrir Formaplane — Tutos, FAQ & contact ✅
 
 ### Objectif
 Créer dans Formaplane un espace permettant aux utilisateurs de comprendre le produit, apprendre à l'utiliser et contacter facilement Formaplane.
@@ -465,6 +465,25 @@ Créer le socle de suivi des demandes :
 
 Cette brique sera intégrée et enrichie dans le Dashboard Admin du Sprint 17.
 
+### Réalisé
+- ajout de l’entrée « Découvrir Formaplane » dans les espaces OF et Formateur ;
+- contenus pédagogiques adaptés au profil utilisateur ;
+- guides pas à pas et FAQ contextualisée avec recherche ;
+- présentation claire des bénéfices : planning partagé en temps réel, recherche de formateurs, propositions de mission, suivi des réponses et affectations ;
+- clarification de la confidentialité du réseau propre à chaque OF et du partage maîtrisé des informations formateur ;
+- transparence produit avec version affichée et évolutions futures utiles aux utilisateurs ;
+- ajout d’un accès direct « Nous contacter » dans les deux menus ;
+- formulaire de contact intégré avec enregistrement Supabase ;
+- notification automatique vers `contact@formaplane.fr` ;
+- stockage structuré des demandes, catégories, profil utilisateur et champs de pilotage futurs ;
+- préparation du socle mini-CRM destiné au Sprint 17 ;
+- recette OF / Formateur validée ;
+- build de production réussi ;
+- lint validé avec 0 erreur et 2 warnings React Hooks connus.
+
+### Version
+`v0.15.0`
+
 ### Enjeu produit
 Rendre Formaplane plus autonome, réduire l'accompagnement individuel et préparer les contenus de la présentation publique.
 
@@ -476,7 +495,7 @@ Rendre Formaplane plus autonome, réduire l'accompagnement individuel et prépar
 Créer la vitrine publique de Formaplane à partir d'un produit et d'un discours désormais stabilisés.
 
 ### Principe
-Le Sprint 15 explique Formaplane à quelqu'un qui l'utilise déjà. Le Sprint 15 doit expliquer Formaplane à quelqu'un qui ne connaît pas encore la plateforme.
+Le Sprint 15 explique Formaplane à quelqu'un qui l'utilise déjà. Le Sprint 16 doit expliquer Formaplane à quelqu'un qui ne connaît pas encore la plateforme.
 
 Les contenus, formulations, captures et éléments pédagogiques produits au Sprint 15 seront réutilisés autant que possible.
 
@@ -623,11 +642,7 @@ Un sprint est terminé lorsque :
 # Priorité actuelle
 
 ```text
-v0.13.0 — Sprint 13 officiellement clôturé
-↓
-Sprint 14 — Harmonisation des e-mails côté OF
-↓
-Sprint 15 — Découvrir Formaplane — Tutos, FAQ & contact
+v0.15.0 — Sprint 15 officiellement clôturé
 ↓
 Sprint 16 — Landing page / site public Formaplane
 ↓

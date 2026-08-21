@@ -30,6 +30,7 @@ import Signup from './pages/Signup';
 import OrganizationSignup from './pages/OrganizationSignup';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
+import PublicLanding from './pages/PublicLanding';
 
 import TrainerClaimStart from './pages/TrainerClaimStart';
 import SpaceChooser from './pages/SpaceChooser';
@@ -560,6 +561,24 @@ function AccountRouter() {
   return <OrganizationApp />;
 }
 
+function RootRoute() {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'grid', placeItems: 'center', color: '#64748b', fontWeight: 600 }}>
+        Chargement de Formaplane…
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <PublicLanding />;
+  }
+
+  return <AccountRouter />;
+}
+
 export default function App() {
   const location = useLocation();
 
@@ -668,6 +687,10 @@ export default function App() {
         />
       </Routes>
     );
+  }
+
+  if (location.pathname === '/') {
+    return <RootRoute />;
   }
 
   return (

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { faqItems } from '../content/discoverContent';
+import { submitPublicContact } from '../services/publicContactService';
 import './PublicLanding.css';
 
 const publicFaq = faqItems.filter((item) =>
@@ -48,6 +49,19 @@ function ProductVisual({ src, alt, className = '' }) {
 
 export default function PublicLanding() {
   const [accountChooserOpen, setAccountChooserOpen] = useState(false);
+  const [contactForm, setContactForm] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    profile: 'organization',
+    message: '',
+    website: '',
+  });
+  const [contactStartedAt] = useState(() => Date.now());
+  const [contactStatus, setContactStatus] = useState({
+    state: 'idle',
+    message: '',
+  });
 
   useEffect(() => {
     if (!accountChooserOpen) return undefined;
@@ -59,6 +73,51 @@ export default function PublicLanding() {
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [accountChooserOpen]);
+
+  const handleContactChange = (event) => {
+    const { name, value } = event.target;
+    setContactForm((current) => ({ ...current, [name]: value }));
+
+    if (contactStatus.state !== 'idle') {
+      setContactStatus({ state: 'idle', message: '' });
+    }
+  };
+
+  const handleContactSubmit = async (event) => {
+    event.preventDefault();
+
+    if (contactStatus.state === 'submitting') return;
+
+    setContactStatus({ state: 'submitting', message: '' });
+
+    try {
+      await submitPublicContact({
+        ...contactForm,
+        startedAt: contactStartedAt,
+      });
+
+      setContactForm({
+        firstName: '',
+        lastName: '',
+        email: '',
+        profile: 'organization',
+        message: '',
+        website: '',
+      });
+
+      setContactStatus({
+        state: 'success',
+        message: 'Merci. Votre message a bien été transmis à Formaplane.',
+      });
+    } catch (error) {
+      setContactStatus({
+        state: 'error',
+        message:
+          error?.message ||
+          "Impossible d'envoyer votre message pour le moment. Vous pouvez aussi écrire à contact@formaplane.fr.",
+      });
+    }
+  };
 
   return (
     <div className="public-site">
@@ -82,22 +141,38 @@ export default function PublicLanding() {
 
       <main id="top">
         <section className="public-hero">
-          <div className="public-wrap public-hero__grid">
+          <div
+            className="public-wrap public-hero__grid"
+            style={{
+              gridTemplateColumns: 'minmax(0, 860px)',
+              justifyContent: 'center',
+              textAlign: 'center',
+            }}
+          >
             <div>
               <p className="public-eyebrow">OF + FORMATEURS INDÉPENDANTS</p>
               <h1>Vos missions et vos disponibilités, enfin au même endroit.</h1>
-              <p className="public-hero__lead">Formaplane connecte les organismes de formation et leurs formateurs indépendants : disponibilités, recherche, propositions de missions et affectations réunies dans un même outil.</p>
-              <div className="public-actions" id="commencer">
-                <Link className="public-button" to="/inscription-organisme">Je suis un organisme de formation</Link>
-                <Link className="public-button public-button--secondary" to="/inscription">Je suis formateur indépendant</Link>
+              <p
+                className="public-hero__lead"
+                style={{ maxWidth: '760px', marginLeft: 'auto', marginRight: 'auto' }}
+              >
+                Formaplane connecte les organismes de formation et leurs formateurs indépendants : disponibilités, recherche, propositions de missions et affectations réunies dans un même outil.
+              </p>
+              <div
+                className="public-actions"
+                id="commencer"
+                style={{ justifyContent: 'center' }}
+              >
+                <a className="public-button" href="#of">Je suis un organisme de formation</a>
+                <a className="public-button public-button--secondary" href="#formateurs">Je suis formateur indépendant</a>
               </div>
-              <p className="public-hero__note">Un outil conçu pour simplifier la collaboration, sans transformer les réseaux professionnels en base publique.</p>
+              <p
+                className="public-hero__note"
+                style={{ maxWidth: '720px', marginLeft: 'auto', marginRight: 'auto' }}
+              >
+                Un outil conçu pour simplifier la collaboration, sans transformer les réseaux professionnels en base publique.
+              </p>
             </div>
-            <ProductVisual
-              src={visuals.screenshots.search}
-              alt="Exemple de recherche de formateurs dans l’espace organisme de formation de Formaplane"
-              className="public-product-visual--hero"
-            />
           </div>
         </section>
 
@@ -160,7 +235,7 @@ export default function PublicLanding() {
           <div className="public-wrap">
             <div className="public-section-heading public-section-heading--light public-section-heading--center">
               <p className="public-eyebrow">UN PROCESSUS CONTINU</p>
-              <h2>Une mise à jour. Tous vos OF sont alignés.</h2>
+              <h2>Une mission affectée, des disponibilités automatiquement actualisées.</h2>
               <p>Le formateur tient ses disponibilités à jour, reçoit les propositions et, lorsqu’une mission est affectée, le créneau devient automatiquement indisponible pour les autres organismes.</p>
             </div>
             <figure className="public-diagram public-diagram--on-dark">
@@ -253,8 +328,117 @@ export default function PublicLanding() {
 
         <section className="public-section public-section--contact" id="contact">
           <div className="public-wrap public-contact">
-            <div><p className="public-eyebrow">UNE QUESTION ?</p><h2>Parlons de Formaplane.</h2><p>Vous êtes organisme de formation, formateur indépendant ou simplement curieux du projet ? Écrivez-nous.</p></div>
-            <div className="public-contact__box"><strong>Le formulaire public arrive dans ce Sprint.</strong><p>Son raccordement au mini-CRM sera sécurisé côté serveur. En attendant, le site ne simule aucun envoi.</p><a className="public-button" href="mailto:contact@formaplane.fr">contact@formaplane.fr</a></div>
+            <div>
+              <p className="public-eyebrow">UNE QUESTION ?</p>
+              <h2>Parlons de Formaplane.</h2>
+              <p>Vous êtes organisme de formation, formateur indépendant ou simplement curieux du projet ? Écrivez-nous directement depuis ce formulaire.</p>
+              <p className="public-contact__direct">
+                Vous préférez l’e-mail ? <a href="mailto:contact@formaplane.fr">contact@formaplane.fr</a>
+              </p>
+            </div>
+
+            <form className="public-contact__box public-contact-form" onSubmit={handleContactSubmit}>
+              <div className="public-contact-form__row">
+                <label>
+                  <span>Prénom</span>
+                  <input
+                    type="text"
+                    name="firstName"
+                    value={contactForm.firstName}
+                    onChange={handleContactChange}
+                    autoComplete="given-name"
+                    maxLength={80}
+                    required
+                  />
+                </label>
+                <label>
+                  <span>Nom</span>
+                  <input
+                    type="text"
+                    name="lastName"
+                    value={contactForm.lastName}
+                    onChange={handleContactChange}
+                    autoComplete="family-name"
+                    maxLength={80}
+                    required
+                  />
+                </label>
+              </div>
+
+              <label>
+                <span>E-mail</span>
+                <input
+                  type="email"
+                  name="email"
+                  value={contactForm.email}
+                  onChange={handleContactChange}
+                  autoComplete="email"
+                  maxLength={254}
+                  required
+                />
+              </label>
+
+              <label>
+                <span>Vous êtes</span>
+                <select
+                  name="profile"
+                  value={contactForm.profile}
+                  onChange={handleContactChange}
+                  required
+                >
+                  <option value="organization">Organisme de formation</option>
+                  <option value="trainer">Formateur indépendant</option>
+                  <option value="other">Autre</option>
+                </select>
+              </label>
+
+              <label>
+                <span>Message</span>
+                <textarea
+                  name="message"
+                  value={contactForm.message}
+                  onChange={handleContactChange}
+                  rows={6}
+                  maxLength={5000}
+                  required
+                />
+              </label>
+
+              <div className="public-contact-form__honeypot" aria-hidden="true">
+                <label>
+                  Site web
+                  <input
+                    type="text"
+                    name="website"
+                    value={contactForm.website}
+                    onChange={handleContactChange}
+                    tabIndex={-1}
+                    autoComplete="off"
+                  />
+                </label>
+              </div>
+
+              <button
+                className="public-button public-contact-form__submit"
+                type="submit"
+                disabled={contactStatus.state === 'submitting'}
+              >
+                {contactStatus.state === 'submitting' ? 'Envoi en cours…' : 'Envoyer mon message'}
+              </button>
+
+              {contactStatus.message && (
+                <p
+                  className={`public-contact-form__status public-contact-form__status--${contactStatus.state}`}
+                  role={contactStatus.state === 'error' ? 'alert' : 'status'}
+                >
+                  {contactStatus.message}
+                </p>
+              )}
+
+              <p className="public-contact-form__privacy">
+                Vos coordonnées sont utilisées uniquement pour répondre à votre demande.
+              </p>
+            </form>
           </div>
         </section>
 

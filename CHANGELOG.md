@@ -1,5 +1,47 @@
 # CHANGELOG - Formaplane
 
+
+## v0.13.0 — Sprint 13 — Sécurisation du partage des disponibilités — 21 août 2026
+
+### Ajouté
+- délai minimal de 20 jours complets entre deux partages de disponibilités par e-mail d'un même formateur vers une même adresse destinataire ;
+- contrôle côté PostgreSQL et Edge Function, indépendant de l'identifiant du contact ;
+- réservation atomique avant envoi afin d'éviter les doubles envois concurrents ;
+- affichage de la date et de l'heure exactes du prochain envoi autorisé ;
+- possibilité pour le formateur de recevoir une copie de l'e-mail envoyé ;
+- génération et téléchargement d'un PDF personnalisé des disponibilités ;
+- personnalisation du PDF selon l'organisme destinataire ;
+- intégration du commentaire du formateur dans le PDF ;
+- séparation claire des trois modes de partage : e-mail Formaplane, PDF et réseaux sociaux.
+
+### Sécurité et garde-fous
+- impossibilité de contourner le délai de 20 jours en supprimant puis recréant un contact avec la même adresse e-mail ;
+- contrôle basé sur le couple formateur + adresse e-mail normalisée ;
+- blocage appliqué côté serveur et non uniquement dans l'interface ;
+- maintien du téléchargement PDF même lorsqu'un destinataire est temporairement bloqué pour l'envoi par e-mail.
+
+### UX
+- contacts temporairement bloqués clairement identifiés ;
+- information sur la prochaine date d'envoi possible ;
+- rappel qu'un organisme inscrit peut consulter les disponibilités actualisées directement dans Formaplane ;
+- invitation à encourager les organismes partenaires à utiliser Formaplane ;
+- cartes contacts compactées ;
+- parcours de partage réorganisé en trois parties distinctes.
+
+### Recette
+Validés :
+- envoi vers un contact autorisé ;
+- blocage immédiat après envoi ;
+- délai de 20 jours ;
+- suppression/recréation d'un contact avec la même adresse ;
+- mélange de destinataires bloqués et autorisés ;
+- copie facultative au formateur ;
+- PDF disponible indépendamment du délai anti-spam ;
+- PDF personnalisé par organisme ;
+- commentaire intégré au PDF.
+
+---
+
 Version : 10.0
 Date : 18/08/2026
 

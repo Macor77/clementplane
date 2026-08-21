@@ -67,6 +67,10 @@ async function enrichContacts(rows) {
         months: Array.isArray(row.shared_months)
           ? row.shared_months
           : [],
+        canShare: row.can_share !== false,
+        nextShareAt: row.next_share_at || null,
+        cooldownReferenceAt: row.cooldown_reference_at || null,
+        copyToSender: Boolean(row.copy_to_sender),
       },
     ]),
   );

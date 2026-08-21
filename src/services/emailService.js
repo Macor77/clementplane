@@ -367,6 +367,7 @@ export async function sendTrainerAvailabilityShareEmail({
   contactId,
   months,
   message = '',
+  copyToSender = false,
 }) {
   if (!contactId) {
     throw new Error(
@@ -388,6 +389,7 @@ export async function sendTrainerAvailabilityShareEmail({
         contactId,
         months,
         message: String(message || '').trim(),
+        copyToSender: Boolean(copyToSender),
       },
     },
   );
@@ -398,8 +400,19 @@ export async function sendTrainerAvailabilityShareEmail({
       error,
     );
 
+    let serverMessage = '';
+    try {
+      if (error?.context && typeof error.context.json === 'function') {
+        const payload = await error.context.json();
+        serverMessage = String(payload?.message || '');
+      }
+    } catch {
+      serverMessage = '';
+    }
+
     throw new Error(
-      "Impossible d'envoyer vos disponibilités pour le moment.",
+      serverMessage ||
+        "Impossible d'envoyer vos disponibilités pour le moment.",
     );
   }
 

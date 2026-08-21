@@ -1183,6 +1183,254 @@ async function createPublicAvailabilityImage({
 }
 
 
+function pdfBinaryFromCanvases(canvases) {
+  const pageWidth = 595.28;
+  const pageHeight = 841.89;
+  const encoder = new TextEncoder();
+  const chunks = [];
+  const offsets = [0];
+  let length = 0;
+
+  const pushText = (text) => {
+    const bytes = encoder.encode(text);
+    chunks.push(bytes);
+    length += bytes.length;
+  };
+
+  const pushBytes = (bytes) => {
+    chunks.push(bytes);
+    length += bytes.length;
+  };
+
+  pushText('%PDF-1.4\n%Formaplane\n');
+
+  const objectCount = 2 + canvases.length * 3;
+  const pageObjectIds = canvases.map((_, index) => 3 + index * 3);
+
+  const startObject = (id) => {
+    offsets[id] = length;
+    pushText(`${id} 0 obj\n`);
+  };
+
+  startObject(1);
+  pushText('<< /Type /Catalog /Pages 2 0 R >>\nendobj\n');
+
+  startObject(2);
+  pushText(`<< /Type /Pages /Count ${canvases.length} /Kids [${pageObjectIds.map((id) => `${id} 0 R`).join(' ')}] >>\nendobj\n`);
+
+  canvases.forEach((canvas, index) => {
+    const pageId = 3 + index * 3;
+    const imageId = pageId + 1;
+    const contentId = pageId + 2;
+    const base64 = canvas.toDataURL('image/jpeg', 0.98).split(',')[1];
+    const binary = atob(base64);
+    const imageBytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i += 1) {
+      imageBytes[i] = binary.charCodeAt(i);
+    }
+
+    startObject(pageId);
+    pushText(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pageWidth} ${pageHeight}] /Resources << /XObject << /Im${index + 1} ${imageId} 0 R >> >> /Contents ${contentId} 0 R >>\nendobj\n`);
+
+    startObject(imageId);
+    pushText(`<< /Type /XObject /Subtype /Image /Width ${canvas.width} /Height ${canvas.height} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${imageBytes.length} >>\nstream\n`);
+    pushBytes(imageBytes);
+    pushText('\nendstream\nendobj\n');
+
+    const content = `q ${pageWidth} 0 0 ${pageHeight} 0 0 cm /Im${index + 1} Do Q`;
+    const contentBytes = encoder.encode(content);
+    startObject(contentId);
+    pushText(`<< /Length ${contentBytes.length} >>\nstream\n`);
+    pushBytes(contentBytes);
+    pushText('\nendstream\nendobj\n');
+  });
+
+  const xrefOffset = length;
+  pushText(`xref\n0 ${objectCount + 1}\n`);
+  pushText('0000000000 65535 f \n');
+  for (let id = 1; id <= objectCount; id += 1) {
+    pushText(`${String(offsets[id] || 0).padStart(10, '0')} 00000 n \n`);
+  }
+  pushText(`trailer\n<< /Size ${objectCount + 1} /Root 1 0 R >>\nstartxref\n${xrefOffset}\n%%EOF`);
+
+  return new Blob(chunks, { type: 'application/pdf' });
+}
+
+
+function createAvailabilityPdfPage({
+  trainerName,
+  recipientName,
+  recipientOrganizationId,
+  monthKeyValue,
+  availabilityByDay,
+  commitmentsByDay,
+  skills = [],
+  trainerMessage = '',
+}) {
+  const canvas = document.createElement('canvas');
+  // A4 à ~300 dpi : le PDF reste net à l'écran et à l'impression.
+  canvas.width = 2480;
+  canvas.height = 3508;
+  const ctx = canvas.getContext('2d');
+  ctx.scale(2, 2);
+
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, 1240, 1754);
+
+  ctx.fillStyle = '#eff6ff';
+  ctx.fillRect(0, 0, canvas.width, 330);
+
+  ctx.fillStyle = '#2563eb';
+  ctx.font = '800 38px Arial';
+  ctx.fillText('FORMAPLANE', 80, 90);
+
+  ctx.fillStyle = '#0f172a';
+  ctx.font = '800 54px Arial';
+  ctx.fillText('Mes disponibilités', 80, 180);
+
+  ctx.fillStyle = '#334155';
+  ctx.font = '700 28px Arial';
+  ctx.fillText(trainerName || 'Formateur', 80, 235);
+
+  ctx.fillStyle = '#64748b';
+  ctx.font = '600 22px Arial';
+  ctx.fillText(monthLabelFromKey(monthKeyValue), 80, 280);
+
+  if (recipientName) {
+    ctx.fillStyle = '#1d4ed8';
+    ctx.font = '700 18px Arial';
+    ctx.fillText(`Préparé pour ${recipientName}`, 80, 315);
+  }
+
+  if (skills.length > 0) {
+    const skillText = skills.slice(0, 5).join(' • ');
+    ctx.fillStyle = '#475569';
+    ctx.font = '600 16px Arial';
+    ctx.fillText(skillText.slice(0, 115), 80, 345);
+  }
+
+  const normalizedTrainerMessage = String(trainerMessage || '').trim();
+  if (normalizedTrainerMessage) {
+    ctx.fillStyle = '#f8fafc';
+    ctx.strokeStyle = '#dbeafe';
+    ctx.lineWidth = 2;
+    ctx.fillRect(80, 370, 1080, 82);
+    ctx.strokeRect(80, 370, 1080, 82);
+    ctx.fillStyle = '#1e3a8a';
+    ctx.font = '800 15px Arial';
+    ctx.fillText('MESSAGE DU FORMATEUR', 102, 396);
+    ctx.fillStyle = '#334155';
+    ctx.font = '500 16px Arial';
+    const messageLines = wrapCanvasText(ctx, normalizedTrainerMessage, 1015).slice(0, 2);
+    messageLines.forEach((line, index) => {
+      ctx.fillText(line, 102, 423 + index * 20);
+    });
+  }
+
+  const matrix = getMonthMatrix(monthKeyValue);
+  const days = matrix.flat();
+  const ref = monthDateFromKey(monthKeyValue);
+  const currentMonth = ref.getMonth();
+  const weekLabels = ['LUN', 'MAR', 'MER', 'JEU', 'VEN', 'SAM', 'DIM'];
+  const gridX = 80;
+  const gridY = normalizedTrainerMessage ? 505 : 425;
+  const cellW = 154;
+  const cellH = normalizedTrainerMessage ? 142 : 152;
+
+  ctx.font = '800 18px Arial';
+  ctx.textAlign = 'center';
+  weekLabels.forEach((label, index) => {
+    ctx.fillStyle = '#475569';
+    ctx.fillText(label, gridX + index * cellW + cellW / 2, gridY - 26);
+  });
+
+  days.forEach((date, index) => {
+    const col = index % 7;
+    const row = Math.floor(index / 7);
+    const x = gridX + col * cellW;
+    const y = gridY + row * cellH;
+    const inMonth = date.getMonth() === currentMonth;
+    const day = toISODate(date);
+    const state = getSharedDayState({
+      day,
+      availabilityByDay,
+      commitmentsByDay,
+      recipientOrganizationId: recipientOrganizationId || null,
+    });
+
+    ctx.fillStyle = inMonth ? '#ffffff' : '#f8fafc';
+    ctx.fillRect(x, y, cellW - 4, cellH - 4);
+    ctx.strokeStyle = '#e2e8f0';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(x, y, cellW - 4, cellH - 4);
+
+    ctx.textAlign = 'left';
+    ctx.fillStyle = inMonth ? '#0f172a' : '#94a3b8';
+    ctx.font = '800 24px Arial';
+    ctx.fillText(String(date.getDate()), x + 14, y + 34);
+
+    if (inMonth) {
+      let background = '#f1f5f9';
+      let foreground = '#64748b';
+      if (state.key === 'available') {
+        background = '#dcfce7';
+        foreground = '#15803d';
+      } else if (state.key === 'unavailable') {
+        background = '#fee2e2';
+        foreground = '#b42318';
+      } else if (state.key === 'option_with_recipient') {
+        background = '#fef3c7';
+        foreground = '#a16207';
+      } else if (state.key === 'mission_with_recipient') {
+        background = '#dbeafe';
+        foreground = '#1d4ed8';
+      }
+      ctx.fillStyle = background;
+      ctx.fillRect(x + 10, y + 58, cellW - 24, 58);
+      ctx.textAlign = 'center';
+      ctx.fillStyle = foreground;
+      ctx.font = '800 13px Arial';
+      let pdfLabel = state.otherOptionsCount > 0 && state.key === 'available'
+        ? 'Disponible*'
+        : state.label;
+      if (state.key === 'mission_with_recipient') pdfLabel = 'Mission avec vous';
+      if (state.key === 'option_with_recipient') pdfLabel = 'Option avec vous';
+      const labelLines = wrapCanvasText(ctx, pdfLabel, cellW - 38).slice(0, 2);
+      labelLines.forEach((line, lineIndex) => {
+        ctx.fillText(line, x + (cellW - 4) / 2, y + 86 + lineIndex * 17);
+      });
+    }
+  });
+
+  const footerY = 1435;
+  ctx.textAlign = 'left';
+  ctx.fillStyle = '#f8fafc';
+  ctx.fillRect(80, footerY, 1080, 178);
+  ctx.fillStyle = '#0f172a';
+  ctx.font = '800 21px Arial';
+  ctx.fillText('Disponibilités indicatives', 105, footerY + 38);
+  ctx.fillStyle = '#64748b';
+  ctx.font = '500 17px Arial';
+  ctx.fillText('Merci de confirmer directement avec le formateur avant toute programmation.', 105, footerY + 72);
+  ctx.font = '500 14px Arial';
+  ctx.fillText('* Une ou plusieurs autres demandes peuvent être en cours, sans révéler l’organisme concerné.', 105, footerY + 104);
+  ctx.fillStyle = '#2563eb';
+  ctx.font = '700 17px Arial';
+  ctx.fillText('Disponibilités gérées avec Formaplane - formaplane.fr', 105, footerY + 142);
+
+  ctx.textAlign = 'right';
+  ctx.fillStyle = '#94a3b8';
+  ctx.font = '500 15px Arial';
+  ctx.fillText(
+    `Document généré le ${new Intl.DateTimeFormat('fr-FR').format(new Date())}`,
+    1160,
+    1705,
+  );
+
+  return canvas;
+}
+
+
 export default function TrainerAvailabilityShare() {
   const {
     profile,
@@ -1306,6 +1554,11 @@ export default function TrainerAvailabilityShare() {
     setPreviewContactId,
   ] = useState('');
 
+  const [
+    pdfContactId,
+    setPdfContactId,
+  ] = useState('');
+
 
   const [
     previewData,
@@ -1346,6 +1599,26 @@ export default function TrainerAvailabilityShare() {
   const [
     sendError,
     setSendError,
+  ] = useState('');
+
+  const [
+    copyToSender,
+    setCopyToSender,
+  ] = useState(false);
+
+  const [
+    pdfLoading,
+    setPdfLoading,
+  ] = useState(false);
+
+  const [
+    pdfMessage,
+    setPdfMessage,
+  ] = useState('');
+
+  const [
+    pdfError,
+    setPdfError,
   ] = useState('');
 
 
@@ -1423,6 +1696,17 @@ export default function TrainerAvailabilityShare() {
       ],
     );
 
+  const pdfContact =
+    useMemo(
+      () =>
+        contacts.find(
+          (contact) =>
+            contact.id ===
+            pdfContactId,
+        ) || null,
+      [contacts, pdfContactId],
+    );
+
 
   const loadContacts =
     useCallback(async () => {
@@ -1443,13 +1727,20 @@ export default function TrainerAvailabilityShare() {
               (contactId) =>
                 rows.some(
                   (contact) =>
-                    contact.id ===
-                    contactId,
+                    contact.id === contactId &&
+                    contact?.last_share?.canShare !== false,
                 ),
             ),
         );
 
         setPreviewContactId(
+          (current) =>
+            current ||
+            rows?.[0]?.id ||
+            '',
+        );
+
+        setPdfContactId(
           (current) =>
             current ||
             rows?.[0]?.id ||
@@ -1839,6 +2130,11 @@ export default function TrainerAvailabilityShare() {
           );
         }
 
+        if (pdfContactId === contact.id) {
+          const replacement = contacts.find((row) => row.id !== contact.id);
+          setPdfContactId(replacement?.id || '');
+        }
+
         if (
           editingId ===
           contact.id
@@ -1870,6 +2166,19 @@ export default function TrainerAvailabilityShare() {
     (contactId) => {
       setSendMessage('');
       setSendError('');
+
+      const contact = contacts.find(
+        (row) => row.id === contactId,
+      );
+
+      if (contact?.last_share?.canShare === false) {
+        setSendError(
+          contact.last_share.nextShareAt
+            ? `Un nouvel envoi à ${contact.organization_name} sera possible le ${formatShareDate(contact.last_share.nextShareAt)}.`
+            : `Un nouvel envoi à ${contact.organization_name} n'est pas encore autorisé.`,
+        );
+        return;
+      }
 
       setSelectedContactIds(
         (current) =>
@@ -1906,6 +2215,19 @@ export default function TrainerAvailabilityShare() {
       ) {
         setSendError(
           'Sélectionnez au moins un contact destinataire.',
+        );
+        return;
+      }
+
+      const blockedContact = selectedContacts.find(
+        (contact) => contact?.last_share?.canShare === false,
+      );
+
+      if (blockedContact) {
+        setSendError(
+          blockedContact.last_share?.nextShareAt
+            ? `Un nouvel envoi à ${blockedContact.organization_name} sera possible le ${formatShareDate(blockedContact.last_share.nextShareAt)}.`
+            : `Un nouvel envoi à ${blockedContact.organization_name} n'est pas encore autorisé.`,
         );
         return;
       }
@@ -1964,6 +2286,7 @@ export default function TrainerAvailabilityShare() {
               message:
                 customMessage ||
                 commonShareMessage.trim(),
+              copyToSender,
             });
 
             sentCount += 1;
@@ -2006,6 +2329,77 @@ export default function TrainerAvailabilityShare() {
         await loadContacts();
       } finally {
         setSendingShare(false);
+      }
+    };
+
+
+  const downloadAvailabilityPdf =
+    async () => {
+      if (pdfLoading) {
+        return;
+      }
+
+      setPdfLoading(true);
+      setPdfMessage('');
+      setPdfError('');
+
+      try {
+        if (selectedMonths.length === 0) {
+          throw new Error('Sélectionnez au moins un mois à intégrer au PDF.');
+        }
+
+        const orderedMonths = selectedMonths.slice().sort();
+        const range = getMonthRangeFromKeys(orderedMonths);
+        if (!range) {
+          throw new Error('La période sélectionnée est invalide.');
+        }
+
+        if (!pdfContact) {
+          throw new Error('Sélectionnez un organisme pour préparer le PDF.');
+        }
+
+        const data = await getMyAvailabilitySharePreview({
+          ...range,
+          organizationId: pdfContact.organization_id || null,
+        });
+
+        const canvases = orderedMonths.map((month) =>
+          createAvailabilityPdfPage({
+            trainerName: publicTrainerName,
+            recipientName: pdfContact.organization_name || '',
+            recipientOrganizationId: pdfContact.organization_id || null,
+            monthKeyValue: month,
+            availabilityByDay: data.availabilityByDay || {},
+            commitmentsByDay: data.commitmentsByDay || {},
+            skills: publicSkills,
+            trainerMessage:
+              customizeMessages && String(customMessagesByContact[pdfContact.id] || '').trim()
+                ? String(customMessagesByContact[pdfContact.id] || '').trim()
+                : commonShareMessage.trim(),
+          }),
+        );
+
+        const blob = pdfBinaryFromCanvases(canvases);
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `formaplane-disponibilites-${orderedMonths[0]}${orderedMonths.length > 1 ? `-a-${orderedMonths[orderedMonths.length - 1]}` : ''}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+        setPdfMessage(
+          `PDF personnalisé pour ${pdfContact.organization_name} généré. Vous pouvez l'envoyer librement depuis votre propre messagerie.`,
+        );
+      } catch (downloadError) {
+        console.error('Erreur génération PDF :', downloadError);
+        setPdfError(
+          downloadError?.message ||
+            'Impossible de générer le PDF de vos disponibilités.',
+        );
+      } finally {
+        setPdfLoading(false);
       }
     };
 
@@ -2187,8 +2581,7 @@ export default function TrainerAvailabilityShare() {
       );
 
       try {
-        const data =
-          await getPublicShareData();
+        await getPublicShareData();
 
         await navigator.clipboard.writeText(
           publicPostText,
@@ -2698,8 +3091,8 @@ export default function TrainerAvailabilityShare() {
           <div
             style={{
               display: 'grid',
-              gap: 12,
-              marginTop: 12,
+              gap: 8,
+              marginTop: 8,
             }}
           >
             {contacts.map(
@@ -2711,20 +3104,20 @@ export default function TrainerAvailabilityShare() {
                   style={{
                     border:
                       '1px solid #e2e8f0',
-                    borderRadius: 12,
-                    padding: 12,
+                    borderRadius: 10,
+                    padding: '7px 9px',
                     display: 'flex',
                     justifyContent:
                       'space-between',
                     alignItems:
-                      'center',
-                    gap: 16,
+                      'flex-start',
+                    gap: 7,
                     flexWrap:
                       'wrap',
                     background: '#fff',
                   }}
                 >
-                  <div>
+                  <div style={{ minWidth: 0, flex: 1 }}>
                     <div
                       style={{
                         display: 'flex',
@@ -2768,47 +3161,25 @@ export default function TrainerAvailabilityShare() {
                       ) : null}
                     </div>
 
-                    {contact.contact_name ? (
-                      <div
-                        style={{
-                          marginTop: 6,
-                          color:
-                            '#475569',
-                        }}
-                      >
-                        {
-                          contact.contact_name
-                        }
-                      </div>
-                    ) : null}
-
                     <div
                       style={{
-                        marginTop: 4,
-                        color:
-                          '#64748b',
-                        fontSize: 14,
+                        marginTop: 3,
+                        color: '#64748b',
+                        fontSize: 11,
+                        display: 'flex',
+                        gap: 6,
+                        flexWrap: 'wrap',
+                        alignItems: 'center',
                       }}
                     >
-                      {
-                        contact.email
-                      }
+                      {contact.contact_name ? (
+                        <span style={{ color: '#475569', fontWeight: 700 }}>
+                          {contact.contact_name}
+                        </span>
+                      ) : null}
+                      <span>{contact.email}</span>
+                      {contact.phone ? <span>· {contact.phone}</span> : null}
                     </div>
-
-                    {contact.phone ? (
-                      <div
-                        style={{
-                          marginTop: 2,
-                          color:
-                            '#64748b',
-                          fontSize: 14,
-                        }}
-                      >
-                        {
-                          contact.phone
-                        }
-                      </div>
-                    ) : null}
 
 
                     {contact.last_share?.sentAt ? (() => {
@@ -2820,7 +3191,7 @@ export default function TrainerAvailabilityShare() {
                       return (
                         <div
                           style={{
-                            marginTop: 8,
+                            marginTop: 5,
                             display: 'flex',
                             alignItems: 'center',
                             gap: 7,
@@ -2860,17 +3231,39 @@ export default function TrainerAvailabilityShare() {
                         </div>
                       );
                     })() : null}
+
+                    {contact.last_share?.canShare === false ? (
+                      <div
+                        style={{
+                          marginTop: 5,
+                          padding: '5px 7px',
+                          borderRadius: 7,
+                          background: '#fff7ed',
+                          border: '1px solid #fed7aa',
+                          color: '#9a3412',
+                          fontSize: 11,
+                          fontWeight: 700,
+                          lineHeight: 1.45,
+                        }}
+                      >
+                        Nouvel envoi via Formaplane possible le{' '}
+                        {formatShareDate(contact.last_share.nextShareAt)}.{' '}
+                        PDF disponible à tout moment. Vous pouvez aussi suggérer à cet OF de se connecter à Formaplane pour consulter vos disponibilités en temps réel et en permanence.
+                      </div>
+                    ) : null}
                   </div>
 
                   <div
                     style={{
                       display: 'flex',
-                      gap: 5,
+                      gap: 4,
+                      flexShrink: 0,
                     }}
                   >
                     <button
                       className="button button--soft"
                       type="button"
+                      style={{ padding: '5px 8px', fontSize: 10 }}
                       onClick={() =>
                         edit(
                           contact,
@@ -2893,8 +3286,9 @@ export default function TrainerAvailabilityShare() {
                         )
                       }
                       style={{
-                        color:
-                          '#b42318',
+                        color: '#b42318',
+                        padding: '5px 8px',
+                        fontSize: 10,
                       }}
                     >
                       Supprimer
@@ -2972,6 +3366,8 @@ export default function TrainerAvailabilityShare() {
                       selectedContactIds.includes(
                         contact.id,
                       );
+                    const blocked =
+                      contact?.last_share?.canShare === false;
 
                     return (
                       <label
@@ -2990,17 +3386,24 @@ export default function TrainerAvailabilityShare() {
                           background: selected
                             ? '#eff6ff'
                             : '#ffffff',
-                          cursor: 'pointer',
+                          cursor: blocked ? 'not-allowed' : 'pointer',
                           fontSize: 11,
                           fontWeight: 700,
-                          color: '#334155',
+                          color: blocked ? '#94a3b8' : '#334155',
+                          opacity: blocked ? 0.8 : 1,
                         }}
+                        title={
+                          blocked && contact.last_share?.nextShareAt
+                            ? `Nouvel envoi possible le ${formatShareDate(contact.last_share.nextShareAt)}`
+                            : undefined
+                        }
                       >
                         <input
                           type="checkbox"
                           checked={
                             selected
                           }
+                          disabled={blocked}
                           onChange={() =>
                             toggleRecipient(
                               contact.id,
@@ -3011,6 +3414,11 @@ export default function TrainerAvailabilityShare() {
                         {
                           contact.organization_name
                         }
+                        {blocked ? (
+                          <span style={{ fontWeight: 600 }}>
+                            · jusqu'au {formatShareDate(contact.last_share?.nextShareAt)}
+                          </span>
+                        ) : null}
                       </label>
                     );
                   },
@@ -3480,7 +3888,7 @@ export default function TrainerAvailabilityShare() {
                       marginBottom: 5,
                     }}
                   >
-                    Ajouter un message
+                    Ajouter un commentaire au partage
                     <span
                       style={{
                         marginLeft: 5,
@@ -3501,7 +3909,7 @@ export default function TrainerAvailabilityShare() {
                       color: '#64748b',
                     }}
                   >
-                    Ce message sera ajouté dans le corps de l'e-mail envoyé aux organismes sélectionnés.
+                    Ce message sera ajouté dans le corps de l'e-mail et dans le PDF personnalisé.
                   </p>
 
                   <textarea
@@ -3689,85 +4097,108 @@ export default function TrainerAvailabilityShare() {
                 <div
                   style={{
                     marginTop: 12,
-                    padding: '12px 14px',
-                    borderRadius: 12,
-                    border: '1px solid #e2e8f0',
-                    background: '#ffffff',
+                    display: 'grid',
+                    gap: 10,
                   }}
                 >
                   <div
                     style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      gap: 12,
-                      flexWrap: 'wrap',
+                      padding: '12px 14px',
+                      borderRadius: 12,
+                      border: '1px solid #dbeafe',
+                      background: '#ffffff',
                     }}
                   >
-                    <div>
-                      <strong>
-                        Prêt à partager
-                      </strong>
-
-                      <div
-                        style={{
-                          marginTop: 3,
-                          fontSize: 11,
-                          color: '#64748b',
-                        }}
-                      >
-                        {selectedContactIds.length}{' '}
-                        destinataire
-                        {selectedContactIds.length > 1
-                          ? 's'
-                          : ''}{' '}
-                        · {selectedMonths.length}{' '}
-                        mois sélectionné
-                        {selectedMonths.length > 1
-                          ? 's'
-                          : ''}
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        gap: 12,
+                        flexWrap: 'wrap',
+                      }}
+                    >
+                      <div>
+                        <strong>1. Envoyer par e-mail avec Formaplane</strong>
+                        <div style={{ marginTop: 3, fontSize: 11, color: '#64748b' }}>
+                          {selectedContactIds.length} destinataire{selectedContactIds.length > 1 ? 's' : ''} · {selectedMonths.length} mois sélectionné{selectedMonths.length > 1 ? 's' : ''}
+                        </div>
                       </div>
+
+                      <button
+                        className="button"
+                        type="button"
+                        onClick={openSendConfirmation}
+                        disabled={sendingShare || selectedContactIds.length === 0}
+                      >
+                        Envoyer via Formaplane
+                      </button>
                     </div>
 
-                    <button
-                      className="button"
-                      type="button"
-                      onClick={
-                        openSendConfirmation
-                      }
-                      disabled={
-                        sendingShare
-                      }
-                    >
-                      Envoyer mes disponibilités
-                    </button>
+                    {sendMessage ? (
+                      <div style={{ marginTop: 9, color: '#15803d', fontSize: 11, fontWeight: 700 }}>
+                        {sendMessage}
+                      </div>
+                    ) : null}
+
+                    {sendError ? (
+                      <div style={{ marginTop: 9, color: '#b42318', fontSize: 11, fontWeight: 700 }}>
+                        {sendError}
+                      </div>
+                    ) : null}
                   </div>
 
-                  {sendMessage ? (
-                    <div
-                      style={{
-                        marginTop: 9,
-                        color: '#15803d',
-                        fontSize: 11,
-                        fontWeight: 700,
-                      }}
-                    >
-                      {sendMessage}
-                    </div>
-                  ) : null}
+                  <div
+                    style={{
+                      padding: '12px 14px',
+                      borderRadius: 12,
+                      border: '1px solid #e2e8f0',
+                      background: '#f8fafc',
+                    }}
+                  >
+                    <div style={{ fontWeight: 800 }}>2. Télécharger un PDF personnalisé</div>
+                    <p style={{ margin: '4px 0 10px', fontSize: 11, color: '#64748b', lineHeight: 1.45 }}>
+                      Le PDF reste disponible à tout moment, même pendant le délai de 20 jours. Vous pouvez ensuite l'envoyer vous-même depuis votre propre messagerie.
+                    </p>
 
-                  {sendError ? (
-                    <div
-                      style={{
-                        marginTop: 9,
-                        color: '#b42318',
-                        fontSize: 11,
-                        fontWeight: 700,
-                      }}
-                    >
-                      {sendError}
+                    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+                      <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, fontWeight: 700, color: '#475569' }}>
+                        PDF pour
+                        <select
+                          value={pdfContactId}
+                          onChange={(event) => setPdfContactId(event.target.value)}
+                          style={{ minWidth: 180 }}
+                        >
+                          {contacts.map((contact) => (
+                            <option key={contact.id} value={contact.id}>
+                              {contact.organization_name}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+
+                      <button
+                        className="button button--soft"
+                        type="button"
+                        onClick={downloadAvailabilityPdf}
+                        disabled={pdfLoading || selectedMonths.length === 0 || !pdfContactId}
+                      >
+                        {pdfLoading ? 'Génération du PDF…' : 'Télécharger le PDF'}
+                      </button>
                     </div>
-                  ) : null}
+
+                    {pdfMessage ? (
+                      <div style={{ marginTop: 9, color: '#15803d', fontSize: 11, fontWeight: 700 }}>
+                        {pdfMessage}
+                      </div>
+                    ) : null}
+
+                    {pdfError ? (
+                      <div style={{ marginTop: 9, color: '#b42318', fontSize: 11, fontWeight: 700 }}>
+                        {pdfError}
+                      </div>
+                    ) : null}
+                  </div>
                 </div>
 
               </>
@@ -3797,7 +4228,7 @@ export default function TrainerAvailabilityShare() {
             marginBottom: 6,
           }}
         >
-          Partager sur les réseaux sociaux
+          3. Partager sur les réseaux sociaux
         </h2>
 
         <p
@@ -4291,6 +4722,36 @@ export default function TrainerAvailabilityShare() {
                 </div>
               ) : null}
             </div>
+
+            <label
+              style={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: 9,
+                marginTop: 16,
+                padding: '11px 12px',
+                borderRadius: 10,
+                background: '#eff6ff',
+                border: '1px solid #bfdbfe',
+                color: '#1e3a8a',
+                fontSize: 12,
+                lineHeight: 1.45,
+                cursor: sendingShare ? 'default' : 'pointer',
+              }}
+            >
+              <input
+                type="checkbox"
+                checked={copyToSender}
+                disabled={sendingShare}
+                onChange={(event) => setCopyToSender(event.target.checked)}
+                style={{ marginTop: 2 }}
+              />
+              <span>
+                <strong>Recevoir une copie de cet e-mail</strong>
+                <br />
+                La copie sera envoyée à l'adresse e-mail de votre compte Formaplane. Elle fait partie du même partage et ne crée pas un second délai de 20 jours.
+              </span>
+            </label>
 
             <div
               style={{

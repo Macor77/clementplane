@@ -21,6 +21,7 @@ type EmailRequest = {
   contactId?: string;
   months?: string[];
   message?: string;
+  copyToSender?: boolean;
 };
 
 const jsonResponse = (body: Record<string, unknown>, status = 200) =>
@@ -1284,6 +1285,7 @@ Deno.serve(async (req) => {
 
     let emailPayload: Record<string, unknown>;
     let logPayload: Record<string, unknown>;
+    let precreatedLogId: string | null = null;
 
     if (body.type === 'infrastructure_test') {
       const recipientEmail = String(authData.user.email || '').trim().toLowerCase();
@@ -1316,6 +1318,8 @@ Deno.serve(async (req) => {
         String(body.message || '')
           .trim()
           .slice(0, 1500);
+
+      const copyToSender = Boolean(body.copyToSender);
 
       if (!contactId || months.length === 0 || months.length > 6) {
         return jsonResponse(
@@ -1490,6 +1494,51 @@ Deno.serve(async (req) => {
         trainerMessage,
       });
 
+      if (copyToSender) {
+        const senderCopyEmail = String(authData.user.email || '').trim().toLowerCase();
+        if (senderCopyEmail && senderCopyEmail !== recipientEmail) {
+          emailPayload.cc = [{ email: senderCopyEmail, name: trainerName }];
+        }
+      }
+
+      // Le journal pending est réservé atomiquement en base. La RPC sérialise
+      // les appels pour un même couple formateur + e-mail et impose 20 jours.
+      const { data: reservationRows, error: reservationError } =
+        await authenticatedClient.rpc('reserve_my_availability_share', {
+          p_contact_id: contact.id,
+          p_months: months,
+          p_trainer_message: trainerMessage,
+          p_copy_to_sender: copyToSender,
+        });
+
+      if (reservationError) {
+        console.error('Réservation du partage impossible :', reservationError);
+        return jsonResponse(
+          { success: false, message: "Impossible de vérifier le délai avant l'envoi." },
+          500,
+        );
+      }
+
+      const reservation = Array.isArray(reservationRows)
+        ? reservationRows[0]
+        : reservationRows;
+
+      if (!reservation?.success || !reservation?.email_log_id) {
+        return jsonResponse(
+          {
+            success: false,
+            code: 'AVAILABILITY_SHARE_COOLDOWN',
+            nextShareAt: reservation?.next_share_at || null,
+            message: reservation?.next_share_at
+              ? `Un partage a déjà été envoyé à ce contact. Un nouvel envoi sera possible à partir du ${new Intl.DateTimeFormat('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Paris' }).format(new Date(reservation.next_share_at))}.`
+              : 'Un partage a déjà été envoyé récemment à ce contact.',
+          },
+          429,
+        );
+      }
+
+      precreatedLogId = String(reservation.email_log_id);
+
       logPayload = {
         email_type: 'trainer_availability_share',
         provider: 'brevo',
@@ -1510,8 +1559,32 @@ Deno.serve(async (req) => {
           organization_registered: Boolean(recipientOrganizationId),
           trainer_referenced: trainerReferenced,
           trainer_message: trainerMessage || null,
+          copy_to_sender: copyToSender,
         },
       };
+
+      // Complète le journal déjà créé par la réservation atomique avec les
+      // informations calculées par l'Edge Function.
+      const { error: reservationLogUpdateError } = await admin
+        .from('email_logs')
+        .update({
+          organization_id: recipientOrganizationId,
+          metadata: logPayload.metadata,
+        })
+        .eq('id', precreatedLogId);
+
+      if (reservationLogUpdateError) {
+        console.error('Mise à jour du journal réservé impossible :', reservationLogUpdateError);
+        await admin.from('email_logs').update({
+          status: 'failed',
+          error_message: 'Impossible de finaliser le journal du partage.',
+          failed_at: new Date().toISOString(),
+        }).eq('id', precreatedLogId);
+        return jsonResponse(
+          { success: false, message: "L'envoi a été bloqué car son journal n'a pas pu être finalisé." },
+          500,
+        );
+      }
     } else if (body.type === 'trainer_claim_invitation') {
       const trainerId = String(body.trainerId || '').trim();
       const organizationId = String(body.organizationId || '').trim();
@@ -2716,18 +2789,22 @@ Deno.serve(async (req) => {
       return jsonResponse({ success: false, message: "Ce type d'e-mail n'est pas autorisé." }, 400);
     }
 
-    const { data: log, error: logError } = await admin
-      .from('email_logs')
-      .insert(logPayload)
-      .select('id')
-      .single();
+    if (precreatedLogId) {
+      logId = precreatedLogId;
+    } else {
+      const { data: log, error: logError } = await admin
+        .from('email_logs')
+        .insert(logPayload)
+        .select('id')
+        .single();
 
-    if (logError || !log?.id) {
-      console.error('Impossible de créer le journal e-mail :', logError);
-      return jsonResponse({ success: false, message: "L'envoi a été bloqué car son journal n'a pas pu être créé." }, 500);
+      if (logError || !log?.id) {
+        console.error('Impossible de créer le journal e-mail :', logError);
+        return jsonResponse({ success: false, message: "L'envoi a été bloqué car son journal n'a pas pu être créé." }, 500);
+      }
+
+      logId = log.id;
     }
-
-    logId = log.id;
 
     // Permet au webhook Brevo de rattacher sans ambiguïté l'événement
     // (délivré, bounce, etc.) au journal Formaplane correspondant.

@@ -19,6 +19,7 @@ import {
 import { sendMissionChangeRevalidationEmails } from '../services/emailService';
 
 import CompetencyInput from '../components/CompetencyInput';
+import EmailCopyToSenderOption from '../components/EmailCopyToSenderOption';
 
 const EMPTY_MISSION = {
   client: '',
@@ -64,6 +65,8 @@ export default function MissionForm() {
     useState('email');
   const [revalidationContactNote, setRevalidationContactNote] =
     useState('');
+  const [revalidationCopyToSender, setRevalidationCopyToSender] =
+    useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -219,6 +222,7 @@ export default function MissionForm() {
             try {
               await sendMissionChangeRevalidationEmails({
                 requestId: result.requestId,
+                copyToSender: revalidationCopyToSender,
               });
             } catch (emailError) {
               console.error(
@@ -304,6 +308,7 @@ export default function MissionForm() {
       if (preview.revalidationRequired) {
         setRevalidationContactChannel('email');
         setRevalidationContactNote('');
+        setRevalidationCopyToSender(false);
         setRevalidationConfirm(preview);
         setSaving(false);
         return;
@@ -775,6 +780,16 @@ export default function MissionForm() {
               </label>
             </div>
 
+            {revalidationContactChannel === 'email' ? (
+              <EmailCopyToSenderOption
+                checked={revalidationCopyToSender}
+                onChange={setRevalidationCopyToSender}
+                disabled={saving}
+                multiple
+                compact
+              />
+            ) : null}
+
             <div style={styles.channelGroupSecondary}>
               <div style={styles.channelGroupTitleSecondary}>
                 J’ai déjà informé les formateurs autrement
@@ -843,9 +858,10 @@ export default function MissionForm() {
             <div style={styles.modalActions}>
               <button
                 type="button"
-                onClick={() =>
-                  setRevalidationConfirm(null)
-                }
+                onClick={() => {
+                  setRevalidationConfirm(null);
+                  setRevalidationCopyToSender(false);
+                }}
                 disabled={saving}
                 style={styles.secondaryButton}
               >

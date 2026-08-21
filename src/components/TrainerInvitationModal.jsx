@@ -1,9 +1,13 @@
+import EmailCopyToSenderOption from './EmailCopyToSenderOption';
+
 export default function TrainerInvitationModal({
   open,
   trainerName,
   trainerEmail,
   sending = false,
   recentInvitation = null,
+  copyToSender = false,
+  onCopyToSenderChange,
   onCancel,
   onConfirm,
 }) {
@@ -94,6 +98,12 @@ export default function TrainerInvitationModal({
             {' '}Vous pouvez tout de même la renvoyer depuis cette fiche.
           </div>
         ) : null}
+
+        <EmailCopyToSenderOption
+          checked={copyToSender}
+          onChange={onCopyToSenderChange}
+          disabled={sending}
+        />
 
         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 24 }}>
           <button

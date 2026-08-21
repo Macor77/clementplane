@@ -26,6 +26,7 @@ import {
 
 import { getMissionRecommendations } from '../services/missionMatchingService';
 import { prepareMissionProposal } from '../services/proposalService';
+import EmailCopyToSenderOption from '../components/EmailCopyToSenderOption';
 import {
   sendMissionAssignmentConfirmation,
   sendMissionUnassignmentNotification,
@@ -52,6 +53,7 @@ export default function MissionDetail() {
   const [cancelMissionChannel, setCancelMissionChannel] = useState('email');
   const [cancelMissionNote, setCancelMissionNote] = useState('');
   const [cancelMissionSending, setCancelMissionSending] = useState(false);
+  const [cancelMissionCopyToSender, setCancelMissionCopyToSender] = useState(false);
 
   const [
     missionHistory,
@@ -109,6 +111,7 @@ export default function MissionDetail() {
     useState('');
   const [proposalContactSending, setProposalContactSending] =
     useState(false);
+  const [proposalCopyToSender, setProposalCopyToSender] = useState(false);
 
   const [
     actionTrainerId,
@@ -123,6 +126,7 @@ export default function MissionDetail() {
     useState('');
   const [assignmentContactSending, setAssignmentContactSending] =
     useState(false);
+  const [assignmentCopyToSender, setAssignmentCopyToSender] = useState(false);
 
   const [pendingMissionChange, setPendingMissionChange] = useState(null);
 
@@ -391,6 +395,7 @@ export default function MissionDetail() {
         try {
           const result = await sendMissionCancellationEmails({
             missionId: id,
+            copyToSender: cancelMissionCopyToSender,
           });
 
           setActionNotice(
@@ -414,6 +419,7 @@ export default function MissionDetail() {
       setCancelMissionOpen(false);
       setCancelMissionChannel('email');
       setCancelMissionNote('');
+      setCancelMissionCopyToSender(false);
       await refresh();
     } catch (cancelError) {
       setError(
@@ -459,6 +465,7 @@ export default function MissionDetail() {
     });
     setAssignmentContactChannel('email');
     setAssignmentContactNote('');
+    setAssignmentCopyToSender(false);
   };
 
   const executeAssignmentContactAction = async () => {
@@ -496,10 +503,12 @@ export default function MissionDetail() {
             ? await sendMissionAssignmentConfirmation({
                 missionId: id,
                 trainerId,
+                copyToSender: assignmentCopyToSender,
               })
             : await sendMissionUnassignmentNotification({
                 missionId: id,
                 trainerId,
+                copyToSender: assignmentCopyToSender,
               });
         } catch (emailError) {
           setError(
@@ -645,6 +654,7 @@ export default function MissionDetail() {
     });
     setProposalContactChannel('email');
     setProposalContactNote('');
+    setProposalCopyToSender(false);
     setError('');
     setActionNotice('');
   };
@@ -673,6 +683,7 @@ export default function MissionDetail() {
         await sendMissionProposalEmail({
           missionTrainerId,
           isReminder,
+          copyToSender: proposalCopyToSender,
         });
       }
 
@@ -929,6 +940,15 @@ export default function MissionDetail() {
               </label>
             </div>
 
+            {proposalContactChannel === 'email' ? (
+              <EmailCopyToSenderOption
+                checked={proposalCopyToSender}
+                onChange={setProposalCopyToSender}
+                disabled={proposalContactSending}
+                compact
+              />
+            ) : null}
+
             <div
               style={{
                 marginTop: 10,
@@ -1086,43 +1106,150 @@ export default function MissionDetail() {
               </span>
             </div>
 
-            <div style={{ display: 'grid', gap: 7, marginTop: 12 }}>
-              {[
-                ['email', 'Envoyer immédiatement un e-mail via Formaplane'],
-                ['sms', 'J’ai envoyé un SMS'],
-                ['whatsapp', 'J’ai envoyé un message WhatsApp'],
-                ['phone', 'J’ai appelé les formateurs'],
-                ['other', 'Autre'],
-              ].map(([value, label]) => (
-                <label
-                  key={value}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 9,
-                    padding: '9px 10px',
-                    border: cancelMissionChannel === value
-                      ? '1px solid #93c5fd'
-                      : '1px solid #e2e8f0',
-                    borderRadius: 8,
-                    background: cancelMissionChannel === value
-                      ? '#eff6ff'
-                      : '#fff',
-                    cursor: 'pointer',
-                    fontSize: 11.5,
-                    fontWeight: 650,
-                    color: '#334155',
-                  }}
-                >
-                  <input
-                    type="radio"
-                    name="cancel-mission-channel"
-                    checked={cancelMissionChannel === value}
-                    onChange={() => setCancelMissionChannel(value)}
-                  />
-                  {label}
-                </label>
-              ))}
+            <div
+              style={{
+                marginTop: 12,
+                padding: '10px 11px',
+                border: '1px solid #bfdbfe',
+                borderRadius: 9,
+                background: '#eff6ff',
+              }}
+            >
+              <div
+                style={{
+                  marginBottom: 7,
+                  fontSize: 10.5,
+                  fontWeight: 800,
+                  color: '#1d4ed8',
+                  textTransform: 'uppercase',
+                  letterSpacing: '.5px',
+                }}
+              >
+                Envoyer maintenant avec Formaplane
+              </div>
+
+              <label
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 9,
+                  padding: '9px 10px',
+                  border:
+                    cancelMissionChannel === 'email'
+                      ? '1px solid #60a5fa'
+                      : '1px solid #dbeafe',
+                  borderRadius: 8,
+                  background: '#ffffff',
+                  cursor: 'pointer',
+                  fontSize: 11.5,
+                  fontWeight: 700,
+                  color: '#334155',
+                }}
+              >
+                <input
+                  type="radio"
+                  name="cancel-mission-channel"
+                  value="email"
+                  checked={cancelMissionChannel === 'email'}
+                  onChange={() => setCancelMissionChannel('email')}
+                />
+                <span>
+                  Envoyer immédiatement un e-mail via Formaplane
+                  <span
+                    style={{
+                      display: 'block',
+                      marginTop: 2,
+                      color: '#64748b',
+                      fontSize: 10.5,
+                      fontWeight: 500,
+                    }}
+                  >
+                    Chaque formateur concerné recevra l’e-mail dès que vous validerez cette fenêtre.
+                  </span>
+                </span>
+              </label>
+            </div>
+
+            {cancelMissionChannel === 'email' ? (
+              <EmailCopyToSenderOption
+                checked={cancelMissionCopyToSender}
+                onChange={setCancelMissionCopyToSender}
+                disabled={cancelMissionSending}
+                multiple
+                compact
+              />
+            ) : null}
+
+            <div
+              style={{
+                marginTop: 10,
+                padding: '10px 11px',
+                border: '1px solid #e2e8f0',
+                borderRadius: 9,
+                background: '#ffffff',
+              }}
+            >
+              <div
+                style={{
+                  marginBottom: 7,
+                  fontSize: 10.5,
+                  fontWeight: 800,
+                  color: '#64748b',
+                  textTransform: 'uppercase',
+                  letterSpacing: '.5px',
+                }}
+              >
+                J’ai déjà informé les formateurs autrement
+              </div>
+
+              <p
+                style={{
+                  margin: '0 0 8px',
+                  color: '#64748b',
+                  fontSize: 10.5,
+                  lineHeight: 1.45,
+                }}
+              >
+                Ces choix n’envoient aucun message depuis Formaplane. Ils enregistrent simplement le moyen utilisé dans l’historique.
+              </p>
+
+              <div style={{ display: 'grid', gap: 7 }}>
+                {[
+                  ['sms', 'J’ai envoyé un SMS'],
+                  ['whatsapp', 'J’ai envoyé un message WhatsApp'],
+                  ['phone', 'J’ai appelé les formateurs'],
+                  ['other', 'Autre'],
+                ].map(([value, label]) => (
+                  <label
+                    key={value}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 9,
+                      padding: '9px 10px',
+                      border: cancelMissionChannel === value
+                        ? '1px solid #93c5fd'
+                        : '1px solid #e2e8f0',
+                      borderRadius: 8,
+                      background: cancelMissionChannel === value
+                        ? '#eff6ff'
+                        : '#fff',
+                      cursor: 'pointer',
+                      fontSize: 11.5,
+                      fontWeight: 650,
+                      color: '#334155',
+                    }}
+                  >
+                    <input
+                      type="radio"
+                      name="cancel-mission-channel"
+                      checked={cancelMissionChannel === value}
+                      onChange={() => setCancelMissionChannel(value)}
+                    />
+                    {label}
+                  </label>
+                ))}
+              </div>
             </div>
 
             {cancelMissionChannel === 'other' ? (
@@ -1209,69 +1336,149 @@ export default function MissionDetail() {
 
             <div
               style={{
-                display: 'grid',
-                gap: 7,
                 marginTop: 12,
+                padding: '10px 11px',
+                border: '1px solid #bfdbfe',
+                borderRadius: 9,
+                background: '#eff6ff',
               }}
             >
-              {[
-                [
-                  'email',
-                  'Envoyer immédiatement un e-mail via Formaplane',
-                ],
-                [
-                  'sms',
-                  'J’ai envoyé un SMS',
-                ],
-                [
-                  'whatsapp',
-                  'J’ai envoyé un message WhatsApp',
-                ],
-                [
-                  'phone',
-                  'J’ai appelé le formateur',
-                ],
-                [
-                  'other',
-                  'Autre',
-                ],
-              ].map(([value, label]) => (
-                <label
-                  key={value}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 9,
-                    padding: '9px 10px',
-                    border:
-                      assignmentContactChannel === value
-                        ? '1px solid #93c5fd'
-                        : '1px solid #e2e8f0',
-                    borderRadius: 8,
-                    background:
-                      assignmentContactChannel === value
-                        ? '#eff6ff'
-                        : '#fff',
-                    cursor: 'pointer',
-                    fontSize: 11.5,
-                    fontWeight: 650,
-                    color: '#334155',
-                  }}
-                >
-                  <input
-                    type="radio"
-                    name="assignment-contact-channel"
-                    checked={
-                      assignmentContactChannel === value
-                    }
-                    onChange={() =>
-                      setAssignmentContactChannel(value)
-                    }
-                  />
+              <div
+                style={{
+                  marginBottom: 7,
+                  fontSize: 10.5,
+                  fontWeight: 800,
+                  color: '#1d4ed8',
+                  textTransform: 'uppercase',
+                  letterSpacing: '.5px',
+                }}
+              >
+                Envoyer maintenant avec Formaplane
+              </div>
 
-                  {label}
-                </label>
-              ))}
+              <label
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 9,
+                  padding: '9px 10px',
+                  border:
+                    assignmentContactChannel === 'email'
+                      ? '1px solid #60a5fa'
+                      : '1px solid #dbeafe',
+                  borderRadius: 8,
+                  background: '#ffffff',
+                  cursor: 'pointer',
+                  fontSize: 11.5,
+                  fontWeight: 700,
+                  color: '#334155',
+                }}
+              >
+                <input
+                  type="radio"
+                  name="assignment-contact-channel"
+                  value="email"
+                  checked={assignmentContactChannel === 'email'}
+                  onChange={() => setAssignmentContactChannel('email')}
+                />
+                <span>
+                  Envoyer immédiatement un e-mail via Formaplane
+                  <span
+                    style={{
+                      display: 'block',
+                      marginTop: 2,
+                      color: '#64748b',
+                      fontSize: 10.5,
+                      fontWeight: 500,
+                    }}
+                  >
+                    L’e-mail sera envoyé dès que vous validerez cette fenêtre.
+                  </span>
+                </span>
+              </label>
+            </div>
+
+            {assignmentContactChannel === 'email' ? (
+              <EmailCopyToSenderOption
+                checked={assignmentCopyToSender}
+                onChange={setAssignmentCopyToSender}
+                disabled={assignmentContactSending}
+                compact
+              />
+            ) : null}
+
+            <div
+              style={{
+                marginTop: 10,
+                padding: '10px 11px',
+                border: '1px solid #e2e8f0',
+                borderRadius: 9,
+                background: '#ffffff',
+              }}
+            >
+              <div
+                style={{
+                  marginBottom: 7,
+                  fontSize: 10.5,
+                  fontWeight: 800,
+                  color: '#64748b',
+                  textTransform: 'uppercase',
+                  letterSpacing: '.5px',
+                }}
+              >
+                J’ai déjà contacté le formateur autrement
+              </div>
+
+              <p
+                style={{
+                  margin: '0 0 8px',
+                  color: '#64748b',
+                  fontSize: 10.5,
+                  lineHeight: 1.45,
+                }}
+              >
+                Ces choix n’envoient aucun message depuis Formaplane. Ils enregistrent simplement le moyen utilisé dans l’historique.
+              </p>
+
+              <div style={{ display: 'grid', gap: 7 }}>
+                {[
+                  ['sms', 'J’ai envoyé un SMS'],
+                  ['whatsapp', 'J’ai envoyé un message WhatsApp'],
+                  ['phone', 'J’ai appelé le formateur'],
+                  ['other', 'Autre'],
+                ].map(([value, label]) => (
+                  <label
+                    key={value}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 9,
+                      padding: '9px 10px',
+                      border:
+                        assignmentContactChannel === value
+                          ? '1px solid #93c5fd'
+                          : '1px solid #e2e8f0',
+                      borderRadius: 8,
+                      background:
+                        assignmentContactChannel === value
+                          ? '#eff6ff'
+                          : '#fff',
+                      cursor: 'pointer',
+                      fontSize: 11.5,
+                      fontWeight: 650,
+                      color: '#334155',
+                    }}
+                  >
+                    <input
+                      type="radio"
+                      name="assignment-contact-channel"
+                      checked={assignmentContactChannel === value}
+                      onChange={() => setAssignmentContactChannel(value)}
+                    />
+                    {label}
+                  </label>
+                ))}
+              </div>
             </div>
 
             {assignmentContactChannel === 'other' ? (
@@ -1305,6 +1512,7 @@ export default function MissionDetail() {
                   setAssignmentContactTarget(null);
                   setAssignmentContactChannel('email');
                   setAssignmentContactNote('');
+                  setAssignmentCopyToSender(false);
                 }}
               >
                 Annuler
@@ -1406,7 +1614,10 @@ export default function MissionDetail() {
           affectedTrainer={affectedTrainer}
           missionId={id}
           onDelete={handleDelete}
-          onCancel={() => setCancelMissionOpen(true)}
+          onCancel={() => {
+            setCancelMissionCopyToSender(false);
+            setCancelMissionOpen(true);
+          }}
           pendingMissionChange={pendingMissionChange}
         />
 

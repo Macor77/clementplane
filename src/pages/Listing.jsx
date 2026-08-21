@@ -107,6 +107,8 @@ export default function Listing() {
     setTrainerToInvite,
   ] = useState(null);
 
+  const [inviteCopyToSender, setInviteCopyToSender] = useState(false);
+
   const [
     invitationHistoryByTrainer,
     setInvitationHistoryByTrainer,
@@ -273,6 +275,7 @@ export default function Listing() {
 
       setInviteMessage('');
       setInviteError('');
+      setInviteCopyToSender(false);
       setTrainerToInvite(formateur);
     };
 
@@ -297,6 +300,7 @@ export default function Listing() {
         await sendTrainerClaimInvitation({
           trainerId: formateur.id,
           organizationId: currentOrganization.id,
+          copyToSender: inviteCopyToSender,
         });
 
         setInviteMessage(
@@ -483,6 +487,8 @@ export default function Listing() {
         }
         trainerEmail={trainerToInvite?.email || ''}
         sending={Boolean(inviteBusyId)}
+        copyToSender={inviteCopyToSender}
+        onCopyToSenderChange={setInviteCopyToSender}
         onCancel={() => {
           if (!inviteBusyId) setTrainerToInvite(null);
         }}

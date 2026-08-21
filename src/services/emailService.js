@@ -30,6 +30,7 @@ export async function sendInfrastructureTestEmail() {
 export async function sendTrainerClaimInvitation({
   trainerId,
   organizationId,
+  copyToSender = false,
 }) {
   if (!trainerId || !organizationId) {
     throw new Error('Organisation et formateur obligatoires.');
@@ -42,6 +43,7 @@ export async function sendTrainerClaimInvitation({
         type: 'trainer_claim_invitation',
         trainerId,
         organizationId,
+        copyToSender: Boolean(copyToSender),
       },
     },
   );
@@ -92,11 +94,12 @@ export async function getTrainerInvitationHistory({
 
 export function getLatestSuccessfulInvitationByTrainer(history = []) {
   const latestByTrainer = {};
+  const successfulStatuses = new Set(['sent', 'delivered']);
 
   for (const entry of history) {
     if (
       entry?.trainer_id &&
-      entry?.status === 'sent' &&
+      successfulStatuses.has(entry?.status) &&
       entry?.sent_at &&
       !latestByTrainer[entry.trainer_id]
     ) {
@@ -134,6 +137,7 @@ export function formatInvitationRelativeLabel(invitation) {
 export async function sendMissionProposalEmail({
   missionTrainerId,
   isReminder = false,
+  copyToSender = false,
 }) {
   if (!missionTrainerId) {
     throw new Error(
@@ -149,6 +153,7 @@ export async function sendMissionProposalEmail({
           ? 'mission_proposal_reminder'
           : 'mission_proposal',
         missionTrainerId,
+        copyToSender: Boolean(copyToSender),
       },
     },
   );
@@ -178,6 +183,7 @@ export async function sendMissionProposalEmail({
 export async function sendMissionAssignmentConfirmation({
   missionId,
   trainerId,
+  copyToSender = false,
 }) {
   if (!missionId || !trainerId) {
     throw new Error(
@@ -192,6 +198,7 @@ export async function sendMissionAssignmentConfirmation({
         type: 'mission_assignment_confirmation',
         missionId,
         trainerId,
+        copyToSender: Boolean(copyToSender),
       },
     },
   );
@@ -218,7 +225,10 @@ export async function sendMissionAssignmentConfirmation({
 }
 
 
-export async function sendMissionChangeRevalidationEmails({ requestId }) {
+export async function sendMissionChangeRevalidationEmails({
+  requestId,
+  copyToSender = false,
+}) {
   if (!requestId) {
     throw new Error("La demande de revalidation est obligatoire.");
   }
@@ -229,6 +239,7 @@ export async function sendMissionChangeRevalidationEmails({ requestId }) {
       body: {
         type: 'mission_change_revalidation',
         requestId,
+        copyToSender: Boolean(copyToSender),
       },
     },
   );
@@ -251,7 +262,10 @@ export async function sendMissionChangeRevalidationEmails({ requestId }) {
 }
 
 
-export async function sendMissionCancellationEmails({ missionId }) {
+export async function sendMissionCancellationEmails({
+  missionId,
+  copyToSender = false,
+}) {
   if (!missionId) {
     throw new Error('La mission est obligatoire.');
   }
@@ -262,6 +276,7 @@ export async function sendMissionCancellationEmails({ missionId }) {
       body: {
         type: 'mission_cancellation',
         missionId,
+        copyToSender: Boolean(copyToSender),
       },
     },
   );
@@ -322,6 +337,7 @@ export async function sendMissionWithdrawalNotification({
 export async function sendMissionUnassignmentNotification({
   missionId,
   trainerId,
+  copyToSender = false,
 }) {
   if (!missionId || !trainerId) {
     throw new Error(
@@ -336,6 +352,7 @@ export async function sendMissionUnassignmentNotification({
         type: 'mission_unassignment_notification',
         missionId,
         trainerId,
+        copyToSender: Boolean(copyToSender),
       },
     },
   );

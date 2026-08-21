@@ -1243,10 +1243,143 @@ Deno.serve(async (req) => {
       auth: { autoRefreshToken: false, persistSession: false },
     });
 
+    const senderCopyEnabledTypes = new Set([
+      'trainer_claim_invitation',
+      'mission_proposal',
+      'mission_proposal_reminder',
+      'mission_assignment_confirmation',
+      'mission_unassignment_notification',
+      'mission_change_revalidation',
+      'mission_cancellation',
+    ]);
+
+    const prepareSenderCopy = (
+      logData: Record<string, unknown>,
+      recipientEmail: string,
+    ) => {
+      if (!senderCopyEnabledTypes.has(String(body.type || ''))) {
+        return null;
+      }
+
+      const copyToSender = Boolean(body.copyToSender);
+      const senderCopyEmail = String(authData.user.email || '').trim().toLowerCase();
+      const shouldSendCopy =
+        copyToSender &&
+        Boolean(senderCopyEmail) &&
+        senderCopyEmail !== recipientEmail;
+
+      logData.metadata = {
+        ...((logData.metadata as Record<string, unknown> | undefined) || {}),
+        copy_to_sender: copyToSender,
+        copy_recipient: shouldSendCopy ? senderCopyEmail : null,
+      };
+
+      return shouldSendCopy ? senderCopyEmail : null;
+    };
+
+    const neutralizeActionLinks = (html: string) =>
+      String(html || '')
+        .replace(/<(script|form)\b[^>]*>[\s\S]*?<\/\1>/gi, '')
+        .replace(/\s(?:href|action|formaction|onclick)=("[^"]*"|'[^']*'|[^\s>]+)/gi, '')
+        .replace(/https?:\/\/[^\s<"']+/gi, '[lien retiré]');
+
+    const buildSecureSenderCopyPayload = (
+      originalPayload: Record<string, unknown>,
+      senderCopyEmail: string,
+      recipientEmail: string,
+    ) => {
+      const subject = String(originalPayload.subject || 'E-mail Formaplane');
+      const originalHtml = String(originalPayload.htmlContent || '');
+      const safeHtml = neutralizeActionLinks(originalHtml);
+
+      return {
+        sender: {
+          name: SENDER_NAME,
+          email: SENDER_EMAIL,
+        },
+        to: [{ email: senderCopyEmail }],
+        subject: `Copie — ${subject}`,
+        htmlContent: `
+          <div style="font-family:Arial,sans-serif;background:#f5f7fb;padding:24px;color:#0f172a;">
+            <div style="max-width:720px;margin:0 auto;">
+              <div style="background:#eaf2ff;border:1px solid #bfdbfe;border-radius:12px;padding:16px 18px;margin-bottom:18px;">
+                <div style="font-size:15px;font-weight:800;color:#1d4ed8;margin-bottom:6px;">
+                  Copie sécurisée de votre envoi Formaplane
+                </div>
+                <div style="font-size:13px;line-height:1.55;color:#475569;">
+                  Cet e-mail est une copie de celui envoyé à <strong>${escapeHtml(recipientEmail)}</strong>.
+                  Les liens et boutons d’action destinés au formateur ont été neutralisés.
+                  Pour effectuer une action, utilisez directement votre espace Formaplane.
+                </div>
+              </div>
+              <div style="pointer-events:none;">${safeHtml}</div>
+            </div>
+          </div>
+        `,
+      };
+    };
+
+    const sendSecureSenderCopy = async (
+      originalPayload: Record<string, unknown>,
+      senderCopyEmail: string | null,
+      recipientEmail: string,
+    ) => {
+      if (!senderCopyEmail) {
+        return { status: 'not_requested' as const, providerMessageId: null, error: null };
+      }
+
+      const copyPayload = buildSecureSenderCopyPayload(
+        originalPayload,
+        senderCopyEmail,
+        recipientEmail,
+      );
+
+      try {
+        const response = await fetch(BREVO_ENDPOINT, {
+          method: 'POST',
+          headers: {
+            accept: 'application/json',
+            'api-key': brevoApiKey,
+            'content-type': 'application/json',
+          },
+          body: JSON.stringify(copyPayload),
+        });
+
+        const raw = await response.text();
+        let provider: Record<string, unknown> = {};
+        try { provider = raw ? JSON.parse(raw) : {}; } catch { provider = {}; }
+
+        if (!response.ok) {
+          const message =
+            typeof provider.message === 'string'
+              ? provider.message.slice(0, 1000)
+              : `Brevo ${response.status}`;
+          return { status: 'failed' as const, providerMessageId: null, error: message };
+        }
+
+        return {
+          status: 'sent' as const,
+          providerMessageId:
+            typeof provider.messageId === 'string' ? provider.messageId : null,
+          error: null,
+        };
+      } catch (error) {
+        return {
+          status: 'failed' as const,
+          providerMessageId: null,
+          error: error instanceof Error ? error.message.slice(0, 1000) : 'COPY_SEND_FAILED',
+        };
+      }
+    };
+
     const sendLoggedEmail = async (
       payload: Record<string, unknown>,
       logData: Record<string, unknown>,
     ) => {
+      const recipientEmail =
+        String(logData.recipient_email || '').trim().toLowerCase();
+      const senderCopyEmail = prepareSenderCopy(logData, recipientEmail);
+
       const { data: log, error: insertError } = await admin
         .from('email_logs')
         .insert(logData)
@@ -1280,7 +1413,28 @@ Deno.serve(async (req) => {
 
       const providerMessageId = typeof provider.messageId === 'string' ? provider.messageId : null;
       await admin.from('email_logs').update({ status:'sent', provider_message_id:providerMessageId, sent_at:new Date().toISOString(), error_message:null }).eq('id', log.id);
-      return { logId: log.id, providerMessageId };
+
+      const copyResult = await sendSecureSenderCopy(
+        payload,
+        senderCopyEmail,
+        recipientEmail,
+      );
+
+      if (senderCopyEmail) {
+        const nextMetadata = {
+          ...((logData.metadata as Record<string, unknown> | undefined) || {}),
+          copy_delivery_status: copyResult.status,
+          copy_provider_message_id: copyResult.providerMessageId,
+          copy_error: copyResult.error,
+        };
+        await admin.from('email_logs').update({ metadata: nextMetadata }).eq('id', log.id);
+      }
+
+      return {
+        logId: log.id,
+        providerMessageId,
+        copyStatus: copyResult.status,
+      };
     };
 
     let emailPayload: Record<string, unknown>;
@@ -2789,6 +2943,13 @@ Deno.serve(async (req) => {
       return jsonResponse({ success: false, message: "Ce type d'e-mail n'est pas autorisé." }, 400);
     }
 
+    const primaryRecipientEmail =
+      String(logPayload.recipient_email || '').trim().toLowerCase();
+    const senderCopyEmail = prepareSenderCopy(
+      logPayload,
+      primaryRecipientEmail,
+    );
+
     if (precreatedLogId) {
       logId = precreatedLogId;
     } else {
@@ -2873,10 +3034,35 @@ Deno.serve(async (req) => {
       });
     }
 
+    const copyResult = await sendSecureSenderCopy(
+      emailPayload,
+      senderCopyEmail,
+      primaryRecipientEmail,
+    );
+
+    if (senderCopyEmail) {
+      const nextMetadata = {
+        ...((logPayload.metadata as Record<string, unknown> | undefined) || {}),
+        copy_delivery_status: copyResult.status,
+        copy_provider_message_id: copyResult.providerMessageId,
+        copy_error: copyResult.error,
+      };
+
+      const { error: copyMetadataError } = await admin
+        .from('email_logs')
+        .update({ metadata: nextMetadata })
+        .eq('id', logId);
+
+      if (copyMetadataError) {
+        console.error('Copie envoyée mais métadonnées non finalisées :', copyMetadataError);
+      }
+    }
+
     return jsonResponse({
       success: true,
       logId,
       providerMessageId,
+      copyStatus: copyResult.status,
       recipientEmail:
         typeof logPayload.recipient_email === 'string'
           ? logPayload.recipient_email

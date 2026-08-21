@@ -1,7 +1,7 @@
 # ROADMAP — Formaplane
 
-> Mise à jour : après clôture officielle du Sprint 12 — 21 août 2026  
-> Version actuelle : `v0.13.0`
+> Mise à jour : après clôture officielle du Sprint 14 — 21 août 2026  
+> Version actuelle : `v0.14.0`
 
 ## Vision
 
@@ -9,7 +9,7 @@ Formaplane est une plateforme de gestion des relations entre organismes de forma
 
 Le produit permet aujourd'hui de gérer le réseau de formateurs, les disponibilités, les missions, les propositions, les affectations, les principaux événements du cycle de vie d'une mission, les communications transactionnelles et le partage des disponibilités.
 
-Après le Sprint 12, la priorité est de sécuriser le partage des disponibilités, rendre Formaplane plus autonome pour ses utilisateurs, préparer sa vitrine publique, puis mieux piloter et sécuriser la bêta.
+Après le Sprint 14, la priorité est désormais de rendre Formaplane plus autonome pour ses utilisateurs, préparer sa vitrine publique, puis mieux piloter et sécuriser la bêta.
 
 ---
 
@@ -30,7 +30,7 @@ Après le Sprint 12, la priorité est de sécuriser le partage des disponibilit�
 | 11 | Communications transactionnelles & workflows métier | ✅ TERMINÉ |
 | 12 | Partage des disponibilités formateur | ✅ TERMINÉ |
 | 13 | Sécurisation du partage des disponibilités | ✅ TERMINÉ |
-| 14 | Harmonisation des e-mails côté OF | 🔜 À FAIRE |
+| 14 | Harmonisation des e-mails côté OF | ✅ TERMINÉ |
 | 15 | Découvrir Formaplane — Tutos, FAQ & contact | 🔜 À FAIRE |
 | 16 | Landing page / site public Formaplane | 🔜 À FAIRE |
 | 17 | Dashboard Admin, mini-CRM & statistiques d'utilisation | 🔜 À FAIRE |
@@ -343,23 +343,76 @@ Protéger les contacts OF contre les sollicitations répétitives et préserver 
 
 ---
 
-## Sprint 14 — Harmonisation des e-mails côté OF 🔜
+## Sprint 14 — Harmonisation des e-mails côté OF ✅
 
-### Objectif
-Uniformiser les e-mails déclenchés depuis l’espace OF et permettre à l’utilisateur OF de recevoir, lorsqu’il le souhaite, une copie des messages envoyés par Formaplane.
+### Objectif atteint
+Uniformiser les e-mails déclenchés depuis l’espace OF et permettre à l’utilisateur OF de recevoir, lorsqu’il le souhaite, une copie sécurisée des messages envoyés par Formaplane.
 
-### Périmètre cible
-- recenser tous les e-mails qu’un utilisateur OF peut déclencher depuis Formaplane ;
-- identifier les parcours pour lesquels une copie à l’expéditeur est pertinente ;
-- ajouter de manière cohérente une case **« Recevoir une copie de cet e-mail »** ;
+### Livré
+
+#### Copie facultative des e-mails OF
+- ajout d’une option commune **« Recevoir une copie de cet e-mail »** ;
 - case décochée par défaut ;
-- envoyer la copie à l’adresse du compte Formaplane de l’utilisateur OF à l’origine de l’action ;
-- réutiliser la mécanique technique développée au Sprint 13 ;
-- harmoniser le composant, les libellés et le comportement dans toute l’application ;
-- conserver une traçabilité cohérente dans `email_logs` sans créer artificiellement un second événement métier.
+- adresse de copie déterminée côté serveur à partir du compte Formaplane authentifié ;
+- aucun choix libre de l’adresse de copie depuis le navigateur ;
+- composant et comportement harmonisés dans les différents parcours OF.
+
+#### Parcours couverts
+- invitation individuelle d’un formateur ;
+- invitations issues de l’import en masse ;
+- proposition de mission ;
+- relance de proposition ;
+- affectation ;
+- désaffectation ;
+- modification importante avec revalidation ;
+- annulation de mission.
+
+#### Copie sécurisée
+- abandon du simple CC identique au message du formateur ;
+- envoi d’un e-mail de copie distinct à l’utilisateur OF ;
+- préfixe d’objet permettant d’identifier clairement la copie ;
+- bandeau indiquant qu’il s’agit d’une copie sécurisée ;
+- neutralisation des liens et boutons d’action destinés au formateur ;
+- conservation du message principal comme seul événement métier journalisé ;
+- traçabilité de l’utilisation de l’option de copie dans les métadonnées.
+
+#### Harmonisation UX
+- fenêtres d’envoi alignées sur le modèle de proposition de mission ;
+- bloc **« Envoyer maintenant avec Formaplane »** clairement identifié ;
+- option e-mail présélectionnée ;
+- case de copie placée immédiatement sous l’option e-mail ;
+- autres moyens de contact regroupés ensuite : SMS, WhatsApp, téléphone et autre ;
+- formulation adaptée aux envois multiples : une copie de chaque e-mail envoyé.
+
+#### Correctifs associés validés
+- correction du délai de réinvitation depuis le listing : les invitations `sent` et `delivered` sont reconnues comme récentes ;
+- maintien volontaire de la possibilité de réinviter depuis la fiche formateur ;
+- correction de l’état des missions lorsqu’un formateur est déjà affecté et a revalidé, même si d’autres formateurs ont encore une revalidation en attente ;
+- cohérence du statut corrigée dans le listing Missions et dans le Planning.
+
+### Recette Sprint 14 ✅
+Validés :
+- copie décochée : aucun e-mail reçu par l’utilisateur OF ;
+- copie cochée : réception correcte de la copie ;
+- copie sécurisée sans action possible à la place du formateur ;
+- invitation formateur ;
+- proposition et relance ;
+- affectation ;
+- désaffectation ;
+- revalidation après modification importante ;
+- annulation ;
+- cas mono-destinataire et multi-destinataires ;
+- harmonisation visuelle des fenêtres ;
+- délai de réinvitation depuis le listing ;
+- statut d’affectation après revalidation ;
+- build de production réussi ;
+- Edge Function `send-transactional-email` redéployée et testée en conditions réelles.
+
+### Version
+`v0.14.0`
 
 ### Enjeu produit
-Rassurer les utilisateurs OF sur les communications envoyées en leur nom et garantir un comportement homogène de Formaplane sur l’ensemble des e-mails sortants.
+Rassurer les utilisateurs OF sur les communications envoyées en leur nom, empêcher qu’une copie puisse être utilisée pour agir à la place d’un formateur et garantir un comportement homogène de Formaplane sur l’ensemble des e-mails sortants.
 
 ---
 

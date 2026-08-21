@@ -328,10 +328,16 @@ function compareOccurrences(left, right) {
 }
 
 function getPendingRevalidationTrainer(mission) {
+  const affectedRelation = (mission.mission_formateurs || []).find(
+    (item) => item.statut === 'affecte',
+  );
+
   const pending = (mission.pending_change?.trainer_responses || []).find(
     (item) =>
       item.response_status === 'pending' &&
-      item.previous_status === 'affecte',
+      item.previous_status === 'affecte' &&
+      (!affectedRelation ||
+        item.trainer_id === affectedRelation.formateur_id),
   );
 
   return pending || null;
@@ -352,10 +358,6 @@ function getAssignedTrainer(mission) {
 }
 
 function getMissionVisualState(mission) {
-  if (mission.pending_change) {
-    return { tone: 'blocking', label: 'À affecter' };
-  }
-
   const trainer = getAssignedTrainer(mission);
 
   return trainer

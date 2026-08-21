@@ -315,6 +315,8 @@ export default function FormateurView() {
     setInviteModalOpen,
   ] = useState(false);
 
+  const [inviteCopyToSender, setInviteCopyToSender] = useState(false);
+
   const [
     invitationHistory,
     setInvitationHistory,
@@ -1006,6 +1008,7 @@ export default function FormateurView() {
 
       setInviteMessage('');
       setInviteError('');
+      setInviteCopyToSender(false);
       setInviteModalOpen(true);
     };
 
@@ -1029,6 +1032,7 @@ export default function FormateurView() {
         await sendTrainerClaimInvitation({
           trainerId: trainer.id,
           organizationId: currentOrganization.id,
+          copyToSender: inviteCopyToSender,
         });
 
         setInviteMessage(
@@ -1485,6 +1489,8 @@ export default function FormateurView() {
         trainerName={title}
         trainerEmail={trainer.email || ''}
         sending={inviteSending}
+        copyToSender={inviteCopyToSender}
+        onCopyToSenderChange={setInviteCopyToSender}
         recentInvitation={
           isInvitationCoolingDown(latestSuccessfulInvitation)
             ? latestSuccessfulInvitation

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as XLSX from 'xlsx';
 import { useAuth } from '../context/AuthContext';
+import EmailCopyToSenderOption from '../components/EmailCopyToSenderOption';
 
 import { getCompetencyCatalog } from '../services/competencyCatalogService';
 import { getEquipmentCatalog } from '../services/equipmentCatalogService';
@@ -263,6 +264,7 @@ export default function TrainerBulkImport() {
   const [bulkInvitationSending, setBulkInvitationSending] = useState(false);
   const [bulkInvitationError, setBulkInvitationError] = useState('');
   const [bulkInvitationResults, setBulkInvitationResults] = useState({});
+  const [bulkInvitationCopyToSender, setBulkInvitationCopyToSender] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -1016,6 +1018,7 @@ export default function TrainerBulkImport() {
         await sendTrainerClaimInvitation({
           trainerId: row.trainerId,
           organizationId: currentOrganization.id,
+          copyToSender: bulkInvitationCopyToSender,
         });
         nextResults[row.trainerId] = { status: 'sent' };
       } catch (error) {
@@ -1028,6 +1031,7 @@ export default function TrainerBulkImport() {
 
     setBulkInvitationResults(nextResults);
     setBulkInvitationSelection({});
+    setBulkInvitationCopyToSender(false);
 
     try {
       const history = await getTrainerInvitationHistory({
@@ -2767,6 +2771,16 @@ export default function TrainerBulkImport() {
                     {bulkInvitationError}
                   </div>
                 ) : null}
+
+                <div style={{ padding: '0 10px 10px' }}>
+                  <EmailCopyToSenderOption
+                    checked={bulkInvitationCopyToSender}
+                    onChange={setBulkInvitationCopyToSender}
+                    disabled={bulkInvitationSending || selectedInvitationRows.length === 0}
+                    multiple
+                    compact
+                  />
+                </div>
 
                 <div style={{ padding: 10, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10, flexWrap: 'wrap', borderTop: '1px solid #e2e8f0' }}>
                   <span style={{ color: '#64748b', fontSize: 10.5 }}>

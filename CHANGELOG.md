@@ -1,5 +1,50 @@
 # CHANGELOG - Formaplane
 
+## v0.14.0 — Sprint 14 — Harmonisation des e-mails côté OF — 21 août 2026
+
+### Ajouté
+- option commune **« Recevoir une copie de cet e-mail »** dans les parcours e-mail déclenchés depuis l’espace OF ;
+- prise en charge des invitations formateurs, invitations en masse, propositions et relances de mission, affectations, désaffectations, revalidations et annulations ;
+- récupération sécurisée de l’adresse de copie depuis le compte Formaplane authentifié ;
+- composant réutilisable pour harmoniser l’option de copie dans l’application.
+
+### Sécurité
+- remplacement du CC identique par un e-mail de copie distinct destiné à l’utilisateur OF ;
+- neutralisation dans la copie OF des liens et boutons d’action réservés au formateur ;
+- maintien du message principal comme seul événement métier journalisé ;
+- traçabilité de l’option de copie dans les métadonnées de l’envoi ;
+- redéploiement de l’Edge Function `send-transactional-email`.
+
+### UX
+- harmonisation des fenêtres d’envoi sur le modèle de proposition de mission ;
+- option e-mail Formaplane affichée en premier ;
+- case de copie positionnée immédiatement sous l’option e-mail ;
+- autres moyens de contact regroupés ensuite ;
+- libellé adapté lorsque plusieurs e-mails sont envoyés.
+
+### Corrigé
+- cooldown d’invitation depuis le listing formateurs : prise en compte des statuts `sent` et `delivered` ;
+- conservation de la réinvitation volontaire depuis la fiche formateur ;
+- statut erroné « revalidation en attente » d’une mission déjà affectée lorsque seul un autre formateur devait encore revalider ;
+- cohérence du statut d’affectation entre la liste des missions et le planning.
+
+### Recette
+Validés en conditions réelles :
+- envoi avec et sans copie ;
+- copie sécurisée reçue par l’utilisateur OF ;
+- impossibilité d’utiliser la copie pour agir à la place du formateur ;
+- invitation ;
+- proposition / relance ;
+- affectation ;
+- désaffectation ;
+- revalidation ;
+- annulation ;
+- envois simples et multiples ;
+- harmonisation visuelle des fenêtres ;
+- build de production réussi.
+
+---
+
 
 ## v0.13.0 — Sprint 13 — Sécurisation du partage des disponibilités — 21 août 2026
 

@@ -719,7 +719,24 @@ function getMissionBusinessState(
     mission.mission_formateurs ||
     [];
 
-  if (mission.pending_change) {
+  const affectedRelation =
+    relations.find(
+      (item) =>
+        item.statut === 'affecte',
+    ) || null;
+
+  const hasAffected = Boolean(affectedRelation);
+
+  const affectedTrainerPendingRevalidation =
+    (mission.pending_change?.trainer_responses || []).some(
+      (item) =>
+        item.response_status === 'pending' &&
+        item.previous_status === 'affecte' &&
+        (!affectedRelation ||
+          item.trainer_id === affectedRelation.formateur_id),
+    );
+
+  if (affectedTrainerPendingRevalidation) {
     return {
       id: 'revalidation',
       label: 'Revalidation en attente',
@@ -727,12 +744,6 @@ function getMissionBusinessState(
       color: '#c2410c',
     };
   }
-
-  const hasAffected =
-    relations.some(
-      (item) =>
-        item.statut === 'affecte',
-    );
 
   const hasAccepted =
     relations.some(
@@ -774,6 +785,15 @@ function getMissionBusinessState(
       label: 'Affectée',
       background: '#eff8ff',
       color: '#175cd3',
+    };
+  }
+
+  if (mission.pending_change) {
+    return {
+      id: 'revalidation',
+      label: 'Revalidation en attente',
+      background: '#fff7ed',
+      color: '#c2410c',
     };
   }
 

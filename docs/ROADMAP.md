@@ -1,7 +1,7 @@
 # ROADMAP — Formaplane
 
-> Mise à jour : fin du Sprint 12 — 20 août 2026  
-> Version de clôture visée : `v0.12.0`
+> Mise à jour : après clôture officielle du Sprint 12 — 21 août 2026  
+> Version actuelle : `v0.12.0`
 
 ## Vision
 
@@ -9,7 +9,7 @@ Formaplane est une plateforme de gestion des relations entre organismes de forma
 
 Le produit permet aujourd'hui de gérer le réseau de formateurs, les disponibilités, les missions, les propositions, les affectations, les principaux événements du cycle de vie d'une mission, les communications transactionnelles et le partage des disponibilités.
 
-Après le Sprint 12, la priorité est de rendre Formaplane plus autonome pour ses utilisateurs, plus fiable techniquement et plus facile à piloter pendant la bêta.
+Après le Sprint 12, la priorité est de sécuriser le partage des disponibilités, rendre Formaplane plus autonome pour ses utilisateurs, préparer sa vitrine publique, puis mieux piloter et sécuriser la bêta.
 
 ---
 
@@ -29,9 +29,12 @@ Après le Sprint 12, la priorité est de rendre Formaplane plus autonome pour se
 | 10 | Préparation bêta & consolidation métier | ✅ TERMINÉ |
 | 11 | Communications transactionnelles & workflows métier | ✅ TERMINÉ |
 | 12 | Partage des disponibilités formateur | ✅ TERMINÉ |
-| 13 | Tutos, explications, FAQ & transparence produit | 🔜 À FAIRE |
-| 14 | Tests automatisés & surveillance | 🔜 À FAIRE |
-| 15 | Dashboard Admin & statistiques d'utilisation | 🔜 À FAIRE |
+| 13 | Sécurisation du partage des disponibilités | 🔜 À FAIRE |
+| 14 | Découvrir Formaplane — Tutos, FAQ & contact | 🔜 À FAIRE |
+| 15 | Landing page / site public Formaplane | 🔜 À FAIRE |
+| 16 | Dashboard Admin, mini-CRM & statistiques d'utilisation | 🔜 À FAIRE |
+| 17 | Tests automatisés & surveillance | 🔜 À FAIRE |
+| 18+ | Évolutions guidées par la bêta | 🧭 PRÉVISIONNEL |
 
 ---
 
@@ -281,103 +284,220 @@ Validés :
 - conservation des mois partagés.
 
 ### Version
-`v0.12.0` à taguer après validation finale de la production.
+`v0.12.0` — release GitHub publiée et production validée.
 
 ---
 
 # Prochains sprints
 
-## Sprint 13 — Tutos, explications, FAQ & transparence produit 🔜
+## Sprint 13 — Sécurisation du partage des disponibilités 🔜
 
 ### Objectif
-Permettre à un nouvel utilisateur de comprendre Formaplane et les conséquences de ses actions sans accompagnement systématique.
+Prolonger immédiatement le Sprint 12 en sécurisant le partage des disponibilités par e-mail afin d'éviter qu'un même contact OF soit sollicité trop fréquemment par le même formateur.
 
 ### Périmètre validé
-- explications contextuelles sur les pages et actions qui le nécessitent ;
-- explication de ce qui va se produire avant les actions importantes ;
-- menu dédié **Tutos / Explications** ;
-- couverture des principales fonctionnalités ;
-- FAQ ;
-- affichage de la version actuellement déployée ;
-- présentation accessible des fonctionnalités existantes ;
-- roadmap publique simplifiée :
-  - fonctionnalités existantes ;
-  - fonctionnalités envisagées ;
-  - grandes orientations produit.
+
+#### Règle anti-spam
+- délai minimal de **7 jours complets** entre deux partages par e-mail d'un même formateur vers un même contact OF ;
+- contrôle par couple **formateur + contact OF** ;
+- exemple : envoi le 20 août à 14 h → nouvel envoi possible le 27 août à 14 h ;
+- contrôle fiable côté serveur / base à partir de l'historique des partages ;
+- le blocage ne doit pas dépendre uniquement de l'interface ;
+- impossibilité de contourner la règle par un appel direct au service d'envoi.
+
+#### Information du formateur
+Pendant le délai :
+- désactiver clairement l'envoi vers le contact concerné ;
+- expliquer la raison du blocage ;
+- afficher la date et l'heure exactes du prochain envoi possible ;
+- proposer au formateur de contacter directement l'OF s'il souhaite l'informer plus tôt ;
+- rappeler que ses disponibilités restent actualisées dans Formaplane.
+
+#### OF déjà inscrit
+- rappeler qu'un OF ayant accès au formateur peut consulter directement sa fiche et ses disponibilités actualisées dans Formaplane ;
+- éviter les e-mails inutiles lorsque la consultation directe est possible.
+
+#### OF non inscrit
+- encourager le formateur à présenter Formaplane à son contact ;
+- rappeler que l'inscription permettra ensuite à l'OF de consulter plus facilement les informations et disponibilités du formateur.
+
+### Point à réévaluer
+Le délai de **7 jours** est la règle de départ. Il pourra être augmenté ultérieurement si les usages montrent qu'une fréquence plus faible est préférable.
 
 ### Enjeu produit
-Préparer l'élargissement de la bêta et réduire le besoin d'assistance individuelle.
+Protéger les contacts OF contre les sollicitations répétitives et préserver l'image de Formaplane.
 
 ---
 
-## Sprint 14 — Tests automatisés & surveillance 🔜
+## Sprint 14 — Découvrir Formaplane — Tutos, FAQ & contact 🔜
 
 ### Objectif
-Sécuriser les parcours critiques avant d'augmenter le nombre d'utilisateurs.
+Créer dans Formaplane un espace permettant aux utilisateurs de comprendre le produit, apprendre à l'utiliser et contacter facilement Formaplane.
+
+Ce sprint doit également produire une base éditoriale et visuelle réutilisable pour la future landing page.
+
+### Accès « Découvrir Formaplane »
+- ajouter une entrée clairement identifiable dans la navigation ;
+- adapter le contenu au contexte OF / formateur lorsque pertinent ;
+- conserver une intégration cohérente avec l'identité visuelle de Formaplane.
+
+### Tutos et explications
+- présenter les principales fonctionnalités ;
+- expliquer les parcours importants ;
+- ajouter des explications contextuelles sur les actions qui le nécessitent ;
+- expliquer les conséquences des actions sensibles avant validation ;
+- utiliser des captures ou illustrations lorsqu'elles améliorent la compréhension ;
+- structurer les contenus pour qu'ils puissent être réutilisés sur le site public.
+
+### FAQ
+- créer une FAQ claire et évolutive ;
+- couvrir les questions OF et formateur ;
+- expliquer notamment réseau, disponibilités, options, missions, communications et confidentialité.
+
+### Transparence produit
+- afficher la version actuellement déployée ;
+- présenter simplement les fonctionnalités disponibles ;
+- proposer une roadmap publique simplifiée : existant, fonctionnalités envisagées et grandes orientations.
+
+### Contact Formaplane
+- intégrer un bouton de contact ;
+- proposer un formulaire simple et contextualisé ;
+- réutiliser automatiquement les informations utilisateur disponibles lorsque pertinent ;
+- conserver la demande pour permettre son suivi.
+
+### Première brique du mini-CRM Admin
+Créer le socle de suivi des demandes :
+- demandeur ;
+- organisme ou profil concerné lorsque disponible ;
+- coordonnées utiles ;
+- objet / catégorie ;
+- message ;
+- date ;
+- statut de suivi ;
+- notes internes si nécessaire.
+
+Cette brique sera intégrée et enrichie dans le Dashboard Admin du Sprint 16.
+
+### Enjeu produit
+Rendre Formaplane plus autonome, réduire l'accompagnement individuel et préparer les contenus de la présentation publique.
+
+---
+
+## Sprint 15 — Landing page / site public Formaplane 🔜
+
+### Objectif
+Créer la vitrine publique de Formaplane à partir d'un produit et d'un discours désormais stabilisés.
+
+### Principe
+Le Sprint 14 explique Formaplane à quelqu'un qui l'utilise déjà. Le Sprint 15 doit expliquer Formaplane à quelqu'un qui ne connaît pas encore la plateforme.
+
+Les contenus, formulations, captures et éléments pédagogiques produits au Sprint 14 seront réutilisés autant que possible.
+
+### Périmètre cible
+- page d'accueil publique ;
+- proposition de valeur ;
+- bénéfices distincts pour OF et formateurs ;
+- présentation des principales fonctionnalités ;
+- captures de la version la plus récente de l'application ;
+- explication du fonctionnement général ;
+- éléments de confiance et de transparence ;
+- appels à l'inscription / connexion ;
+- FAQ publique adaptée ;
+- formulaire de contact ;
+- raccordement au même socle mini-CRM que le Sprint 14 ;
+- responsive mobile / desktop ;
+- bases SEO ;
+- intégration cohérente avec `formaplane.fr` et l'identité visuelle.
+
+### Enjeu produit
+Donner à Formaplane une présence publique crédible et transformer les visites issues des invitations, partages et recommandations en découverte réelle du produit.
+
+---
+
+## Sprint 16 — Dashboard Admin, mini-CRM & statistiques d'utilisation 🔜
+
+### Objectif
+Créer un espace d'administration réservé à Formaplane pour suivre les demandes entrantes et comprendre l'utilisation réelle du produit.
+
+### Mini-CRM
+- intégrer le socle du Sprint 14 ;
+- centraliser les demandes provenant de l'application et du site public ;
+- statuts de traitement ;
+- recherche et filtres ;
+- notes internes ;
+- historique utile ;
+- accès au compte / OF concerné lorsqu'il existe.
+
+### Statistiques d'utilisation
+Indicateurs envisagés :
+- utilisateurs inscrits ;
+- organismes ;
+- formateurs ;
+- évolution des inscriptions ;
+- utilisateurs actifs ;
+- missions ;
+- propositions et réponses ;
+- options ;
+- affectations ;
+- communications ;
+- partages de disponibilités ;
+- utilisation de « Découvrir Formaplane » ;
+- demandes de contact ;
+- adoption des principales fonctionnalités ;
+- parcours peu ou pas utilisés.
+
+### Distinction importante
+Ce dashboard est un outil interne d'administration de Formaplane, distinct de futures statistiques métier destinées aux OF.
+
+### Enjeu produit
+Observer les usages, les demandes et les points de friction pour piloter la bêta sur des données réelles.
+
+---
+
+## Sprint 17 — Tests automatisés & surveillance 🔜
+
+### Objectif
+Renforcer la sécurité technique des parcours critiques avant une diffusion plus large.
 
 ### Périmètre cible
 - tests automatisés des workflows métier critiques ;
-- tests des parcours OF ;
-- tests des parcours formateur ;
+- tests des parcours OF et formateur ;
 - tests des réponses publiques sans compte ;
-- contrôles des RPC ;
-- contrôles RLS ;
-- contrôles des Edge Functions ;
+- contrôles RPC, RLS et Edge Functions ;
 - tests des communications transactionnelles ;
+- tests de la règle anti-spam et des autres garde-fous ;
 - surveillance des erreurs frontend et backend ;
 - surveillance des traitements sensibles ;
 - alertes exploitables en cas de dysfonctionnement important.
 
 ### Enjeu produit
-Détecter une régression avant qu'elle ne soit découverte par un utilisateur bêta.
+Détecter les régressions et incidents avant les utilisateurs.
 
 ---
 
-## Sprint 15 — Dashboard Admin & statistiques d'utilisation 🔜
+# Jalon après le Sprint 17
 
-### Objectif
-Créer un espace d'administration Formaplane permettant de comprendre l'utilisation réelle du produit.
-
-### Indicateurs envisagés
-- utilisateurs inscrits ;
-- organismes de formation ;
-- formateurs ;
-- évolution des inscriptions ;
-- activité ;
-- missions créées ;
-- propositions et réponses ;
-- affectations ;
-- communications ;
-- partages de disponibilités ;
-- adoption des fonctionnalités ;
-- indicateurs techniques et erreurs utiles au pilotage.
-
-### Distinction importante
-Ce dashboard est un outil interne d'administration de Formaplane. Il ne doit pas être confondu avec de futures statistiques métier destinées aux OF.
-
----
-
-# Jalon après le Sprint 15
-
-À la fin du Sprint 15, Formaplane doit disposer :
-- d'un cœur métier complet ;
-- de communications transactionnelles opérationnelles ;
-- d'un partage des disponibilités capable de favoriser l'acquisition ;
+À la fin du Sprint 17, Formaplane doit disposer :
+- d'un cœur métier complet et éprouvé ;
+- d'un partage des disponibilités protégé contre les sollicitations excessives ;
 - d'une aide utilisateur intégrée ;
+- d'un canal de contact relié à un mini-CRM ;
+- d'une vraie vitrine publique ;
+- d'outils internes pour observer la bêta ;
 - d'une couverture automatisée des parcours critiques ;
-- d'outils internes permettant d'observer l'utilisation de la bêta.
+- d'une surveillance technique exploitable.
 
-À partir de ce jalon, l'ordre des développements sera fortement influencé par les retours et les usages réels.
+À partir de ce jalon, l'ordre des développements sera principalement influencé par les usages et retours réels de la bêta.
 
 ---
 
-# Pistes pour les Sprints 16+
+# Sprints 18+ — Prévisionnels
 
-Ordre non figé :
-
+Ordre volontairement non figé :
 - améliorations UX et productivité ;
-- réseau et collaboration entre utilisateurs ;
 - gestion avancée des utilisateurs d'un OF ;
+- rôles et permissions plus fins ;
+- notifications et centre d'activité ;
 - statistiques métier destinées aux OF ;
 - documents et pièces liées aux missions ;
 - intégrations calendrier ;
@@ -385,11 +505,14 @@ Ordre non figé :
 - notifications Push ;
 - automatisations et relances avancées ;
 - fonctionnalités assistées par IA ;
-- autres besoins issus de la bêta.
+- réseau et collaboration entre utilisateurs ;
+- autres besoins révélés par la bêta.
 
 ## Règle de priorisation
 
 **Retours utilisateurs + fréquence du besoin + valeur métier + risque technique.**
+
+Les Sprints 13 à 17 constituent le prochain bloc stratégique. À partir du Sprint 18, la roadmap reste volontairement souple.
 
 ---
 
@@ -413,7 +536,15 @@ Un sprint est terminé lorsque :
 # Priorité actuelle
 
 ```text
-Clôture de la version v0.12.0
+v0.12.0 — Sprint 12 officiellement clôturé
 ↓
-Sprint 13 — Tutos, explications, FAQ & transparence produit
+Sprint 13 — Sécurisation du partage des disponibilités
+↓
+Sprint 14 — Découvrir Formaplane — Tutos, FAQ & contact
+↓
+Sprint 15 — Landing page / site public Formaplane
+↓
+Sprint 16 — Dashboard Admin, mini-CRM & statistiques d'utilisation
+↓
+Sprint 17 — Tests automatisés & surveillance
 ```

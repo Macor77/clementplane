@@ -140,16 +140,7 @@ Deno.serve(async (req) => {
 
       const html = `
         <div style="font-family:Arial,sans-serif;max-width:640px;margin:auto;color:#10234a;line-height:1.5">
-          <div style="margin-bottom:26px">
-            <img
-              src="https://app.formaplane.fr/brand/formaplane-email-logo.png"
-              alt="Formaplane"
-              width="145"
-              style="display:block;max-width:145px;height:auto"
-            />
-          </div>
-
-          <h1 style="font-size:24px;line-height:1.25;margin:0 0 20px">${esc(subject)}</h1>
+<h1 style="font-size:24px;line-height:1.25;margin:0 0 20px">${esc(subject)}</h1>
 
           ${paragraphs}
 

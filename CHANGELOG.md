@@ -1,5 +1,23 @@
 # CHANGELOG - Formaplane
 
+
+## [0.17.0] - En cours
+
+### Sprint 17 — Dashboard Admin, mini-CRM & statistiques
+
+- 17.1 : socle Admin sécurisé, mini-CRM, utilisateurs et organismes.
+- 17.2 : dashboard de pilotage, statistiques métier et instrumentation légère des consultations de fonctionnalités clés.
+
+## [Unreleased] — Sprint 17
+
+### Admin / mini-CRM
+- ajout du socle sécurisé d’administration Formaplane ;
+- création du Dashboard Admin, du mini-CRM et des vues Utilisateurs / Organismes ;
+- ajout d’un rôle d’administration plateforme distinct des rôles internes aux OF ;
+- ajout des fonctions serveur réservées à l’Admin pour consulter et piloter les demandes ;
+- mise en cohérence de la version affichée avec `v0.16.0` ;
+- intégration dans la roadmap du Sprint 19 « création de missions par le formateur » et de la nouvelle procédure permanente de clôture.
+
 ## v0.16.0 — Sprint 16 — Landing page / site public Formaplane — 21 août 2026
 
 ### Ajouté

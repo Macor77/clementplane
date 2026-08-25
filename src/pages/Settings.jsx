@@ -4,6 +4,7 @@ import { updateCurrentUserProfile } from '../services/currentUserService';
 import { requestCurrentUserEmailChange } from '../services/authService';
 import { getMyAccountDeletionStatus, deleteMyAccount } from '../services/accountDeletionService';
 import { sendInfrastructureTestEmail } from '../services/emailService';
+import FeatureNewsPreferenceCard from '../components/FeatureNewsPreferenceCard';
 
 export default function Settings() {
   const {
@@ -370,6 +371,8 @@ export default function Settings() {
             </div>
           </form>
         </div>
+
+        <FeatureNewsPreferenceCard />
 
         <div
           style={{

@@ -1,4 +1,4 @@
-export const FORMPLANE_VERSION = 'v0.15.0';
+export const FORMPLANE_VERSION = 'v0.16.0';
 
 export const discoverFeatures = [
   {
@@ -96,7 +96,7 @@ export const trainerTutorials = [
   },
   {
     id: 'trainer-share', title: 'Partager mes disponibilités avec un organisme', summary: 'Prévenir un contact que mon planning est à jour et l’inviter à consulter Formaplane.', route: '/formateur/partage-disponibilites', routeLabel: 'Partager mes disponibilités',
-    steps: ['Ajoutez ou sélectionnez le contact de l’organisme que vous souhaitez informer.', 'Choisissez les mois de disponibilités à partager.', 'Vérifiez le destinataire puis envoyez le partage depuis Formaplane.', 'Après un envoi, un délai de 7 jours complets s’applique pour ce même couple formateur + contact afin d’éviter les relances répétées.'],
+    steps: ['Ajoutez ou sélectionnez le contact de l’organisme que vous souhaitez informer.', 'Choisissez les mois de disponibilités à partager.', 'Vérifiez le destinataire puis envoyez le partage depuis Formaplane.', 'Après un envoi, un délai de 20 jours complets s’applique pour ce même couple formateur + contact afin d’éviter les relances répétées.'],
     tip: 'Si une mise à jour doit être signalée avant la fin du délai, indiquez simplement à l’organisme que vos disponibilités sont actualisées et consultables en permanence dans Formaplane.',
   },
   {
@@ -119,7 +119,7 @@ export const faqItems = [
   { question: 'Comment Formaplane aide-t-il à trouver un formateur pour une mission ?', answer: 'L’organisme crée d’abord la mission puis peut rechercher les profils pertinents en tenant compte notamment des disponibilités, de la distance, des compétences et des informations de son propre réseau. Il peut ensuite envoyer les propositions directement depuis Formaplane.', audiences: ['organization'], category: 'Missions' },
   { question: 'Un formateur doit-il être inscrit pour recevoir une proposition ?', answer: 'Non. Formaplane permet à l’organisme d’envoyer une proposition à un formateur même si celui-ci n’utilise pas encore activement la plateforme. Il reçoit les informations par e-mail et peut répondre à la sollicitation.', audiences: ['organization'], category: 'Missions' },
   { question: 'Une proposition de mission confirme-t-elle la mission ?', answer: 'Non. Une proposition permet d’abord au formateur d’indiquer s’il accepte ou refuse la sollicitation. L’organisme suit les réponses puis affecte officiellement le formateur retenu.', audiences: ['organization', 'trainer'], category: 'Missions' },
-  { question: 'Pourquoi ne puis-je pas renvoyer mes disponibilités immédiatement au même contact ?', answer: 'Formaplane applique un délai de 7 jours complets après un partage vers un même contact OF pour éviter les sollicitations répétées. Vos disponibilités peuvent néanmoins être mises à jour à tout moment et restent consultables dans Formaplane.', audiences: ['trainer'], category: 'Disponibilités' },
+  { question: 'Pourquoi ne puis-je pas renvoyer mes disponibilités immédiatement au même contact ?', answer: 'Formaplane applique un délai de 20 jours complets après un partage vers un même contact OF pour éviter les sollicitations répétées. Vos disponibilités peuvent néanmoins être mises à jour à tout moment et restent consultables dans Formaplane.', audiences: ['trainer'], category: 'Disponibilités' },
   { question: 'Puis-je avoir à la fois un espace OF et un espace Formateur ?', answer: 'Oui. Lorsqu’un même compte possède les deux rôles, Formaplane propose un choix d’espace et permet ensuite de passer de l’un à l’autre.', audiences: ['organization', 'trainer'], category: 'Compte' },
   { question: 'Comment contacter Formaplane si je rencontre un problème ?', answer: 'Utilisez la rubrique « Contacter Formaplane » de cette page. Elle prépare un e-mail vers contact@formaplane.fr avec le contexte technique utile.', audiences: ['organization', 'trainer'], category: 'Support' },
 ];
@@ -136,6 +136,8 @@ export const publicRoadmap = {
     'Enrichir la fiche formateur pour lui permettre de détailler davantage son profil : expériences, compétences, formations et autres informations professionnelles.',
     'Stocker les documents et données de référencement d’un formateur et permettre leur partage maîtrisé : CV, NDA, avis SIREN et autres justificatifs.',
     'Ajouter une messagerie interne pour permettre aux organismes de formation et aux formateurs d’échanger directement dans Formaplane autour d’une session de formation.',
+    'Permettre au formateur de créer lui-même une mission dans son agenda lorsque l’organisme qui la lui confie n’utilise pas encore Formaplane, afin de centraliser son planning et de mettre automatiquement ses disponibilités à jour.',
+    'Permettre aux apprenants d’évaluer un formateur après une mission afin de construire progressivement un système de réputation interne à Formaplane.',
     'Une expérience encore plus fluide pour rechercher, proposer et affecter des missions.',
     'Des améliorations régulières issues des retours des organismes et des formateurs.',
   ],

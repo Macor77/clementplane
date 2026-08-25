@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { updateCurrentUserProfile } from '../../services/currentUserService';
 import { requestCurrentUserEmailChange } from '../../services/authService';
 import { getMyAccountDeletionStatus, deleteMyAccount } from '../../services/accountDeletionService';
+import FeatureNewsPreferenceCard from '../../components/FeatureNewsPreferenceCard';
 
 const ACTIVE_SPACE_KEY = 'timeforma_active_space';
 
@@ -265,6 +266,8 @@ export default function TrainerSettings() {
           </div>
         </form>
       </div>
+
+      <FeatureNewsPreferenceCard trainer />
 
       <div className="panel-card trainer-settings-card" style={{ marginTop: 20 }}>
         <h2>Session</h2>

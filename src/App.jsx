@@ -31,6 +31,8 @@ import OrganizationSignup from './pages/OrganizationSignup';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import PublicLanding from './pages/PublicLanding';
+import AdminApp from './pages/admin/AdminApp';
+import FeatureNewsUnsubscribe from './pages/FeatureNewsUnsubscribe';
 
 import TrainerClaimStart from './pages/TrainerClaimStart';
 import SpaceChooser from './pages/SpaceChooser';
@@ -45,6 +47,7 @@ import {
 
 import { useAuth } from './context/AuthContext';
 import { getTrainerClaimCandidates } from './services/trainerClaimService';
+import { trackProductEvent } from './services/productAnalyticsService';
 
 import './App.css';
 
@@ -581,6 +584,41 @@ function RootRoute() {
 
 export default function App() {
   const location = useLocation();
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (!user || location.pathname.startsWith('/admin')) return;
+
+    const path = location.pathname;
+    let eventName = null;
+    if (path === '/') eventName = 'organization_dashboard_viewed';
+    else if (path === '/listing' || path === '/formateurs/recherche') eventName = 'trainer_search_viewed';
+    else if (path === '/missions') eventName = 'missions_viewed';
+    else if (path === '/planning' || path === '/formateur/planning') eventName = 'planning_viewed';
+    else if (path === '/decouvrir' || path === '/formateur/decouvrir') eventName = 'discover_viewed';
+    else if (path === '/formateur/espace') eventName = 'trainer_dashboard_viewed';
+    else if (path === '/formateur/propositions') eventName = 'proposals_viewed';
+    else if (path === '/formateur/disponibilites') eventName = 'availability_viewed';
+    else if (path === '/formateur/partage-disponibilites') eventName = 'availability_share_viewed';
+
+    if (eventName) {
+      trackProductEvent(eventName, path).catch((error) => {
+        console.warn('Statistique produit non enregistrée', error);
+      });
+    }
+  }, [user, location.pathname]);
+
+  if (location.pathname === '/desabonnement-nouveautes') {
+    return <FeatureNewsUnsubscribe />;
+  }
+
+  if (location.pathname === '/admin' || location.pathname.startsWith('/admin/')) {
+    return (
+      <RequireAuth>
+        <AdminApp />
+      </RequireAuth>
+    );
+  }
 
   /*
    * Revalidation publique d'une modification de mission.

@@ -10,6 +10,14 @@ Date : 18/08/2026
 Le Sprint 6 transforme Formaplane d'un gestionnaire de formateurs en un
 véritable moteur de gestion des missions.
 
+
+## [0.17.0] - En cours
+
+### Sprint 17 — Dashboard Admin, mini-CRM & statistiques
+
+- 17.1 : socle Admin sécurisé, mini-CRM, utilisateurs et organismes.
+- 17.2 : dashboard de pilotage, statistiques métier et instrumentation légère des consultations de fonctionnalités clés.
+
 ## Mini Sprint 6.1 --- Base de données
 
 ### Ajouts

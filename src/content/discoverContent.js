@@ -1,4 +1,4 @@
-export const FORMPLANE_VERSION = 'v0.17.0';
+export const FORMPLANE_VERSION = 'v0.18.0';
 
 export const discoverFeatures = [
   {
@@ -121,6 +121,7 @@ export const faqItems = [
   { question: 'Une proposition de mission confirme-t-elle la mission ?', answer: 'Non. Une proposition permet d’abord au formateur d’indiquer s’il accepte ou refuse la sollicitation. L’organisme suit les réponses puis affecte officiellement le formateur retenu.', audiences: ['organization', 'trainer'], category: 'Missions' },
   { question: 'Pourquoi ne puis-je pas renvoyer mes disponibilités immédiatement au même contact ?', answer: 'Formaplane applique un délai de 20 jours complets après un partage vers un même contact OF pour éviter les sollicitations répétées. Vos disponibilités peuvent néanmoins être mises à jour à tout moment et restent consultables dans Formaplane.', audiences: ['trainer'], category: 'Disponibilités' },
   { question: 'Puis-je avoir à la fois un espace OF et un espace Formateur ?', answer: 'Oui. Lorsqu’un même compte possède les deux rôles, Formaplane propose un choix d’espace et permet ensuite de passer de l’un à l’autre.', audiences: ['organization', 'trainer'], category: 'Compte' },
+  { question: "Comment Formaplane s'assure-t-il que la plateforme reste fiable ?", answer: "Formaplane dispose de contrôles automatisés qui vérifient régulièrement ses principales fonctionnalités, certaines règles de sécurité et ses dépendances techniques. Ces contrôles sont également exécutés lors des mises à jour de la plateforme afin de détecter d'éventuelles régressions avant leur mise en ligne.", audiences: ['organization', 'trainer'], category: 'Fiabilité' },
   { question: 'Comment contacter Formaplane si je rencontre un problème ?', answer: 'Utilisez la rubrique « Contacter Formaplane » de cette page. Elle prépare un e-mail vers contact@formaplane.fr avec le contexte technique utile.', audiences: ['organization', 'trainer'], category: 'Support' },
 ];
 

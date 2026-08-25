@@ -62,7 +62,7 @@ Les Edge Functions conservent par ailleurs leurs `console.error`, consultables d
 
 Playwright est installé et les parcours critiques sont préparés, mais ils restent **désactivés dans GitHub Actions** tant qu’aucun projet Supabase E2E isolé n’est configuré.
 
-La CI active du Sprint 18 exécute gratuitement à chaque `push` sur `main`, Pull Request vers `main` et lancement manuel :
+La CI active du Sprint 18 exécute gratuitement à chaque `push` sur `main`, Pull Request vers `main`, lancement manuel et chaque lundi matin (07:00 UTC) :
 
 ```bash
 npm ci

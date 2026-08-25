@@ -1,7 +1,7 @@
 # ROADMAP — Formaplane
 
-> Mise à jour : clôture officielle du Sprint 17 — 25 août 2026  
-> Version actuelle : `v0.17.0`
+> Mise à jour : clôture officielle du Sprint 18 — 25 août 2026  
+> Version actuelle : `v0.18.0`
 
 ## Vision
 
@@ -34,9 +34,10 @@ Après le Sprint 14, la priorité est désormais de rendre Formaplane plus auton
 | 15 | Découvrir Formaplane — Tutos, FAQ & contact | ✅ TERMINÉ |
 | 16 | Landing page / site public Formaplane | ✅ TERMINÉ |
 | 17 | Dashboard Admin, mini-CRM & statistiques d'utilisation | ✅ TERMINÉ |
-| 18 | Tests automatisés & surveillance | 🚧 EN COURS |
-| 19 | Création de missions par le formateur dans son propre agenda | 🔜 À FAIRE |
-| 20+ | Évolutions guidées par la bêta | 🧭 PRÉVISIONNEL |
+| 18 | Tests automatisés & surveillance | ✅ TERMINÉ |
+| 19 | Optimisation UX & expérience mobile | 🔜 À FAIRE |
+| 20 | Création de missions par le formateur dans son propre agenda | 🔜 À FAIRE |
+| 21+ | Évolutions guidées par la bêta | 🧭 PRÉVISIONNEL |
 
 ---
 
@@ -581,24 +582,26 @@ Piloter la bêta à partir de données réelles, centraliser les demandes et dis
 
 ---
 
-## Sprint 18 — Tests automatisés & surveillance 🚧
+## Sprint 18 — Tests automatisés & surveillance ✅
 
-### Objectif
-Renforcer la sécurité technique des parcours critiques avant une diffusion plus large.
+### Livré
+- socle Vitest et 47 tests automatisés couvrant les validations métier, propositions, disponibilités, partage, e-mails, parcours publics et garde-fous E2E ;
+- contrats automatisés sur les règles RLS/RPC et le cloisonnement multi-organismes ;
+- contrôle de la règle anti-spam de 20 jours et du verrou anti double-envoi ;
+- surveillance des erreurs React et JavaScript pour les utilisateurs authentifiés, avec journalisation non bloquante ;
+- audit des dépendances ramené à 0 vulnérabilité connue au moment de la clôture ;
+- socle Playwright et scénarios E2E critiques préparés, avec blocage explicite de la production ;
+- activation des E2E réels différée afin de ne pas engager le coût d'un environnement Supabase dédié tant que l'usage ne le justifie pas ;
+- GitHub Actions automatique à chaque push sur `main`, chaque Pull Request, à la demande et chaque lundi matin ;
+- CI : tests, audit de sécurité npm et build de production ;
+- notifications GitHub configurées afin de signaler par e-mail les workflows en échec ;
+- ajout d'une FAQ utilisateur expliquant les contrôles automatisés de fiabilité.
 
-### Périmètre cible
-- tests automatisés des workflows métier critiques ;
-- tests des parcours OF et formateur ;
-- tests des réponses publiques sans compte ;
-- contrôles RPC, RLS et Edge Functions ;
-- tests des communications transactionnelles ;
-- tests de la règle anti-spam et des autres garde-fous ;
-- surveillance des erreurs frontend et backend ;
-- surveillance des traitements sensibles ;
-- alertes exploitables en cas de dysfonctionnement important.
+### Version
+`v0.18.0`
 
 ### Enjeu produit
-Détecter les régressions et incidents avant les utilisateurs.
+Détecter les régressions et problèmes techniques plus tôt, tout en conservant une surveillance simple et exploitable.
 
 ---
 
@@ -618,7 +621,26 @@ Détecter les régressions et incidents avant les utilisateurs.
 
 ---
 
-# Sprint 19 — Création de missions par le formateur 🔜
+# Sprint 19 — Optimisation UX & expérience mobile 🔜
+
+### Objectif
+Rendre Formaplane plus agréable, plus intuitif et surtout réellement confortable à utiliser depuis un smartphone.
+
+### Périmètre cible
+- revue responsive des principales pages OF et Formateur ;
+- optimisation de la navigation et des menus sur mobile ;
+- amélioration des formulaires, modales, tableaux, listes et fiches sur petits écrans ;
+- optimisation des missions, calendriers et plannings pour l'usage tactile ;
+- amélioration de la lisibilité, des espacements, des boutons et zones tactiles ;
+- suppression des débordements et éléments trop petits ;
+- revue visuelle globale desktop, avec priorité mobile-first.
+
+### Enjeu produit
+Permettre une utilisation quotidienne confortable de Formaplane sur smartphone sans dégrader l'expérience desktop.
+
+---
+
+# Sprint 20 — Création de missions par le formateur 🔜
 
 ### Objectif
 Permettre au formateur d’ajouter lui-même dans son agenda Formaplane une mission confiée par un organisme qui n’utilise pas encore Formaplane.
@@ -635,7 +657,7 @@ Permettre au formateur d’ajouter lui-même dans son agenda Formaplane une miss
 
 ---
 
-# Sprints 20+ — Prévisionnels
+# Sprints 21+ — Prévisionnels
 
 Ordre volontairement non figé :
 - améliorations UX et productivité ;
@@ -656,7 +678,7 @@ Ordre volontairement non figé :
 
 **Retours utilisateurs + fréquence du besoin + valeur métier + risque technique.**
 
-Les Sprints 13 à 19 constituent le bloc stratégique en cours. À partir du Sprint 20, la roadmap reste volontairement souple.
+Les Sprints 13 à 20 constituent le bloc stratégique en cours. À partir du Sprint 21, la roadmap reste volontairement souple.
 
 ---
 
@@ -676,18 +698,19 @@ Un sprint est terminé lorsque :
 - un ZIP complet du projet est archivé ;
 - la version affichée dans Formaplane est vérifiée et mise à jour ;
 - la pertinence d'un e-mail « Nouveautés Formaplane » est décidée et, si nécessaire, la communication est envoyée aux populations pertinentes ;
-- les « évolutions envisagées » visibles des utilisateurs sont révisées : retrait des éléments réalisés et ajout des nouvelles idées utiles aux utilisateurs.
+- les « évolutions envisagées » visibles des utilisateurs sont révisées : retrait des éléments réalisés et ajout des nouvelles idées utiles aux utilisateurs ;
+- une revue « Découvrir Formaplane » est faite avec validation explicite : FAQ, tutoriels, explications et captures sont actualisés si les changements du sprint le nécessitent.
 
 ---
 
 # Priorité actuelle
 
 ```text
-v0.17.0 — Sprint 17 officiellement clôturé
+v0.18.0 — Sprint 18 officiellement clôturé
 ↓
-Sprint 18 — Tests automatisés & surveillance
+Sprint 19 — Optimisation UX & expérience mobile
 ↓
-Sprint 19 — Création de missions par le formateur
+Sprint 20 — Création de missions par le formateur
 ↓
-Sprint 20+ — Évolutions guidées par la bêta
+Sprint 21+ — Évolutions guidées par la bêta
 ```

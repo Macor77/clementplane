@@ -1,6 +1,36 @@
 # CHANGELOG - Formaplane
 
 
+## v0.18.0 — Sprint 18 — Tests automatisés & surveillance — 25 août 2026
+
+### Tests et sécurité
+- mise en place de Vitest et de 47 tests automatisés ;
+- couverture des validations métier, propositions, disponibilités, partage, e-mails et parcours publics ;
+- contrats de sécurité sur les règles RLS/RPC et le cloisonnement multi-organismes ;
+- tests de la règle anti-spam de 20 jours et du verrou anti double-envoi ;
+- mise à jour des dépendances et audit npm ramené à 0 vulnérabilité connue lors de la clôture.
+
+### Surveillance et CI
+- journalisation non bloquante des erreurs React et JavaScript des utilisateurs authentifiés ;
+- préparation de Playwright et de scénarios E2E critiques avec garde-fou anti-production ;
+- activation des E2E réels différée afin de ne pas engager le coût d'un projet Supabase dédié ;
+- ajout d'un workflow GitHub Actions exécutant tests, audit npm et build à chaque push sur `main`, Pull Request, lancement manuel et chaque lundi matin ;
+- notifications GitHub configurées pour signaler par e-mail les workflows en échec.
+
+### Découvrir Formaplane et roadmap
+- ajout de la FAQ « Comment Formaplane s'assure-t-il que la plateforme reste fiable ? » ;
+- ajout de la revue systématique de « Découvrir Formaplane » à la méthode de clôture des futurs sprints ;
+- Sprint 19 repositionné sur l'optimisation UX et l'expérience mobile ;
+- création autonome de missions par le formateur conservée et décalée au Sprint 20 ;
+- version affichée mise à jour vers `v0.18.0`.
+
+### Recette
+- 47/47 tests automatisés validés ;
+- `npm audit` : 0 vulnérabilité ;
+- `npm run build` : réussi ;
+- GitHub Actions : workflow Quality validé automatiquement sur `main`.
+
+
 ## v0.17.0 — Sprint 17 — Dashboard Admin, mini-CRM & statistiques d’utilisation — 25 août 2026
 
 ### Administration Formaplane

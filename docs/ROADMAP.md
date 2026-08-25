@@ -1,7 +1,7 @@
 # ROADMAP — Formaplane
 
-> Mise à jour : après clôture officielle du Sprint 14 — 21 août 2026  
-> Version actuelle : `v0.15.0`
+> Mise à jour : clôture officielle du Sprint 17 — 25 août 2026  
+> Version actuelle : `v0.17.0`
 
 ## Vision
 
@@ -31,11 +31,12 @@ Après le Sprint 14, la priorité est désormais de rendre Formaplane plus auton
 | 12 | Partage des disponibilités formateur | ✅ TERMINÉ |
 | 13 | Sécurisation du partage des disponibilités | ✅ TERMINÉ |
 | 14 | Harmonisation des e-mails côté OF | ✅ TERMINÉ |
-| 15 | Découvrir Formaplane — Tutos, FAQ & contact | 🔜 À FAIRE |
-| 16 | Landing page / site public Formaplane | 🔜 À FAIRE |
-| 17 | Dashboard Admin, mini-CRM & statistiques d'utilisation | 🔜 À FAIRE |
+| 15 | Découvrir Formaplane — Tutos, FAQ & contact | ✅ TERMINÉ |
+| 16 | Landing page / site public Formaplane | ✅ TERMINÉ |
+| 17 | Dashboard Admin, mini-CRM & statistiques d'utilisation | ✅ TERMINÉ |
 | 18 | Tests automatisés & surveillance | 🔜 À FAIRE |
-| 19+ | Évolutions guidées par la bêta | 🧭 PRÉVISIONNEL |
+| 19 | Création de missions par le formateur dans son propre agenda | 🔜 À FAIRE |
+| 20+ | Évolutions guidées par la bêta | 🧭 PRÉVISIONNEL |
 
 ---
 
@@ -554,43 +555,29 @@ Donner à Formaplane une présence publique crédible et transformer les visites
 
 ---
 
-## Sprint 17 — Dashboard Admin, mini-CRM & statistiques d'utilisation 🔜
+## Sprint 17 — Dashboard Admin, mini-CRM & statistiques d'utilisation ✅
 
-### Objectif
-Créer un espace d'administration réservé à Formaplane pour suivre les demandes entrantes et comprendre l'utilisation réelle du produit.
+### Livré
+- espace Admin sécurisé et réservé à l’administration de Formaplane ;
+- Dashboard de pilotage avec indicateurs d’adoption, d’activité et de fonctionnement ;
+- activité OF et formateurs sur 7 jours glissants ;
+- suivi des mises à jour manuelles de disponibilités sur 30 jours, hors mises à jour automatiques liées aux missions ;
+- suivi des formateurs référencés par les OF et des OF ayant enrichi leur listing sur 30 jours ;
+- courbes d’évolution avec dates visibles ;
+- mini-CRM des demandes issues de l’application et du site public ;
+- vues Utilisateurs et Organismes ;
+- instrumentation légère des principales fonctionnalités consultées ;
+- communication « Nouveautés Formaplane » depuis l’Admin avec ciblage, déduplication, compteur de destinataires, envoi test et historique ;
+- désabonnement spécifique aux nouveautés avec double confirmation ;
+- réabonnement depuis les Paramètres avec double confirmation et rappel de la date du désabonnement ;
+- séparation stricte entre communications de nouveautés et e-mails transactionnels ;
+- durcissement du rôle `platform_admin` afin que le compte administrateur prévu soit le seul compte Admin.
 
-### Mini-CRM
-- intégrer le socle du Sprint 15 ;
-- centraliser les demandes provenant de l'application et du site public ;
-- statuts de traitement ;
-- recherche et filtres ;
-- notes internes ;
-- historique utile ;
-- accès au compte / OF concerné lorsqu'il existe.
-
-### Statistiques d'utilisation
-Indicateurs envisagés :
-- utilisateurs inscrits ;
-- organismes ;
-- formateurs ;
-- évolution des inscriptions ;
-- utilisateurs actifs ;
-- missions ;
-- propositions et réponses ;
-- options ;
-- affectations ;
-- communications ;
-- partages de disponibilités ;
-- utilisation de « Découvrir Formaplane » ;
-- demandes de contact ;
-- adoption des principales fonctionnalités ;
-- parcours peu ou pas utilisés.
-
-### Distinction importante
-Ce dashboard est un outil interne d'administration de Formaplane, distinct de futures statistiques métier destinées aux OF.
+### Version
+`v0.17.0`
 
 ### Enjeu produit
-Observer les usages, les demandes et les points de friction pour piloter la bêta sur des données réelles.
+Piloter la bêta à partir de données réelles, centraliser les demandes et disposer d’un canal maîtrisé pour informer les utilisateurs des évolutions importantes.
 
 ---
 
@@ -631,7 +618,24 @@ Détecter les régressions et incidents avant les utilisateurs.
 
 ---
 
-# Sprints 19+ — Prévisionnels
+# Sprint 19 — Création de missions par le formateur 🔜
+
+### Objectif
+Permettre au formateur d’ajouter lui-même dans son agenda Formaplane une mission confiée par un organisme qui n’utilise pas encore Formaplane.
+
+### Périmètre cible
+- création d’une mission depuis l’espace Formateur ;
+- mission visible dans son planning professionnel ;
+- mise à jour automatique de ses disponibilités pour les autres organismes ;
+- distinction claire entre mission créée par un OF Formaplane et mission ajoutée personnellement par le formateur ;
+- respect de la confidentialité : les autres OF voient uniquement l’information utile de disponibilité.
+
+### Enjeu produit
+Éviter au formateur de maintenir deux agendas différents et faire de Formaplane son planning professionnel de référence, même lorsque certains de ses clients OF n’utilisent pas encore la plateforme.
+
+---
+
+# Sprints 20+ — Prévisionnels
 
 Ordre volontairement non figé :
 - améliorations UX et productivité ;
@@ -652,7 +656,7 @@ Ordre volontairement non figé :
 
 **Retours utilisateurs + fréquence du besoin + valeur métier + risque technique.**
 
-Les Sprints 13 à 18 constituent le prochain bloc stratégique. À partir du Sprint 19, la roadmap reste volontairement souple.
+Les Sprints 13 à 19 constituent le bloc stratégique en cours. À partir du Sprint 20, la roadmap reste volontairement souple.
 
 ---
 
@@ -669,16 +673,21 @@ Un sprint est terminé lorsque :
 - Vercel est déployé ;
 - la version en ligne est testée ;
 - le tag de version est créé ;
-- un ZIP complet du projet est archivé.
+- un ZIP complet du projet est archivé ;
+- la version affichée dans Formaplane est vérifiée et mise à jour ;
+- la pertinence d'un e-mail « Nouveautés Formaplane » est décidée et, si nécessaire, la communication est envoyée aux populations pertinentes ;
+- les « évolutions envisagées » visibles des utilisateurs sont révisées : retrait des éléments réalisés et ajout des nouvelles idées utiles aux utilisateurs.
 
 ---
 
 # Priorité actuelle
 
 ```text
-v0.16.0 — Sprint 16 officiellement clôturé
-↓
-Sprint 17 — Dashboard Admin, mini-CRM & statistiques d'utilisation
+v0.17.0 — Sprint 17 officiellement clôturé
 ↓
 Sprint 18 — Tests automatisés & surveillance
+↓
+Sprint 19 — Création de missions par le formateur
+↓
+Sprint 20+ — Évolutions guidées par la bêta
 ```

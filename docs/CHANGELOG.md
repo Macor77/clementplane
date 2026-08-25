@@ -1,5 +1,243 @@
 # CHANGELOG - Formaplane
 
+
+## v0.17.0 — Sprint 17 — Dashboard Admin, mini-CRM & statistiques d’utilisation — 25 août 2026
+
+### Administration Formaplane
+- ajout d’un espace Admin réservé à la plateforme, distinct des rôles internes aux organismes ;
+- accès Admin protégé côté interface et côté serveur via `platform_admins` / `is_platform_admin()` ;
+- durcissement final garantissant que `vincent.macor@alter-prevention.com` est le seul administrateur plateforme autorisé ;
+- ajout des vues Dashboard, Mini-CRM, Utilisateurs et Organismes.
+
+### Mini-CRM
+- centralisation des demandes provenant de l’application et du site public ;
+- recherche et filtres ;
+- gestion des statuts, priorités et notes internes ;
+- consultation du contexte utilisateur / organisme lorsqu’il existe.
+
+### Statistiques et pilotage
+- séparation claire entre comptes utilisateurs, utilisateurs OF, utilisateurs formateurs, doubles profils et organismes ;
+- activité OF et formateurs calculée sur 7 jours glissants avec nombre et pourcentage ;
+- suivi des formateurs ayant renseigné manuellement une disponibilité ou indisponibilité au moins une fois sur les 30 derniers jours, hors changements automatiques liés aux missions ;
+- suivi du nombre de formateurs référencés dans les listings OF, moyenne et médiane par OF ;
+- suivi des OF ayant ajouté au moins un formateur dans leur listing sur 30 jours ;
+- suivi des missions, propositions, réponses, affectations, partages de disponibilités, e-mails et demandes support ;
+- instrumentation légère des principales consultations produit ;
+- ajout des courbes d’évolution avec dates visibles : inscrits, utilisateurs actifs, missions créées, fiches formateurs créées et fiches revendiquées.
+
+### Communications « Nouveautés Formaplane »
+- nouvel écran Admin pour préparer une information de nouvelle fonctionnalité ;
+- ciblage Utilisateurs OF / Utilisateurs formateurs / doubles profils avec déduplication des destinataires ;
+- affichage du nombre de destinataires éligibles avant envoi ;
+- envoi test et confirmation avant envoi réel ;
+- historique des communications avec date, contenu, populations ciblées et nombre de destinataires ;
+- désabonnement spécifique aux e-mails de nouveautés, sans couper les e-mails transactionnels nécessaires au fonctionnement de Formaplane ;
+- double confirmation du désabonnement ;
+- préférence de réabonnement dans Paramètres avec rappel de la date du désabonnement volontaire et double confirmation ;
+- conservation d’un historique des changements de préférence ;
+- template d’e-mail simplifié avec bouton discret « Se connecter à mon espace » et sans logo distant dans le corps du message.
+
+### Roadmap et clôture
+- mise à jour de la version affichée vers `v0.17.0` ;
+- ajout du Sprint 19 dédié à la création autonome de missions par le formateur ;
+- maintien dans les évolutions envisagées de la création de mission par le formateur et des évaluations par les apprenants ;
+- ajout de la règle permanente de clôture : version affichée, décision d’e-mail de nouveautés et révision des évolutions envisagées.
+
+### Recette
+- migrations Supabase appliquées ;
+- Edge Function `send-feature-announcement` déployée et testée ;
+- compteur de destinataires, déduplication, envoi test, désabonnement et réabonnement validés en conditions réelles ;
+- accès Admin durci côté base ;
+- `npm run build` : réussi.
+
+## v0.16.0 — Sprint 16 — Landing page / site public Formaplane — 21 août 2026
+
+### Ajouté
+- nouvelle landing page publique Formaplane ;
+- proposition de valeur et parcours de lecture distincts pour les organismes de formation et les formateurs indépendants ;
+- sections dédiées aux fonctionnalités principales, au fonctionnement général, à la confidentialité, à la FAQ et au contact ;
+- navigation interne du hero vers les contenus OF et Formateur ;
+- sélecteur de création de compte OF / Formateur avec explication du fonctionnement en double profil ;
+- intégration de trois schémas pédagogiques et de cinq captures produit validées.
+
+### Présentation produit et UX
+- mise en avant des disponibilités partagées, de la recherche ciblée, du réseau privé, des propositions de mission et du planning synchronisé ;
+- présentation du parcours formateur avec propositions reçues et planning centralisé ;
+- présentation du suivi d'une mission côté OF jusqu'à l'affectation ;
+- clarification de la confidentialité des réseaux propres à chaque organisme ;
+- responsive desktop / mobile validé sur l'ensemble de la landing ;
+- vérification des CTA, liens, FAQ, modale de création de compte et parcours d'inscription ;
+- correction des deux CTA principaux afin qu'ils mènent aux sections OF / Formateur plutôt qu'à l'inscription immédiate.
+
+### Contact public et mini-CRM
+- remplacement du bloc de contact provisoire par un formulaire public réel ;
+- collecte du prénom, du nom, de l'e-mail, du profil et du message ;
+- nouvelle Edge Function `submit-public-contact` pour traiter les demandes côté serveur ;
+- validation serveur des champs et ajout de garde-fous anti-spam ;
+- raccordement au socle `support_requests` créé au Sprint 15 ;
+- distinction des demandes provenant de l'application (`source = app`) et de la landing (`source = public`) ;
+- conservation du fonctionnement sécurisé des demandes authentifiées existantes ;
+- notification Brevo vers `contact@formaplane.fr` avec `replyTo` vers le demandeur ;
+- journalisation des notifications publiques dans `email_logs`.
+
+### Recette
+Validés en conditions réelles :
+- affichage desktop de la landing ;
+- responsive mobile sur l'ensemble des sections ;
+- navigation OF / Formateur depuis le hero ;
+- parcours de connexion et de création de compte ;
+- fonctionnement de la FAQ ;
+- envoi du formulaire public ;
+- création de la demande dans `support_requests` avec `source = public` ;
+- réception de la notification e-mail Brevo ;
+- `npm run build` : réussi.
+
+---
+
+## v0.15.0 — Sprint 15 — Découvrir Formaplane : tutos, FAQ & contact — 21 août 2026
+
+### Ajouté
+- nouvelle rubrique **« Découvrir Formaplane »** dans les espaces Organisme de Formation et Formateur ;
+- présentation pédagogique des bénéfices concrets de Formaplane selon le profil utilisateur ;
+- guides pas à pas dédiés aux principaux parcours OF et formateur ;
+- FAQ contextualisée avec recherche par mot-clé ;
+- bloc de transparence produit avec version publiée et évolutions envisagées ;
+- accès **« Nous contacter »** directement visible dans les deux menus ;
+- formulaire de contact intégré à Formaplane sans ouverture de messagerie externe.
+
+### Contact et suivi des demandes
+- enregistrement des demandes utilisateur dans Supabase avant l’envoi de la notification e-mail ;
+- notification automatique vers `contact@formaplane.fr` ;
+- conservation du demandeur, de son e-mail, de son profil réel (OF, Formateur ou double profil), du contexte d’envoi, de l’organisme ou du formateur concerné, de la catégorie, du message et de la version Formaplane ;
+- catégories structurées pour préparer le futur outil de pilotage : question générale, problème technique, compte, suggestion d’amélioration, confidentialité / données et autre demande ;
+- préparation des champs de suivi futurs : statut, priorité, tags, attribution, notes internes et dates de traitement ;
+- reprise et catégorisation des demandes déjà enregistrées.
+
+### UX et pédagogie
+- mise en avant du planning partagé et actualisé en temps réel afin de limiter les échanges par e-mail, SMS ou WhatsApp ;
+- explication du parcours complet d’une mission côté OF : création, recherche selon disponibilités / distance / compétences, proposition, réponse du formateur et affectation ;
+- clarification du caractère privé du réseau de formateurs propre à chaque organisme ;
+- explication de la mise à jour automatique des indisponibilités lorsqu’une mission est affectée ;
+- présentation adaptée du profil formateur afin de ne pas laisser penser aux OF qu’ils alimentent une base accessible à leurs concurrents ;
+- guides présentés comme des parcours pas à pas et non comme des vidéos ;
+- roadmap publique simplifiée centrée sur les évolutions utiles aux utilisateurs.
+
+### Évolutions envisagées affichées
+- amélioration continue de l’expérience utilisateur ;
+- optimisation de Formaplane sur mobile ;
+- enrichissement des fiches formateurs : expériences, compétences, formations et informations professionnelles ;
+- stockage et partage maîtrisé des documents de référencement : CV, NDA, avis SIREN et autres justificatifs ;
+- messagerie interne OF / formateur autour des sessions de formation ;
+- amélioration du parcours de recherche, proposition et affectation des missions ;
+- évolutions régulières issues des retours utilisateurs.
+
+### Sécurité et données
+- création des demandes via une fonction serveur afin que l’identité et les rattachements soient déterminés côté Supabase ;
+- règles RLS limitant la lecture des demandes à leur propre demandeur dans l’espace utilisateur ;
+- catégories normalisées par clé technique pour éviter une dépendance aux libellés visibles ;
+- stockage structuré prévu pour le futur Dashboard Admin / mini-CRM sans exposer les données internes aux utilisateurs.
+
+### Recette
+Validés en conditions réelles :
+- accès « Découvrir Formaplane » côté OF et côté Formateur ;
+- guides, FAQ, transparence produit et roadmap publique ;
+- accès direct « Nous contacter » depuis les deux menus ;
+- enregistrement des demandes en base ;
+- réception des notifications sur `contact@formaplane.fr` ;
+- distinction du contexte OF / Formateur ;
+- affichage du profil réel de l’utilisateur dans la notification ;
+- `npm run lint` : 0 erreur, 2 warnings React Hooks connus ;
+- `npm run build` : réussi.
+
+---
+
+## v0.14.0 — Sprint 14 — Harmonisation des e-mails côté OF — 21 août 2026
+
+### Ajouté
+- option commune **« Recevoir une copie de cet e-mail »** dans les parcours e-mail déclenchés depuis l’espace OF ;
+- prise en charge des invitations formateurs, invitations en masse, propositions et relances de mission, affectations, désaffectations, revalidations et annulations ;
+- récupération sécurisée de l’adresse de copie depuis le compte Formaplane authentifié ;
+- composant réutilisable pour harmoniser l’option de copie dans l’application.
+
+### Sécurité
+- remplacement du CC identique par un e-mail de copie distinct destiné à l’utilisateur OF ;
+- neutralisation dans la copie OF des liens et boutons d’action réservés au formateur ;
+- maintien du message principal comme seul événement métier journalisé ;
+- traçabilité de l’option de copie dans les métadonnées de l’envoi ;
+- redéploiement de l’Edge Function `send-transactional-email`.
+
+### UX
+- harmonisation des fenêtres d’envoi sur le modèle de proposition de mission ;
+- option e-mail Formaplane affichée en premier ;
+- case de copie positionnée immédiatement sous l’option e-mail ;
+- autres moyens de contact regroupés ensuite ;
+- libellé adapté lorsque plusieurs e-mails sont envoyés.
+
+### Corrigé
+- cooldown d’invitation depuis le listing formateurs : prise en compte des statuts `sent` et `delivered` ;
+- conservation de la réinvitation volontaire depuis la fiche formateur ;
+- statut erroné « revalidation en attente » d’une mission déjà affectée lorsque seul un autre formateur devait encore revalider ;
+- cohérence du statut d’affectation entre la liste des missions et le planning.
+
+### Recette
+Validés en conditions réelles :
+- envoi avec et sans copie ;
+- copie sécurisée reçue par l’utilisateur OF ;
+- impossibilité d’utiliser la copie pour agir à la place du formateur ;
+- invitation ;
+- proposition / relance ;
+- affectation ;
+- désaffectation ;
+- revalidation ;
+- annulation ;
+- envois simples et multiples ;
+- harmonisation visuelle des fenêtres ;
+- build de production réussi.
+
+---
+
+
+## v0.13.0 — Sprint 13 — Sécurisation du partage des disponibilités — 21 août 2026
+
+### Ajouté
+- délai minimal de 20 jours complets entre deux partages de disponibilités par e-mail d'un même formateur vers une même adresse destinataire ;
+- contrôle côté PostgreSQL et Edge Function, indépendant de l'identifiant du contact ;
+- réservation atomique avant envoi afin d'éviter les doubles envois concurrents ;
+- affichage de la date et de l'heure exactes du prochain envoi autorisé ;
+- possibilité pour le formateur de recevoir une copie de l'e-mail envoyé ;
+- génération et téléchargement d'un PDF personnalisé des disponibilités ;
+- personnalisation du PDF selon l'organisme destinataire ;
+- intégration du commentaire du formateur dans le PDF ;
+- séparation claire des trois modes de partage : e-mail Formaplane, PDF et réseaux sociaux.
+
+### Sécurité et garde-fous
+- impossibilité de contourner le délai de 20 jours en supprimant puis recréant un contact avec la même adresse e-mail ;
+- contrôle basé sur le couple formateur + adresse e-mail normalisée ;
+- blocage appliqué côté serveur et non uniquement dans l'interface ;
+- maintien du téléchargement PDF même lorsqu'un destinataire est temporairement bloqué pour l'envoi par e-mail.
+
+### UX
+- contacts temporairement bloqués clairement identifiés ;
+- information sur la prochaine date d'envoi possible ;
+- rappel qu'un organisme inscrit peut consulter les disponibilités actualisées directement dans Formaplane ;
+- invitation à encourager les organismes partenaires à utiliser Formaplane ;
+- cartes contacts compactées ;
+- parcours de partage réorganisé en trois parties distinctes.
+
+### Recette
+Validés :
+- envoi vers un contact autorisé ;
+- blocage immédiat après envoi ;
+- délai de 20 jours ;
+- suppression/recréation d'un contact avec la même adresse ;
+- mélange de destinataires bloqués et autorisés ;
+- copie facultative au formateur ;
+- PDF disponible indépendamment du délai anti-spam ;
+- PDF personnalisé par organisme ;
+- commentaire intégré au PDF.
+
+---
+
 Version : 10.0
 Date : 18/08/2026
 
@@ -503,5 +741,5 @@ Les parcours de partage privé et public ont été testés fonctionnellement. Le
 
 # Prochaine étape
 
-Sprint 13 — Tutos, explications, FAQ & transparence produit.
+Sprint 17 — Dashboard Admin, mini-CRM & statistiques d'utilisation.
 

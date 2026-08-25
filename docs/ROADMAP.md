@@ -34,7 +34,7 @@ Après le Sprint 14, la priorité est désormais de rendre Formaplane plus auton
 | 15 | Découvrir Formaplane — Tutos, FAQ & contact | ✅ TERMINÉ |
 | 16 | Landing page / site public Formaplane | ✅ TERMINÉ |
 | 17 | Dashboard Admin, mini-CRM & statistiques d'utilisation | ✅ TERMINÉ |
-| 18 | Tests automatisés & surveillance | 🔜 À FAIRE |
+| 18 | Tests automatisés & surveillance | 🚧 EN COURS |
 | 19 | Création de missions par le formateur dans son propre agenda | 🔜 À FAIRE |
 | 20+ | Évolutions guidées par la bêta | 🧭 PRÉVISIONNEL |
 
@@ -581,7 +581,7 @@ Piloter la bêta à partir de données réelles, centraliser les demandes et dis
 
 ---
 
-## Sprint 18 — Tests automatisés & surveillance 🔜
+## Sprint 18 — Tests automatisés & surveillance 🚧
 
 ### Objectif
 Renforcer la sécurité technique des parcours critiques avant une diffusion plus large.

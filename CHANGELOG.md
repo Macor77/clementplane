@@ -1,22 +1,54 @@
 # CHANGELOG - Formaplane
 
 
-## [0.17.0] - En cours
+## v0.17.0 — Sprint 17 — Dashboard Admin, mini-CRM & statistiques d’utilisation — 25 août 2026
 
-### Sprint 17 — Dashboard Admin, mini-CRM & statistiques
+### Administration Formaplane
+- ajout d’un espace Admin réservé à la plateforme, distinct des rôles internes aux organismes ;
+- accès Admin protégé côté interface et côté serveur via `platform_admins` / `is_platform_admin()` ;
+- durcissement final garantissant que `vincent.macor@alter-prevention.com` est le seul administrateur plateforme autorisé ;
+- ajout des vues Dashboard, Mini-CRM, Utilisateurs et Organismes.
 
-- 17.1 : socle Admin sécurisé, mini-CRM, utilisateurs et organismes.
-- 17.2 : dashboard de pilotage, statistiques métier et instrumentation légère des consultations de fonctionnalités clés.
+### Mini-CRM
+- centralisation des demandes provenant de l’application et du site public ;
+- recherche et filtres ;
+- gestion des statuts, priorités et notes internes ;
+- consultation du contexte utilisateur / organisme lorsqu’il existe.
 
-## [Unreleased] — Sprint 17
+### Statistiques et pilotage
+- séparation claire entre comptes utilisateurs, utilisateurs OF, utilisateurs formateurs, doubles profils et organismes ;
+- activité OF et formateurs calculée sur 7 jours glissants avec nombre et pourcentage ;
+- suivi des formateurs ayant renseigné manuellement une disponibilité ou indisponibilité au moins une fois sur les 30 derniers jours, hors changements automatiques liés aux missions ;
+- suivi du nombre de formateurs référencés dans les listings OF, moyenne et médiane par OF ;
+- suivi des OF ayant ajouté au moins un formateur dans leur listing sur 30 jours ;
+- suivi des missions, propositions, réponses, affectations, partages de disponibilités, e-mails et demandes support ;
+- instrumentation légère des principales consultations produit ;
+- ajout des courbes d’évolution avec dates visibles : inscrits, utilisateurs actifs, missions créées, fiches formateurs créées et fiches revendiquées.
 
-### Admin / mini-CRM
-- ajout du socle sécurisé d’administration Formaplane ;
-- création du Dashboard Admin, du mini-CRM et des vues Utilisateurs / Organismes ;
-- ajout d’un rôle d’administration plateforme distinct des rôles internes aux OF ;
-- ajout des fonctions serveur réservées à l’Admin pour consulter et piloter les demandes ;
-- mise en cohérence de la version affichée avec `v0.16.0` ;
-- intégration dans la roadmap du Sprint 19 « création de missions par le formateur » et de la nouvelle procédure permanente de clôture.
+### Communications « Nouveautés Formaplane »
+- nouvel écran Admin pour préparer une information de nouvelle fonctionnalité ;
+- ciblage Utilisateurs OF / Utilisateurs formateurs / doubles profils avec déduplication des destinataires ;
+- affichage du nombre de destinataires éligibles avant envoi ;
+- envoi test et confirmation avant envoi réel ;
+- historique des communications avec date, contenu, populations ciblées et nombre de destinataires ;
+- désabonnement spécifique aux e-mails de nouveautés, sans couper les e-mails transactionnels nécessaires au fonctionnement de Formaplane ;
+- double confirmation du désabonnement ;
+- préférence de réabonnement dans Paramètres avec rappel de la date du désabonnement volontaire et double confirmation ;
+- conservation d’un historique des changements de préférence ;
+- template d’e-mail simplifié avec bouton discret « Se connecter à mon espace » et sans logo distant dans le corps du message.
+
+### Roadmap et clôture
+- mise à jour de la version affichée vers `v0.17.0` ;
+- ajout du Sprint 19 dédié à la création autonome de missions par le formateur ;
+- maintien dans les évolutions envisagées de la création de mission par le formateur et des évaluations par les apprenants ;
+- ajout de la règle permanente de clôture : version affichée, décision d’e-mail de nouveautés et révision des évolutions envisagées.
+
+### Recette
+- migrations Supabase appliquées ;
+- Edge Function `send-feature-announcement` déployée et testée ;
+- compteur de destinataires, déduplication, envoi test, désabonnement et réabonnement validés en conditions réelles ;
+- accès Admin durci côté base ;
+- `npm run build` : réussi.
 
 ## v0.16.0 — Sprint 16 — Landing page / site public Formaplane — 21 août 2026
 

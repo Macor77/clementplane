@@ -1119,6 +1119,7 @@ export default function TrainerAvailability() {
                   return (
                     <div
                       key={iso}
+                      data-testid={`availability-day-${iso}`}
                       className={
                         classes
                       }

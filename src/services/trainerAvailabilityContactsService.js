@@ -54,11 +54,11 @@ async function enrichContacts(rows) {
 
   if (organizationStatusResult.error) {
     console.error(
-      "Erreur de lecture du statut Formaplane des organismes :",
+      "Erreur de lecture du statut Clementplane des organismes :",
       organizationStatusResult.error,
     );
     throw new Error(
-      "Impossible de vérifier le statut Formaplane de vos organismes.",
+      "Impossible de vérifier le statut Clementplane de vos organismes.",
     );
   }
 

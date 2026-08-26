@@ -62,7 +62,7 @@ export default function TrainerInvitationModal({
           id="trainer-invitation-title"
           style={{ margin: '0 0 14px', fontSize: 23, lineHeight: 1.3, color: '#0f2747' }}
         >
-          Inviter {trainerName || 'ce formateur'} à rejoindre Formaplane ?
+          Inviter {trainerName || 'ce formateur'} à rejoindre Clementplane ?
         </h2>
 
         <p style={{ margin: '0 0 12px', color: '#5b6b82', lineHeight: 1.6, fontSize: 15 }}>

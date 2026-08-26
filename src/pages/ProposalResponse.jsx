@@ -91,8 +91,8 @@ export default function ProposalResponse() {
       <main style={styles.card}>
         <div style={styles.brand}>
           <img
-            src="/brand/formaplane-logo.svg"
-            alt="Formaplane"
+            src="/brand/clementplane-logo.svg"
+            alt="Clementplane"
             style={{ width: '220px', height: 'auto', display: 'block' }}
           />
         </div>
@@ -177,7 +177,7 @@ export default function ProposalResponse() {
         )}
 
         <p style={styles.footerNote}>
-          Aucun compte Formaplane n’est nécessaire pour répondre à cette proposition.
+          Aucun compte Clementplane n’est nécessaire pour répondre à cette proposition.
         </p>
       </main>
     </div>
@@ -188,7 +188,7 @@ function CreateTrainerAccountInvite() {
   return (
     <aside style={styles.accountInvite}>
       <strong style={styles.accountInviteTitle}>
-        Retrouvez vos missions dans votre espace Formaplane
+        Retrouvez vos missions dans votre espace Clementplane
       </strong>
 
       <p style={styles.accountInviteText}>
@@ -343,8 +343,8 @@ function PublicState({ message, error = false }) {
       <main style={styles.card}>
         <div style={styles.brand}>
           <img
-            src="/brand/formaplane-logo.svg"
-            alt="Formaplane"
+            src="/brand/clementplane-logo.svg"
+            alt="Clementplane"
             style={{ width: '220px', height: 'auto', display: 'block' }}
           />
         </div>

@@ -8,9 +8,9 @@ const corsHeaders = {
 };
 
 const BREVO_ENDPOINT = 'https://api.brevo.com/v3/smtp/email';
-const SENDER_EMAIL = 'contact@formaplane.fr';
-const SENDER_NAME = 'Formaplane';
-const APP_URL = 'https://app.formaplane.fr';
+const SENDER_EMAIL = 'contact@clementplane.fr';
+const SENDER_NAME = 'Clementplane';
+const APP_URL = 'https://app.clementplane.fr';
 
 const jsonResponse = (
   body: Record<string, unknown>,
@@ -488,7 +488,7 @@ Deno.serve(async (req) => {
       htmlContent: `
         <div style="margin:0;padding:40px 20px;background-color:#f3f6fb;font-family:Arial,Helvetica,sans-serif;color:#0f2747;">
           <div style="max-width:600px;margin:0 auto;background-color:#ffffff;border:1px solid #dbe3ef;border-radius:18px;padding:36px;box-sizing:border-box;">
-            <div style="font-size:24px;font-weight:800;margin-bottom:28px;color:#0f2747;">Formaplane</div>
+            <div style="font-size:24px;font-weight:800;margin-bottom:28px;color:#0f2747;">Clementplane</div>
 
             <div style="font-size:12px;font-weight:800;letter-spacing:1.5px;color:${accepted ? '#15803d' : '#b45309'};text-transform:uppercase;margin-bottom:10px;">
               Réponse à une proposition de mission
@@ -546,7 +546,7 @@ Deno.serve(async (req) => {
                     </div>
                     <div style="font-size:13px;line-height:1.55;color:#475569;">
                       L’acceptation du formateur ne confirme pas encore définitivement la mission.
-                      Ouvrez la mission dans Formaplane puis cliquez sur <strong>« Affecter »</strong>
+                      Ouvrez la mission dans Clementplane puis cliquez sur <strong>« Affecter »</strong>
                       pour confirmer ce formateur sur la mission.
                     </div>
                   </div>
@@ -562,11 +562,11 @@ Deno.serve(async (req) => {
               href="${safeMissionUrl}"
               style="display:block;text-align:center;background:#2563eb;color:#ffffff;text-decoration:none;font-size:15px;font-weight:800;padding:14px 18px;border-radius:10px;"
             >
-              Voir la mission dans Formaplane
+              Voir la mission dans Clementplane
             </a>
 
             <div style="margin-top:26px;padding-top:18px;border-top:1px solid #dbe3ef;font-size:11px;line-height:1.5;color:#94a3b8;">
-              Formaplane<br />
+              Clementplane<br />
               Suivez vos propositions et affectations simplement.
             </div>
           </div>

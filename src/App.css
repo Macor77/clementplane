@@ -3812,10 +3812,10 @@ textarea {
 
 
 /* =========================================================
-   Mini-Sprint 9.1.2 — Harmonisation identité Formaplane
+   Mini-Sprint 9.1.2 — Harmonisation identité Clementplane
    ---------------------------------------------------------
    Objectif :
-   - unifier la couleur d'action Formaplane ;
+   - unifier la couleur d'action Clementplane ;
    - renforcer légèrement la présence du logo ;
    - harmoniser cartes, focus et états interactifs ;
    - préserver strictement la structure et la densité
@@ -3823,17 +3823,17 @@ textarea {
    ========================================================= */
 
 :root {
-  --formaplane-blue: #3b82f6;
-  --formaplane-blue-dark: #2563eb;
-  --formaplane-blue-deep: #1d4ed8;
-  --formaplane-blue-soft: #eff6ff;
-  --formaplane-blue-border: #bfdbfe;
+  --clementplane-blue: #3b82f6;
+  --clementplane-blue-dark: #2563eb;
+  --clementplane-blue-deep: #1d4ed8;
+  --clementplane-blue-soft: #eff6ff;
+  --clementplane-blue-border: #bfdbfe;
 
   --navy-950: #0b1533;
   --navy-900: #1e3a8a;
 
-  --blue-600: var(--formaplane-blue);
-  --blue-700: var(--formaplane-blue-dark);
+  --blue-600: var(--clementplane-blue);
+  --blue-700: var(--clementplane-blue-dark);
 
   --page: #f8fafc;
   --surface: #ffffff;
@@ -3863,8 +3863,8 @@ textarea {
   border-color: rgba(255, 255, 255, 0.14);
   background: linear-gradient(
     135deg,
-    var(--formaplane-blue) 0%,
-    var(--formaplane-blue-dark) 100%
+    var(--clementplane-blue) 0%,
+    var(--clementplane-blue-dark) 100%
   );
   box-shadow: 0 8px 22px rgba(15, 23, 42, 0.2);
 }
@@ -3878,23 +3878,23 @@ textarea {
 .trainer-cell__actions button,
 .calendar-day__more,
 .trainer-note-item__actions button {
-  color: var(--formaplane-blue);
+  color: var(--clementplane-blue);
 }
 
 .button--primary {
-  border-color: var(--formaplane-blue);
-  background: var(--formaplane-blue);
+  border-color: var(--clementplane-blue);
+  background: var(--clementplane-blue);
 }
 
 .button--primary:hover {
-  border-color: var(--formaplane-blue-dark);
-  background: var(--formaplane-blue-dark);
+  border-color: var(--clementplane-blue-dark);
+  background: var(--clementplane-blue-dark);
 }
 
 .button--soft {
-  border-color: var(--formaplane-blue-border);
-  background: var(--formaplane-blue-soft);
-  color: var(--formaplane-blue-deep);
+  border-color: var(--clementplane-blue-border);
+  background: var(--clementplane-blue-soft);
+  color: var(--clementplane-blue-deep);
 }
 
 .button--soft:hover {
@@ -3938,22 +3938,22 @@ textarea {
   box-shadow: 0 2px 8px rgba(15, 23, 42, 0.045);
 }
 
-/* États bleus Formaplane */
+/* États bleus Clementplane */
 .count-badge,
 .trainer-proposal-tab--active span {
-  background: var(--formaplane-blue);
+  background: var(--clementplane-blue);
 }
 
 .trainer-proposal-tab--active {
-  border-color: var(--formaplane-blue-border);
-  background: var(--formaplane-blue-soft);
-  color: var(--formaplane-blue-deep);
+  border-color: var(--clementplane-blue-border);
+  background: var(--clementplane-blue-soft);
+  color: var(--clementplane-blue-deep);
 }
 
 .trainer-profile-chip,
 .listing-status-filter:has(input:checked) {
-  border-color: var(--formaplane-blue-border);
-  background: var(--formaplane-blue-soft);
+  border-color: var(--clementplane-blue-border);
+  background: var(--clementplane-blue-soft);
   color: #2457a7;
 }
 
@@ -3961,29 +3961,29 @@ textarea {
    uniquement harmonisation de la teinte bleue.
    Aucune dimension, grille, hauteur ou densité n'est modifiée. */
 .planning-page .calendar-day--selected {
-  outline-color: var(--formaplane-blue);
+  outline-color: var(--clementplane-blue);
 }
 
 .planning-page .calendar-day--today .calendar-day__number {
-  background: var(--formaplane-blue);
+  background: var(--clementplane-blue);
   box-shadow: 0 5px 12px rgba(59, 130, 246, 0.22);
 }
 
 .planning-page .calendar-day__mission-count {
-  border-color: var(--formaplane-blue-border);
-  background: var(--formaplane-blue-soft);
+  border-color: var(--clementplane-blue-border);
+  background: var(--clementplane-blue-soft);
   color: #2457a7;
   box-shadow: 0 2px 6px rgba(59, 130, 246, 0.12);
 }
 
 /* Espace formateur */
 .trainer-planning-day--selected {
-  box-shadow: inset 0 0 0 2px var(--formaplane-blue);
+  box-shadow: inset 0 0 0 2px var(--clementplane-blue);
 }
 
 .trainer-planning-day--today .trainer-planning-day__number,
 .trainer-availability-day--today .trainer-availability-day__number {
-  background: var(--formaplane-blue);
+  background: var(--clementplane-blue);
   color: #fff;
 }
 
@@ -3991,7 +3991,7 @@ textarea {
 .trainer-dashboard-card--accent {
   background: linear-gradient(
     135deg,
-    var(--formaplane-blue-soft),
+    var(--clementplane-blue-soft),
     #ffffff
   );
 }

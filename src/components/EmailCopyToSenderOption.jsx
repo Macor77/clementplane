@@ -44,8 +44,8 @@ export default function EmailCopyToSenderOption({
           }}
         >
           {multiple
-            ? 'Une copie de chaque e-mail envoyé sera adressée à l’adresse e-mail de votre compte Formaplane.'
-            : 'La copie sera envoyée à l’adresse e-mail de votre compte Formaplane.'}
+            ? 'Une copie de chaque e-mail envoyé sera adressée à l’adresse e-mail de votre compte Clementplane.'
+            : 'La copie sera envoyée à l’adresse e-mail de votre compte Clementplane.'}
         </span>
       </span>
     </label>

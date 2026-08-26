@@ -210,7 +210,7 @@ export default function TrainerOrganizations() {
           <div style={{ marginTop: 4, fontSize: 24, fontWeight: 900 }}>{contacts.length}</div>
         </div>
         <div className="panel-card" style={{ padding: 14 }}>
-          <div style={{ color: '#64748b', fontSize: 12, fontWeight: 700 }}>Déjà sur Formaplane</div>
+          <div style={{ color: '#64748b', fontSize: 12, fontWeight: 700 }}>Déjà sur Clementplane</div>
           <div style={{ marginTop: 4, fontSize: 24, fontWeight: 900 }}>{registeredCount}</div>
         </div>
       </div>
@@ -262,7 +262,7 @@ export default function TrainerOrganizations() {
         <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
           <div>
             <h2 style={{ margin: 0 }}>Mes organismes partenaires</h2>
-            <p style={{ margin: '5px 0 0' }}>Le statut Formaplane est actualisé automatiquement.</p>
+            <p style={{ margin: '5px 0 0' }}>Le statut Clementplane est actualisé automatiquement.</p>
           </div>
           <button className="button button--soft" type="button" onClick={loadContacts} disabled={loading}>
             Actualiser
@@ -302,7 +302,7 @@ export default function TrainerOrganizations() {
                     </div>
                     <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'flex-start' }}>
                       <StatusPill tone={contact.is_on_formaplane ? 'success' : 'neutral'}>
-                        {contact.is_on_formaplane ? '● Sur Formaplane' : '○ Pas encore sur Formaplane'}
+                        {contact.is_on_formaplane ? '● Sur Clementplane' : '○ Pas encore sur Clementplane'}
                       </StatusPill>
                       {contact.is_on_formaplane ? (
                         <StatusPill tone={contact.is_referenced ? 'info' : 'warning'}>
@@ -326,7 +326,7 @@ export default function TrainerOrganizations() {
                         disabled={sendingId === contact.id || status.canInvite === false}
                         onClick={() => invite(contact)}
                       >
-                        {sendingId === contact.id ? 'Envoi…' : status.canInvite === false ? 'Invitation récente' : 'Inviter sur Formaplane'}
+                        {sendingId === contact.id ? 'Envoi…' : status.canInvite === false ? 'Invitation récente' : 'Inviter sur Clementplane'}
                       </button>
                     ) : null}
                     <button className="button button--soft" type="button" onClick={() => startEdit(contact)}>

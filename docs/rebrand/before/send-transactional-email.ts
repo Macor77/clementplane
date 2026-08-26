@@ -7,9 +7,9 @@ const corsHeaders = {
 };
 
 const BREVO_ENDPOINT = 'https://api.brevo.com/v3/smtp/email';
-const SENDER_EMAIL = 'contact@clementplane.fr';
-const SENDER_NAME = 'Clementplane';
-const APP_URL = 'https://app.clementplane.fr';
+const SENDER_EMAIL = 'contact@formaplane.fr';
+const SENDER_NAME = 'Formaplane';
+const APP_URL = 'https://app.formaplane.fr';
 
 type EmailRequest = {
   type?: string;
@@ -316,7 +316,7 @@ const buildTrainerAvailabilityShareEmail = ({
 
   if (organizationRegistered) {
     const label = trainerReferenced
-      ? `Voir la fiche de ${safeTrainerName} sur Clementplane`
+      ? `Voir la fiche de ${safeTrainerName} sur Formaplane`
       : `Retrouver ${safeTrainerName} et l’ajouter à mon réseau`;
 
     ctaHtml = `
@@ -334,13 +334,13 @@ const buildTrainerAvailabilityShareEmail = ({
           Simplifiez vos échanges avec vos formateurs
         </div>
         <div style="font-size:12px;line-height:1.55;color:#64748b;">
-          Clementplane permet aux organismes de retrouver leurs formateurs, consulter les disponibilités qu’ils partagent et gérer plus facilement propositions et missions.
+          Formaplane permet aux organismes de retrouver leurs formateurs, consulter les disponibilités qu’ils partagent et gérer plus facilement propositions et missions.
         </div>
         <a
           href="${safeSignupUrl}"
           style="display:block;text-align:center;background:#2563eb;color:#ffffff;text-decoration:none;font-size:14px;font-weight:800;padding:12px 16px;border-radius:10px;margin-top:13px;"
         >
-          Découvrir Clementplane et créer mon compte
+          Découvrir Formaplane et créer mon compte
         </a>
       </div>
     `;
@@ -365,7 +365,7 @@ const buildTrainerAvailabilityShareEmail = ({
     htmlContent: `
       <div style="margin:0;padding:30px 16px;background:#f3f6fb;font-family:Arial,Helvetica,sans-serif;color:#0f2747;">
         <div style="max-width:640px;margin:0 auto;background:#ffffff;border:1px solid #dbe3ef;border-radius:18px;padding:28px;box-sizing:border-box;">
-          <div style="font-size:22px;font-weight:800;margin-bottom:24px;color:#0f2747;">Clementplane</div>
+          <div style="font-size:22px;font-weight:800;margin-bottom:24px;color:#0f2747;">Formaplane</div>
 
           <div style="font-size:11px;font-weight:800;letter-spacing:1.4px;color:#2563eb;text-transform:uppercase;margin-bottom:8px;">
             Disponibilités formateur
@@ -416,7 +416,7 @@ const buildTrainerAvailabilityShareEmail = ({
           ${ctaHtml}
 
           <div style="margin-top:24px;padding-top:16px;border-top:1px solid #dbe3ef;font-size:10px;line-height:1.5;color:#94a3b8;">
-            Clementplane transmet les informations renseignées par le formateur. Pour confirmer une disponibilité, contactez directement ${safeTrainerName}.
+            Formaplane transmet les informations renseignées par le formateur. Pour confirmer une disponibilité, contactez directement ${safeTrainerName}.
           </div>
         </div>
       </div>
@@ -508,7 +508,7 @@ const buildMissionProposalEmail = ({
     htmlContent: `
       <div style="margin:0;padding:40px 20px;background-color:#f3f6fb;font-family:Arial,Helvetica,sans-serif;color:#0f2747;">
         <div style="max-width:600px;margin:0 auto;background-color:#ffffff;border:1px solid #dbe3ef;border-radius:18px;padding:36px;box-sizing:border-box;">
-          <div style="font-size:24px;font-weight:800;margin-bottom:28px;color:#0f2747;">Clementplane</div>
+          <div style="font-size:24px;font-weight:800;margin-bottom:28px;color:#0f2747;">Formaplane</div>
 
           <div style="font-size:12px;font-weight:800;letter-spacing:1.5px;color:#2563eb;text-transform:uppercase;margin-bottom:10px;">
             ${isReminder ? 'Relance — proposition de mission' : 'Proposition de mission'}
@@ -521,7 +521,7 @@ const buildMissionProposalEmail = ({
           <p style="margin:0 0 20px 0;font-size:15px;line-height:1.6;color:#5b6b82;">
             ${isReminder
               ? 'Cette mission vous a déjà été proposée. Vous pouvez toujours consulter les informations ci-dessous et répondre en quelques instants.'
-              : 'Consultez les informations ci-dessous puis ouvrez la proposition pour répondre directement depuis Clementplane.'}
+              : 'Consultez les informations ci-dessous puis ouvrez la proposition pour répondre directement depuis Formaplane.'}
           </p>
 
           <div style="border:1px solid #dbe3ef;border-radius:12px;padding:18px;margin-bottom:20px;background:#f8fafc;">
@@ -557,10 +557,10 @@ const buildMissionProposalEmail = ({
             trainerHasAccount
               ? `
                 <div style="margin-top:18px;padding-top:16px;border-top:1px solid #edf1f5;font-size:12px;line-height:1.55;color:#64748b;">
-                  Vous utilisez déjà Clementplane ? Retrouvez également vos disponibilités et vos missions depuis votre espace formateur.
+                  Vous utilisez déjà Formaplane ? Retrouvez également vos disponibilités et vos missions depuis votre espace formateur.
                   <div style="margin-top:7px;">
                     <a href="${safeTrainerHomeUrl}" style="color:#2563eb;text-decoration:none;font-weight:700;">
-                      Accéder à mon espace Clementplane
+                      Accéder à mon espace Formaplane
                     </a>
                   </div>
                 </div>
@@ -570,10 +570,10 @@ const buildMissionProposalEmail = ({
                   <div style="margin-bottom:4px;color:#1d4ed8;font-size:13px;font-weight:800;">
                     Simplifiez aussi la gestion de vos disponibilités
                   </div>
-                  Renseignez vos disponibilités une seule fois dans Clementplane et partagez-les en temps réel avec vos organismes de formation partenaires.
+                  Renseignez vos disponibilités une seule fois dans Formaplane et partagez-les en temps réel avec vos organismes de formation partenaires.
                   <div style="margin-top:8px;">
                     <a href="${safeSignupUrl}" style="color:#2563eb;text-decoration:none;font-weight:800;">
-                      Découvrir Clementplane →
+                      Découvrir Formaplane →
                     </a>
                   </div>
                 </div>
@@ -581,7 +581,7 @@ const buildMissionProposalEmail = ({
           }
 
           <div style="margin-top:26px;padding-top:18px;border-top:1px solid #dbe3ef;font-size:11px;line-height:1.5;color:#94a3b8;">
-            Clementplane<br />
+            Formaplane<br />
             Facilitez vos disponibilités, propositions et missions avec vos organismes partenaires.
           </div>
         </div>
@@ -691,7 +691,7 @@ const buildMissionAssignmentConfirmationEmail = ({
     htmlContent: `
       <div style="margin:0;padding:40px 20px;background-color:#f3f6fb;font-family:Arial,Helvetica,sans-serif;color:#0f2747;">
         <div style="max-width:600px;margin:0 auto;background-color:#ffffff;border:1px solid #dbe3ef;border-radius:18px;padding:36px;box-sizing:border-box;">
-          <div style="font-size:24px;font-weight:800;margin-bottom:28px;color:#0f2747;">Clementplane</div>
+          <div style="font-size:24px;font-weight:800;margin-bottom:28px;color:#0f2747;">Formaplane</div>
 
           <div style="font-size:12px;font-weight:800;letter-spacing:1.5px;color:#15803d;text-transform:uppercase;margin-bottom:10px;">
             Mission confirmée
@@ -729,7 +729,7 @@ const buildMissionAssignmentConfirmationEmail = ({
             </div>
 
             <div style="font-size:13px;line-height:1.6;color:#475569;">
-              Clementplane confirme la planification et votre affectation à cette mission.
+              Formaplane confirme la planification et votre affectation à cette mission.
               Pour préparer concrètement l’intervention, il est important de vous rapprocher directement de
               <strong> ${safeOrganizationName}</strong> afin de convenir ensemble des modalités
               <strong> logistiques, organisationnelles et administratives</strong> :
@@ -739,7 +739,7 @@ const buildMissionAssignmentConfirmationEmail = ({
 
             <div style="margin-top:9px;font-size:13px;line-height:1.6;color:#475569;">
               Ces échanges ainsi que la gestion du dossier se font directement entre vous et l’organisme de formation,
-              en dehors de Clementplane.
+              en dehors de Formaplane.
             </div>
           </div>
 
@@ -763,7 +763,7 @@ const buildMissionAssignmentConfirmationEmail = ({
                   href="${safeTrainerMissionUrl}"
                   style="display:block;text-align:center;background:#2563eb;color:#ffffff;text-decoration:none;font-size:15px;font-weight:800;padding:14px 18px;border-radius:10px;"
                 >
-                  Voir ma mission dans Clementplane
+                  Voir ma mission dans Formaplane
                 </a>
 
                 <p style="margin:12px 0 0;font-size:12px;line-height:1.55;color:#64748b;text-align:center;">
@@ -774,8 +774,8 @@ const buildMissionAssignmentConfirmationEmail = ({
           }
 
           <div style="margin-top:26px;padding-top:18px;border-top:1px solid #dbe3ef;font-size:11px;line-height:1.5;color:#94a3b8;">
-            Clementplane<br />
-            La mission est planifiée dans Clementplane ; sa préparation opérationnelle se poursuit directement avec votre organisme partenaire.
+            Formaplane<br />
+            La mission est planifiée dans Formaplane ; sa préparation opérationnelle se poursuit directement avec votre organisme partenaire.
           </div>
         </div>
       </div>
@@ -852,7 +852,7 @@ const buildMissionChangeRevalidationEmail = ({
     htmlContent: `
       <div style="margin:0;padding:40px 20px;background:#f3f6fb;font-family:Arial,Helvetica,sans-serif;color:#0f2747;">
         <div style="max-width:600px;margin:0 auto;background:#fff;border:1px solid #dbe3ef;border-radius:18px;padding:36px;box-sizing:border-box;">
-          <div style="font-size:24px;font-weight:800;margin-bottom:28px;">Clementplane</div>
+          <div style="font-size:24px;font-weight:800;margin-bottom:28px;">Formaplane</div>
           <div style="font-size:12px;font-weight:800;letter-spacing:1.5px;color:#2563eb;text-transform:uppercase;margin-bottom:10px;">Modification de mission</div>
           <h1 style="margin:0 0 14px;font-size:25px;line-height:1.25;">${escapeHtml(trainerFirstName || 'Bonjour')}, votre validation est requise</h1>
           <p style="margin:0 0 18px;font-size:15px;line-height:1.6;color:#5b6b82;">
@@ -860,11 +860,11 @@ const buildMissionChangeRevalidationEmail = ({
           </p>
           <div style="border:1px solid #dbe3ef;border-radius:12px;padding:16px;background:#f8fafc;margin-bottom:20px;">
             <div style="font-size:16px;font-weight:800;margin-bottom:4px;">Ce qui change</div>
-            ${diffRows || '<div style="font-size:13px;color:#64748b;">Consultez Clementplane pour voir les nouvelles conditions.</div>'}
+            ${diffRows || '<div style="font-size:13px;color:#64748b;">Consultez Formaplane pour voir les nouvelles conditions.</div>'}
           </div>
           <p style="margin:0 0 20px;font-size:13px;line-height:1.6;color:#64748b;">Les éventuelles conditions tarifaires ne sont pas affichées dans cet e-mail. Consultez les modifications puis confirmez si vous maintenez votre accord.</p>
           <a href="${escapeHtml(responseUrl)}" style="display:inline-block;padding:13px 20px;border-radius:9px;background:#2563eb;color:#fff;font-size:14px;font-weight:800;text-decoration:none;">Consulter les modifications et répondre</a>
-          <p style="margin:24px 0 0;font-size:11px;line-height:1.55;color:#94a3b8;">Vous pouvez répondre à cette demande même si vous ne possédez pas encore de compte Clementplane.</p>
+          <p style="margin:24px 0 0;font-size:11px;line-height:1.55;color:#94a3b8;">Vous pouvez répondre à cette demande même si vous ne possédez pas encore de compte Formaplane.</p>
         </div>
       </div>
     `,
@@ -875,16 +875,16 @@ const buildInfrastructureTestEmail = (recipientEmail: string) => ({
   sender: { name: SENDER_NAME, email: SENDER_EMAIL },
   to: [{ email: recipientEmail }],
   replyTo: { name: SENDER_NAME, email: SENDER_EMAIL },
-  subject: 'Test technique Clementplane',
+  subject: 'Test technique Formaplane',
   htmlContent: `
     <div style="margin:0;padding:40px 20px;background-color:#f3f6fb;font-family:Arial,Helvetica,sans-serif;color:#0f2747;">
       <div style="max-width:560px;margin:0 auto;background-color:#ffffff;border:1px solid #dbe3ef;border-radius:18px;padding:40px;box-sizing:border-box;">
-        <div style="font-size:24px;font-weight:800;margin-bottom:32px;color:#0f2747;">Clementplane</div>
+        <div style="font-size:24px;font-weight:800;margin-bottom:32px;color:#0f2747;">Formaplane</div>
         <div style="font-size:12px;font-weight:800;letter-spacing:1.5px;color:#2563eb;text-transform:uppercase;margin-bottom:12px;">Test technique</div>
         <h1 style="margin:0 0 16px 0;font-size:28px;line-height:1.2;color:#0f2747;">Le moteur d'e-mails fonctionne</h1>
-        <p style="margin:0 0 16px 0;font-size:16px;line-height:1.6;color:#5b6b82;">Cet e-mail a été envoyé depuis Clementplane via notre moteur transactionnel centralisé.</p>
+        <p style="margin:0 0 16px 0;font-size:16px;line-height:1.6;color:#5b6b82;">Cet e-mail a été envoyé depuis Formaplane via notre moteur transactionnel centralisé.</p>
         <p style="margin:0;font-size:16px;line-height:1.6;color:#5b6b82;">Aucune action n'est nécessaire.</p>
-        <div style="margin-top:32px;padding-top:22px;border-top:1px solid #e5eaf1;font-size:12px;line-height:1.6;color:#94a0b2;">Clementplane<br>Gérez vos formateurs, leurs disponibilités et vos missions simplement.</div>
+        <div style="margin-top:32px;padding-top:22px;border-top:1px solid #e5eaf1;font-size:12px;line-height:1.6;color:#94a0b2;">Formaplane<br>Gérez vos formateurs, leurs disponibilités et vos missions simplement.</div>
       </div>
     </div>
   `,
@@ -909,19 +909,19 @@ const buildTrainerClaimInvitationEmail = ({
     sender: { name: SENDER_NAME, email: SENDER_EMAIL },
     to: [{ email: recipientEmail }],
     replyTo: { name: SENDER_NAME, email: SENDER_EMAIL },
-    subject: `${organizationName} vous invite à rejoindre Clementplane`,
+    subject: `${organizationName} vous invite à rejoindre Formaplane`,
     htmlContent: `
       <div style="margin:0;padding:40px 20px;background-color:#f3f6fb;font-family:Arial,Helvetica,sans-serif;color:#0f2747;">
         <div style="max-width:600px;margin:0 auto;background-color:#ffffff;border:1px solid #dbe3ef;border-radius:18px;padding:40px;box-sizing:border-box;">
-          <div style="font-size:24px;font-weight:800;margin-bottom:32px;color:#0f2747;">Clementplane</div>
+          <div style="font-size:24px;font-weight:800;margin-bottom:32px;color:#0f2747;">Formaplane</div>
           <div style="font-size:12px;font-weight:800;letter-spacing:1.5px;color:#2563eb;text-transform:uppercase;margin-bottom:12px;">Invitation formateur</div>
-          <h1 style="margin:0 0 16px 0;font-size:28px;line-height:1.25;color:#0f2747;">${safeFirstName}, ${safeOrganizationName} vous invite à rejoindre Clementplane</h1>
-          <p style="margin:0 0 16px 0;font-size:16px;line-height:1.65;color:#5b6b82;">${safeOrganizationName} vous a ajouté à son réseau de formateurs sur Clementplane.</p>
+          <h1 style="margin:0 0 16px 0;font-size:28px;line-height:1.25;color:#0f2747;">${safeFirstName}, ${safeOrganizationName} vous invite à rejoindre Formaplane</h1>
+          <p style="margin:0 0 16px 0;font-size:16px;line-height:1.65;color:#5b6b82;">${safeOrganizationName} vous a ajouté à son réseau de formateurs sur Formaplane.</p>
           <p style="margin:0 0 16px 0;font-size:16px;line-height:1.65;color:#5b6b82;">En créant gratuitement votre espace et en revendiquant votre fiche, vous pourrez <strong style="color:#334155;">renseigner vos disponibilités une seule fois et les partager en direct avec tous vos organismes de formation partenaires</strong>, retrouver vos propositions de missions et faciliter vos échanges avec eux.</p>
-          <p style="margin:0 0 28px 0;font-size:14px;line-height:1.6;color:#7b8798;">Votre inscription reste facultative : ${safeOrganizationName} peut continuer à gérer votre fiche même sans compte Clementplane.</p>
+          <p style="margin:0 0 28px 0;font-size:14px;line-height:1.6;color:#7b8798;">Votre inscription reste facultative : ${safeOrganizationName} peut continuer à gérer votre fiche même sans compte Formaplane.</p>
           <a href="${signupUrl}" style="display:block;background-color:#2563eb;color:#ffffff;text-decoration:none;text-align:center;font-size:16px;font-weight:700;padding:15px 24px;border-radius:10px;">Créer mon compte et revendiquer ma fiche</a>
-          <p style="margin:22px 0 0;font-size:14px;line-height:1.6;color:#64748b;text-align:center;">Vous avez déjà un compte Clementplane ? <a href="${loginUrl}" style="color:#2563eb;font-weight:700;">Connectez-vous</a> avec cette adresse e-mail : Clementplane vous proposera automatiquement la fiche correspondante.</p>
-          <div style="margin-top:32px;padding-top:22px;border-top:1px solid #e5eaf1;font-size:12px;line-height:1.6;color:#94a0b2;">Clementplane<br>Facilitez vos disponibilités, propositions et missions avec vos organismes partenaires.</div>
+          <p style="margin:22px 0 0;font-size:14px;line-height:1.6;color:#64748b;text-align:center;">Vous avez déjà un compte Formaplane ? <a href="${loginUrl}" style="color:#2563eb;font-weight:700;">Connectez-vous</a> avec cette adresse e-mail : Formaplane vous proposera automatiquement la fiche correspondante.</p>
+          <div style="margin-top:32px;padding-top:22px;border-top:1px solid #e5eaf1;font-size:12px;line-height:1.6;color:#94a0b2;">Formaplane<br>Facilitez vos disponibilités, propositions et missions avec vos organismes partenaires.</div>
         </div>
       </div>
     `,
@@ -966,7 +966,7 @@ const buildMissionCancellationEmail = ({
     htmlContent: `
       <div style="font-family:Arial,sans-serif;background:#f6f8fb;padding:28px;color:#0f2747;">
         <div style="max-width:640px;margin:auto;background:white;border-radius:14px;padding:28px;border:1px solid #e5eaf0;">
-          <div style="font-size:20px;font-weight:800;margin-bottom:18px;">Clementplane</div>
+          <div style="font-size:20px;font-weight:800;margin-bottom:18px;">Formaplane</div>
           <h1 style="font-size:22px;margin:0 0 12px;color:#b42318;">Cette mission a été annulée</h1>
           <p>Bonjour ${escapeHtml(trainerFirstName || '')},</p>
           <p><strong>${escapeHtml(organizationName)}</strong> vous informe que la mission ci-dessous est annulée. Aucune action n’est attendue de votre part.</p>
@@ -987,7 +987,7 @@ const buildMissionCancellationEmail = ({
                   <div style="font-size:13px;line-height:1.55;color:#475569;margin-bottom:12px;">
                     Les dates de cette mission ont été automatiquement remises en
                     <strong> Disponible </strong>
-                    dans votre espace Clementplane.
+                    dans votre espace Formaplane.
                     Si votre disponibilité a changé, pensez à la modifier.
                   </div>
                   <a
@@ -1036,7 +1036,7 @@ const buildMissionWithdrawalOfEmail = ({
   htmlContent: `
     <div style="font-family:Arial,sans-serif;background:#f6f8fb;padding:28px;color:#0f2747;">
       <div style="max-width:640px;margin:auto;background:white;border-radius:14px;padding:28px;border:1px solid #e5eaf0;">
-        <div style="font-size:20px;font-weight:800;margin-bottom:18px;">Clementplane</div>
+        <div style="font-size:20px;font-weight:800;margin-bottom:18px;">Formaplane</div>
         <h1 style="font-size:22px;margin:0 0 12px;">Un formateur s’est désisté</h1>
         <p>Bonjour ${escapeHtml(recipientFirstName || '')},</p>
         <p>
@@ -1048,7 +1048,7 @@ const buildMissionWithdrawalOfEmail = ({
           }
         </p>
         ${comment ? `<div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;padding:14px;margin:18px 0;"><strong>Commentaire du formateur</strong><div style="margin-top:6px;">${escapeHtml(comment)}</div></div>` : ''}
-        <a href="${escapeHtml(missionUrl)}" style="display:inline-block;background:#2563eb;color:#fff;text-decoration:none;font-weight:700;padding:12px 18px;border-radius:8px;">Voir la mission dans Clementplane</a>
+        <a href="${escapeHtml(missionUrl)}" style="display:inline-block;background:#2563eb;color:#fff;text-decoration:none;font-weight:700;padding:12px 18px;border-radius:8px;">Voir la mission dans Formaplane</a>
       </div>
     </div>
   `,
@@ -1131,7 +1131,7 @@ const buildMissionUnassignmentEmail = ({
       <div style="font-family:Arial,sans-serif;background:#f6f8fb;padding:28px;color:#0f2747;">
         <div style="max-width:640px;margin:auto;background:white;border-radius:14px;padding:28px;border:1px solid #e5eaf0;">
           <div style="font-size:20px;font-weight:800;margin-bottom:18px;">
-            Clementplane
+            Formaplane
           </div>
 
           <div style="font-size:11px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;color:#b45309;margin-bottom:8px;">
@@ -1178,7 +1178,7 @@ const buildMissionUnassignmentEmail = ({
           </div>
 
           <div style="margin:18px 0;padding:15px;border:1px solid #fde68a;border-radius:10px;background:#fffbeb;color:#854d0e;font-size:13px;line-height:1.55;">
-            Votre réponse précédente reste enregistrée dans Clementplane,
+            Votre réponse précédente reste enregistrée dans Formaplane,
             mais vous n’êtes plus le formateur officiellement affecté à cette mission.
             Si nécessaire, rapprochez-vous directement de l’organisme de formation.
           </div>
@@ -1190,7 +1190,7 @@ const buildMissionUnassignmentEmail = ({
                   href="${escapeHtml(missionUrl)}"
                   style="display:inline-block;background:#2563eb;color:#fff;text-decoration:none;font-weight:700;padding:12px 18px;border-radius:8px;"
                 >
-                  Voir la mission dans Clementplane
+                  Voir la mission dans Formaplane
                 </a>
               `
               : ''
@@ -1224,31 +1224,31 @@ const buildTrainerOrganizationInvitationEmail = ({
     name: SENDER_NAME,
     email: SENDER_EMAIL,
   },
-  subject: `${trainerName} vous invite à rejoindre Clementplane`,
+  subject: `${trainerName} vous invite à rejoindre Formaplane`,
   htmlContent: `
     <div style="font-family:Arial,sans-serif;background:#f6f8fb;padding:28px;color:#0f2747;">
       <div style="max-width:640px;margin:auto;background:#ffffff;border-radius:14px;padding:28px;border:1px solid #e5eaf0;">
-        <div style="font-size:20px;font-weight:800;margin-bottom:18px;">Clementplane</div>
+        <div style="font-size:20px;font-weight:800;margin-bottom:18px;">Formaplane</div>
         <div style="font-size:11px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;color:#2563eb;margin-bottom:8px;">
           INVITATION D’UN FORMATEUR PARTENAIRE
         </div>
         <h1 style="font-size:23px;line-height:1.3;margin:0 0 14px;">
-          ${escapeHtml(trainerName)} vous invite à rejoindre Clementplane
+          ${escapeHtml(trainerName)} vous invite à rejoindre Formaplane
         </h1>
         <p style="line-height:1.6;color:#475569;">
           Bonjour${contactName ? ` ${escapeHtml(contactName)}` : ''},
         </p>
         <p style="line-height:1.6;color:#475569;">
-          <strong>${escapeHtml(trainerName)}</strong> utilise Clementplane pour tenir ses disponibilités à jour et simplifier ses échanges avec ses organismes de formation partenaires.
+          <strong>${escapeHtml(trainerName)}</strong> utilise Formaplane pour tenir ses disponibilités à jour et simplifier ses échanges avec ses organismes de formation partenaires.
         </p>
         <div style="margin:18px 0;padding:16px;border:1px solid #dbeafe;border-radius:10px;background:#eff6ff;color:#1e3a8a;line-height:1.6;">
-          En rejoignant Clementplane, <strong>${escapeHtml(organizationName || 'votre organisme')}</strong> pourra consulter ses disponibilités directement, sans attendre un nouvel e-mail à chaque mise à jour.
+          En rejoignant Formaplane, <strong>${escapeHtml(organizationName || 'votre organisme')}</strong> pourra consulter ses disponibilités directement, sans attendre un nouvel e-mail à chaque mise à jour.
         </div>
         <a href="${escapeHtml(invitationUrl)}" style="display:block;text-align:center;background:#2563eb;color:#ffffff;text-decoration:none;font-size:14px;font-weight:800;padding:13px 16px;border-radius:10px;margin-top:20px;">
-          Découvrir Clementplane et retrouver ${escapeHtml(trainerName)}
+          Découvrir Formaplane et retrouver ${escapeHtml(trainerName)}
         </a>
         <p style="margin-top:18px;font-size:12px;line-height:1.55;color:#64748b;">
-          Après votre inscription ou votre connexion, Clementplane vous conduira directement sur la fiche de ${escapeHtml(trainerName)} afin que vous puissiez l’ajouter à votre réseau si vous le souhaitez.
+          Après votre inscription ou votre connexion, Formaplane vous conduira directement sur la fiche de ${escapeHtml(trainerName)} afin que vous puissiez l’ajouter à votre réseau si vous le souhaitez.
         </p>
       </div>
     </div>
@@ -1343,7 +1343,7 @@ Deno.serve(async (req) => {
       senderCopyEmail: string,
       recipientEmail: string,
     ) => {
-      const subject = String(originalPayload.subject || 'E-mail Clementplane');
+      const subject = String(originalPayload.subject || 'E-mail Formaplane');
       const originalHtml = String(originalPayload.htmlContent || '');
       const safeHtml = neutralizeActionLinks(originalHtml);
 
@@ -1359,12 +1359,12 @@ Deno.serve(async (req) => {
             <div style="max-width:720px;margin:0 auto;">
               <div style="background:#eaf2ff;border:1px solid #bfdbfe;border-radius:12px;padding:16px 18px;margin-bottom:18px;">
                 <div style="font-size:15px;font-weight:800;color:#1d4ed8;margin-bottom:6px;">
-                  Copie sécurisée de votre envoi Clementplane
+                  Copie sécurisée de votre envoi Formaplane
                 </div>
                 <div style="font-size:13px;line-height:1.55;color:#475569;">
                   Cet e-mail est une copie de celui envoyé à <strong>${escapeHtml(recipientEmail)}</strong>.
                   Les liens et boutons d’action destinés au formateur ont été neutralisés.
-                  Pour effectuer une action, utilisez directement votre espace Clementplane.
+                  Pour effectuer une action, utilisez directement votre espace Formaplane.
                 </div>
               </div>
               <div style="pointer-events:none;">${safeHtml}</div>
@@ -1545,7 +1545,7 @@ Deno.serve(async (req) => {
       const requesterName = [
         supportRequest.requester_first_name,
         supportRequest.requester_last_name,
-      ].filter(Boolean).join(' ').trim() || 'Utilisateur Clementplane';
+      ].filter(Boolean).join(' ').trim() || 'Utilisateur Formaplane';
 
       const contextLabel = supportRequest.audience === 'trainer'
         ? 'Formateur'
@@ -1567,12 +1567,12 @@ Deno.serve(async (req) => {
           email: supportRequest.requester_email,
           name: requesterName,
         },
-        subject: `[Support Clementplane] ${String(supportRequest.category || 'Nouvelle demande')}`,
+        subject: `[Support Formaplane] ${String(supportRequest.category || 'Nouvelle demande')}`,
         htmlContent: `
           <div style="font-family:Arial,sans-serif;background:#f5f7fb;padding:24px;color:#0f172a;">
             <div style="max-width:720px;margin:0 auto;background:#fff;border:1px solid #dbe3ef;border-radius:14px;padding:24px;">
               <div style="font-size:12px;font-weight:800;letter-spacing:.06em;color:#2563eb;text-transform:uppercase;margin-bottom:8px;">
-                Nouvelle demande Clementplane
+                Nouvelle demande Formaplane
               </div>
               <h1 style="font-size:22px;line-height:1.3;margin:0 0 18px;">
                 ${escapeHtml(String(supportRequest.category || 'Demande'))}
@@ -1665,7 +1665,7 @@ Deno.serve(async (req) => {
             {
               success: false,
               code: 'ORGANIZATION_ALREADY_ON_FORMAPLANE',
-              message: "Cet organisme est déjà présent sur Clementplane. Il n'a plus besoin d'être invité.",
+              message: "Cet organisme est déjà présent sur Formaplane. Il n'a plus besoin d'être invité.",
             },
             409,
           );
@@ -3270,7 +3270,7 @@ Deno.serve(async (req) => {
     }
 
     // Permet au webhook Brevo de rattacher sans ambiguïté l'événement
-    // (délivré, bounce, etc.) au journal Clementplane correspondant.
+    // (délivré, bounce, etc.) au journal Formaplane correspondant.
     emailPayload.headers = {
       ...((emailPayload.headers as Record<string, string> | undefined) || {}),
       'X-Mailin-custom': `formaplane_log_id:${logId}`,

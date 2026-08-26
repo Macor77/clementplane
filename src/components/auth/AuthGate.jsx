@@ -13,8 +13,8 @@ function LoadingScreen() {
       <div className="auth-card auth-card--compact">
         <div className="auth-brand">
           <img
-            src="/brand/formaplane-logo.svg"
-            alt="Formaplane"
+            src="/brand/clementplane-logo.svg"
+            alt="Clementplane"
             style={{ width: '220px', height: 'auto' }}
           />
         </div>
@@ -43,8 +43,8 @@ function OrganizationAccountRequired({
       >
         <div className="auth-brand">
           <img
-            src="/brand/formaplane-logo.svg"
-            alt="Formaplane"
+            src="/brand/clementplane-logo.svg"
+            alt="Clementplane"
             style={{
               width: '210px',
               height: 'auto',

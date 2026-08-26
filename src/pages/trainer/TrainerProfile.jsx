@@ -242,7 +242,7 @@ export default function TrainerProfile() {
           <p>
             Gérez vos informations
             professionnelles utilisées dans
-            Formaplane.
+            Clementplane.
           </p>
         </div>
       </div>
@@ -311,7 +311,7 @@ export default function TrainerProfile() {
 
               <span className="trainer-profile-help">
                 Cette adresse correspond à
-                votre compte Formaplane.
+                votre compte Clementplane.
               </span>
             </div>
 

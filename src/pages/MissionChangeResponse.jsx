@@ -64,7 +64,7 @@ export default function MissionChangeResponse() {
   return (
     <main style={styles.page}>
       <section style={styles.shell}>
-        <div style={styles.brand}>Formaplane</div>
+        <div style={styles.brand}>Clementplane</div>
         <p style={styles.eyebrow}>MODIFICATION DE MISSION</p>
         <h1 style={styles.title}>
           {affected ? 'Votre validation est requise' : 'De nouvelles conditions sont à valider'}
@@ -114,7 +114,7 @@ export default function MissionChangeResponse() {
           <AfterResponse change={change} />
         )}
 
-        <p style={styles.footer}>Vous pouvez répondre à cette demande sans créer de compte Formaplane.</p>
+        <p style={styles.footer}>Vous pouvez répondre à cette demande sans créer de compte Clementplane.</p>
       </section>
     </main>
   );
@@ -131,7 +131,7 @@ function AfterResponse({ change }) {
 
       <section style={styles.accountInvite}>
         <strong style={styles.accountTitle}>
-          {change.trainer_has_account ? 'Retrouvez cette mission dans votre espace Formaplane' : 'Retrouvez vos missions dans votre espace Formaplane'}
+          {change.trainer_has_account ? 'Retrouvez cette mission dans votre espace Clementplane' : 'Retrouvez vos missions dans votre espace Clementplane'}
         </strong>
         <p style={styles.accountText}>
           {change.trainer_has_account
@@ -142,7 +142,7 @@ function AfterResponse({ change }) {
           to={change.trainer_has_account ? '/connexion' : '/inscription?invitation=trainer'}
           style={styles.accountButton}
         >
-          {change.trainer_has_account ? 'Accéder à mon espace Formaplane' : 'Créer mon espace formateur'}
+          {change.trainer_has_account ? 'Accéder à mon espace Clementplane' : 'Créer mon espace formateur'}
         </Link>
       </section>
     </>

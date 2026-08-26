@@ -90,7 +90,7 @@ export default function ResetPassword() {
       <div className="auth-screen">
         <div className="auth-card auth-card--compact">
           <div className="auth-brand">
-          <img src="/brand/formaplane-logo.svg" alt="Formaplane" />
+          <img src="/brand/clementplane-logo.svg" alt="Clementplane" />
         </div>
 
           <p className="auth-muted">
@@ -106,7 +106,7 @@ export default function ResetPassword() {
       <div className="auth-screen">
         <div className="auth-card">
           <div className="auth-brand">
-          <img src="/brand/formaplane-logo.svg" alt="Formaplane" />
+          <img src="/brand/clementplane-logo.svg" alt="Clementplane" />
         </div>
 
           <p className="auth-eyebrow">
@@ -137,7 +137,7 @@ export default function ResetPassword() {
     <div className="auth-screen">
       <div className="auth-card">
         <div className="auth-brand">
-          <img src="/brand/formaplane-logo.svg" alt="Formaplane" />
+          <img src="/brand/clementplane-logo.svg" alt="Clementplane" />
         </div>
 
         <p className="auth-eyebrow">

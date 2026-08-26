@@ -20,7 +20,7 @@ import {
 } from '../services/emailService';
 
 const MODEL_URL =
-  '/templates/Formaplane_Modele_Import_Formateurs_v1_1.xlsx';
+  '/templates/Clementplane_Modele_Import_Formateurs_v1_1.xlsx';
 
 function normalizeCatalogKey(value) {
   return String(value || '')
@@ -286,7 +286,7 @@ export default function TrainerBulkImport() {
         setEquipmentCatalog(equipment);
       } catch (error) {
         console.error(
-          'Impossible de charger les référentiels Formaplane :',
+          'Impossible de charger les référentiels Clementplane :',
           error,
         );
 
@@ -1108,7 +1108,7 @@ export default function TrainerBulkImport() {
     }));
 
     const summaryRows = [
-      ['Compte-rendu import Formaplane'],
+      ['Compte-rendu import Clementplane'],
       [
         'Date',
         new Date(
@@ -1194,7 +1194,7 @@ export default function TrainerBulkImport() {
 
     XLSX.writeFile(
       workbook,
-      `Formaplane_Compte-rendu_import_${stamp}.xlsx`,
+      `Clementplane_Compte-rendu_import_${stamp}.xlsx`,
     );
   };
 
@@ -1223,7 +1223,7 @@ export default function TrainerBulkImport() {
               fontSize: 14,
             }}
           >
-            Utilisez le modèle Formaplane pour préparer votre fichier.
+            Utilisez le modèle Clementplane pour préparer votre fichier.
             L’analyse est effectuée avant toute création ou modification :
             rien n’est enregistré dans votre base à cette étape.
           </p>
@@ -1247,7 +1247,7 @@ export default function TrainerBulkImport() {
       >
         <Step
           number="1"
-          title="Téléchargez le modèle Formaplane"
+          title="Téléchargez le modèle Clementplane"
         >
           <p
             style={{
@@ -1263,7 +1263,7 @@ export default function TrainerBulkImport() {
 
           <a
             href={MODEL_URL}
-            download="Formaplane_Modele_Import_Formateurs_v1_1.xlsx"
+            download="Clementplane_Modele_Import_Formateurs_v1_1.xlsx"
             className="button button--primary button--compact"
             style={{
               display: 'inline-flex',
@@ -1304,7 +1304,7 @@ export default function TrainerBulkImport() {
 
             <div>
               Les compétences et matériels sont comparés aux référentiels
-              Formaplane. Une valeur inconnue sera signalée pour contrôle
+              Clementplane. Une valeur inconnue sera signalée pour contrôle
               et ne créera jamais automatiquement une nouvelle référence.
             </div>
           </div>
@@ -2042,7 +2042,7 @@ export default function TrainerBulkImport() {
             >
               Les valeurs déjà reconnues sont validées automatiquement.
               Pour une valeur inconnue, vous pouvez l’ajouter au référentiel
-              Formaplane, la renommer avant de l’ajouter, la rapprocher d’une
+              Clementplane, la renommer avant de l’ajouter, la rapprocher d’une
               valeur existante ou l’ignorer. Une même valeur n’apparaît qu’une
               seule fois : votre choix s’appliquera à tous les formateurs concernés.
             </p>
@@ -2148,7 +2148,7 @@ export default function TrainerBulkImport() {
                           Choisir une seule décision pour toutes les occurrences…
                         </option>
                         <option value="__create_same__">
-                          Ajouter « {issue.value} » au référentiel Formaplane
+                          Ajouter « {issue.value} » au référentiel Clementplane
                         </option>
                         <option value="__create_custom__">
                           Ajouter au référentiel sous un autre nom…
@@ -2296,7 +2296,7 @@ export default function TrainerBulkImport() {
                     lineHeight: 1.4,
                   }}
                 >
-                  Formaplane n’a encore rien modifié. Ce résumé présente les
+                  Clementplane n’a encore rien modifié. Ce résumé présente les
                   opérations prévues avant la validation définitive.
                 </p>
               </div>
@@ -2336,7 +2336,7 @@ export default function TrainerBulkImport() {
                 <strong>Création bloquée :</strong>{' '}
                 {exactEmailDuplicateRows.length} ligne(s) ont été définies comme
                 « nouveau formateur » alors qu’un profil existant possède exactement
-                la même adresse e-mail. Formaplane empêchera la création d’un doublon.
+                la même adresse e-mail. Clementplane empêchera la création d’un doublon.
               </div>
             ) : null}
 
@@ -2685,7 +2685,7 @@ export default function TrainerBulkImport() {
               >
                 <div style={{ padding: '12px 12px 9px' }}>
                   <div style={{ color: '#0f2747', fontSize: 14, fontWeight: 800 }}>
-                    Inviter les formateurs à rejoindre Formaplane
+                    Inviter les formateurs à rejoindre Clementplane
                   </div>
                   <p style={{ margin: '5px 0 0', color: '#64748b', fontSize: 11.5, lineHeight: 1.5 }}>
                     Vos formateurs ont bien été ajoutés. Vous pouvez continuer à gérer vous-même leurs disponibilités, missions et informations.

@@ -249,7 +249,7 @@ const STATUS_BORDER = {
 function getHistoryActorLabel(item) {
   const actor =
     item.actor_name ||
-    'Utilisateur Formaplane';
+    'Utilisateur Clementplane';
 
   if (
     item.source ===
@@ -1484,7 +1484,7 @@ export default function FormateurView() {
               maxWidth: 900,
             }}
           >
-            Le formateur possède son propre espace Formaplane. Vos notes, tarifs et données internes restent propres à votre organisme.
+            Le formateur possède son propre espace Clementplane. Vos notes, tarifs et données internes restent propres à votre organisme.
           </p>
         ) : (
           <>
@@ -1526,7 +1526,7 @@ export default function FormateurView() {
                   cursor: inviteSending ? 'wait' : 'pointer',
                 }}
               >
-                {inviteSending ? 'Envoi de l’invitation…' : 'Inviter à rejoindre Formaplane'}
+                {inviteSending ? 'Envoi de l’invitation…' : 'Inviter à rejoindre Clementplane'}
               </button>
             )}
 
@@ -1558,7 +1558,7 @@ export default function FormateurView() {
                   marginBottom: 8,
                 }}
               >
-                Historique des invitations Formaplane
+                Historique des invitations Clementplane
               </div>
 
               {invitationHistory.length === 0 ? (

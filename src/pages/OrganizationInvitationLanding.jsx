@@ -60,10 +60,10 @@ export default function OrganizationInvitationLanding() {
     return (
       <div className="auth-screen">
         <div className="auth-card">
-          <div className="auth-brand"><img src="/brand/formaplane-logo.svg" alt="Formaplane" /></div>
+          <div className="auth-brand"><img src="/brand/clementplane-logo.svg" alt="Clementplane" /></div>
           <h1>Invitation indisponible</h1>
           <p className="auth-muted">{error || "Cette invitation n'est plus disponible."}</p>
-          <Link className="auth-button auth-button--link" to="/">Découvrir Formaplane</Link>
+          <Link className="auth-button auth-button--link" to="/">Découvrir Clementplane</Link>
         </div>
       </div>
     );
@@ -75,11 +75,11 @@ export default function OrganizationInvitationLanding() {
   return (
     <div className="auth-screen">
       <div className="auth-card auth-card--wide">
-        <div className="auth-brand"><img src="/brand/formaplane-logo.svg" alt="Formaplane" /></div>
-        <p className="auth-eyebrow">INVITATION FORMAPLANE</p>
+        <div className="auth-brand"><img src="/brand/clementplane-logo.svg" alt="Clementplane" /></div>
+        <p className="auth-eyebrow">INVITATION CLEMENTPLANE</p>
         <h1>{trainerName} vous invite</h1>
         <p className="auth-muted">
-          {trainerName} utilise Formaplane pour tenir ses disponibilités à jour et vous invite à rejoindre la plateforme.
+          {trainerName} utilise Clementplane pour tenir ses disponibilités à jour et vous invite à rejoindre la plateforme.
         </p>
         <div className="auth-alert" style={{ marginTop: 18, background: '#eff6ff', color: '#1e3a8a', border: '1px solid #bfdbfe' }}>
           Après votre inscription ou votre connexion, vous arriverez directement sur sa fiche pour pouvoir l’ajouter à votre réseau.
@@ -88,7 +88,7 @@ export default function OrganizationInvitationLanding() {
           <div style={{ display: 'grid', gap: 10, marginTop: 20 }}>
             <Link className="auth-button auth-button--link" to={signupUrl}>Créer mon espace OF</Link>
             <Link to={loginUrl} style={{ minHeight: 44, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #2563eb', borderRadius: 10, color: '#2563eb', fontWeight: 800, textDecoration: 'none' }}>
-              J’ai déjà un compte Formaplane
+              J’ai déjà un compte Clementplane
             </Link>
           </div>
         ) : (

@@ -486,7 +486,7 @@ export default function MissionForm() {
 
           <Field
             label="Adresse"
-            help="Facultative. Si elle n’est pas renseignée, Formaplane utilisera le code postal et la ville pour le calcul de proximité."
+            help="Facultative. Si elle n’est pas renseignée, Clementplane utilisera le code postal et la ville pour le calcul de proximité."
           >
             <input
               type="text"
@@ -745,7 +745,7 @@ export default function MissionForm() {
 
             <div style={styles.channelGroup}>
               <div style={styles.channelGroupTitle}>
-                Envoyer maintenant avec Formaplane
+                Envoyer maintenant avec Clementplane
               </div>
 
               <label
@@ -768,7 +768,7 @@ export default function MissionForm() {
 
                 <span>
                   <strong>
-                    Envoyer immédiatement un e-mail via Formaplane
+                    Envoyer immédiatement un e-mail via Clementplane
                   </strong>
 
                   <span style={styles.channelOptionHelp}>
@@ -796,7 +796,7 @@ export default function MissionForm() {
               </div>
 
               <p style={styles.channelExplanation}>
-                Ces choix n’envoient aucun message depuis Formaplane.
+                Ces choix n’envoient aucun message depuis Clementplane.
                 Ils enregistrent simplement le moyen utilisé dans l’historique.
               </p>
 
@@ -850,7 +850,7 @@ export default function MissionForm() {
 
             {revalidationContactChannel === 'email' ? (
               <p style={styles.modalHelp}>
-                L’e-mail Formaplane permet également aux formateurs
+                L’e-mail Clementplane permet également aux formateurs
                 qui n’ont pas encore de compte de répondre.
               </p>
             ) : null}

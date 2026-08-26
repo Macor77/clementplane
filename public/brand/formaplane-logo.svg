@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="240" viewBox="0 0 1000 240" role="img" aria-labelledby="title">
-  <title id="title">Formaplane</title>
-  <g transform="translate(45 55)">
-    <path d="M20 18 H102 L91 42 H31 Q20 42 20 31 Z" fill="#1E3A8A"/>
-    <path d="M20 52 H84 L73 76 H31 Q20 76 20 65 Z" fill="#3B82F6"/>
-    <path d="M20 86 H52 L42 108 H20 Z" fill="#93C5FD"/>
-  </g>
-  <text x="205" y="157" font-family="Manrope, Arial, sans-serif" font-size="84" font-weight="700" fill="#0B132B">formaplane</text>
-</svg>

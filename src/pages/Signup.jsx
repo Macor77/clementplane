@@ -154,7 +154,7 @@ export default function Signup() {
         <div className="auth-card">
 
           <div className="auth-brand">
-          <img src="/brand/formaplane-logo.svg" alt="Formaplane" />
+          <img src="/brand/clementplane-logo.svg" alt="Clementplane" />
         </div>
 
           <p className="auth-eyebrow">
@@ -171,7 +171,7 @@ export default function Signup() {
               {form.email}
             </strong>.
             {' '}
-            Après confirmation, revenez sur Formaplane pour vous connecter.
+            Après confirmation, revenez sur Clementplane pour vous connecter.
           </p>
 
           <Link
@@ -192,7 +192,7 @@ export default function Signup() {
       <div className="auth-card auth-card--wide">
 
         <div className="auth-brand">
-          <img src="/brand/formaplane-logo.svg" alt="Formaplane" />
+          <img src="/brand/clementplane-logo.svg" alt="Clementplane" />
         </div>
 
 
@@ -213,9 +213,9 @@ export default function Signup() {
 
         {isTrainerInvitation ? (
           <div className="auth-alert" style={{ marginBottom: 18 }}>
-            <strong>Une fiche Formaplane existe déjà pour vous.</strong>
+            <strong>Une fiche Clementplane existe déjà pour vous.</strong>
             <div style={{ marginTop: 6 }}>
-              Créez votre compte avec l’adresse <strong>{invitedEmail}</strong>. Après confirmation, Formaplane vous proposera de revendiquer votre fiche existante.
+              Créez votre compte avec l’adresse <strong>{invitedEmail}</strong>. Après confirmation, Clementplane vous proposera de revendiquer votre fiche existante.
             </div>
           </div>
         ) : null}

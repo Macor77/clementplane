@@ -29,18 +29,18 @@ export default function ForgotPassword() {
     <div className="auth-screen">
       <div className="auth-card">
         <div className="auth-brand">
-          <img src="/brand/formaplane-logo.svg" alt="Formaplane" />
+          <img src="/brand/clementplane-logo.svg" alt="Clementplane" />
         </div>
         <p className="auth-eyebrow">Mot de passe oublié</p>
         <h1>Réinitialiser votre mot de passe</h1>
         <p className="auth-muted">
-          Indiquez l'adresse e-mail utilisée pour votre compte Formaplane. Nous vous enverrons un lien sécurisé.
+          Indiquez l'adresse e-mail utilisée pour votre compte Clementplane. Nous vous enverrons un lien sécurisé.
         </p>
 
         {sent ? (
           <>
             <div className="auth-alert auth-alert--success">
-              Si un compte Formaplane correspond à cette adresse, un e-mail de réinitialisation vient d'être envoyé.
+              Si un compte Clementplane correspond à cette adresse, un e-mail de réinitialisation vient d'être envoyé.
             </div>
             <div className="auth-footer">
               <Link to="/connexion">Retour à la connexion</Link>

@@ -191,7 +191,7 @@ function historyActionLabel(item) {
 function historyActor(item) {
   const name =
     item.actor_display_name ||
-    (item.actor_type === 'system' ? 'Formaplane' : 'Utilisateur');
+    (item.actor_type === 'system' ? 'Clementplane' : 'Utilisateur');
 
   if (item.actor_type === 'trainer') {
     return `${name} · Formateur`;

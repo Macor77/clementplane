@@ -257,7 +257,7 @@ export default function OrganizationSignup() {
         <div className="auth-card">
 
           <div className="auth-brand">
-          <img src="/brand/formaplane-logo.svg" alt="Formaplane" />
+          <img src="/brand/clementplane-logo.svg" alt="Clementplane" />
         </div>
 
 
@@ -277,7 +277,7 @@ export default function OrganizationSignup() {
               {form.email}
             </strong>.
             {' '}
-            Après confirmation, Formaplane vous ramènera dans le parcours d’invitation
+            Après confirmation, Clementplane vous ramènera dans le parcours d’invitation
             {invitationTrainerName ? ` de ${invitationTrainerName}` : ''}. Votre organisme sera déjà rattaché à votre compte.
           </p>
 
@@ -300,7 +300,7 @@ export default function OrganizationSignup() {
       <div className="auth-card auth-card--wide">
 
         <div className="auth-brand">
-          <img src="/brand/formaplane-logo.svg" alt="Formaplane" />
+          <img src="/brand/clementplane-logo.svg" alt="Clementplane" />
         </div>
 
 
@@ -315,7 +315,7 @@ export default function OrganizationSignup() {
 
 
         <p className="auth-muted">
-          Créez votre espace Formaplane pour gérer vos formateurs,
+          Créez votre espace Clementplane pour gérer vos formateurs,
           vos missions et votre planning.
         </p>
 

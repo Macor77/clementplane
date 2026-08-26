@@ -6,7 +6,7 @@ const cors = {
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
-const DEFAULT_APP_URL = 'https://app.clementplane.fr';
+const DEFAULT_APP_URL = 'https://app.formaplane.fr';
 
 function safeAppUrl(value: unknown) {
   try {
@@ -17,7 +17,7 @@ function safeAppUrl(value: unknown) {
     return DEFAULT_APP_URL;
   }
 }
-const SENDER_EMAIL = 'contact@clementplane.fr';
+const SENDER_EMAIL = 'contact@formaplane.fr';
 
 const esc = (s: string) =>
   String(s || '')
@@ -156,14 +156,14 @@ Deno.serve(async (req) => {
           <hr style="border:0;border-top:1px solid #e5e7eb;margin:34px 0 18px">
 
           <p style="font-size:12px;color:#64748b;margin:0 0 10px">
-            Vous recevez cet e-mail pour être informé(e) des mises à jour et nouveautés de Clementplane.
+            Vous recevez cet e-mail pour être informé(e) des mises à jour et nouveautés de Formaplane.
           </p>
           <p style="font-size:12px;color:#64748b;margin:0">
             Vous pouvez
             <a href="${unsubscribeUrl}" style="color:#475569;text-decoration:underline">
-              vous désabonner des e-mails de nouveautés Clementplane
+              vous désabonner des e-mails de nouveautés Formaplane
             </a>.
-            Ce désabonnement ne concerne pas les e-mails nécessaires à votre activité sur Clementplane
+            Ce désabonnement ne concerne pas les e-mails nécessaires à votre activité sur Formaplane
             (propositions de mission, réponses, affectations, modifications de mission et autres notifications transactionnelles).
           </p>
         </div>
@@ -176,7 +176,7 @@ Deno.serve(async (req) => {
           'content-type': 'application/json',
         },
         body: JSON.stringify({
-          sender: { name: 'Clementplane', email: SENDER_EMAIL },
+          sender: { name: 'Formaplane', email: SENDER_EMAIL },
           to: [{ email: recipient.email }],
           subject,
           htmlContent: html,

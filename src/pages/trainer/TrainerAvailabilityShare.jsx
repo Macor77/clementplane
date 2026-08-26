@@ -501,9 +501,9 @@ function buildPublicShareText({
     `Retrouvez ci-dessous mes créneaux disponibles pour ${month}.`,
     skillsLine,
     '',
-    'Je partage désormais mon planning simplement avec mes organismes partenaires grâce à Formaplane.',
+    'Je partage désormais mon planning simplement avec mes organismes partenaires grâce à Clementplane.',
     '',
-    'Formaplane — La plateforme qui connecte formateurs et organismes de formation.',
+    'Clementplane — La plateforme qui connecte formateurs et organismes de formation.',
     trainerName
       ? `— ${trainerName}`
       : '',
@@ -689,7 +689,7 @@ async function loadBrandImage() {
           resolve(null);
 
       image.src =
-        '/brand/formaplane-logo.svg';
+        '/brand/clementplane-logo.svg';
     },
   );
 }
@@ -770,7 +770,7 @@ async function createPublicAvailabilityImage({
     ctx.font =
       '800 42px Arial';
     ctx.fillText(
-      'Formaplane',
+      'Clementplane',
       70,
       105,
     );
@@ -1167,7 +1167,7 @@ async function createPublicAvailabilityImage({
   ctx.font =
     '700 19px Arial';
   ctx.fillText(
-    'Je les partage simplement avec Formaplane.',
+    'Je les partage simplement avec Clementplane.',
     90,
     1245,
   );
@@ -1177,7 +1177,7 @@ async function createPublicAvailabilityImage({
   ctx.font =
     '600 16px Arial';
   ctx.fillText(
-    'Formaplane — La plateforme qui connecte formateurs et organismes de formation.',
+    'Clementplane — La plateforme qui connecte formateurs et organismes de formation.',
     90,
     1290,
   );
@@ -1205,7 +1205,7 @@ function pdfBinaryFromCanvases(canvases) {
     length += bytes.length;
   };
 
-  pushText('%PDF-1.4\n%Formaplane\n');
+  pushText('%PDF-1.4\n%Clementplane\n');
 
   const objectCount = 2 + canvases.length * 3;
   const pageObjectIds = canvases.map((_, index) => 3 + index * 3);
@@ -1285,7 +1285,7 @@ function createAvailabilityPdfPage({
 
   ctx.fillStyle = '#2563eb';
   ctx.font = '800 38px Arial';
-  ctx.fillText('FORMAPLANE', 80, 90);
+  ctx.fillText('CLEMENTPLANE', 80, 90);
 
   ctx.fillStyle = '#0f172a';
   ctx.font = '800 54px Arial';
@@ -1419,7 +1419,7 @@ function createAvailabilityPdfPage({
   ctx.fillText('* Une ou plusieurs autres demandes peuvent être en cours, sans révéler l’organisme concerné.', 105, footerY + 104);
   ctx.fillStyle = '#2563eb';
   ctx.font = '700 17px Arial';
-  ctx.fillText('Disponibilités gérées avec Formaplane - formaplane.fr', 105, footerY + 142);
+  ctx.fillText('Disponibilités gérées avec Clementplane - clementplane.fr', 105, footerY + 142);
 
   ctx.textAlign = 'right';
   ctx.fillStyle = '#94a3b8';
@@ -2397,7 +2397,7 @@ export default function TrainerAvailabilityShare() {
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = `formaplane-disponibilites-${orderedMonths[0]}${orderedMonths.length > 1 ? `-a-${orderedMonths[orderedMonths.length - 1]}` : ''}.pdf`;
+        link.download = `clementplane-disponibilites-${orderedMonths[0]}${orderedMonths.length > 1 ? `-a-${orderedMonths[orderedMonths.length - 1]}` : ''}.pdf`;
         document.body.appendChild(link);
         link.click();
         link.remove();
@@ -2553,7 +2553,7 @@ export default function TrainerAvailabilityShare() {
           );
 
         link.download =
-          `formaplane-disponibilites-${publicShareMonth}.png`;
+          `clementplane-disponibilites-${publicShareMonth}.png`;
 
         link.href =
           canvas.toDataURL(
@@ -2662,7 +2662,7 @@ export default function TrainerAvailabilityShare() {
             [
               blob,
             ],
-            `formaplane-disponibilites-${publicShareMonth}.png`,
+            `clementplane-disponibilites-${publicShareMonth}.png`,
             {
               type:
                 'image/png',
@@ -2685,7 +2685,7 @@ export default function TrainerAvailabilityShare() {
         ) {
           await navigator.share({
             title:
-              'Mes disponibilités Formaplane',
+              'Mes disponibilités Clementplane',
             text,
             files: [
               file,
@@ -2870,7 +2870,7 @@ export default function TrainerAvailabilityShare() {
               className="page-eyebrow"
               style={{ marginTop: 0 }}
             >
-              VOS DISPONIBILITÉS SUR FORMAPLANE
+              VOS DISPONIBILITÉS SUR CLEMENTPLANE
             </p>
 
             <h2
@@ -2881,7 +2881,7 @@ export default function TrainerAvailabilityShare() {
                 lineHeight: 1.2,
               }}
             >
-              Le plus simple ? Invitez vos OF sur Formaplane !
+              Le plus simple ? Invitez vos OF sur Clementplane !
             </h2>
 
             <p
@@ -2892,7 +2892,7 @@ export default function TrainerAvailabilityShare() {
                 fontSize: 14,
               }}
             >
-              Lorsqu’un organisme partenaire utilise Formaplane, il peut consulter directement vos disponibilités à jour.
+              Lorsqu’un organisme partenaire utilise Clementplane, il peut consulter directement vos disponibilités à jour.
             </p>
 
             <div
@@ -2954,7 +2954,7 @@ export default function TrainerAvailabilityShare() {
                 lineHeight: 1.45,
               }}
             >
-              L’e-mail et le PDF restent disponibles si votre organisme ne souhaite pas encore utiliser Formaplane.
+              L’e-mail et le PDF restent disponibles si votre organisme ne souhaite pas encore utiliser Clementplane.
             </p>
           </div>
         </div>
@@ -3305,7 +3305,7 @@ export default function TrainerAvailabilityShare() {
                         }
                       >
                         {contact.organization_id
-                          ? 'Inscrit sur Formaplane'
+                          ? 'Inscrit sur Clementplane'
                           : 'Non inscrit'}
                       </StatusBadge>
 
@@ -3411,9 +3411,9 @@ export default function TrainerAvailabilityShare() {
                             lineHeight: 1.45,
                           }}
                         >
-                          Nouvel envoi via Formaplane possible le{' '}
+                          Nouvel envoi via Clementplane possible le{' '}
                           {formatShareDate(contact.last_share.nextShareAt)}.{' '}
-                          PDF disponible à tout moment. Vous pouvez aussi suggérer à cet OF de se connecter à Formaplane pour consulter vos disponibilités en temps réel et en permanence.
+                          PDF disponible à tout moment. Vous pouvez aussi suggérer à cet OF de se connecter à Clementplane pour consulter vos disponibilités en temps réel et en permanence.
                         </div>
 
                         <details className="trainer-share-blocked-message trainer-share-blocked-message--mobile">
@@ -3421,7 +3421,7 @@ export default function TrainerAvailabilityShare() {
                             Nouvel envoi possible le {formatShareDate(contact.last_share.nextShareAt)} · Voir pourquoi
                           </summary>
                           <p>
-                            Le PDF reste disponible à tout moment. Si vous souhaitez prévenir cet organisme avant cette date, contactez-le directement : vos disponibilités sont mises à jour et consultables en permanence sur Formaplane.
+                            Le PDF reste disponible à tout moment. Si vous souhaitez prévenir cet organisme avant cette date, contactez-le directement : vos disponibilités sont mises à jour et consultables en permanence sur Clementplane.
                           </p>
                         </details>
                       </>
@@ -4048,7 +4048,7 @@ export default function TrainerAvailabilityShare() {
                       previewContact?.organization_name
                     }.
                   </strong>{' '}
-                  Lors de l'envoi à plusieurs organismes, Formaplane générera automatiquement la version adaptée à chaque destinataire.
+                  Lors de l'envoi à plusieurs organismes, Clementplane générera automatiquement la version adaptée à chaque destinataire.
                 </div>
 
                 <div
@@ -4297,7 +4297,7 @@ export default function TrainerAvailabilityShare() {
                       }}
                     >
                       <div>
-                        <strong>1. Envoyer par e-mail avec Formaplane</strong>
+                        <strong>1. Envoyer par e-mail avec Clementplane</strong>
                         <div style={{ marginTop: 3, fontSize: 11, color: '#64748b' }}>
                           {selectedContactIds.length} destinataire{selectedContactIds.length > 1 ? 's' : ''} · {selectedMonths.length} mois sélectionné{selectedMonths.length > 1 ? 's' : ''}
                         </div>
@@ -4309,7 +4309,7 @@ export default function TrainerAvailabilityShare() {
                         onClick={openSendConfirmation}
                         disabled={sendingShare || selectedContactIds.length === 0}
                       >
-                        Envoyer via Formaplane
+                        Envoyer via Clementplane
                       </button>
                     </div>
 
@@ -4474,7 +4474,7 @@ export default function TrainerAvailabilityShare() {
             <strong>
               Mes disponibilités évoluent. Mon planning aussi.
             </strong>{' '}
-            Je les partage simplement avec Formaplane.
+            Je les partage simplement avec Clementplane.
           </div>
         </div>
 
@@ -4574,7 +4574,7 @@ export default function TrainerAvailabilityShare() {
                 color: '#64748b',
               }}
             >
-              Aucune compétence n'est renseignée sur votre profil Formaplane.
+              Aucune compétence n'est renseignée sur votre profil Clementplane.
             </div>
           )}
         </div>
@@ -4655,7 +4655,7 @@ export default function TrainerAvailabilityShare() {
               color: '#94a3b8',
             }}
           >
-            Formaplane propose un texte de départ, mais vous pouvez le modifier librement avant de le copier ou de le partager.
+            Clementplane propose un texte de départ, mais vous pouvez le modifier librement avant de le copier ou de le partager.
           </div>
         </div>
 
@@ -4824,7 +4824,7 @@ export default function TrainerAvailabilityShare() {
                 fontSize: 13,
               }}
             >
-              Formaplane va envoyer un e-mail individuel à{' '}
+              Clementplane va envoyer un e-mail individuel à{' '}
               <strong>
                 {selectedContacts.length}{' '}
                 contact
@@ -4927,7 +4927,7 @@ export default function TrainerAvailabilityShare() {
               <span>
                 <strong>Recevoir une copie de cet e-mail</strong>
                 <br />
-                La copie sera envoyée à l'adresse e-mail de votre compte Formaplane. Elle fait partie du même partage et ne crée pas un second délai de 20 jours.
+                La copie sera envoyée à l'adresse e-mail de votre compte Clementplane. Elle fait partie du même partage et ne crée pas un second délai de 20 jours.
               </span>
             </label>
 
@@ -5044,7 +5044,7 @@ export default function TrainerAvailabilityShare() {
                   contactToDelete.organization_name
                 }
               </strong>{' '}
-              sera retiré de votre carnet. Cette action ne supprime aucun compte Formaplane et ne modifie pas votre éventuel référencement auprès de cet organisme.
+              sera retiré de votre carnet. Cette action ne supprime aucun compte Clementplane et ne modifie pas votre éventuel référencement auprès de cet organisme.
             </p>
 
             <div

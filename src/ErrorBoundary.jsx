@@ -19,7 +19,7 @@ export default class ErrorBoundary extends React.Component {
       return (
         <main style={{ maxWidth: 720, margin: '80px auto', padding: 24, fontFamily: 'system-ui' }}>
           <h1>Un problème est survenu</h1>
-          <p>Formaplane a rencontré une erreur inattendue. Rechargez la page pour réessayer.</p>
+          <p>Clementplane a rencontré une erreur inattendue. Rechargez la page pour réessayer.</p>
           <button type="button" onClick={() => window.location.reload()}>
             Recharger la page
           </button>

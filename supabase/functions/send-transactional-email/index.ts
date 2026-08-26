@@ -1201,6 +1201,60 @@ const buildMissionUnassignmentEmail = ({
   };
 };
 
+
+const buildTrainerOrganizationInvitationEmail = ({
+  recipientEmail,
+  contactName,
+  organizationName,
+  trainerName,
+  invitationUrl,
+}: {
+  recipientEmail: string;
+  contactName: string;
+  organizationName: string;
+  trainerName: string;
+  invitationUrl: string;
+}) => ({
+  sender: {
+    name: SENDER_NAME,
+    email: SENDER_EMAIL,
+  },
+  to: [{ email: recipientEmail }],
+  replyTo: {
+    name: SENDER_NAME,
+    email: SENDER_EMAIL,
+  },
+  subject: `${trainerName} vous invite à rejoindre Formaplane`,
+  htmlContent: `
+    <div style="font-family:Arial,sans-serif;background:#f6f8fb;padding:28px;color:#0f2747;">
+      <div style="max-width:640px;margin:auto;background:#ffffff;border-radius:14px;padding:28px;border:1px solid #e5eaf0;">
+        <div style="font-size:20px;font-weight:800;margin-bottom:18px;">Formaplane</div>
+        <div style="font-size:11px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;color:#2563eb;margin-bottom:8px;">
+          INVITATION D’UN FORMATEUR PARTENAIRE
+        </div>
+        <h1 style="font-size:23px;line-height:1.3;margin:0 0 14px;">
+          ${escapeHtml(trainerName)} vous invite à rejoindre Formaplane
+        </h1>
+        <p style="line-height:1.6;color:#475569;">
+          Bonjour${contactName ? ` ${escapeHtml(contactName)}` : ''},
+        </p>
+        <p style="line-height:1.6;color:#475569;">
+          <strong>${escapeHtml(trainerName)}</strong> utilise Formaplane pour tenir ses disponibilités à jour et simplifier ses échanges avec ses organismes de formation partenaires.
+        </p>
+        <div style="margin:18px 0;padding:16px;border:1px solid #dbeafe;border-radius:10px;background:#eff6ff;color:#1e3a8a;line-height:1.6;">
+          En rejoignant Formaplane, <strong>${escapeHtml(organizationName || 'votre organisme')}</strong> pourra consulter ses disponibilités directement, sans attendre un nouvel e-mail à chaque mise à jour.
+        </div>
+        <a href="${escapeHtml(invitationUrl)}" style="display:block;text-align:center;background:#2563eb;color:#ffffff;text-decoration:none;font-size:14px;font-weight:800;padding:13px 16px;border-radius:10px;margin-top:20px;">
+          Découvrir Formaplane et retrouver ${escapeHtml(trainerName)}
+        </a>
+        <p style="margin-top:18px;font-size:12px;line-height:1.55;color:#64748b;">
+          Après votre inscription ou votre connexion, Formaplane vous conduira directement sur la fiche de ${escapeHtml(trainerName)} afin que vous puissiez l’ajouter à votre réseau si vous le souhaitez.
+        </p>
+      </div>
+    </div>
+  `,
+});
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
@@ -1577,6 +1631,135 @@ Deno.serve(async (req) => {
         status: 'pending',
         metadata: { source: 'settings_email_test' },
       };
+    } else if (body.type === 'trainer_organization_invitation') {
+      const contactId = String(body.contactId || '').trim();
+
+      if (!contactId) {
+        return jsonResponse(
+          { success: false, message: "L'organisme à inviter est obligatoire." },
+          400,
+        );
+      }
+
+      const { data: reservationRows, error: reservationError } =
+        await authenticatedClient.rpc(
+          'reserve_my_trainer_organization_invitation',
+          { p_contact_id: contactId },
+        );
+
+      if (reservationError) {
+        console.error("Réservation de l'invitation OF impossible :", reservationError);
+        return jsonResponse(
+          { success: false, message: "Impossible de vérifier le délai avant l'invitation." },
+          500,
+        );
+      }
+
+      const reservation = Array.isArray(reservationRows)
+        ? reservationRows[0]
+        : reservationRows;
+
+      if (!reservation?.success || !reservation?.email_log_id) {
+        if (reservation?.message === 'ORGANIZATION_ALREADY_ON_FORMAPLANE') {
+          return jsonResponse(
+            {
+              success: false,
+              code: 'ORGANIZATION_ALREADY_ON_FORMAPLANE',
+              message: "Cet organisme est déjà présent sur Formaplane. Il n'a plus besoin d'être invité.",
+            },
+            409,
+          );
+        }
+
+        return jsonResponse(
+          {
+            success: false,
+            code: 'ORGANIZATION_INVITATION_COOLDOWN',
+            nextInvitationAt: reservation?.next_invitation_at || null,
+            message: reservation?.next_invitation_at
+              ? `Une invitation a déjà été envoyée récemment. Un nouvel envoi sera possible à partir du ${new Intl.DateTimeFormat('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Paris' }).format(new Date(reservation.next_invitation_at))}.`
+              : 'Une invitation a déjà été envoyée il y a moins de 7 jours.',
+          },
+          429,
+        );
+      }
+
+      precreatedLogId = String(reservation.email_log_id);
+      const invitationToken = String(reservation.invitation_token || '').trim();
+
+      const { data: trainer, error: trainerError } = await admin
+        .from('trainers')
+        .select('id, prenom, nom, user_id')
+        .eq('user_id', authData.user.id)
+        .maybeSingle();
+
+      const { data: contact, error: contactError } = await admin
+        .from('trainer_availability_contacts')
+        .select('id, trainer_id, organization_name, contact_name, email')
+        .eq('id', contactId)
+        .maybeSingle();
+
+      if (trainerError || !trainer || contactError || !contact || contact.trainer_id !== trainer.id) {
+        await admin.from('email_logs').update({
+          status: 'failed',
+          error_message: "Contact ou profil formateur introuvable.",
+          failed_at: new Date().toISOString(),
+        }).eq('id', precreatedLogId);
+
+        return jsonResponse(
+          { success: false, message: "Impossible de préparer cette invitation." },
+          404,
+        );
+      }
+
+      const recipientEmail = String(contact.email || '').trim().toLowerCase();
+      const trainerName = [trainer.prenom, trainer.nom].filter(Boolean).join(' ').trim() || 'Votre formateur partenaire';
+      const invitationUrl = `${APP_URL}/invitation-of/${encodeURIComponent(invitationToken)}`;
+
+      emailPayload = buildTrainerOrganizationInvitationEmail({
+        recipientEmail,
+        contactName: String(contact.contact_name || '').trim(),
+        organizationName: String(contact.organization_name || '').trim(),
+        trainerName,
+        invitationUrl,
+      });
+
+      logPayload = {
+        email_type: 'trainer_organization_invitation',
+        provider: 'brevo',
+        recipient_email: recipientEmail,
+        recipient_user_id: null,
+        requested_by_user_id: authData.user.id,
+        organization_id: null,
+        related_entity_type: 'trainer_availability_contact',
+        related_entity_id: contact.id,
+        status: 'pending',
+        metadata: {
+          source: 'trainer_organization_invitation',
+          trainer_id: trainer.id,
+          trainer_name: trainerName,
+          contact_id: contact.id,
+          organization_name: contact.organization_name,
+          invitation_token: invitationToken,
+        },
+      };
+
+      const { error: logUpdateError } = await admin
+        .from('email_logs')
+        .update({ metadata: logPayload.metadata })
+        .eq('id', precreatedLogId);
+
+      if (logUpdateError) {
+        await admin.from('email_logs').update({
+          status: 'failed',
+          error_message: "Impossible de finaliser le journal de l'invitation.",
+          failed_at: new Date().toISOString(),
+        }).eq('id', precreatedLogId);
+        return jsonResponse(
+          { success: false, message: "L'invitation a été bloquée car son journal n'a pas pu être finalisé." },
+          500,
+        );
+      }
     } else if (body.type === 'trainer_availability_share') {
       const contactId = String(body.contactId || '').trim();
       const requestedMonths = Array.isArray(body.months)

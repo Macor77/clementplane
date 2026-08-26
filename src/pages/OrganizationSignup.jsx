@@ -1,15 +1,21 @@
 import {
+  useEffect,
   useState,
 } from 'react';
 
 import {
   Link,
   useNavigate,
+  useSearchParams,
 } from 'react-router-dom';
 
 import {
   signUpOrganization,
 } from '../services/organizationSignupService';
+
+import {
+  getPublicTrainerOrganizationInvitation,
+} from '../services/trainerOrganizationsService';
 
 import './Auth.css';
 
@@ -17,6 +23,12 @@ import './Auth.css';
 export default function OrganizationSignup() {
   const navigate =
     useNavigate();
+
+  const [searchParams] =
+    useSearchParams();
+
+  const invitationToken =
+    String(searchParams.get('invitation') || '').trim();
 
   const [
     form,
@@ -44,6 +56,62 @@ export default function OrganizationSignup() {
     confirmationRequired,
     setConfirmationRequired,
   ] = useState(false);
+
+  const [
+    invitationTrainerName,
+    setInvitationTrainerName,
+  ] = useState('');
+
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadInvitation() {
+      if (!invitationToken) return;
+
+      try {
+        const invitation =
+          await getPublicTrainerOrganizationInvitation(
+            invitationToken,
+          );
+
+        if (!active || !invitation) return;
+
+        setInvitationTrainerName(
+          [
+            invitation.trainer_first_name,
+            invitation.trainer_last_name,
+          ]
+            .filter(Boolean)
+            .join(' ')
+            .trim(),
+        );
+
+        setForm((current) => ({
+          ...current,
+          email:
+            current.email ||
+            invitation.recipient_email ||
+            '',
+          organizationName:
+            current.organizationName ||
+            invitation.organization_name ||
+            '',
+        }));
+      } catch (invitationError) {
+        console.warn(
+          "Invitation OF non chargée pour préremplissage :",
+          invitationError,
+        );
+      }
+    }
+
+    loadInvitation();
+
+    return () => {
+      active = false;
+    };
+  }, [invitationToken]);
 
 
   const [
@@ -120,9 +188,13 @@ export default function OrganizationSignup() {
 
       try {
         const data =
-          await signUpOrganization(
-            form,
-          );
+          await signUpOrganization({
+            ...form,
+            emailRedirectTo:
+              invitationToken
+                ? `${window.location.origin}/invitation-of/${encodeURIComponent(invitationToken)}`
+                : null,
+          });
 
 
         if (
@@ -134,7 +206,9 @@ export default function OrganizationSignup() {
           );
 
           navigate(
-            '/',
+            invitationToken
+              ? `/invitation-of/${encodeURIComponent(invitationToken)}`
+              : '/',
             {
               replace: true,
             },
@@ -203,14 +277,14 @@ export default function OrganizationSignup() {
               {form.email}
             </strong>.
             {' '}
-            Après confirmation, connectez-vous à Formaplane :
-            votre organisme sera déjà rattaché à votre compte.
+            Après confirmation, Formaplane vous ramènera dans le parcours d’invitation
+            {invitationTrainerName ? ` de ${invitationTrainerName}` : ''}. Votre organisme sera déjà rattaché à votre compte.
           </p>
 
 
           <Link
             className="auth-button auth-button--link"
-            to="/connexion"
+            to={invitationToken ? `/connexion?invitation=${encodeURIComponent(invitationToken)}` : '/connexion'}
           >
             Retour à la connexion
           </Link>
@@ -244,6 +318,12 @@ export default function OrganizationSignup() {
           Créez votre espace Formaplane pour gérer vos formateurs,
           vos missions et votre planning.
         </p>
+
+        {invitationTrainerName ? (
+          <div className="auth-alert" style={{ background: '#eff6ff', color: '#1e3a8a', border: '1px solid #bfdbfe' }}>
+            Invitation de <strong>{invitationTrainerName}</strong> : après votre inscription, vous arriverez directement sur sa fiche.
+          </div>
+        ) : null}
 
 
         <form
@@ -445,6 +525,15 @@ export default function OrganizationSignup() {
             <div className="auth-alert auth-alert--error">
               {error}
             </div>
+          ) : null}
+
+          {error && invitationToken ? (
+            <Link
+              to={`/connexion?invitation=${encodeURIComponent(invitationToken)}`}
+              style={{ color: '#2563eb', fontWeight: 800, textDecoration: 'none' }}
+            >
+              J’ai déjà un compte : me connecter
+            </Link>
           ) : null}
 
 

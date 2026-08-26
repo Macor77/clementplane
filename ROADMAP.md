@@ -1,6 +1,6 @@
 # ROADMAP — Formaplane
 
-> Mise à jour : clôture officielle du Sprint 18 — 25 août 2026  
+> Mise à jour : Sprint 19 en cours — 26 août 2026  
 > Version actuelle : `v0.18.0`
 
 ## Vision
@@ -35,7 +35,7 @@ Après le Sprint 14, la priorité est désormais de rendre Formaplane plus auton
 | 16 | Landing page / site public Formaplane | ✅ TERMINÉ |
 | 17 | Dashboard Admin, mini-CRM & statistiques d'utilisation | ✅ TERMINÉ |
 | 18 | Tests automatisés & surveillance | ✅ TERMINÉ |
-| 19 | Optimisation UX & expérience mobile | 🔜 À FAIRE |
+| 19 | Optimisation UX & expérience mobile | 🟡 EN COURS |
 | 20 | Création de missions par le formateur dans son propre agenda | 🔜 À FAIRE |
 | 21+ | Évolutions guidées par la bêta | 🧭 PRÉVISIONNEL |
 
@@ -621,7 +621,7 @@ Détecter les régressions et problèmes techniques plus tôt, tout en conservan
 
 ---
 
-# Sprint 19 — Optimisation UX & expérience mobile 🔜
+# Sprint 19 — Optimisation UX & expérience mobile 🟡
 
 ### Objectif
 Rendre Formaplane plus agréable, plus intuitif et surtout réellement confortable à utiliser depuis un smartphone.
@@ -634,6 +634,8 @@ Rendre Formaplane plus agréable, plus intuitif et surtout réellement confortab
 - amélioration de la lisibilité, des espacements, des boutons et zones tactiles ;
 - suppression des débordements et éléments trop petits ;
 - revue visuelle globale desktop, avec priorité mobile-first.
+- création du carnet central **Mes OF** côté Formateur, avec statut Formaplane, invitation OF et synchronisation avec le partage des disponibilités ;
+- parcours d’invitation OF : e-mail, inscription/connexion, arrivée sur la fiche du formateur puis CTA **Ajouter à mon réseau**.
 
 ### Enjeu produit
 Permettre une utilisation quotidienne confortable de Formaplane sur smartphone sans dégrader l'expérience desktop.

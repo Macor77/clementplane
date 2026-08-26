@@ -6,6 +6,7 @@ import TrainerMissions from '../../pages/trainer/TrainerMissions';
 import TrainerMissionDetail from '../../pages/trainer/TrainerMissionDetail';
 import TrainerOrganizationContact from '../../pages/trainer/TrainerOrganizationContact';
 import TrainerAvailability from '../../pages/trainer/TrainerAvailability';
+import TrainerOrganizations from '../../pages/trainer/TrainerOrganizations';
 import TrainerPlanning from '../../pages/trainer/TrainerPlanning';
 import TrainerAvailabilityShare from '../../pages/trainer/TrainerAvailabilityShare';
 import TrainerProfile from '../../pages/trainer/TrainerProfile';
@@ -13,6 +14,7 @@ import TrainerSettings from '../../pages/trainer/TrainerSettings';
 import DiscoverFormaplane from '../../pages/DiscoverFormaplane';
 
 import { useAuth } from '../../context/AuthContext';
+import MobileNavigation from '../layout/MobileNavigation';
 
 const ACTIVE_SPACE_KEY = 'timeforma_active_space';
 
@@ -37,6 +39,11 @@ const navigationItems = [
     to: '/formateur/disponibilites',
     label: 'Mes disponibilités',
     icon: '▦',
+  },
+  {
+    to: '/formateur/mes-of',
+    label: 'Mes OF',
+    icon: '◎',
   },
   {
     to: '/formateur/partage-disponibilites',
@@ -68,7 +75,39 @@ const navigationItems = [
     label: 'Paramètres',
     icon: '⚙',
   },
+
 ];
+
+function TrainerNavigationFooter({
+  initials,
+  displayName,
+  hasOrganizationSpace,
+  onChangeSpace,
+  onLogout,
+}) {
+  return (
+    <>
+      <div className="user-card">
+        <div className="user-card__avatar">{initials}</div>
+        <div className="user-card__content">
+          <strong>{displayName}</strong>
+          <span>Formateur</span>
+        </div>
+      </div>
+
+      <div className="trainer-sidebar-actions">
+        {hasOrganizationSpace && (
+          <button type="button" onClick={onChangeSpace}>
+            Changer d’espace
+          </button>
+        )}
+        <button type="button" onClick={onLogout}>
+          Se déconnecter
+        </button>
+      </div>
+    </>
+  );
+}
 
 export default function TrainerApp() {
   const navigate = useNavigate();
@@ -114,6 +153,20 @@ export default function TrainerApp() {
 
   return (
     <div className="app-shell trainer-app">
+      <MobileNavigation
+        spaceLabel="Espace formateur"
+        navigationItems={navigationItems}
+        footer={
+          <TrainerNavigationFooter
+            initials={initials}
+            displayName={displayName}
+            hasOrganizationSpace={hasOrganizationSpace}
+            onChangeSpace={handleChangeSpace}
+            onLogout={handleLogout}
+          />
+        }
+      />
+
       <aside className="app-sidebar">
         <div
           className="app-brand"
@@ -170,34 +223,13 @@ export default function TrainerApp() {
         </nav>
 
         <div className="app-sidebar__footer">
-          <div className="user-card">
-            <div className="user-card__avatar">
-              {initials}
-            </div>
-
-            <div className="user-card__content">
-              <strong>{displayName}</strong>
-              <span>Formateur</span>
-            </div>
-          </div>
-
-          <div className="trainer-sidebar-actions">
-            {hasOrganizationSpace && (
-              <button
-                type="button"
-                onClick={handleChangeSpace}
-              >
-                Changer d’espace
-              </button>
-            )}
-
-            <button
-              type="button"
-              onClick={handleLogout}
-            >
-              Se déconnecter
-            </button>
-          </div>
+          <TrainerNavigationFooter
+            initials={initials}
+            displayName={displayName}
+            hasOrganizationSpace={hasOrganizationSpace}
+            onChangeSpace={handleChangeSpace}
+            onLogout={handleLogout}
+          />
         </div>
       </aside>
 
@@ -231,6 +263,11 @@ export default function TrainerApp() {
           <Route
             path="/formateur/disponibilites"
             element={<TrainerAvailability />}
+          />
+
+          <Route
+            path="/formateur/mes-of"
+            element={<TrainerOrganizations />}
           />
 
           <Route

@@ -3,6 +3,7 @@ import {
   Link,
   useLocation,
   useNavigate,
+  useSearchParams,
 } from 'react-router-dom';
 
 import { supabase } from '../lib/supabaseClient';
@@ -12,6 +13,10 @@ import './Auth.css';
 export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams] = useSearchParams();
+
+  const invitationToken =
+    String(searchParams.get('invitation') || '').trim();
 
   const [email, setEmail] =
     useState('');
@@ -53,10 +58,12 @@ export default function Login() {
         }
 
         const destination =
-          typeof location.state?.from === 'string' &&
-          location.state.from.startsWith('/')
-            ? location.state.from
-            : '/';
+          invitationToken
+            ? `/invitation-of/${encodeURIComponent(invitationToken)}`
+            : typeof location.state?.from === 'string' &&
+              location.state.from.startsWith('/')
+              ? location.state.from
+              : '/';
 
         navigate(
           destination,
@@ -246,7 +253,7 @@ export default function Login() {
 
             <Link
               className="auth-button auth-button--link"
-              to="/inscription-organisme"
+              to={invitationToken ? `/inscription-organisme?invitation=${encodeURIComponent(invitationToken)}` : '/inscription-organisme'}
             >
               Créer mon organisme
             </Link>

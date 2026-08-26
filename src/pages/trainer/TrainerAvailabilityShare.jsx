@@ -2,8 +2,11 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
+
+import { useNavigate } from 'react-router-dom';
 
 import {
   createMyAvailabilityContact,
@@ -1432,6 +1435,9 @@ function createAvailabilityPdfPage({
 
 
 export default function TrainerAvailabilityShare() {
+  const navigate = useNavigate();
+  const contactManagementEnabledHere = false;
+
   const {
     profile,
     trainerProfile,
@@ -1494,6 +1500,14 @@ export default function TrainerAvailabilityShare() {
     contactToDelete,
     setContactToDelete,
   ] = useState(null);
+
+  const [
+    shareIntroOpen,
+    setShareIntroOpen,
+  ] = useState(true);
+
+  const contactFormRef = useRef(null);
+  const organizationNameInputRef = useRef(null);
 
 
   const monthChoices =
@@ -2808,8 +2822,144 @@ export default function TrainerAvailabilityShare() {
     ]);
 
 
+  const continueToShare = () => {
+    setShareIntroOpen(false);
+  };
+
+  const inviteOrganization = () => {
+    setShareIntroOpen(false);
+    navigate('/formateur/mes-of?ajouter=1');
+  };
+
+
   return (
-    <div className="page-container">
+    <div className="page-container trainer-share-page">
+      {shareIntroOpen ? (
+        <div
+          role="presentation"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) {
+              continueToShare();
+            }
+          }}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 1200,
+            display: 'grid',
+            placeItems: 'center',
+            padding: 16,
+            background: 'rgba(15, 23, 42, 0.58)',
+          }}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="trainer-share-intro-title"
+            style={{
+              width: 'min(100%, 560px)',
+              maxHeight: 'calc(100vh - 32px)',
+              overflowY: 'auto',
+              background: '#ffffff',
+              borderRadius: 18,
+              boxShadow: '0 24px 70px rgba(15, 23, 42, 0.30)',
+              padding: '22px',
+            }}
+          >
+            <p
+              className="page-eyebrow"
+              style={{ marginTop: 0 }}
+            >
+              VOS DISPONIBILITÉS SUR FORMAPLANE
+            </p>
+
+            <h2
+              id="trainer-share-intro-title"
+              style={{
+                margin: '6px 0 10px',
+                fontSize: 'clamp(20px, 5vw, 26px)',
+                lineHeight: 1.2,
+              }}
+            >
+              Le plus simple ? Invitez vos OF sur Formaplane !
+            </h2>
+
+            <p
+              style={{
+                margin: 0,
+                color: '#475569',
+                lineHeight: 1.6,
+                fontSize: 14,
+              }}
+            >
+              Lorsqu’un organisme partenaire utilise Formaplane, il peut consulter directement vos disponibilités à jour.
+            </p>
+
+            <div
+              style={{
+                marginTop: 14,
+                padding: '12px 14px',
+                borderRadius: 12,
+                background: '#eff6ff',
+                border: '1px solid #bfdbfe',
+                color: '#1e3a8a',
+                fontWeight: 700,
+                lineHeight: 1.5,
+                fontSize: 13,
+              }}
+            >
+              Vous n’avez plus besoin de lui renvoyer votre planning à chaque modification : vos OF consultent vos disponibilités quand ils en ont besoin.
+            </div>
+
+            <div
+              style={{
+                display: 'grid',
+                gap: 10,
+                marginTop: 20,
+              }}
+            >
+              <button
+                type="button"
+                className="button"
+                onClick={inviteOrganization}
+                style={{
+                  minHeight: 46,
+                  width: '100%',
+                  justifyContent: 'center',
+                }}
+              >
+                Inviter un organisme
+              </button>
+
+              <button
+                type="button"
+                className="button button--soft"
+                onClick={continueToShare}
+                style={{
+                  minHeight: 44,
+                  width: '100%',
+                  justifyContent: 'center',
+                }}
+              >
+                Continuer vers le partage
+              </button>
+            </div>
+
+            <p
+              style={{
+                margin: '14px 0 0',
+                textAlign: 'center',
+                color: '#64748b',
+                fontSize: 11,
+                lineHeight: 1.45,
+              }}
+            >
+              L’e-mail et le PDF restent disponibles si votre organisme ne souhaite pas encore utiliser Formaplane.
+            </p>
+          </div>
+        </div>
+      ) : null}
+
       <div className="page-heading">
         <div>
           <p className="page-eyebrow">
@@ -2821,7 +2971,7 @@ export default function TrainerAvailabilityShare() {
           </h1>
 
           <p>
-            Gérez vos contacts, choisissez les mois à partager et prévisualisez exactement ce que chaque organisme verra.
+            Votre liste d’OF est synchronisée avec « Mes OF ». Choisissez ici les destinataires et les mois à partager.
           </p>
         </div>
       </div>
@@ -2829,15 +2979,25 @@ export default function TrainerAvailabilityShare() {
 
       <div className="panel-card">
         <h2>
-          Mon carnet d'organismes
+          Mes OF utilisés pour le partage
         </h2>
 
         <p>
-          Ajoutez vos contacts OF. Formaplane vous indique si l'organisme possède déjà un compte et, lorsqu'il est inscrit, s'il vous a déjà ajouté à son réseau de formateurs.
+          Cette liste provient de « Mes OF ». Gérez vos organismes depuis la page dédiée ; la liste ci-dessous se met à jour automatiquement.
         </p>
 
+        <button
+          type="button"
+          className="button button--soft"
+          onClick={() => navigate('/formateur/mes-of')}
+          style={{ marginTop: 10 }}
+        >
+          Gérer Mes OF
+        </button>
 
+        {contactManagementEnabledHere ? (
         <form
+          ref={contactFormRef}
           onSubmit={
             submit
           }
@@ -2862,6 +3022,7 @@ export default function TrainerAvailabilityShare() {
             >
               Organisme de formation
               <input
+                ref={organizationNameInputRef}
                 name="organizationName"
                 value={
                   form.organizationName
@@ -3000,6 +3161,7 @@ export default function TrainerAvailabilityShare() {
             ) : null}
           </div>
         </form>
+        ) : null}
       </div>
 
 
@@ -3014,7 +3176,7 @@ export default function TrainerAvailabilityShare() {
             marginBottom: 4,
           }}
         >
-          Mes contacts
+          Mes OF disponibles pour le partage
         </h2>
 
         <p
@@ -3080,7 +3242,7 @@ export default function TrainerAvailabilityShare() {
               color: '#64748b',
             }}
           >
-            Votre carnet est vide. Ajoutez votre premier organisme ci-dessus.
+            Votre liste est vide. Ajoutez votre premier organisme depuis « Mes OF ».
           </div>
         ) : null}
 
@@ -3101,6 +3263,7 @@ export default function TrainerAvailabilityShare() {
                   key={
                     contact.id
                   }
+                  className="trainer-share-contact-card"
                   style={{
                     border:
                       '1px solid #e2e8f0',
@@ -3233,27 +3396,41 @@ export default function TrainerAvailabilityShare() {
                     })() : null}
 
                     {contact.last_share?.canShare === false ? (
-                      <div
-                        style={{
-                          marginTop: 5,
-                          padding: '5px 7px',
-                          borderRadius: 7,
-                          background: '#fff7ed',
-                          border: '1px solid #fed7aa',
-                          color: '#9a3412',
-                          fontSize: 11,
-                          fontWeight: 700,
-                          lineHeight: 1.45,
-                        }}
-                      >
-                        Nouvel envoi via Formaplane possible le{' '}
-                        {formatShareDate(contact.last_share.nextShareAt)}.{' '}
-                        PDF disponible à tout moment. Vous pouvez aussi suggérer à cet OF de se connecter à Formaplane pour consulter vos disponibilités en temps réel et en permanence.
-                      </div>
+                      <>
+                        <div
+                          className="trainer-share-blocked-message trainer-share-blocked-message--desktop"
+                          style={{
+                            marginTop: 5,
+                            padding: '5px 7px',
+                            borderRadius: 7,
+                            background: '#fff7ed',
+                            border: '1px solid #fed7aa',
+                            color: '#9a3412',
+                            fontSize: 11,
+                            fontWeight: 700,
+                            lineHeight: 1.45,
+                          }}
+                        >
+                          Nouvel envoi via Formaplane possible le{' '}
+                          {formatShareDate(contact.last_share.nextShareAt)}.{' '}
+                          PDF disponible à tout moment. Vous pouvez aussi suggérer à cet OF de se connecter à Formaplane pour consulter vos disponibilités en temps réel et en permanence.
+                        </div>
+
+                        <details className="trainer-share-blocked-message trainer-share-blocked-message--mobile">
+                          <summary>
+                            Nouvel envoi possible le {formatShareDate(contact.last_share.nextShareAt)} · Voir pourquoi
+                          </summary>
+                          <p>
+                            Le PDF reste disponible à tout moment. Si vous souhaitez prévenir cet organisme avant cette date, contactez-le directement : vos disponibilités sont mises à jour et consultables en permanence sur Formaplane.
+                          </p>
+                        </details>
+                      </>
                     ) : null}
                   </div>
 
+                  {contactManagementEnabledHere ? (
                   <div
+                    className="trainer-share-contact-actions"
                     style={{
                       display: 'flex',
                       gap: 4,
@@ -3294,6 +3471,7 @@ export default function TrainerAvailabilityShare() {
                       Supprimer
                     </button>
                   </div>
+                  ) : null}
                 </div>
               ),
             )}

@@ -19,12 +19,16 @@ async function enrichContacts(rows) {
   const [
     referenceResult,
     shareResult,
+    organizationStatusResult,
   ] = await Promise.all([
     supabase.rpc(
       'get_my_availability_contact_reference_status',
     ),
     supabase.rpc(
       'get_my_availability_contact_last_share_status',
+    ),
+    supabase.rpc(
+      'get_my_trainer_organization_contact_status',
     ),
   ]);
 
@@ -45,6 +49,16 @@ async function enrichContacts(rows) {
     );
     throw new Error(
       "Impossible de charger le statut de vos derniers partages.",
+    );
+  }
+
+  if (organizationStatusResult.error) {
+    console.error(
+      "Erreur de lecture du statut Formaplane des organismes :",
+      organizationStatusResult.error,
+    );
+    throw new Error(
+      "Impossible de vérifier le statut Formaplane de vos organismes.",
     );
   }
 
@@ -75,15 +89,51 @@ async function enrichContacts(rows) {
     ]),
   );
 
-  return contacts.map((contact) => ({
-    ...contact,
-    is_referenced:
-      contact.organization_id
-        ? Boolean(referenceByContactId.get(contact.id))
-        : false,
-    last_share:
-      shareByContactId.get(contact.id) || null,
-  }));
+
+  const organizationStatusByContactId = new Map(
+    (organizationStatusResult.data || []).map((row) => [
+      row.contact_id,
+      {
+        organizationId: row.resolved_organization_id || null,
+        isOnFormaplane: Boolean(row.is_on_formaplane),
+        isReferenced: Boolean(row.is_referenced),
+        lastInvitationAt: row.last_invitation_at || null,
+        canInvite: row.can_invite !== false,
+        nextInvitationAt: row.next_invitation_at || null,
+      },
+    ]),
+  );
+
+  return contacts.map((contact) => {
+    const organizationStatus =
+      organizationStatusByContactId.get(contact.id) || null;
+
+    const resolvedOrganizationId =
+      organizationStatus?.organizationId || contact.organization_id || null;
+
+    return {
+      ...contact,
+      organization_id: resolvedOrganizationId,
+      is_on_formaplane: Boolean(
+        organizationStatus?.isOnFormaplane || resolvedOrganizationId,
+      ),
+      is_referenced:
+        organizationStatus?.isReferenced ??
+        (resolvedOrganizationId
+          ? Boolean(referenceByContactId.get(contact.id))
+          : false),
+      invitation_status: {
+        lastInvitationAt:
+          organizationStatus?.lastInvitationAt || null,
+        canInvite:
+          organizationStatus?.canInvite !== false,
+        nextInvitationAt:
+          organizationStatus?.nextInvitationAt || null,
+      },
+      last_share:
+        shareByContactId.get(contact.id) || null,
+    };
+  });
 }
 
 export async function getMyAvailabilityContacts() {

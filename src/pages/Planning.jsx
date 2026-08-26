@@ -1,5 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+
+import PlanningFilterMenu from '../components/planning/PlanningFilterMenu';
+import PlanningDayModal from '../components/planning/PlanningDayModal';
+import { filterOrganizationMissions, getOrganizationDayOccurrences, getOrganizationTrainerOptions } from '../utils/planningFilters';
 
 import { getMissions } from '../services/missionsService';
 
@@ -12,7 +16,9 @@ export default function Planning() {
   const [missions, setMissions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [selectedDayKey, setSelectedDayKey] = useState(formatDateKey(new Date()));
+  const [selectedDayKey, setSelectedDayKey] = useState('');
+  const [selectedTrainerIds, setSelectedTrainerIds] = useState([]);
+  const [selectedStatuses, setSelectedStatuses] = useState([]);
 
   const loadMissions = useCallback(async () => {
     setLoading(true);
@@ -42,9 +48,19 @@ export default function Planning() {
     [missions],
   );
 
-  const missionOccurrences = useMemo(
-    () => createMissionOccurrences(activeMissions),
+  const trainerOptions = useMemo(
+    () => getOrganizationTrainerOptions(activeMissions),
     [activeMissions],
+  );
+
+  const filteredMissions = useMemo(
+    () => filterOrganizationMissions(activeMissions, { trainerIds: selectedTrainerIds, statuses: selectedStatuses }),
+    [activeMissions, selectedTrainerIds, selectedStatuses],
+  );
+
+  const missionOccurrences = useMemo(
+    () => createMissionOccurrences(filteredMissions),
+    [filteredMissions],
   );
 
   const occurrencesByDay = useMemo(() => {
@@ -65,18 +81,15 @@ export default function Planning() {
     return grouped;
   }, [missionOccurrences]);
 
-  const monthOccurrences = useMemo(() => {
-    const year = currentMonth.getFullYear();
-    const month = currentMonth.getMonth();
+  const selectedDayOccurrences = useMemo(
+    () => getOrganizationDayOccurrences(missionOccurrences, selectedDayKey),
+    [missionOccurrences, selectedDayKey],
+  );
 
-    return missionOccurrences.filter((occurrence) => {
-      const date = parseLocalDate(occurrence.date);
-      return date.getFullYear() === year && date.getMonth() === month;
-    });
-  }, [currentMonth, missionOccurrences]);
-
-  const selectedDayOccurrences = occurrencesByDay.get(selectedDayKey) || [];
-  const monthSummary = summarizeMonth(monthOccurrences);
+  const openDay = (dayKey, dayOccurrences) => {
+    if (!dayOccurrences.length) return;
+    setSelectedDayKey(dayKey);
+  };
 
   const changeMonth = (offset) => {
     setCurrentMonth(
@@ -87,14 +100,39 @@ export default function Planning() {
   const goToToday = () => {
     const today = new Date();
     setCurrentMonth(startOfMonth(today));
-    setSelectedDayKey(formatDateKey(today));
+    setSelectedDayKey('');
   };
 
   return (
     <div className="planning-page">
       {error && <div className="alert alert--error">{error}</div>}
 
-      <div className="planning-layout">
+      <div className="planning-main">
+        <div className="planning-toolbar">
+          <div className="planning-toolbar__navigation">
+            <button type="button" className="icon-button" onClick={() => changeMonth(-1)} aria-label="Mois précédent">‹</button>
+            <button type="button" className="icon-button" onClick={() => changeMonth(1)} aria-label="Mois suivant">›</button>
+            <strong className="planning-month-label">{formatMonthLabel(currentMonth)}</strong>
+            <button type="button" className="button button--soft" onClick={goToToday}>Aujourd’hui</button>
+          </div>
+          <div className="planning-toolbar__filters">
+            <PlanningFilterMenu label="Formateurs" options={trainerOptions} selected={selectedTrainerIds} onChange={setSelectedTrainerIds} />
+            <PlanningFilterMenu
+              label="Statut"
+              options={[{ id: 'assigned', label: 'Affectée' }, { id: 'unassigned', label: 'À affecter' }]}
+              selected={selectedStatuses}
+              onChange={setSelectedStatuses}
+            />
+            <button
+              type="button"
+              className="planning-reset"
+              disabled={!selectedTrainerIds.length && !selectedStatuses.length}
+              onClick={() => { setSelectedTrainerIds([]); setSelectedStatuses([]); }}
+            >
+              Réinitialiser
+            </button>
+          </div>
+        </div>
         <section className="calendar-card" aria-busy={loading}>
           <div className="calendar-weekdays">
             {WEEK_DAYS.map((day) => (
@@ -121,7 +159,7 @@ export default function Planning() {
                   ]
                     .filter(Boolean)
                     .join(' ')}
-                  onClick={() => setSelectedDayKey(dayKey)}
+                  onClick={() => openDay(dayKey, dayOccurrences)}
                 >
                   <div className="calendar-day__number">{day.getDate()}</div>
 
@@ -143,7 +181,7 @@ export default function Planning() {
                         compact
                         onClick={(event) => {
                           event.stopPropagation();
-                          navigate(`/missions/${occurrence.mission.id}`);
+                          openDay(dayKey, dayOccurrences);
                         }}
                       />
                     ))}
@@ -161,89 +199,40 @@ export default function Planning() {
             <LegendItem tone="blocking" label="À affecter" />
           </div>
         </section>
-
-        <aside className="planning-sidebar-panel">
-          <div className="planning-sidebar-header">
-            <h1>Planning des missions</h1>
-
-            <div className="planning-header__actions">
-              <div className="planning-month-switcher" aria-label="Navigation entre les mois">
-                <button
-                  type="button"
-                  className="icon-button"
-                  onClick={() => changeMonth(-1)}
-                  aria-label="Mois précédent"
-                >
-                  ‹
-                </button>
-                <strong className="planning-month-label">
-                  {formatMonthLabel(currentMonth)}
-                </strong>
-                <button
-                  type="button"
-                  className="icon-button"
-                  onClick={() => changeMonth(1)}
-                  aria-label="Mois suivant"
-                >
-                  ›
-                </button>
-              </div>
-              <button type="button" className="button button--soft" onClick={goToToday}>
-                Aujourd’hui
-              </button>
-            </div>
-          </div>
-
-          <section className="panel-card">
-            <h2>Synthèse du mois</h2>
-            <p className="section-subtitle" style={{ marginTop: -4, marginBottom: 10 }}>
-              Seules les missions ayant au moins une date dans le mois affiché sont comptées.
-            </p>
-            <SummaryRow value={monthSummary.total} label="Missions ce mois" tone="blue" />
-            <SummaryRow value={monthSummary.assigned} label="Affectées" tone="green" />
-            <SummaryRow value={monthSummary.unassigned} label="À affecter" tone="orange" />
-          </section>
-
-          <section className="panel-card">
-            <div className="panel-card__heading">
-              <div>
-                <p className="panel-card__eyebrow">Journée sélectionnée</p>
-                <h2>{formatSelectedDay(selectedDayKey)}</h2>
-              </div>
-              <span className="count-badge">{selectedDayOccurrences.length}</span>
-            </div>
-
-            {selectedDayOccurrences.length === 0 ? (
-              <p className="empty-text">Aucune mission ce jour.</p>
-            ) : (
-              <div className="selected-day-list">
-                {selectedDayOccurrences.map((occurrence) => (
-                  <MissionCard
-                    key={`detail-${occurrence.mission.id}-${occurrence.dateRow.id || occurrence.date}`}
-                    occurrence={occurrence}
-                    onClick={() => navigate(`/missions/${occurrence.mission.id}`)}
-                  />
-                ))}
-              </div>
-            )}
-          </section>
-
-          <section className="panel-card">
-            <h2>Actions rapides</h2>
-            <div className="quick-actions">
-              <Link className="button button--primary" to="/missions/new">
-                + Nouvelle mission
-              </Link>
-              <Link className="button" to="/missions">
-                Toutes les missions
-              </Link>
-              <Link className="button" to="/listing">
-                Formateurs
-              </Link>
-            </div>
-          </section>
-        </aside>
       </div>
+
+      {selectedDayKey && selectedDayOccurrences.length ? (
+        <PlanningDayModal
+          title={formatLongDate(selectedDayKey)}
+          subtitle={`${selectedDayOccurrences.length} mission${selectedDayOccurrences.length > 1 ? 's' : ''} sur cette journée`}
+          onClose={() => setSelectedDayKey('')}
+        >
+          <div className="planning-day-modal__list">
+            {selectedDayOccurrences.map((occurrence) => {
+              const { mission, dateRow } = occurrence;
+              const visualState = getMissionVisualState(mission);
+              const trainer = getAssignedTrainer(mission);
+              return (
+                <article key={`${mission.id}-${dateRow.id || occurrence.date}`} className={`planning-day-summary planning-day-summary--${visualState.tone}`}>
+                  <div className="planning-day-summary__top">
+                    <span className={`planning-day-summary__status planning-day-summary__status--${visualState.tone}`}>{visualState.label}</span>
+                    {dateRow.heure_debut ? <strong>{formatTime(dateRow.heure_debut)}</strong> : null}
+                  </div>
+                  <h3>{mission.formation || mission.intitule || 'Formation non renseignée'}</h3>
+                  <div className="planning-day-summary__meta">
+                    <p><span>Client</span><strong>{mission.client || 'Client non renseigné'}</strong></p>
+                    <p><span>Formateur</span><strong>{trainer ? `${trainer.prenom || ''} ${trainer.nom || ''}`.trim() : 'À affecter'}</strong></p>
+                    {(mission.ville || mission.lieu) ? <p><span>Lieu</span><strong>{mission.ville || mission.lieu}</strong></p> : null}
+                  </div>
+                  <button type="button" className="button button--primary planning-day-summary__action" onClick={() => navigate(`/missions/${mission.id}`)}>
+                    Voir la mission
+                  </button>
+                </article>
+              );
+            })}
+          </div>
+        </PlanningDayModal>
+      ) : null}
     </div>
   );
 }
@@ -302,15 +291,6 @@ function LegendItem({ tone, label }) {
   );
 }
 
-function SummaryRow({ value, label, tone }) {
-  return (
-    <div className="summary-row">
-      <strong className={`summary-row__value summary-row__value--${tone}`}>{value}</strong>
-      <span>{label}</span>
-    </div>
-  );
-}
-
 function createMissionOccurrences(missions) {
   return missions.flatMap((mission) =>
     (mission.mission_dates || []).map((dateRow) => ({
@@ -365,23 +345,6 @@ function getMissionVisualState(mission) {
     : { tone: 'blocking', label: 'À affecter' };
 }
 
-function summarizeMonth(occurrences) {
-  const missions = new Map();
-
-  for (const occurrence of occurrences) {
-    missions.set(occurrence.mission.id, occurrence.mission);
-  }
-
-  const values = [...missions.values()];
-  const assigned = values.filter((mission) => Boolean(getAssignedTrainer(mission))).length;
-
-  return {
-    total: values.length,
-    assigned,
-    unassigned: values.length - assigned,
-  };
-}
-
 function buildCalendarDays(monthDate) {
   const year = monthDate.getFullYear();
   const month = monthDate.getMonth();
@@ -412,19 +375,15 @@ function parseLocalDate(value) {
   return new Date(year, month - 1, day);
 }
 
+function formatLongDate(value) {
+  return new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(parseLocalDate(value));
+}
+
 function formatMonthLabel(date) {
   return new Intl.DateTimeFormat('fr-FR', {
     month: 'long',
     year: 'numeric',
   }).format(date);
-}
-
-function formatSelectedDay(dayKey) {
-  return new Intl.DateTimeFormat('fr-FR', {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-  }).format(parseLocalDate(dayKey));
 }
 
 function formatTime(value) {

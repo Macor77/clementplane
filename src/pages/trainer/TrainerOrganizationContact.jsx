@@ -70,7 +70,7 @@ export default function TrainerOrganizationContact() {
     .join('\n');
 
   return (
-    <div style={styles.page}>
+    <div className="trainer-organization-contact-page" style={styles.page}>
       <Link to={`/formateur/missions/${id}`} style={styles.back}>
         ← Retour à la mission
       </Link>

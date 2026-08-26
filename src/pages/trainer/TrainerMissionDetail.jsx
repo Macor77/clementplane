@@ -388,7 +388,7 @@ export default function TrainerMissionDetail() {
   if(error || !mission) return <div style={styles.state}><strong>Mission inaccessible</strong><span>{error}</span><Link to="/formateur/missions">Retour à mes missions</Link></div>;
   const place=[mission.location,mission.postal_code,mission.city].filter(Boolean).join(' ');
   const dates=[...(Array.isArray(mission.dates)?mission.dates:[])].sort((a,b)=>(a.date||'').localeCompare(b.date||''));
-  return <div style={styles.page}>
+  return <div className="trainer-mission-detail-page" style={styles.page}>
     <div style={styles.header}><div><Link to="/formateur/missions" style={styles.back}>← Mes missions</Link><h1 style={styles.title}>{mission.mission_title || 'Mission de formation'}</h1><p style={{...styles.subtitle,color:statusColor(mission.status)}}>{statusLabel(mission.status)}</p></div></div>
     {mission.status === 'affecte' ? (
       <section style={styles.coordinationNotice}>

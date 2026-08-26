@@ -33,12 +33,14 @@ import ResetPassword from './pages/ResetPassword';
 import PublicLanding from './pages/PublicLanding';
 import AdminApp from './pages/admin/AdminApp';
 import FeatureNewsUnsubscribe from './pages/FeatureNewsUnsubscribe';
+import OrganizationInvitationLanding from './pages/OrganizationInvitationLanding';
 
 import TrainerClaimStart from './pages/TrainerClaimStart';
 import SpaceChooser from './pages/SpaceChooser';
 
 import TrainerApp from './components/trainer/TrainerApp';
 import UserCard from './components/layout/UserCard';
+import MobileNavigation from './components/layout/MobileNavigation';
 
 import {
   RequireAuth,
@@ -116,6 +118,7 @@ function isTrainerPersonalPath(pathname) {
     pathname === '/formateur/missions' ||
     pathname.startsWith('/formateur/missions/') ||
     pathname === '/formateur/disponibilites' ||
+    pathname === '/formateur/mes-of' ||
     pathname === '/formateur/partage-disponibilites' ||
     pathname === '/formateur/planning' ||
     pathname === '/formateur/profil' ||
@@ -128,6 +131,12 @@ function OrganizationApp() {
   return (
     <RequireOrganization>
       <div className="app-shell">
+        <MobileNavigation
+          spaceLabel="Espace organisme de formation"
+          navigationItems={navigationItems}
+          footer={<UserCard />}
+        />
+
         <aside className="app-sidebar">
           <div className="app-brand">
             <img
@@ -599,6 +608,7 @@ export default function App() {
     else if (path === '/formateur/espace') eventName = 'trainer_dashboard_viewed';
     else if (path === '/formateur/propositions') eventName = 'proposals_viewed';
     else if (path === '/formateur/disponibilites') eventName = 'availability_viewed';
+    else if (path === '/formateur/mes-of') eventName = 'trainer_organizations_viewed';
     else if (path === '/formateur/partage-disponibilites') eventName = 'availability_share_viewed';
 
     if (eventName) {
@@ -651,6 +661,17 @@ export default function App() {
         <Route
           path="/proposition/:token"
           element={<ProposalResponse />}
+        />
+      </Routes>
+    );
+  }
+
+  if (location.pathname.startsWith('/invitation-of/')) {
+    return (
+      <Routes>
+        <Route
+          path="/invitation-of/:token"
+          element={<OrganizationInvitationLanding />}
         />
       </Routes>
     );

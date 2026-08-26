@@ -29,6 +29,10 @@ import {
   getOrganizationTrainerRelation,
 } from '../services/formateursService';
 
+import {
+  addTrainerToOrganization,
+} from '../services/trainerSearchService';
+
 import { useAuth } from '../context/AuthContext';
 import {
   getTrainerInvitationHistory,
@@ -284,6 +288,21 @@ export default function FormateurView() {
     trainer,
     setTrainer,
   ] = useState(null);
+
+  const [
+    inNetwork,
+    setInNetwork,
+  ] = useState(false);
+
+  const [
+    addingToNetwork,
+    setAddingToNetwork,
+  ] = useState(false);
+
+  const [
+    networkRefreshKey,
+    setNetworkRefreshKey,
+  ] = useState(0);
 
   const [
     loading,
@@ -744,186 +763,94 @@ export default function FormateurView() {
   useEffect(() => {
     let active = true;
 
-
     async function loadTrainer() {
       setLoading(true);
       setError(null);
 
+      try {
+        const relation = await getOrganizationTrainerRelation({
+          organizationId: currentOrganization?.id,
+          trainerId: id,
+        });
 
-      const [
-        trainerResult,
-        relation,
-      ] = await Promise.all([
-        supabase
-          .from(
-            'trainers',
-          )
-          .select('*')
-          .eq(
-            'id',
-            id,
-          )
-          .single(),
+        let data = null;
 
-        getOrganizationTrainerRelation({
-          organizationId:
-            currentOrganization?.id,
+        if (relation) {
+          const trainerResult = await supabase
+            .from('trainers')
+            .select('*')
+            .eq('id', id)
+            .single();
 
-          trainerId:
-            id,
-        }),
-      ]);
-
-
-      if (
-        trainerResult.error
-      ) {
-        if (active) {
-          setError(
-            trainerResult.error.message,
+          if (trainerResult.error) throw trainerResult.error;
+          data = trainerResult.data;
+        } else {
+          const publicResult = await supabase.rpc(
+            'get_trainer_profile_for_organization',
+            { p_trainer_id: id },
           );
 
-          setLoading(
-            false,
-          );
+          if (publicResult.error) throw publicResult.error;
+          data = Array.isArray(publicResult.data)
+            ? publicResult.data[0]
+            : publicResult.data;
         }
 
-        return;
-      }
-
-
-      if (!relation) {
-        if (active) {
-          setError(
-            "Ce formateur n'appartient pas au réseau de votre organisme.",
-          );
-
-          setLoading(
-            false,
-          );
+        if (!data) {
+          throw new Error('Fiche formateur introuvable.');
         }
 
-        return;
-      }
+        if (!active) return;
 
+        setInNetwork(Boolean(relation));
+        setTrainer({
+          id: data.id,
+          prenom: data.prenom ?? '',
+          nom: data.nom ?? '',
+          ville: data.user_id
+            ? data.ville ?? ''
+            : relation?.ville ?? '',
+          codePostal: data.user_id
+            ? data.code_postal ?? ''
+            : relation?.code_postal ?? '',
+          competences: Array.isArray(data.competences) ? data.competences : (data.competences ?? []),
+          materiel: Array.isArray(data.materiel) ? data.materiel : (data.materiel ?? []),
+          statut: relation?.statut ?? '',
+          tarif: relation?.tarif ?? null,
+          notes: relation?.notes ?? '',
+          telephone: data.telephone ?? '',
+          email: data.email ?? '',
+          adresse: data.adresse ?? '',
+          claimed: Boolean(data.user_id),
+          created_at: data.created_at,
+        });
 
-      if (!active) {
-        return;
-      }
-
-
-      const data =
-        trainerResult.data;
-
-
-      setTrainer({
-        id:
-          data.id,
-
-        prenom:
-          data.prenom ??
-          '',
-
-        nom:
-          data.nom ??
-          '',
-
-        ville:
-          data.user_id
-            ? data.ville ??
-              ''
-            : relation.ville ??
-              '',
-
-        codePostal:
-          data.user_id
-            ? data.code_postal ??
-              ''
-            : relation.code_postal ??
-              '',
-
-        competences:
-          Array.isArray(
-            data.competences,
-          )
-            ? data.competences
-            : (
-                data.competences ??
-                []
-              ),
-
-        materiel:
-          Array.isArray(
-            data.materiel,
-          )
-            ? data.materiel
-            : (
-                data.materiel ??
-                []
-              ),
-
-        statut:
-          relation.statut ??
-          'Inactif',
-
-        tarif:
-          relation.tarif ??
-          null,
-
-        notes:
-          relation.notes ??
-          '',
-
-        telephone:
-          data.telephone ??
-          '',
-
-        email:
-          data.email ??
-          '',
-
-        adresse:
-          data.adresse ??
-          '',
-
-        claimed:
-          Boolean(data.user_id),
-
-        created_at:
-          data.created_at,
-      });
-
-
-      await loadMonth(
-        data.id,
-        refDate,
-      );
-
-
-      if (active) {
-        setLoading(
-          false,
-        );
+        if (relation) {
+          await loadMonth(data.id, refDate);
+        } else {
+          setAvailability({});
+          setHistoryByDay({});
+          setGlobalUpdatedAt(null);
+        }
+      } catch (loadError) {
+        if (active) setError(loadError?.message || 'Impossible de charger cette fiche.');
+      } finally {
+        if (active) setLoading(false);
       }
     }
 
-
     loadTrainer();
-
 
     return () => {
       active = false;
     };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    id,
-    currentOrganization?.id,
-  ]);
+  }, [id, currentOrganization?.id, networkRefreshKey]);
 
 
   useEffect(() => {
-    if (!trainer?.id) {
+    if (!trainer?.id || !inNetwork) {
       return;
     }
 
@@ -1362,6 +1289,27 @@ export default function FormateurView() {
     };
 
 
+  const handleAddToNetwork = async () => {
+    if (!currentOrganization?.id || !trainer?.id || inNetwork || addingToNetwork) return;
+
+    setAddingToNetwork(true);
+    setError(null);
+
+    try {
+      await addTrainerToOrganization({
+        organizationId: currentOrganization.id,
+        trainerId: trainer.id,
+      });
+      setNetworkRefreshKey((current) => current + 1);
+    } catch (addError) {
+      console.error('Erreur ajout au réseau :', addError);
+      setError("Impossible d'ajouter ce formateur à votre réseau.");
+    } finally {
+      setAddingToNetwork(false);
+    }
+  };
+
+
   const frenchMonth =
     refDate.toLocaleDateString(
       'fr-FR',
@@ -1413,6 +1361,20 @@ export default function FormateurView() {
         Fiche formateur
       </h2>
 
+      {!inNetwork ? (
+        <div style={{ padding: 14, border: '1px solid #bfdbfe', borderRadius: 12, background: '#eff6ff', display: 'flex', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
+          <div>
+            <strong>Ce formateur n’est pas encore dans votre réseau.</strong>
+            <div style={{ marginTop: 4, color: '#475569', fontSize: 13 }}>
+              Consultez sa fiche puis ajoutez-le à votre réseau pour gérer vos informations internes et ses disponibilités dans votre espace OF.
+            </div>
+          </div>
+          <button className="button" type="button" onClick={handleAddToNetwork} disabled={addingToNetwork}>
+            {addingToNetwork ? 'Ajout…' : 'Ajouter à mon réseau'}
+          </button>
+        </div>
+      ) : null}
+
 
       <div
         style={{
@@ -1443,44 +1405,23 @@ export default function FormateurView() {
           value={trainer.codePostal}
         />
 
-        <Info
-          label="Statut"
-          value={trainer.statut}
-        />
+        {inNetwork ? (
+          <>
+            <Info label="Statut" value={trainer.statut} />
+            <Info
+              label="Tarif"
+              value={trainer.tarif != null ? `${trainer.tarif} €` : '—'}
+            />
+          </>
+        ) : null}
 
-        <Info
-          label="Tarif"
-          value={
-            trainer.tarif !=
-            null
-              ? `${trainer.tarif} €`
-              : '—'
-          }
-        />
-
-        <Info
-          label="Téléphone"
-          value={
-            trainer.telephone ||
-            '—'
-          }
-        />
-
-        <Info
-          label="Email"
-          value={
-            trainer.email ||
-            '—'
-          }
-        />
-
-        <Info
-          label="Adresse"
-          value={
-            trainer.adresse ||
-            '—'
-          }
-        />
+        {inNetwork ? (
+          <>
+            <Info label="Téléphone" value={trainer.telephone || '—'} />
+            <Info label="Email" value={trainer.email || '—'} />
+            <Info label="Adresse" value={trainer.adresse || '—'} />
+          </>
+        ) : null}
 
       </div>
 
@@ -1700,6 +1641,8 @@ export default function FormateurView() {
       />
 
 
+      {inNetwork ? (
+        <>
       <div>
         <strong>
           Notes internes sur le formateur :
@@ -1750,10 +1693,14 @@ export default function FormateurView() {
 
       </div>
 
+        </>
+      ) : null}
 
-      <hr />
+      {inNetwork ? <hr /> : null}
 
 
+      {inNetwork ? (
+        <>
       <div
         style={{
           display: 'flex',
@@ -2419,6 +2366,8 @@ export default function FormateurView() {
 
       <Legend />
 
+        </>
+      ) : null}
 
       {noteModalDay ? (
         <div

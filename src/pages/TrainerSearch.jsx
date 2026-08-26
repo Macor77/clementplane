@@ -545,46 +545,41 @@ export default function TrainerSearch() {
                     )}
                   </div>
 
-                  {trainer
-                    .already_in_network ? (
-                    <span
-                      style={{
-                        padding:
-                          '7px 10px',
-                        borderRadius:
-                          999,
-                        background:
-                          '#ecfdf5',
-                        color:
-                          '#047857',
-                        fontWeight:
-                          700,
-                        fontSize:
-                          13,
-                      }}
-                    >
-                      Déjà dans mon réseau
-                    </span>
-                  ) : (
+                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
                     <button
                       type="button"
-                      className="button button--primary button--compact"
-                      disabled={
-                        addingId ===
-                        trainer.id
-                      }
+                      className="button button--soft button--compact"
                       onClick={() =>
-                        handleAdd(
-                          trainer.id,
-                        )
+                        navigate(`/formateur/view/${trainer.id}?space=organization`)
                       }
                     >
-                      {addingId ===
-                      trainer.id
-                        ? 'Ajout…'
-                        : 'Ajouter à mon réseau'}
+                      Voir la fiche
                     </button>
-                  )}
+
+                    {trainer.already_in_network ? (
+                      <span
+                        style={{
+                          padding: '7px 10px',
+                          borderRadius: 999,
+                          background: '#ecfdf5',
+                          color: '#047857',
+                          fontWeight: 700,
+                          fontSize: 13,
+                        }}
+                      >
+                        Déjà dans mon réseau
+                      </span>
+                    ) : (
+                      <button
+                        type="button"
+                        className="button button--primary button--compact"
+                        disabled={addingId === trainer.id}
+                        onClick={() => handleAdd(trainer.id)}
+                      >
+                        {addingId === trainer.id ? 'Ajout…' : 'Ajouter à mon réseau'}
+                      </button>
+                    )}
+                  </div>
                 </div>
               );
             },

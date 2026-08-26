@@ -6,6 +6,7 @@ import {
 } from 'react';
 
 import { Link } from 'react-router-dom';
+import { getMonthDays } from '../../utils/trainerAvailabilityMobile';
 
 import {
   createMyAvailabilityNote,
@@ -259,6 +260,11 @@ export default function TrainerAvailability() {
   ] = useState(null);
 
   const [
+    expandedMobileDay,
+    setExpandedMobileDay,
+  ] = useState('');
+
+  const [
     historyModalDay,
     setHistoryModalDay,
   ] = useState(null);
@@ -306,6 +312,13 @@ export default function TrainerAvailability() {
         getMonthMatrix(
           refDate,
         ),
+      [refDate],
+    );
+
+
+  const monthDays =
+    useMemo(
+      () => getMonthDays(refDate),
       [refDate],
     );
 
@@ -1005,6 +1018,110 @@ export default function TrainerAvailability() {
             Chargement des disponibilités…
           </div>
         ) : (
+          <>
+          <div className="trainer-availability-mobile-list">
+            {monthDays.map((date) => {
+              const iso = toISODate(date);
+              const declaredStatus = availability[iso]?.status || '';
+              const dayCommitments = commitments[iso] || [];
+              const missionCommitment = dayCommitments.find((item) => item.status === 'mission') || null;
+              const optionCommitments = dayCommitments.filter((item) => item.status === 'option');
+              const missionId = missionCommitment?.missionId || null;
+              const visibleStatus = missionCommitment ? 'mission' : declaredStatus;
+              const locked = Boolean(missionCommitment);
+              const notes = notesByDay[iso] || [];
+              const history = historyByDay[iso] || [];
+              const expanded = expandedMobileDay === iso;
+              const mobileLabel = missionCommitment
+                ? 'Mission confirmée'
+                : optionCommitments.length > 0
+                  ? `${optionCommitments.length} option${optionCommitments.length > 1 ? 's' : ''}${declaredStatus ? ` · ${STATUS_LABELS[declaredStatus]}` : ''}`
+                  : STATUS_LABELS[visibleStatus || ''] || 'Non renseigné';
+
+              return (
+                <div
+                  key={`mobile-${iso}`}
+                  className={[
+                    'trainer-availability-mobile-day',
+                    visibleStatus ? `trainer-availability-mobile-day--${visibleStatus}` : '',
+                    sameDay(date, today) ? 'trainer-availability-mobile-day--today' : '',
+                    expanded ? 'trainer-availability-mobile-day--expanded' : '',
+                  ].filter(Boolean).join(' ')}
+                >
+                  <button
+                    type="button"
+                    className="trainer-availability-mobile-day__summary"
+                    aria-expanded={expanded}
+                    onClick={() => setExpandedMobileDay((current) => current === iso ? '' : iso)}
+                  >
+                    <span className="trainer-availability-mobile-day__date">
+                      <strong>{date.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric' })}</strong>
+                      {sameDay(date, today) ? <span>Aujourd’hui</span> : null}
+                    </span>
+                    <span className={`trainer-availability-mobile-day__badge trainer-availability-mobile-day__badge--${visibleStatus || 'empty'}`}>
+                      {mobileLabel}
+                    </span>
+                    <span className="trainer-availability-mobile-day__chevron" aria-hidden="true">{expanded ? '⌃' : '⌄'}</span>
+                  </button>
+
+                  {expanded ? (
+                    <div className="trainer-availability-mobile-day__details">
+                      {optionCommitments.length > 0 ? (
+                        <div className="trainer-availability-mobile-day__commitments">
+                          <button
+                            type="button"
+                            className="trainer-availability-mobile-day__option"
+                            onClick={() => setOptionModalDay(iso)}
+                          >
+                            Voir {optionCommitments.length} option{optionCommitments.length > 1 ? 's' : ''}
+                          </button>
+                          {optionCommitments.length === 1 && optionCommitments[0]?.missionId ? (
+                            <Link
+                              className="trainer-availability-mobile-day__mission-link trainer-availability-mobile-day__mission-link--option"
+                              to={`/formateur/missions/${optionCommitments[0].missionId}`}
+                            >
+                              Voir la mission
+                            </Link>
+                          ) : null}
+                        </div>
+                      ) : null}
+
+                      {locked ? (
+                        <div className="trainer-availability-mobile-day__commitments">
+                          <span className="trainer-availability-mobile-day__automatic">Mission confirmée · disponibilité automatique</span>
+                          {missionId ? (
+                            <Link
+                              className="trainer-availability-mobile-day__mission-link"
+                              to={`/formateur/missions/${missionId}`}
+                            >
+                              Voir la mission
+                            </Link>
+                          ) : null}
+                        </div>
+                      ) : (
+                        <StatusButtons
+                          iso={iso}
+                          currentStatus={declaredStatus}
+                          saving={savingDay === iso}
+                          onChange={handleStatusChange}
+                        />
+                      )}
+
+                      <div className="trainer-availability-mobile-day__actions">
+                        <button type="button" onClick={(event) => openNotes(event, iso)}>
+                          {notes.length ? `Note (${notes.length})` : 'Note'}
+                        </button>
+                        <button type="button" onClick={(event) => openHistory(event, iso)}>
+                          {history.length ? `Historique (${history.length})` : 'Historique'}
+                        </button>
+                      </div>
+                    </div>
+                  ) : null}
+                </div>
+              );
+            })}
+          </div>
+
           <div className="trainer-availability-grid">
 
             {monthMatrix
@@ -1368,6 +1485,7 @@ export default function TrainerAvailability() {
               )}
 
           </div>
+          </>
         )}
 
 
@@ -1842,6 +1960,7 @@ function TrainerMissionDetails({
 
   return (
     <div
+      className="trainer-availability-status-buttons"
       style={{
         display:
           'grid',
@@ -2131,6 +2250,7 @@ function StatusButtons({
 
           return (
             <button
+              className="trainer-availability-status-button"
               key={
                 option.label
               }

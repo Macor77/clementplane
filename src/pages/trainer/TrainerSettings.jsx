@@ -151,7 +151,7 @@ export default function TrainerSettings() {
   };
 
   return (
-    <div className="page-container">
+    <div className="page-container trainer-settings-page">
       <div className="page-heading">
         <div>
           <p className="page-eyebrow">PARAMÈTRES</p>

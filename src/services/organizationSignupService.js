@@ -7,6 +7,7 @@ export async function signUpOrganization({
   firstName,
   lastName,
   organizationName,
+  emailRedirectTo = null,
 }) {
   const { data, error } =
     await supabase.auth.signUp({
@@ -29,6 +30,10 @@ export async function signUpOrganization({
           organization_name:
             organizationName.trim(),
         },
+
+        ...(emailRedirectTo
+          ? { emailRedirectTo }
+          : {}),
       },
     });
 

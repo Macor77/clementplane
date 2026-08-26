@@ -75,7 +75,7 @@ export default function TrainerMissions() {
     return groups;
   }, [missions]);
 
-  return <div style={styles.page}>
+  return <div className="trainer-missions-page" style={styles.page}>
     <div className="page-heading">
       <div><p className="page-eyebrow">MISSIONS</p><h1>Mes missions</h1>
         <p>Retrouvez les missions que vous avez acceptées et celles confirmées par l’organisme de formation.</p></div>
@@ -87,7 +87,7 @@ export default function TrainerMissions() {
       <div style={styles.monthSeparator}><span>{monthLabel(group.key)}</span><div /></div>
       <div style={styles.list}>{group.missions.map((mission) => {
         const place = [mission.location, mission.postal_code, mission.city].filter(Boolean).join(' ');
-        return <article key={mission.mission_formateur_id} style={styles.row}>
+        return <article className="trainer-mission-row" key={mission.mission_formateur_id} style={styles.row}>
           <div style={styles.main}>
             <strong style={styles.period}>{formatPeriod(mission)}</strong>
             <div style={styles.meta}>
@@ -108,7 +108,7 @@ export default function TrainerMissions() {
               {place ? <span>📍 {place}</span> : null}
             </div>
           </div>
-          <div style={styles.statusStack}>
+          <div className="trainer-mission-status" style={styles.statusStack}>
             {mission.pending_change ? (
               <span style={styles.revalidation}>⚠️ Nouvelles conditions à valider</span>
             ) : null}

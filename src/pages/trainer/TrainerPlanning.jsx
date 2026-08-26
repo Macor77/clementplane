@@ -6,6 +6,10 @@ import {
 
 import { Link } from 'react-router-dom';
 
+import PlanningFilterMenu from '../../components/planning/PlanningFilterMenu';
+import PlanningDayModal from '../../components/planning/PlanningDayModal';
+import { filterTrainerPlanningItems, getTrainerDayItems, getTrainerOrganizationOptions } from '../../utils/planningFilters';
+
 import {
   getMyMissionProposals,
 } from '../../services/trainerProposalService';
@@ -294,11 +298,10 @@ export default function TrainerPlanning() {
   const [
     selectedDay,
     setSelectedDay,
-  ] = useState(
-    () => toISODate(
-      new Date(),
-    ),
-  );
+  ] = useState('');
+
+  const [selectedOrganizationIds, setSelectedOrganizationIds] = useState([]);
+  const [selectedStatuses, setSelectedStatuses] = useState([]);
 
 
   useEffect(() => {
@@ -352,13 +355,24 @@ export default function TrainerPlanning() {
     );
 
 
+  const organizationOptions = useMemo(
+    () => getTrainerOrganizationOptions(planningItems),
+    [planningItems],
+  );
+
+  const filteredPlanningItems = useMemo(
+    () => filterTrainerPlanningItems(planningItems, { organizationIds: selectedOrganizationIds, statuses: selectedStatuses }),
+    [planningItems, selectedOrganizationIds, selectedStatuses],
+  );
+
+
   const itemsByDay =
     useMemo(() => {
       const map = {};
 
       for (
         const item of
-        planningItems
+        filteredPlanningItems
       ) {
         if (!map[item.date]) {
           map[item.date] = [];
@@ -370,7 +384,7 @@ export default function TrainerPlanning() {
       }
 
       return map;
-    }, [planningItems]);
+    }, [filteredPlanningItems]);
 
 
   const monthMatrix =
@@ -398,9 +412,10 @@ export default function TrainerPlanning() {
 
 
   const selectedItems =
-    itemsByDay[
-      selectedDay
-    ] || [];
+    useMemo(
+      () => getTrainerDayItems(filteredPlanningItems, selectedDay),
+      [filteredPlanningItems, selectedDay],
+    );
 
 
   const monthItems =
@@ -470,11 +485,7 @@ export default function TrainerPlanning() {
       ),
     );
 
-    setSelectedDay(
-      toISODate(
-        today,
-      ),
-    );
+    setSelectedDay('');
   };
 
 
@@ -581,8 +592,21 @@ export default function TrainerPlanning() {
               onClick={() =>
                 changeMonth(-1)
               }
+              aria-label="Mois précédent"
             >
               ‹
+            </button>
+
+
+            <button
+              type="button"
+              className="icon-button"
+              onClick={() =>
+                changeMonth(1)
+              }
+              aria-label="Mois suivant"
+            >
+              ›
             </button>
 
 
@@ -593,23 +617,37 @@ export default function TrainerPlanning() {
 
             <button
               type="button"
-              className="icon-button"
-              onClick={() =>
-                changeMonth(1)
-              }
-            >
-              ›
-            </button>
-
-
-            <button
-              type="button"
               className="button button--soft"
               onClick={
                 goToday
               }
             >
               Aujourd’hui
+            </button>
+
+            <div className="trainer-planning-toolbar__spacer" />
+
+            <PlanningFilterMenu
+              label="Organismes"
+              options={organizationOptions}
+              selected={selectedOrganizationIds}
+              onChange={setSelectedOrganizationIds}
+            />
+
+            <PlanningFilterMenu
+              label="Statut"
+              options={[{ id: 'affecte', label: 'Mission confirmée' }, { id: 'accepte', label: 'Option' }]}
+              selected={selectedStatuses}
+              onChange={setSelectedStatuses}
+            />
+
+            <button
+              type="button"
+              className="planning-reset"
+              disabled={!selectedOrganizationIds.length && !selectedStatuses.length}
+              onClick={() => { setSelectedOrganizationIds([]); setSelectedStatuses([]); }}
+            >
+              Réinitialiser
             </button>
 
           </div>
@@ -687,11 +725,9 @@ export default function TrainerPlanning() {
                         className={
                           classes
                         }
-                        onClick={() =>
-                          setSelectedDay(
-                            iso,
-                          )
-                        }
+                        onClick={() => {
+                          if (dayItems.length) setSelectedDay(iso);
+                        }}
                       >
 
                         <span className="trainer-planning-day__number">
@@ -774,209 +810,44 @@ export default function TrainerPlanning() {
         </div>
 
 
-        <aside className="trainer-planning-sidebar">
-
-          <div className="panel-card trainer-planning-selected">
-
-            <p className="page-eyebrow">
-              JOURNÉE
-            </p>
-
-            <h2>
-              {formatLongDate(
-                selectedDay,
-              )}
-            </h2>
-
-
-            {selectedItems.length ===
-            0 ? (
-              <p className="trainer-planning-empty">
-                Aucun engagement sur
-                cette journée.
-              </p>
-            ) : (
-              <div className="trainer-planning-selected__list">
-
-                {selectedItems.map(
-                  (item) => (
-                    <article
-                      className={`trainer-planning-detail-card trainer-planning-detail-card--${
-                        item.status ===
-                        'affecte'
-                          ? 'mission'
-                          : 'option'
-                      }`}
-                      key={item.id}
-                    >
-
-                      <span className="trainer-planning-detail-card__status">
-                        {getStatusLabel(
-                          item.status,
-                        )}
-                      </span>
-
-
-                      <h3>
-                        {
-                          item.formation ||
-                          item.title
-                        }
-                      </h3>
-
-
-                      {item.organizationName ? (
-                        <div>
-                          <span>Organisme de formation</span>
-                          <strong>{item.organizationName}</strong>
-                          <Link
-                            to={`/formateur/missions/${item.missionId}/organisme`}
-                            style={{ color: '#2563eb', fontSize: 10, fontWeight: 750, textDecoration: 'none' }}
-                          >
-                            Voir le contact
-                          </Link>
-                        </div>
-                      ) : null}
-
-                      {item.client ? (
-                        <div>
-                          <span>
-                            Client
-                          </span>
-
-                          <strong>
-                            {
-                              item.client
-                            }
-                          </strong>
-                        </div>
-                      ) : null}
-
-
-                      {item.location ? (
-                        <div>
-                          <span>
-                            Lieu
-                          </span>
-
-                          <strong>
-                            {
-                              item.location
-                            }
-                          </strong>
-                        </div>
-                      ) : null}
-
-
-                      {item.startTime ||
-                      item.endTime ? (
-                        <div>
-                          <span>
-                            Horaires
-                          </span>
-
-                          <strong>
-                            {[
-                              formatTime(
-                                item.startTime,
-                              ),
-
-                              formatTime(
-                                item.endTime,
-                              ),
-                            ]
-                              .filter(
-                                Boolean,
-                              )
-                              .join(
-                                ' – ',
-                              )}
-                          </strong>
-                        </div>
-                      ) : null}
-
-
-                      {item.offeredFee !=
-                      null ? (
-                        <div>
-                          <span>
-                            Rémunération
-                          </span>
-
-                          <strong>
-                            {
-                              item.offeredFee
-                            }{' '}
-                            €
-                          </strong>
-                        </div>
-                      ) : null}
-
-
-                      {item.notes ? (
-                        <div className="trainer-planning-detail-card__notes">
-
-                          <span>
-                            Informations
-                          </span>
-
-                          <strong>
-                            {
-                              item.notes
-                            }
-                          </strong>
-
-                        </div>
-                      ) : null}
-
-                      <Link
-                        to={`/formateur/missions/${item.missionId}`}
-                        className="button button--soft"
-                        style={{
-                          display: 'inline-flex',
-                          justifyContent: 'center',
-                          marginTop: 10,
-                          textDecoration: 'none',
-                        }}
-                      >
-                        Voir la mission
-                      </Link>
-
-                    </article>
-                  ),
-                )}
-
-              </div>
-            )}
-
-          </div>
-
-
-          <div className="trainer-planning-legend">
-
-            <div>
-              <span className="trainer-planning-dot trainer-planning-dot--option" />
-
-              <span>
-                Option : proposition
-                acceptée, en attente de
-                confirmation.
-              </span>
+        {selectedDay && selectedItems.length ? (
+          <PlanningDayModal
+            title={formatLongDate(selectedDay)}
+            subtitle={`${selectedItems.length} engagement${selectedItems.length > 1 ? 's' : ''} sur cette journée`}
+            onClose={() => setSelectedDay('')}
+          >
+            <div className="planning-day-modal__list">
+              {selectedItems.map((item) => (
+                <article
+                  className={`planning-day-summary planning-day-summary--${item.status === 'affecte' ? 'mission' : 'option'}`}
+                  key={item.id}
+                >
+                  <div className="planning-day-summary__top">
+                    <span className={`planning-day-summary__status planning-day-summary__status--${item.status === 'affecte' ? 'mission' : 'option'}`}>
+                      {getStatusLabel(item.status)}
+                    </span>
+                    {item.startTime ? <strong>{formatTime(item.startTime)}</strong> : null}
+                  </div>
+                  <h3>{item.formation || item.title}</h3>
+                  <div className="planning-day-summary__meta">
+                    {item.organizationName ? <p><span>Organisme</span><strong>{item.organizationName}</strong></p> : null}
+                    {item.client ? <p><span>Client</span><strong>{item.client}</strong></p> : null}
+                    {item.location ? <p><span>Lieu</span><strong>{item.location}</strong></p> : null}
+                    {(item.startTime || item.endTime) ? (
+                      <p><span>Horaires</span><strong>{[formatTime(item.startTime), formatTime(item.endTime)].filter(Boolean).join(' – ')}</strong></p>
+                    ) : null}
+                  </div>
+                  <Link
+                    to={`/formateur/missions/${item.missionId}`}
+                    className="button button--primary planning-day-summary__action"
+                  >
+                    Voir la mission
+                  </Link>
+                </article>
+              ))}
             </div>
-
-            <div>
-              <span className="trainer-planning-dot trainer-planning-dot--mission" />
-
-              <span>
-                Mission confirmée :
-                vous êtes affecté à la
-                mission.
-              </span>
-            </div>
-
-          </div>
-
-        </aside>
+          </PlanningDayModal>
+        ) : null}
 
 
       </div>

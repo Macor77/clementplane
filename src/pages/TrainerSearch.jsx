@@ -290,6 +290,7 @@ export default function TrainerSearch() {
 
   return (
     <div
+      className="of-trainer-search-page"
       style={{
         padding: 28,
         maxWidth: 980,

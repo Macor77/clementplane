@@ -383,6 +383,7 @@ export default function Listing() {
 
       {formateurs.some((formateur) => !formateur.claimed) ? (
         <div
+          className="listing-invite-banner"
           style={{
             marginBottom: 14,
             padding: 16,

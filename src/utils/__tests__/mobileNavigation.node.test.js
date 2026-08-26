@@ -1,12 +1,13 @@
-import test from 'node:test';
-import assert from 'node:assert/strict';
+import { describe, expect, it } from 'vitest';
 import { isMobileNavigationCloseKey } from '../mobileNavigation.js';
 
-test('Escape ferme la navigation mobile', () => {
-  assert.equal(isMobileNavigationCloseKey('Escape'), true);
-});
+describe('mobile navigation', () => {
+  it('Escape ferme la navigation mobile', () => {
+    expect(isMobileNavigationCloseKey('Escape')).toBe(true);
+  });
 
-test('les autres touches ne ferment pas la navigation mobile', () => {
-  assert.equal(isMobileNavigationCloseKey('Enter'), false);
-  assert.equal(isMobileNavigationCloseKey(' '), false);
+  it('les autres touches ne ferment pas la navigation mobile', () => {
+    expect(isMobileNavigationCloseKey('Enter')).toBe(false);
+    expect(isMobileNavigationCloseKey(' ')).toBe(false);
+  });
 });

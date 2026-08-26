@@ -809,7 +809,7 @@ export default function MissionDetail() {
   }
 
   return (
-    <div style={styles.page}>
+    <div className="of-mission-detail-page" style={styles.page}>
       {proposalContactTarget ? (
         <div style={styles.modalBackdrop}>
           <div

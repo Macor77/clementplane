@@ -1,4 +1,4 @@
-export const FORMPLANE_VERSION = 'v0.18.0';
+export const FORMPLANE_VERSION = 'v0.19.0';
 
 export const discoverFeatures = [
   {
@@ -95,9 +95,14 @@ export const trainerTutorials = [
     tip: 'Vous partagez votre disponibilité utile au travail, pas un agenda public avec le détail de vos activités.',
   },
   {
-    id: 'trainer-share', title: 'Partager mes disponibilités avec un organisme', summary: 'Prévenir un contact que mon planning est à jour et l’inviter à consulter Formaplane.', route: '/formateur/partage-disponibilites', routeLabel: 'Partager mes disponibilités',
-    steps: ['Ajoutez ou sélectionnez le contact de l’organisme que vous souhaitez informer.', 'Choisissez les mois de disponibilités à partager.', 'Vérifiez le destinataire puis envoyez le partage depuis Formaplane.', 'Après un envoi, un délai de 20 jours complets s’applique pour ce même couple formateur + contact afin d’éviter les relances répétées.'],
-    tip: 'Si une mise à jour doit être signalée avant la fin du délai, indiquez simplement à l’organisme que vos disponibilités sont actualisées et consultables en permanence dans Formaplane.',
+    id: 'trainer-organizations', title: 'Gérer mes organismes partenaires', summary: 'Centraliser mes contacts OF, voir lesquels utilisent Formaplane et les inviter à rejoindre la plateforme.', route: '/formateur/mes-of', routeLabel: 'Ouvrir Mes OF',
+    steps: ['Ouvrez « Mes OF » pour retrouver les organismes avec lesquels vous travaillez.', 'Ajoutez ou mettez à jour un organisme partenaire et vérifiez s’il utilise déjà Formaplane.', 'S’il n’est pas encore inscrit, utilisez « Inviter sur Formaplane » : une nouvelle invitation ne peut pas être renvoyée avant 7 jours complets.', 'Lorsqu’un OF rejoint Formaplane, il peut consulter votre fiche et vous ajouter à son réseau afin d’accéder directement à vos disponibilités à jour.'],
+    tip: 'Plus vos organismes partenaires utilisent Formaplane, moins vous avez besoin de leur renvoyer votre planning à chaque modification.',
+  },
+  {
+    id: 'trainer-share', title: 'Partager mes disponibilités avec un organisme', summary: 'Utiliser l’e-mail ou le PDF lorsque l’organisme ne consulte pas encore directement votre planning dans Formaplane.', route: '/formateur/partage-disponibilites', routeLabel: 'Partager mes disponibilités',
+    steps: ['Sélectionnez un organisme enregistré dans « Mes OF ».', 'Choisissez les mois de disponibilités à partager.', 'Vérifiez le destinataire puis envoyez le partage depuis Formaplane.', 'Après un envoi, un délai de 20 jours complets s’applique pour ce même couple formateur + contact afin d’éviter les relances répétées.'],
+    tip: 'Le plus simple reste d’inviter l’organisme à utiliser Formaplane : il pourra alors consulter directement vos disponibilités à jour sans nouvel envoi.',
   },
   {
     id: 'trainer-proposals', title: 'Répondre simplement à une proposition de mission', summary: 'Recevoir les informations utiles et accepter ou refuser sans multiplier les échanges.', route: '/formateur/propositions', routeLabel: 'Voir mes propositions',
@@ -129,15 +134,15 @@ export const publicRoadmap = {
   available: {
     status: 'Disponible',
     title: 'Le cœur de Formaplane',
-    description: 'Réseau privé de formateurs, recherche, import, missions, propositions, disponibilités, planning, partage et communications transactionnelles.',
+    description: 'Réseau privé de formateurs, recherche, import, missions, propositions, disponibilités, planning, partage, Mes OF, invitations partenaires et expérience mobile optimisée.',
   },
   future: [
-    'Améliorer l’expérience utilisateur.',
-    'Optimiser l’utilisation de Formaplane depuis un mobile.',
     'Enrichir la fiche formateur pour lui permettre de détailler davantage son profil : expériences, compétences, formations et autres informations professionnelles.',
     'Stocker les documents et données de référencement d’un formateur et permettre leur partage maîtrisé : CV, NDA, avis SIREN et autres justificatifs.',
     'Ajouter une messagerie interne pour permettre aux organismes de formation et aux formateurs d’échanger directement dans Formaplane autour d’une session de formation.',
     'Permettre au formateur de créer lui-même une mission dans son agenda lorsque l’organisme qui la lui confie n’utilise pas encore Formaplane, afin de centraliser son planning et de mettre automatiquement ses disponibilités à jour.',
+    'Permettre d’installer Formaplane sur un smartphone avec une icône sur l’écran d’accueil et une ouverture proche d’une application mobile.',
+    'Synchroniser automatiquement les missions Formaplane d’un formateur vers son Google Agenda, avec les informations utiles et un lien direct vers la mission.',
     'Permettre aux apprenants d’évaluer un formateur après une mission afin de construire progressivement un système de réputation interne à Formaplane.',
     'Une expérience encore plus fluide pour rechercher, proposer et affecter des missions.',
     'Des améliorations régulières issues des retours des organismes et des formateurs.',

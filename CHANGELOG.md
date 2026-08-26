@@ -1,21 +1,50 @@
 # CHANGELOG - Formaplane
 
 
-## Sprint 19 — En cours — Optimisation UX & expérience mobile — 26 août 2026
+## v0.19.0 — Sprint 19 — Optimisation UX & expérience mobile — 26 août 2026
 
-### UX & mobile
-- refonte des plannings OF/Formateur avec filtres et détail de journée ;
-- navigation mobile et optimisation progressive de l’espace Formateur ;
-- vue mobile compacte des disponibilités.
+### UX & expérience mobile
+- refonte du socle de navigation mobile avec header compact et menu latéral dédié sur smartphone ;
+- adaptation responsive des principaux écrans Formateur et OF, sans dégrader les usages desktop ;
+- optimisation des zones tactiles, formulaires, modales, cartes, listes et espacements ;
+- transformation des disponibilités Formateur en liste mobile compacte et dépliable ;
+- adaptation du listing Formateurs en cartes mobiles plus compactes ;
+- affichage des numéros de jours dans le mini-planning du listing ;
+- suppression des principaux débordements horizontaux sur petits écrans.
+
+### Plannings OF & Formateur
+- refonte des barres de navigation et de filtres au-dessus du calendrier ;
+- filtres Formateurs + Statut côté OF et Organismes + Statut côté Formateur ;
+- affichage de tous les organismes/formateurs et statuts par défaut ;
+- ajout d’une fenêtre de détail de journée avec accès direct à la mission ;
+- suppression de la colonne latérale permanente du planning Formateur ;
+- calendrier mensuel mobile OF affiché sur 7 colonnes sans défilement horizontal, dans l’esprit d’un agenda mobile ;
+- conservation des cartes de missions existantes avec présentation compacte sur smartphone.
 
 ### Mes OF & invitation des organismes
-- nouveau carnet central `Mes OF` dans l’espace Formateur ;
-- synchronisation avec `Partager mes disponibilités` ;
+- nouveau carnet central **Mes OF** dans l’espace Formateur ;
+- alimentation automatique de la page **Partager mes disponibilités** depuis ce carnet ;
 - statut visuel indiquant si l’OF utilise déjà Formaplane et si le formateur est déjà dans son réseau ;
-- invitation OF avec cooldown serveur de 7 jours par formateur + adresse e-mail ;
+- invitation d’un OF à rejoindre Formaplane avec délai serveur de 7 jours par couple formateur + adresse e-mail ;
 - e-mail d’invitation conservant le contexte du formateur ;
-- après inscription/connexion, redirection vers la fiche du formateur avec CTA `Ajouter à mon réseau` ;
-- consultation d’un profil public revendiqué par un OF authentifié même avant référencement, sans exposer les coordonnées détaillées ni les données internes OF.
+- après inscription ou connexion, redirection vers la fiche du formateur invitant ;
+- ajout du CTA **Ajouter à mon réseau** sur la fiche d’un formateur non encore référencé ;
+- consultation par un OF authentifié d’un profil Formaplane revendiqué même avant référencement, sans exposer les données internes propres aux autres OF ;
+- message pédagogique à l’entrée de **Partager mes disponibilités** pour encourager d’abord l’invitation des OF sur Formaplane.
+
+### Découvrir Formaplane & roadmap
+- version affichée mise à jour vers `v0.19.0` ;
+- retrait de l’optimisation mobile des évolutions futures puisqu’elle est désormais livrée ;
+- ajout de **Formaplane installable sur mobile (PWA)** juste après la création autonome de missions par le formateur ;
+- ajout de la **synchronisation Formaplane → Google Agenda** immédiatement après la PWA ;
+- ajout de ces deux évolutions dans la roadmap publique visible par les utilisateurs ;
+- mise à jour du guide Formateur pour présenter **Mes OF** et repositionner le partage par e-mail/PDF comme solution complémentaire.
+
+### Recette
+- recette visuelle mobile complète réalisée sur les espaces Formateur et OF ;
+- tests automatisés : **62/62 réussis** ;
+- build Vite de production : réussi ;
+- parcours réel d’invitation OF validé jusqu’à l’inscription, la fiche du formateur et l’ajout au réseau.
 
 
 ## v0.18.0 — Sprint 18 — Tests automatisés & surveillance — 25 août 2026

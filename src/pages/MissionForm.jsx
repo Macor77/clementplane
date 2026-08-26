@@ -335,7 +335,7 @@ export default function MissionForm() {
   }
 
   return (
-    <div style={styles.page}>
+    <div className="of-mission-form-page" style={styles.page}>
       <div style={styles.header}>
         <div>
           <h1 style={styles.title}>

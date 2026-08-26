@@ -1,7 +1,7 @@
 # ROADMAP — Formaplane
 
-> Mise à jour : clôture officielle du Sprint 18 — 25 août 2026  
-> Version actuelle : `v0.18.0`
+> Mise à jour : clôture officielle du Sprint 19 — 26 août 2026  
+> Version actuelle : `v0.19.0`
 
 ## Vision
 
@@ -35,9 +35,11 @@ Après le Sprint 14, la priorité est désormais de rendre Formaplane plus auton
 | 16 | Landing page / site public Formaplane | ✅ TERMINÉ |
 | 17 | Dashboard Admin, mini-CRM & statistiques d'utilisation | ✅ TERMINÉ |
 | 18 | Tests automatisés & surveillance | ✅ TERMINÉ |
-| 19 | Optimisation UX & expérience mobile | 🔜 À FAIRE |
+| 19 | Optimisation UX & expérience mobile | ✅ TERMINÉ |
 | 20 | Création de missions par le formateur dans son propre agenda | 🔜 À FAIRE |
-| 21+ | Évolutions guidées par la bêta | 🧭 PRÉVISIONNEL |
+| 21 | Formaplane installable sur mobile (PWA) | 🔜 À FAIRE |
+| 22 | Synchronisation des missions avec Google Agenda | 🔜 À FAIRE |
+| 23+ | Évolutions guidées par la bêta | 🧭 PRÉVISIONNEL |
 
 ---
 
@@ -621,22 +623,34 @@ Détecter les régressions et problèmes techniques plus tôt, tout en conservan
 
 ---
 
-# Sprint 19 — Optimisation UX & expérience mobile 🔜
+# Sprint 19 — Optimisation UX & expérience mobile ✅
 
-### Objectif
-Rendre Formaplane plus agréable, plus intuitif et surtout réellement confortable à utiliser depuis un smartphone.
+### Objectif atteint
+Rendre Formaplane plus agréable, plus intuitif et réellement confortable à utiliser depuis un smartphone, sans dégrader l’expérience desktop.
 
-### Périmètre cible
-- revue responsive des principales pages OF et Formateur ;
-- optimisation de la navigation et des menus sur mobile ;
-- amélioration des formulaires, modales, tableaux, listes et fiches sur petits écrans ;
-- optimisation des missions, calendriers et plannings pour l'usage tactile ;
-- amélioration de la lisibilité, des espacements, des boutons et zones tactiles ;
-- suppression des débordements et éléments trop petits ;
-- revue visuelle globale desktop, avec priorité mobile-first.
+### Livré
+- navigation mobile dédiée avec header compact et menu latéral ;
+- adaptation responsive des principaux écrans OF et Formateur ;
+- plannings OF/Formateur harmonisés avec filtres au-dessus du calendrier et détail de journée ;
+- calendrier OF mobile sur 7 colonnes sans défilement horizontal ;
+- disponibilité Formateur en vue mobile compacte et dépliable ;
+- listing Formateurs adapté en cartes mobiles, avec mini-planning et numéros de jours lisibles ;
+- formulaires, modales, boutons et zones tactiles optimisés pour smartphone ;
+- carnet central **Mes OF** côté Formateur ;
+- synchronisation de **Mes OF** avec **Partager mes disponibilités** ;
+- statut OF sur Formaplane / hors Formaplane et présence du formateur dans le réseau ;
+- invitation OF avec délai serveur de 7 jours ;
+- parcours invitation → inscription/connexion → fiche du formateur → **Ajouter à mon réseau** ;
+- message pédagogique encourageant les formateurs à inviter leurs OF plutôt qu’à renvoyer systématiquement leurs disponibilités.
 
-### Enjeu produit
-Permettre une utilisation quotidienne confortable de Formaplane sur smartphone sans dégrader l'expérience desktop.
+### Recette
+- parcours mobiles Formateur et OF validés visuellement ;
+- 62/62 tests automatisés réussis ;
+- build de production réussi ;
+- parcours réel d’invitation OF validé.
+
+### Version
+`v0.19.0`
 
 ---
 
@@ -657,7 +671,43 @@ Permettre au formateur d’ajouter lui-même dans son agenda Formaplane une miss
 
 ---
 
-# Sprints 21+ — Prévisionnels
+# Sprint 21 — Formaplane installable sur mobile (PWA) 🔜
+
+### Objectif
+Permettre aux utilisateurs d’installer Formaplane sur leur smartphone et de l’ouvrir depuis une icône comme une application, sans recréer le produit en application native.
+
+### Périmètre cible
+- PWA installable sur Android et iPhone ;
+- icône Formaplane et ouverture en mode application ;
+- écran de lancement et métadonnées adaptées ;
+- invitation simple et non intrusive à installer Formaplane sur mobile ;
+- détection pour ne pas reproposer inutilement l’installation lorsqu’elle est déjà réalisée ;
+- vérification des principaux parcours dans le mode installé.
+
+### Enjeu produit
+Rendre l’accès quotidien à Formaplane aussi naturel qu’une application mobile tout en conservant un seul produit web à maintenir.
+
+---
+
+# Sprint 22 — Synchronisation Google Agenda 🔜
+
+### Objectif
+Permettre au formateur de retrouver automatiquement ses missions Formaplane dans son Google Agenda.
+
+### Périmètre cible
+- connexion sécurisée du compte Google du formateur ;
+- synchronisation initiale à sens unique **Formaplane → Google Agenda** ;
+- création automatique d’un événement lors de la confirmation d’une mission ;
+- mise à jour ou suppression de l’événement si la mission change ou est annulée ;
+- informations utiles dans l’événement : mission, horaires, lieu et lien direct vers Formaplane ;
+- conservation de l’identifiant Google de l’événement afin d’éviter les doublons.
+
+### Enjeu produit
+Éviter une nouvelle double saisie et permettre au formateur de conserver Google Agenda comme agenda personnel tout en utilisant Formaplane comme source métier de ses missions.
+
+---
+
+# Sprints 23+ — Prévisionnels
 
 Ordre volontairement non figé :
 - améliorations UX et productivité ;
@@ -666,7 +716,6 @@ Ordre volontairement non figé :
 - notifications et centre d'activité ;
 - statistiques métier destinées aux OF ;
 - documents et pièces liées aux missions ;
-- intégrations calendrier ;
 - communications SMS ;
 - notifications Push ;
 - automatisations et relances avancées ;
@@ -678,7 +727,7 @@ Ordre volontairement non figé :
 
 **Retours utilisateurs + fréquence du besoin + valeur métier + risque technique.**
 
-Les Sprints 13 à 20 constituent le bloc stratégique en cours. À partir du Sprint 21, la roadmap reste volontairement souple.
+Les Sprints 13 à 22 constituent le bloc stratégique en cours. À partir du Sprint 23, la roadmap reste volontairement souple.
 
 ---
 
@@ -706,11 +755,13 @@ Un sprint est terminé lorsque :
 # Priorité actuelle
 
 ```text
-v0.18.0 — Sprint 18 officiellement clôturé
-↓
-Sprint 19 — Optimisation UX & expérience mobile
+v0.19.0 — Sprint 19 officiellement clôturé
 ↓
 Sprint 20 — Création de missions par le formateur
 ↓
-Sprint 21+ — Évolutions guidées par la bêta
+Sprint 21 — Formaplane installable sur mobile (PWA)
+↓
+Sprint 22 — Synchronisation Google Agenda
+↓
+Sprint 23+ — Évolutions guidées par la bêta
 ```

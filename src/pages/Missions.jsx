@@ -260,8 +260,8 @@ export default function Missions() {
   };
 
   return (
-    <div style={styles.page}>
-      <header style={styles.header}>
+    <div className="of-missions-page" style={styles.page}>
+      <header className="of-missions-header" style={styles.header}>
         <div>
           <div style={styles.eyebrow}>
             MISSIONS
@@ -287,7 +287,7 @@ export default function Missions() {
         </Link>
       </header>
 
-      <div style={styles.viewTabs}>
+      <div className="of-missions-tabs" style={styles.viewTabs}>
         {VIEW_FILTERS.map(
           (item) => {
             const active =
@@ -325,7 +325,7 @@ export default function Missions() {
         )}
       </div>
 
-      <section style={styles.toolbar}>
+      <section className="of-missions-toolbar" style={styles.toolbar}>
         <input
           type="search"
           value={search}
@@ -537,6 +537,7 @@ function MissionRow({
 
   return (
     <article
+      className="of-mission-row"
       onClick={onOpen}
       style={styles.row}
     >

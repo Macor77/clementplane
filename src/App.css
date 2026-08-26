@@ -5467,3 +5467,374 @@ textarea {
     padding-top: 9px;
   }
 }
+
+
+/* =========================================================
+   Sprint 19 — Lot mobile complet espace OF
+   ========================================================= */
+@media (max-width: 720px) {
+  .of-dashboard-page,
+  .listing-page,
+  .planning-page,
+  .of-missions-page,
+  .of-mission-detail-page,
+  .of-mission-form-page,
+  .of-trainer-view-page,
+  .of-trainer-search-page,
+  .of-settings-page {
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    padding-bottom: 22px !important;
+    box-sizing: border-box;
+  }
+
+  .of-dashboard-page .page-heading { gap: 10px; }
+  .of-dashboard-page .page-heading .button {
+    width: 100%; min-height: 44px; justify-content: center;
+  }
+  .of-dashboard-page .dashboard-grid {
+    grid-template-columns: 1fr !important; gap: 10px;
+  }
+
+  .listing-page__header {
+    display: grid; grid-template-columns: 1fr; gap: 10px;
+  }
+  .listing-page__header > div:last-child,
+  .listing-page__header .button-group {
+    width: 100%; display: grid !important; grid-template-columns: 1fr !important; gap: 7px !important;
+  }
+  .listing-page__header button,
+  .listing-page__header .button,
+  .listing-page__header a { min-height: 42px !important; }
+
+  .listing-invite-banner {
+    padding: 12px !important; border-radius: 11px !important;
+    font-size: 12px !important; line-height: 1.45 !important;
+  }
+
+  .listing-filters { padding: 10px; }
+  .listing-filters__row,
+  .listing-filters__row--search {
+    grid-template-columns: 1fr !important; gap: 7px;
+  }
+  .listing-filters .compact-control { min-height: 44px; font-size: 12px; }
+  .listing-filters__footer {
+    align-items: stretch; flex-direction: column;
+  }
+  .listing-statuses {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
+  }
+  .listing-status-filter { min-height: 38px; justify-content: center; }
+  .listing-filters__summary { justify-content: space-between; gap: 8px; }
+
+  .listing-table-card {
+    overflow: visible !important; border: 0; background: transparent;
+  }
+  .listing-table { min-width: 0 !important; display: block; }
+  .listing-table colgroup,
+  .listing-table thead { display: none; }
+  .listing-table tbody { display: grid; gap: 10px; }
+  .listing-table tbody tr {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0 10px;
+    padding: 13px; border: 1px solid #e2e8f0; border-radius: 13px;
+    background: #fff; box-shadow: 0 1px 3px rgba(15, 23, 42, .05);
+  }
+  .listing-table tbody td {
+    display: block; width: auto !important; height: auto !important;
+    min-width: 0; padding: 7px 0 !important; border-bottom: 0;
+  }
+  .listing-table tbody td:first-child,
+  .listing-table tbody td:last-child,
+  .listing-table__empty { grid-column: 1 / -1; }
+
+  .listing-table tbody td:nth-child(2)::before,
+  .listing-table tbody td:nth-child(3)::before,
+  .listing-table tbody td:nth-child(4)::before {
+    display: block; margin-bottom: 3px; color: #94a3b8;
+    font-size: 9px; font-weight: 800; letter-spacing: .055em; text-transform: uppercase;
+  }
+  .listing-table tbody td:nth-child(2)::before { content: "Localisation"; }
+  .listing-table tbody td:nth-child(3)::before { content: "Statut"; }
+  .listing-table tbody td:nth-child(4)::before { content: "Distance"; }
+
+  .trainer-cell__name { font-size: 15px; white-space: normal; }
+  .trainer-cell__skills,
+  .trainer-cell__equipment { font-size: 10px; white-space: normal; }
+  .trainer-cell__actions {
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px; margin-top: 8px;
+  }
+  .trainer-cell__actions button {
+    min-height: 38px; padding: 7px 8px; border: 1px solid #dbe4ee;
+    border-radius: 8px; background: #f8fafc; font-size: 10px;
+  }
+  .listing-table__planning-cell {
+    overflow-x: auto; padding-top: 10px !important; border-top: 1px solid #f1f5f9 !important;
+  }
+  .listing-table__planning-cell > * { min-width: 600px; }
+
+  .planning-page .planning-toolbar { align-items: stretch; gap: 8px; }
+  .planning-page .planning-toolbar__navigation,
+  .planning-page .planning-toolbar__filters { width: 100%; flex-wrap: wrap; }
+  .planning-page .planning-toolbar__navigation {
+    display: grid; grid-template-columns: auto auto minmax(0, 1fr) auto;
+  }
+  .planning-page .planning-toolbar__filters {
+    display: grid; grid-template-columns: 1fr 1fr;
+  }
+  .planning-page .planning-reset { grid-column: 1 / -1; min-height: 40px; }
+  .planning-page .calendar-card { width: 100%; overflow-x: auto; }
+  .planning-page .calendar-weekdays,
+  .planning-page .calendar-grid { min-width: 680px !important; }
+  .planning-page .calendar-day { min-height: 100px; }
+  .planning-page .planning-day-summary__action {
+    width: 100%; min-height: 42px; justify-content: center;
+  }
+
+  .of-missions-page { padding: 0 !important; }
+  .of-missions-header {
+    display: grid !important; grid-template-columns: 1fr !important; gap: 10px !important;
+  }
+  .of-missions-header a {
+    width: 100% !important; min-height: 44px !important;
+    justify-content: center !important; box-sizing: border-box;
+  }
+  .of-missions-tabs {
+    display: flex !important; width: 100%; gap: 6px !important;
+    overflow-x: auto; padding-bottom: 3px; scrollbar-width: none;
+  }
+  .of-missions-tabs::-webkit-scrollbar { display: none; }
+  .of-missions-tabs > button { flex: 0 0 auto; min-height: 40px; }
+
+  .of-missions-toolbar {
+    display: grid !important; grid-template-columns: 1fr !important;
+    gap: 7px !important; padding: 10px !important;
+  }
+  .of-missions-toolbar input,
+  .of-missions-toolbar select {
+    width: 100% !important; min-height: 44px !important; box-sizing: border-box;
+  }
+  .of-missions-toolbar > strong { margin-left: 0 !important; }
+
+  .of-mission-row {
+    display: grid !important; grid-template-columns: 1fr !important;
+    gap: 9px !important; min-height: 0 !important; padding: 13px !important;
+  }
+  .of-mission-row > div { min-width: 0 !important; }
+  .of-mission-row button { width: 100% !important; min-height: 40px !important; }
+
+  .of-mission-detail-page,
+  .of-mission-form-page,
+  .of-trainer-view-page,
+  .of-trainer-search-page { padding: 0 !important; }
+
+  .of-mission-detail-page [style*="grid-template-columns"],
+  .of-mission-form-page [style*="grid-template-columns"],
+  .of-trainer-view-page [style*="grid-template-columns"],
+  .of-trainer-search-page [style*="grid-template-columns"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  .of-mission-detail-page [style*="display: flex"],
+  .of-mission-form-page [style*="display: flex"],
+  .of-trainer-view-page [style*="display: flex"],
+  .of-trainer-search-page [style*="display: flex"] {
+    flex-wrap: wrap !important;
+  }
+
+  .of-mission-detail-page input:not([type="checkbox"]):not([type="radio"]),
+  .of-mission-detail-page select,
+  .of-mission-detail-page textarea,
+  .of-mission-form-page input:not([type="checkbox"]):not([type="radio"]),
+  .of-mission-form-page select,
+  .of-mission-form-page textarea,
+  .of-trainer-view-page input:not([type="checkbox"]):not([type="radio"]),
+  .of-trainer-view-page select,
+  .of-trainer-view-page textarea,
+  .of-trainer-search-page input,
+  .of-trainer-search-page select,
+  .of-settings-page input:not([type="checkbox"]):not([type="radio"]),
+  .of-settings-page select,
+  .of-settings-page textarea {
+    width: 100% !important; min-height: 44px !important; box-sizing: border-box;
+  }
+
+  .of-mission-detail-page button,
+  .of-mission-detail-page .button,
+  .of-mission-form-page button,
+  .of-mission-form-page .button,
+  .of-trainer-view-page button,
+  .of-trainer-view-page .button,
+  .of-trainer-search-page button,
+  .of-trainer-search-page .button,
+  .of-settings-page button,
+  .of-settings-page .button {
+    min-height: 42px !important;
+  }
+
+  .of-settings-page .settings-grid { grid-template-columns: 1fr !important; }
+}
+
+@media (max-width: 390px) {
+  .listing-statuses { grid-template-columns: 1fr; }
+  .planning-page .planning-toolbar__navigation {
+    grid-template-columns: auto auto minmax(0, 1fr);
+  }
+  .planning-page .planning-toolbar__filters { grid-template-columns: 1fr; }
+  .trainer-cell__actions { grid-template-columns: 1fr; }
+}
+
+
+/* Sprint 19 — Correctif mobile OF : calendrier sans scroll horizontal */
+@media (max-width: 720px) {
+  .planning-page .calendar-card {
+    overflow-x: hidden !important;
+  }
+
+  .planning-page .calendar-weekdays,
+  .planning-page .calendar-grid {
+    width: 100% !important;
+    min-width: 0 !important;
+    grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+  }
+
+  .planning-page .calendar-weekdays > div {
+    min-width: 0;
+    padding: 8px 0 !important;
+    font-size: 9px !important;
+  }
+
+  .planning-page .calendar-day {
+    min-width: 0 !important;
+    min-height: 78px !important;
+    padding: 4px 2px !important;
+    overflow: hidden;
+  }
+
+  .planning-page .calendar-day__number {
+    font-size: 10px !important;
+    margin-bottom: 3px;
+  }
+
+  .planning-page .calendar-day__missions {
+    gap: 2px !important;
+    min-width: 0;
+  }
+
+  .planning-page .mission-calendar-card {
+    width: 100%;
+    min-width: 0 !important;
+    padding: 3px 2px !important;
+    border-radius: 4px !important;
+    overflow: hidden;
+  }
+
+  .planning-page .mission-calendar-card__topline,
+  .planning-page .mission-calendar-card__client,
+  .planning-page .mission-calendar-card__trainer,
+  .planning-page .mission-calendar-card__location {
+    display: none !important;
+  }
+
+  .planning-page .mission-calendar-card__training {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 8px !important;
+    line-height: 1.2 !important;
+  }
+
+  .planning-page .calendar-day__mission-count {
+    top: 3px !important;
+    right: 3px !important;
+    min-width: 16px !important;
+    height: 16px !important;
+    font-size: 8px !important;
+  }
+
+  /* Fiche formateur : le calendrier reste un vrai mois de 7 colonnes.
+     Un appui sur une date conserve les actions existantes. */
+  .of-trainer-availability-calendar {
+    width: 100% !important;
+    min-width: 0 !important;
+    grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+    gap: 2px !important;
+  }
+
+  .of-trainer-availability-calendar > div {
+    min-width: 0 !important;
+    overflow: hidden;
+    font-size: 9px !important;
+  }
+
+  .of-trainer-availability-calendar > div:nth-child(-n+7) {
+    padding: 5px 0 !important;
+    font-size: 8px !important;
+  }
+
+  .of-trainer-availability-calendar > div:nth-child(n+8) {
+    min-height: 58px !important;
+    padding: 4px 2px !important;
+  }
+
+  .of-trainer-availability-calendar button {
+    min-width: 0 !important;
+    min-height: 28px !important;
+    padding: 3px !important;
+    font-size: 8px !important;
+  }
+
+  /* Listing : davantage d'informations par écran. */
+  .listing-table tbody tr {
+    padding: 10px !important;
+    gap: 0 8px !important;
+  }
+
+  .listing-table tbody td {
+    padding: 4px 0 !important;
+  }
+
+  .trainer-cell__actions {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 4px !important;
+    margin-top: 6px !important;
+  }
+
+  .trainer-cell__actions button {
+    min-height: 34px !important;
+    padding: 5px 3px !important;
+    font-size: 9px !important;
+  }
+
+  .trainer-cell__skills,
+  .trainer-cell__equipment {
+    margin-top: 2px !important;
+  }
+
+  /* Barre du planning : compacte mais tactile. */
+  .planning-page .planning-toolbar {
+    padding: 8px !important;
+  }
+
+  .planning-page .planning-toolbar button {
+    min-height: 38px !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .planning-page .calendar-day {
+    min-height: 70px !important;
+  }
+
+  .planning-page .mission-calendar-card__training {
+    font-size: 7px !important;
+  }
+
+  .trainer-cell__actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}

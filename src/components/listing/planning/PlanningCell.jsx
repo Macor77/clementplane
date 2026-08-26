@@ -66,6 +66,14 @@ export default function PlanningCell({
           opacity: planningLoading ? 0.55 : 1,
         }}
       >
+        <span
+          className="listing-planning-cell__day-number"
+          aria-hidden="true"
+          style={dayNumberStyle}
+        >
+          {day}
+        </span>
+
         {hasNotes && (
           <span
             aria-hidden="true"
@@ -176,9 +184,26 @@ const planningCellStyle = {
 };
 
 
+const dayNumberStyle = {
+  position: 'absolute',
+  inset: 0,
+  display: 'grid',
+  placeItems: 'center',
+  color: '#0f172a',
+  fontSize: 7,
+  lineHeight: 1,
+  fontWeight: 800,
+  fontVariantNumeric: 'tabular-nums',
+  pointerEvents: 'none',
+};
+
+
 const noteIndicatorStyle = {
-  width: 4,
-  height: 4,
+  position: 'absolute',
+  right: 1,
+  bottom: 1,
+  width: 3,
+  height: 3,
   borderRadius: '50%',
   background: '#111827',
   display: 'block',

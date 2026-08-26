@@ -7,7 +7,7 @@ export default function Dashboard() {
   const greeting = loading ? 'Bonjour' : `Bonjour${firstName ? ` ${firstName}` : ''}`;
 
   return (
-    <div className="page-container">
+    <div className="page-container of-dashboard-page">
       <header className="page-heading">
         <div>
           <p className="page-eyebrow">Accueil</p>

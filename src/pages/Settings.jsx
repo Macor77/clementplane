@@ -188,7 +188,7 @@ export default function Settings() {
   };
 
   return (
-    <div className="page-container">
+    <div className="page-container of-settings-page">
       <div className="page-header">
         <div>
           <div className="page-eyebrow">PARAMÈTRES</div>

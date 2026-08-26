@@ -1349,6 +1349,7 @@ export default function FormateurView() {
 
   return (
     <div
+      className="of-trainer-view-page"
       style={{
         padding: '1rem',
         display: 'grid',
@@ -1808,6 +1809,7 @@ export default function FormateurView() {
 
 
       <div
+        className="of-trainer-availability-calendar"
         style={{
           display: 'grid',
           gridTemplateColumns:

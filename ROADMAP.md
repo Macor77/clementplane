@@ -36,8 +36,9 @@ Après le Sprint 14, la priorité est désormais de rendre Formaplane plus auton
 | 17 | Dashboard Admin, mini-CRM & statistiques d'utilisation | ✅ TERMINÉ |
 | 18 | Tests automatisés & surveillance | ✅ TERMINÉ |
 | 19 | Optimisation UX & expérience mobile | ✅ TERMINÉ |
+| 19.5 | Rebranding Formaplane → Clementplane | ✅ TERMINÉ |
 | 20 | Création de missions par le formateur dans son propre agenda | 🔜 À FAIRE |
-| 21 | Formaplane installable sur mobile (PWA) | 🔜 À FAIRE |
+| 21 | Clementplane installable sur mobile (PWA) | 🔜 À FAIRE |
 | 22 | Synchronisation des missions avec Google Agenda | 🔜 À FAIRE |
 | 23+ | Évolutions guidées par la bêta | 🧭 PRÉVISIONNEL |
 
@@ -671,7 +672,7 @@ Permettre au formateur d’ajouter lui-même dans son agenda Formaplane une miss
 
 ---
 
-# Sprint 21 — Formaplane installable sur mobile (PWA) 🔜
+# Sprint 21 — Clementplane installable sur mobile (PWA) 🔜
 
 ### Objectif
 Permettre aux utilisateurs d’installer Formaplane sur leur smartphone et de l’ouvrir depuis une icône comme une application, sans recréer le produit en application native.
@@ -759,7 +760,7 @@ v0.19.0 — Sprint 19 officiellement clôturé
 ↓
 Sprint 20 — Création de missions par le formateur
 ↓
-Sprint 21 — Formaplane installable sur mobile (PWA)
+Sprint 21 — Clementplane installable sur mobile (PWA)
 ↓
 Sprint 22 — Synchronisation Google Agenda
 ↓

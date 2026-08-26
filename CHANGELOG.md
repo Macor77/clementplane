@@ -1,6 +1,30 @@
 # CHANGELOG - Formaplane
 
 
+## v0.19.5 — Sprint 19.5 — Rebranding Formaplane → Clementplane — 26 août 2026
+
+### Rebranding complet
+- renommage de l'identité applicative de Formaplane vers Clementplane ;
+- remplacement de l'identité visuelle et des logos ;
+- mise à jour des textes, interfaces et messages utilisateur ;
+- renommage des pages et composants concernés ;
+- migration des références applicatives vers Clementplane ;
+- conservation des références techniques et historiques nécessaires à la compatibilité ;
+- mise à jour du domaine applicatif vers `app.clementplane.fr` ;
+- configuration du domaine e-mail `clementplane.fr` et de l'expéditeur `contact@clementplane.fr` ;
+- mise à jour de la configuration Supabase Auth ;
+- suppression des anciens domaines Formaplane des configurations Vercel et Brevo ;
+- renommage du dépôt GitHub en `clementplane` ;
+- vérification de la configuration Vercel, Supabase et Brevo.
+
+### Recette
+- recherche globale des anciennes références effectuée ;
+- aucune ancienne URL `formaplane.fr` / `formaplane.com` dans le code actif ;
+- build Vite de production : réussi ;
+- tests automatisés : **62/62 réussis** ;
+- application déployée sur `app.clementplane.fr` et testée en conditions réelles ;
+- connexion et parcours principaux validés.
+
 ## v0.19.0 — Sprint 19 — Optimisation UX & expérience mobile — 26 août 2026
 
 ### UX & expérience mobile

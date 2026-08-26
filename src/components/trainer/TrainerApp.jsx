@@ -11,7 +11,7 @@ import TrainerPlanning from '../../pages/trainer/TrainerPlanning';
 import TrainerAvailabilityShare from '../../pages/trainer/TrainerAvailabilityShare';
 import TrainerProfile from '../../pages/trainer/TrainerProfile';
 import TrainerSettings from '../../pages/trainer/TrainerSettings';
-import DiscoverFormaplane from '../../pages/DiscoverFormaplane';
+import DiscoverClementplane from '../../pages/DiscoverClementplane';
 
 import { useAuth } from '../../context/AuthContext';
 import MobileNavigation from '../layout/MobileNavigation';
@@ -62,7 +62,7 @@ const navigationItems = [
   },
   {
     to: '/formateur/decouvrir',
-    label: 'Découvrir Formaplane',
+    label: 'Découvrir Clementplane',
     icon: '?',
   },
   {
@@ -177,8 +177,8 @@ export default function TrainerApp() {
           }}
         >
           <img
-            src="/brand/formaplane-logo-light.svg"
-            alt="Formaplane"
+            src="/brand/clementplane-logo-light.svg"
+            alt="Clementplane"
             style={{
               display: 'block',
               width: '148px',
@@ -287,7 +287,7 @@ export default function TrainerApp() {
 
           <Route
             path="/formateur/decouvrir"
-            element={<DiscoverFormaplane audience="trainer" />}
+            element={<DiscoverClementplane audience="trainer" />}
           />
 
           <Route

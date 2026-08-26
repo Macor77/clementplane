@@ -233,7 +233,7 @@ export default function Listing() {
 
       const ok =
         window.confirm(
-          `Retirer ${label} de votre réseau ?\n\nSa fiche Formaplane ne sera pas supprimée. Cette action retire uniquement le formateur du réseau de ${currentOrganization?.name || 'votre organisme'}.`,
+          `Retirer ${label} de votre réseau ?\n\nSa fiche Clementplane ne sera pas supprimée. Cette action retire uniquement le formateur du réseau de ${currentOrganization?.name || 'votre organisme'}.`,
         );
 
       if (!ok) {
@@ -395,7 +395,7 @@ export default function Listing() {
           }}
         >
           <strong style={{ color: '#1d4ed8' }}>
-            Invitez vos formateurs à rejoindre Formaplane
+            Invitez vos formateurs à rejoindre Clementplane
           </strong>
           <div style={{ marginTop: 6 }}>
             Vous pouvez continuer à gérer vous-même leurs disponibilités, missions et informations, même sans compte formateur. Lorsqu’un formateur revendique sa fiche, il peut toutefois mettre à jour ses disponibilités et interagir directement avec vos propositions : les échanges et validations deviennent beaucoup plus fluides. L’invitation reste entièrement à votre choix.

@@ -12,12 +12,12 @@ import {
   trainerTutorials,
 } from '../content/discoverContent';
 
-import './DiscoverFormaplane.css';
+import './DiscoverClementplane.css';
 
-const CONTACT_EMAIL = 'contact@formaplane.fr';
+const CONTACT_EMAIL = 'contact@clementplane.fr';
 
 const contactCategories = [
-  { key: 'general_question', label: 'Question sur Formaplane' },
+  { key: 'general_question', label: 'Question sur Clementplane' },
   { key: 'technical_issue', label: 'Problème technique' },
   { key: 'account_question', label: 'Question sur mon compte' },
   { key: 'feature_request', label: 'Suggestion d’amélioration' },
@@ -69,7 +69,7 @@ function TutorialCard({ tutorial }) {
   );
 }
 
-export default function DiscoverFormaplane({ audience }) {
+export default function DiscoverClementplane({ audience }) {
   const location = useLocation();
 
   const {
@@ -135,7 +135,7 @@ export default function DiscoverFormaplane({ audience }) {
       setContactFeedback({
         type: request.notificationSent ? 'success' : 'warning',
         message: request.notificationSent
-          ? 'Votre demande a bien été envoyée à Formaplane.'
+          ? 'Votre demande a bien été envoyée à Clementplane.'
           : `Votre demande a bien été enregistrée. Si elle est urgente, vous pouvez aussi écrire à ${CONTACT_EMAIL}.`,
       });
     } catch (error) {
@@ -152,14 +152,14 @@ export default function DiscoverFormaplane({ audience }) {
     <div className="page-container discover-page">
       <header className="discover-hero">
         <div className="discover-hero__content">
-          <p className="page-eyebrow">DÉCOUVRIR FORMAPLANE</p>
-          <h1>Utiliser Formaplane simplement</h1>
+          <p className="page-eyebrow">DÉCOUVRIR CLEMENTPLANE</p>
+          <h1>Utiliser Clementplane simplement</h1>
           <p>
-            Comprenez comment Formaplane simplifie la collaboration entre organismes et formateurs : planning à jour, recherche, propositions de missions et suivi centralisé.
+            Comprenez comment Clementplane simplifie la collaboration entre organismes et formateurs : planning à jour, recherche, propositions de missions et suivi centralisé.
           </p>
           <div className="discover-hero__actions">
             <a className="button button--primary" href="#tutoriels">Voir les guides</a>
-            <a className="button" href="#contact">Contacter Formaplane</a>
+            <a className="button" href="#contact">Contacter Clementplane</a>
           </div>
         </div>
 
@@ -174,9 +174,9 @@ export default function DiscoverFormaplane({ audience }) {
         <div className="discover-section__heading">
           <div>
             <p className="page-eyebrow">BIEN DÉMARRER</p>
-            <h2 id="discover-start-title">Ce que Formaplane simplifie concrètement</h2>
+            <h2 id="discover-start-title">Ce que Clementplane simplifie concrètement</h2>
           </div>
-          <p>{isTrainer ? 'Un seul endroit pour tenir votre profil et vos disponibilités à jour, suivre vos missions et partager uniquement ce qui est utile à vos partenaires.' : 'Moins de fichiers, de relances et de messages dispersés : Formaplane relie votre réseau de formateurs, leurs disponibilités et vos missions.'}</p>
+          <p>{isTrainer ? 'Un seul endroit pour tenir votre profil et vos disponibilités à jour, suivre vos missions et partager uniquement ce qui est utile à vos partenaires.' : 'Moins de fichiers, de relances et de messages dispersés : Clementplane relie votre réseau de formateurs, leurs disponibilités et vos missions.'}</p>
         </div>
 
         <div className="discover-feature-grid">
@@ -194,7 +194,7 @@ export default function DiscoverFormaplane({ audience }) {
         <div className="discover-section__heading">
           <div>
             <p className="page-eyebrow">GUIDES PAS À PAS</p>
-            <h2 id="tutorials-title">Comment faire dans Formaplane ?</h2>
+            <h2 id="tutorials-title">Comment faire dans Clementplane ?</h2>
           </div>
           <p>Ouvrez un guide pour suivre les étapes. Les captures d’écran pourront être ajoutées ensuite au fil de la stabilisation de l’interface.</p>
         </div>
@@ -246,7 +246,7 @@ export default function DiscoverFormaplane({ audience }) {
         <div className="discover-section__heading">
           <div>
             <p className="page-eyebrow">TRANSPARENCE PRODUIT</p>
-            <h2 id="transparency-title">Où en est Formaplane ?</h2>
+            <h2 id="transparency-title">Où en est Clementplane ?</h2>
           </div>
           <div className="discover-version">
             <span>Version actuellement publiée</span>
@@ -277,7 +277,7 @@ export default function DiscoverFormaplane({ audience }) {
         <div className="discover-principles">
           <h3>Nos principes</h3>
           <p>
-            Formaplane est conçu pour simplifier la collaboration entre organismes et formateurs, sans transformer les données personnelles en annuaire public. Les fonctionnalités évoluent progressivement à partir des usages réels et des retours utilisateurs.
+            Clementplane est conçu pour simplifier la collaboration entre organismes et formateurs, sans transformer les données personnelles en annuaire public. Les fonctionnalités évoluent progressivement à partir des usages réels et des retours utilisateurs.
           </p>
         </div>
       </section>
@@ -287,7 +287,7 @@ export default function DiscoverFormaplane({ audience }) {
           <p className="page-eyebrow">CONTACT</p>
           <h2 id="contact-title">Besoin d’aide ou envie de nous faire un retour ?</h2>
           <p>
-            Décrivez votre demande. Formaplane prépare automatiquement le contexte utile pour éviter de vous demander les mêmes informations plusieurs fois.
+            Décrivez votre demande. Clementplane prépare automatiquement le contexte utile pour éviter de vous demander les mêmes informations plusieurs fois.
           </p>
           <div className="discover-contact__identity">
             <span>Message préparé pour</span>
@@ -332,7 +332,7 @@ export default function DiscoverFormaplane({ audience }) {
           )}
 
           <p className="discover-contact__note">
-            Votre demande est enregistrée dans Formaplane avec le contexte de votre compte afin d’en faciliter le suivi.
+            Votre demande est enregistrée dans Clementplane avec le contexte de votre compte afin d’en faciliter le suivi.
           </p>
         </div>
       </section>

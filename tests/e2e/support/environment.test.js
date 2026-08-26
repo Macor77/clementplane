@@ -5,7 +5,7 @@ const SAFE_REF = 'abcdefghijklmnopqrst';
 const SAFE_URL = `https://${SAFE_REF}.supabase.co`;
 
 describe('assertSafeE2EEnvironment', () => {
-  it('refuse la production Formaplane', () => {
+  it('refuse la production Clementplane', () => {
     expect(() => assertSafeE2EEnvironment({
       url: 'https://hctvkynrgmnxjynbncdi.supabase.co',
       allowReset: 'true',

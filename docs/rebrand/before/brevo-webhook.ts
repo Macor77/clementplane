@@ -138,7 +138,7 @@ Deno.serve(async (req) => {
           previous_status: mf.statut,
           new_status: mf.statut,
           actor_type: 'system',
-          actor_display_name: 'Clementplane',
+          actor_display_name: 'Formaplane',
           details: {
             email_log_id: log.id,
             brevo_event: event,

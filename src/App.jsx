@@ -21,7 +21,7 @@ import Dashboard from './pages/Dashboard';
 import Planning from './pages/Planning';
 import MapPage from './pages/MapPage';
 import Settings from './pages/Settings';
-import DiscoverFormaplane from './pages/DiscoverFormaplane';
+import DiscoverClementplane from './pages/DiscoverClementplane';
 import ProposalResponse from './pages/ProposalResponse';
 import MissionChangeResponse from './pages/MissionChangeResponse';
 
@@ -84,7 +84,7 @@ const navigationItems = [
   },
   {
     to: '/decouvrir',
-    label: 'Découvrir Formaplane',
+    label: 'Découvrir Clementplane',
     icon: '?',
   },
   {
@@ -141,8 +141,8 @@ function OrganizationApp() {
           <div className="app-brand">
             <img
               className="app-brand__logo"
-              src="/brand/formaplane-logo-light.svg"
-              alt="Formaplane"
+              src="/brand/clementplane-logo-light.svg"
+              alt="Clementplane"
             />
           </div>
 
@@ -253,7 +253,7 @@ function OrganizationApp() {
 
             <Route
               path="/decouvrir"
-              element={<DiscoverFormaplane audience="organization" />}
+              element={<DiscoverClementplane audience="organization" />}
             />
 
             <Route
@@ -528,7 +528,7 @@ function AccountRouter() {
           fontWeight: 600,
         }}
       >
-        Chargement de votre espace Formaplane…
+        Chargement de votre espace Clementplane…
       </div>
     );
   }
@@ -579,7 +579,7 @@ function RootRoute() {
   if (loading) {
     return (
       <div style={{ minHeight: '100vh', display: 'grid', placeItems: 'center', color: '#64748b', fontWeight: 600 }}>
-        Chargement de Formaplane…
+        Chargement de Clementplane…
       </div>
     );
   }

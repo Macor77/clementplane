@@ -144,8 +144,8 @@ export default function Settings() {
         const org = status?.organization_name ? ` « ${status.organization_name} »` : '';
         setDeleteError(
           status?.reason === 'last_active_owner'
-            ? `Vous êtes le dernier propriétaire actif de l’organisme${org}. Transférez d’abord la propriété à un autre utilisateur ou contactez Formaplane.`
-            : `Vous êtes le dernier utilisateur actif de l’organisme${org}. Ajoutez d’abord un autre utilisateur ou contactez Formaplane.`,
+            ? `Vous êtes le dernier propriétaire actif de l’organisme${org}. Transférez d’abord la propriété à un autre utilisateur ou contactez Clementplane.`
+            : `Vous êtes le dernier utilisateur actif de l’organisme${org}. Ajoutez d’abord un autre utilisateur ou contactez Clementplane.`,
         );
         return;
       }
@@ -384,7 +384,7 @@ export default function Settings() {
           <h3 style={{ marginTop: 0 }}>Test technique des e-mails</h3>
 
           <p style={{ color: '#64748b', marginBottom: '18px' }}>
-            Ce bouton envoie un e-mail technique uniquement à l’adresse de votre compte connecté. Il sert à valider le moteur transactionnel centralisé de Formaplane.
+            Ce bouton envoie un e-mail technique uniquement à l’adresse de votre compte connecté. Il sert à valider le moteur transactionnel centralisé de Clementplane.
           </p>
 
           {testEmailMessage ? (
@@ -427,7 +427,7 @@ export default function Settings() {
           <h3 style={{ marginTop: 0 }}>Session</h3>
 
           <p style={{ color: '#64748b', marginBottom: '18px' }}>
-            Vous pouvez fermer votre session Formaplane sur cet appareil.
+            Vous pouvez fermer votre session Clementplane sur cet appareil.
           </p>
 
           <button
@@ -449,7 +449,7 @@ export default function Settings() {
 
         <div style={{ borderTop: '1px solid #fecaca', paddingTop: '24px', marginTop: '28px' }}>
           <h3 style={{ marginTop: 0, color: '#b42318' }}>Zone de danger</h3>
-          <p style={{ color: '#64748b', marginBottom: '18px' }}>La suppression ferme définitivement votre compte Formaplane. Elle ne supprime pas automatiquement les données métier appartenant à votre organisme. Si vous êtes le dernier utilisateur actif ou le dernier propriétaire de votre organisme, la suppression autonome sera bloquée.</p>
+          <p style={{ color: '#64748b', marginBottom: '18px' }}>La suppression ferme définitivement votre compte Clementplane. Elle ne supprime pas automatiquement les données métier appartenant à votre organisme. Si vous êtes le dernier utilisateur actif ou le dernier propriétaire de votre organisme, la suppression autonome sera bloquée.</p>
           {!deleteOpen ? (
             <button type="button" onClick={() => setDeleteOpen(true)} style={{ border: '1px solid #fecaca', background: '#fff', color: '#b42318', borderRadius: '10px', padding: '11px 16px', fontWeight: 700, cursor: 'pointer' }}>Supprimer mon compte</button>
           ) : (

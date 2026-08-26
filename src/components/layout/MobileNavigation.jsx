@@ -43,8 +43,8 @@ export default function MobileNavigation({
       <header className="mobile-navigation__header">
         <img
           className="mobile-navigation__brand"
-          src="/brand/formaplane-logo.svg"
-          alt="Formaplane"
+          src="/brand/clementplane-logo.svg"
+          alt="Clementplane"
         />
 
         <div className="mobile-navigation__header-actions">
@@ -82,8 +82,8 @@ export default function MobileNavigation({
             <div className="mobile-navigation__drawer-header">
               <img
                 className="mobile-navigation__drawer-brand"
-                src="/brand/formaplane-logo-light.svg"
-                alt="Formaplane"
+                src="/brand/clementplane-logo-light.svg"
+                alt="Clementplane"
               />
 
               <button

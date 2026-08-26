@@ -92,7 +92,7 @@ export default function Login() {
       <div className="auth-card">
 
         <div className="auth-brand">
-          <img src="/brand/formaplane-logo.svg" alt="Formaplane" />
+          <img src="/brand/clementplane-logo.svg" alt="Clementplane" />
         </div>
 
 
@@ -107,7 +107,7 @@ export default function Login() {
 
 
         <p className="auth-muted">
-          Connectez-vous à votre espace Formaplane.
+          Connectez-vous à votre espace Clementplane.
         </p>
 
 
@@ -240,7 +240,7 @@ export default function Login() {
               color: '#0f172a',
             }}
           >
-            Nouveau sur Formaplane ?
+            Nouveau sur Clementplane ?
           </p>
 
 
@@ -315,7 +315,7 @@ export default function Login() {
               Vous êtes à la fois organisme de formation et formateur ?
             </strong>
             {' '}
-            Formaplane fonctionne avec un seul compte utilisateur.
+            Clementplane fonctionne avec un seul compte utilisateur.
             Commencez par créer l’un de vos espaces ; votre second
             espace pourra ensuite être ajouté ou rattaché au même compte.
           </div>

@@ -3,8 +3,8 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL') || '';
 const SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
 const BREVO_API_KEY = Deno.env.get('BREVO_API_KEY') || '';
-const SENDER_EMAIL = Deno.env.get('SENDER_EMAIL') || 'contact@clementplane.fr';
-const SENDER_NAME = Deno.env.get('SENDER_NAME') || 'Clementplane';
+const SENDER_EMAIL = Deno.env.get('SENDER_EMAIL') || 'contact@formaplane.fr';
+const SENDER_NAME = Deno.env.get('SENDER_NAME') || 'Formaplane';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -219,7 +219,7 @@ Deno.serve(async (req) => {
       sender: { name: SENDER_NAME, email: SENDER_EMAIL },
       to: [{ email: SENDER_EMAIL }],
       replyTo: { email, name: requesterName },
-      subject: `[Contact public Clementplane] ${profileLabel}`,
+      subject: `[Contact public Formaplane] ${profileLabel}`,
       htmlContent: `
         <div style="font-family:Arial,sans-serif;background:#f5f7fb;padding:24px;color:#0f172a;">
           <div style="max-width:720px;margin:0 auto;background:#fff;border:1px solid #dbe3ef;border-radius:14px;padding:24px;">

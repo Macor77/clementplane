@@ -439,7 +439,7 @@ export default function TrainerSearch() {
               color: '#64748b',
             }}
           >
-            Vérifiez l'identité ou l'adresse e-mail saisie. Si ce formateur n'utilise pas encore Formaplane, vous pourrez prochainement l'inviter à rejoindre votre réseau.
+            Vérifiez l'identité ou l'adresse e-mail saisie. Si ce formateur n'utilise pas encore Clementplane, vous pourrez prochainement l'inviter à rejoindre votre réseau.
           </p>
         </div>
       ) : null}
@@ -541,7 +541,7 @@ export default function TrainerSearch() {
                           fontSize: 14,
                         }}
                       >
-                        Présent sur Formaplane · Coordonnées confidentielles
+                        Présent sur Clementplane · Coordonnées confidentielles
                       </div>
                     )}
                   </div>

@@ -107,14 +107,14 @@ export default function PublicLanding() {
 
       setContactStatus({
         state: 'success',
-        message: 'Merci. Votre message a bien été transmis à Formaplane.',
+        message: 'Merci. Votre message a bien été transmis à Clementplane.',
       });
     } catch (error) {
       setContactStatus({
         state: 'error',
         message:
           error?.message ||
-          "Impossible d'envoyer votre message pour le moment. Vous pouvez aussi écrire à contact@formaplane.fr.",
+          "Impossible d'envoyer votre message pour le moment. Vous pouvez aussi écrire à contact@clementplane.fr.",
       });
     }
   };
@@ -123,8 +123,8 @@ export default function PublicLanding() {
     <div className="public-site">
       <header className="public-header">
         <div className="public-wrap public-header__inner">
-          <a className="public-brand" href="#top" aria-label="Formaplane — accueil">
-            <img src="/brand/formaplane-logo.svg" alt="Formaplane" />
+          <a className="public-brand" href="#top" aria-label="Clementplane — accueil">
+            <img src="/brand/clementplane-logo.svg" alt="Clementplane" />
           </a>
           <nav className="public-nav" aria-label="Navigation du site">
             <a href="#fonctionnalites">Fonctionnalités</a>
@@ -156,7 +156,7 @@ export default function PublicLanding() {
                 className="public-hero__lead"
                 style={{ maxWidth: '760px', marginLeft: 'auto', marginRight: 'auto' }}
               >
-                Formaplane connecte les organismes de formation et leurs formateurs indépendants : disponibilités, recherche, propositions de missions et affectations réunies dans un même outil.
+                Clementplane connecte les organismes de formation et leurs formateurs indépendants : disponibilités, recherche, propositions de missions et affectations réunies dans un même outil.
               </p>
               <div
                 className="public-actions"
@@ -181,7 +181,7 @@ export default function PublicLanding() {
             <div className="public-section-heading public-section-heading--center">
               <p className="public-eyebrow">MOINS D’ÉCHANGES DISPERSÉS</p>
               <h2>Le planning ne devrait pas circuler entre cinq boîtes mail.</h2>
-              <p>Disponibilités demandées par e-mail, réponses par SMS, missions proposées séparément, planning qui change entre-temps… Formaplane crée un point de référence commun.</p>
+              <p>Disponibilités demandées par e-mail, réponses par SMS, missions proposées séparément, planning qui change entre-temps… Clementplane crée un point de référence commun.</p>
             </div>
             <div className="public-problems">
               <span>Planning envoyé puis déjà dépassé</span><span>Disponibilités redemandées</span><span>Réponses éparpillées</span><span>Double saisie des missions</span>
@@ -214,12 +214,12 @@ export default function PublicLanding() {
           <div className="public-wrap public-split-section public-split-section--reverse">
             <ProductVisual
               src={visuals.screenshots.availability}
-              alt="Calendrier des disponibilités d’un formateur dans Formaplane"
+              alt="Calendrier des disponibilités d’un formateur dans Clementplane"
             />
             <div className="public-split-copy">
               <p className="public-eyebrow">FORMATEURS INDÉPENDANTS</p>
               <h2>Un seul planning pour vos différents partenaires.</h2>
-              <p>Mettez à jour votre disponibilité professionnelle, recevez vos propositions et retrouvez vos missions depuis votre espace Formaplane.</p>
+              <p>Mettez à jour votre disponibilité professionnelle, recevez vos propositions et retrouvez vos missions depuis votre espace Clementplane.</p>
               <ul className="public-check-list">
                 <li>Vos disponibilités à jour pour tous vos OF</li>
                 <li>Votre planning de missions centralisé</li>
@@ -260,7 +260,7 @@ export default function PublicLanding() {
           <div className="public-wrap public-visual-story">
             <div className="public-section-heading public-section-heading--center">
               <p className="public-eyebrow">TROUVER LE BON FORMATEUR</p>
-              <h2>Votre client donne les contraintes. Formaplane vous aide à exploiter votre réseau.</h2>
+              <h2>Votre client donne les contraintes. Clementplane vous aide à exploiter votre réseau.</h2>
               <p>Compétence, lieu, disponibilité et distance permettent de faire remonter rapidement les profils pertinents parmi les formateurs que vous connaissez déjà.</p>
             </div>
             <figure className="public-diagram">
@@ -278,11 +278,11 @@ export default function PublicLanding() {
             </div>
             <div className="public-product-duo">
               <div>
-                <ProductVisual src={visuals.screenshots.proposals} alt="Proposition de mission reçue par un formateur dans Formaplane" />
+                <ProductVisual src={visuals.screenshots.proposals} alt="Proposition de mission reçue par un formateur dans Clementplane" />
                 <p className="public-product-caption"><strong>Répondre simplement</strong><span>Une proposition claire, avec les informations utiles et une réponse centralisée.</span></p>
               </div>
               <div>
-                <ProductVisual src={visuals.screenshots.planning} alt="Planning centralisé des missions d’un formateur dans Formaplane" />
+                <ProductVisual src={visuals.screenshots.planning} alt="Planning centralisé des missions d’un formateur dans Clementplane" />
                 <p className="public-product-caption"><strong>Retrouver toutes ses missions</strong><span>Les engagements confirmés et les options sont visibles dans un planning unique.</span></p>
               </div>
             </div>
@@ -311,7 +311,7 @@ export default function PublicLanding() {
             <div className="public-section-heading public-section-heading--center">
               <p className="public-eyebrow">CONFIDENTIALITÉ</p>
               <h2>Votre réseau reste votre réseau.</h2>
-              <p>Un même formateur peut travailler avec plusieurs OF sur Formaplane sans que ces organismes aient accès aux réseaux, notes ou informations internes des autres.</p>
+              <p>Un même formateur peut travailler avec plusieurs OF sur Clementplane sans que ces organismes aient accès aux réseaux, notes ou informations internes des autres.</p>
             </div>
             <figure className="public-diagram">
               <img src={visuals.diagrams.privacy} alt="Schéma montrant deux réseaux privés d’organismes de formation partageant un même formateur sans accès croisé" loading="lazy" />
@@ -321,7 +321,7 @@ export default function PublicLanding() {
 
         <section className="public-section" id="faq">
           <div className="public-wrap public-faq-layout">
-            <div className="public-section-heading"><p className="public-eyebrow">FAQ</p><h2>Quelques réponses avant de commencer.</h2><p>Formaplane explique clairement ce qui est partagé, ce qui reste privé et comment fonctionne la collaboration.</p></div>
+            <div className="public-section-heading"><p className="public-eyebrow">FAQ</p><h2>Quelques réponses avant de commencer.</h2><p>Clementplane explique clairement ce qui est partagé, ce qui reste privé et comment fonctionne la collaboration.</p></div>
             <div className="public-faq-list">{publicFaq.map((item) => <details key={item.question}><summary>{item.question}</summary><p>{item.answer}</p></details>)}</div>
           </div>
         </section>
@@ -330,10 +330,10 @@ export default function PublicLanding() {
           <div className="public-wrap public-contact">
             <div>
               <p className="public-eyebrow">UNE QUESTION ?</p>
-              <h2>Parlons de Formaplane.</h2>
+              <h2>Parlons de Clementplane.</h2>
               <p>Vous êtes organisme de formation, formateur indépendant ou simplement curieux du projet ? Écrivez-nous directement depuis ce formulaire.</p>
               <p className="public-contact__direct">
-                Vous préférez l’e-mail ? <a href="mailto:contact@formaplane.fr">contact@formaplane.fr</a>
+                Vous préférez l’e-mail ? <a href="mailto:contact@clementplane.fr">contact@clementplane.fr</a>
               </p>
             </div>
 
@@ -443,7 +443,7 @@ export default function PublicLanding() {
         </section>
 
         <section className="public-final-cta">
-          <div className="public-wrap"><img src="/brand/formaplane-symbol.svg" alt="" /><h2>Prêt à simplifier la collaboration entre OF et formateurs ?</h2><div className="public-actions public-actions--center"><Link className="public-button" to="/inscription-organisme">Créer un espace OF</Link><Link className="public-button public-button--secondary-light" to="/inscription">Créer un espace formateur</Link></div></div>
+          <div className="public-wrap"><img src="/brand/clementplane-symbol.svg" alt="" /><h2>Prêt à simplifier la collaboration entre OF et formateurs ?</h2><div className="public-actions public-actions--center"><Link className="public-button" to="/inscription-organisme">Créer un espace OF</Link><Link className="public-button public-button--secondary-light" to="/inscription">Créer un espace formateur</Link></div></div>
         </section>
       </main>
 
@@ -469,14 +469,14 @@ export default function PublicLanding() {
             <div className="public-account-modal__dual">
               <strong>Vous êtes à la fois organisme de formation et formateur ?</strong>
               <p>Aucun problème. Créez d’abord l’un de vos espaces avec votre adresse e-mail habituelle. Vous pourrez ensuite créer ou rattacher votre second profil avec <strong>cette même adresse e-mail</strong>.</p>
-              <p>Votre e-mail fait le lien entre vos deux profils : <strong>un seul compte, deux espaces Formaplane.</strong></p>
+              <p>Votre e-mail fait le lien entre vos deux profils : <strong>un seul compte, deux espaces Clementplane.</strong></p>
             </div>
             <p className="public-account-modal__login">Vous avez déjà un compte ? <Link to="/connexion" onClick={() => setAccountChooserOpen(false)}>Se connecter</Link></p>
           </section>
         </div>
       )}
 
-      <footer className="public-footer"><div className="public-wrap public-footer__inner"><img src="/brand/formaplane-logo-light.svg" alt="Formaplane" /><p>La collaboration entre organismes de formation et formateurs indépendants, plus simplement.</p><div><Link to="/connexion">Connexion</Link><a href="#faq">FAQ</a><a href="mailto:contact@formaplane.fr">Contact</a></div></div></footer>
+      <footer className="public-footer"><div className="public-wrap public-footer__inner"><img src="/brand/clementplane-logo-light.svg" alt="Clementplane" /><p>La collaboration entre organismes de formation et formateurs indépendants, plus simplement.</p><div><Link to="/connexion">Connexion</Link><a href="#faq">FAQ</a><a href="mailto:contact@clementplane.fr">Contact</a></div></div></footer>
     </div>
   );
 }

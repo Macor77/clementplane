@@ -4,7 +4,7 @@ export const discoverFeatures = [
   {
     title: 'Un planning partagé, toujours à jour',
     kicker: 'Moins de messages, plus de visibilité',
-    description: 'Le formateur met ses disponibilités à jour dans Formaplane. Les organismes partenaires peuvent consulter l’information actualisée directement dans la plateforme, sans redemander le planning par e-mail, SMS ou WhatsApp.',
+    description: 'Le formateur met ses disponibilités à jour dans Clementplane. Les organismes partenaires peuvent consulter l’information actualisée directement dans la plateforme, sans redemander le planning par e-mail, SMS ou WhatsApp.',
     audiences: ['organization', 'trainer'],
   },
   {
@@ -16,7 +16,7 @@ export const discoverFeatures = [
   {
     title: 'Proposer une mission en quelques clics',
     kicker: 'Même si le formateur n’est pas inscrit',
-    description: 'La proposition part directement depuis Formaplane. Le formateur reçoit un e-mail avec les informations utiles et peut accepter ou refuser. L’organisme est averti et suit les réponses depuis la mission.',
+    description: 'La proposition part directement depuis Clementplane. Le formateur reçoit un e-mail avec les informations utiles et peut accepter ou refuser. L’organisme est averti et suit les réponses depuis la mission.',
     audiences: ['organization'],
   },
   {
@@ -28,19 +28,19 @@ export const discoverFeatures = [
   {
     title: 'Votre profil professionnel, à jour au même endroit',
     kicker: 'Une seule fiche à maintenir',
-    description: 'Vous tenez à jour vos informations de référence dans Formaplane. Les organismes avec lesquels vous travaillez peuvent ainsi consulter un profil fiable, sans que vous ayez à renvoyer vos informations à chacun.',
+    description: 'Vous tenez à jour vos informations de référence dans Clementplane. Les organismes avec lesquels vous travaillez peuvent ainsi consulter un profil fiable, sans que vous ayez à renvoyer vos informations à chacun.',
     audiences: ['trainer'],
   },
   {
     title: 'Les missions bloquent automatiquement les disponibilités',
     kicker: 'Pas de double saisie',
-    description: 'Lorsqu’une mission est affectée à un formateur, Formaplane rend automatiquement la période concernée indisponible pour les autres organismes. L’OF connaît ainsi automatiquement et en temps réel la disponibilité du formateur, sans nouvelle saisie ni échange supplémentaire.',
+    description: 'Lorsqu’une mission est affectée à un formateur, Clementplane rend automatiquement la période concernée indisponible pour les autres organismes. L’OF connaît ainsi automatiquement et en temps réel la disponibilité du formateur, sans nouvelle saisie ni échange supplémentaire.',
     audiences: ['organization', 'trainer'],
   },
   {
     title: 'Un planning de missions sans agenda public',
     kicker: 'Partager la disponibilité, pas toute sa vie',
-    description: 'Le formateur retrouve ses missions et ses indisponibilités dans Formaplane. Les organismes voient ce dont ils ont besoin pour travailler avec lui, sans accéder à un agenda personnel détaillé de type Google Agenda.',
+    description: 'Le formateur retrouve ses missions et ses indisponibilités dans Clementplane. Les organismes voient ce dont ils ont besoin pour travailler avec lui, sans accéder à un agenda personnel détaillé de type Google Agenda.',
     audiences: ['trainer'],
   },
   {
@@ -54,23 +54,23 @@ export const discoverFeatures = [
 export const organizationTutorials = [
   {
     id: 'of-network', title: 'Construire mon réseau privé de formateurs', summary: 'Ajouter, rechercher ou importer des formateurs tout en gardant une liste propre à mon organisme.', route: '/listing', routeLabel: 'Ouvrir mes formateurs',
-    steps: ['Depuis « Formateurs », ajoutez un profil manuellement, recherchez un formateur existant ou utilisez l’import en masse.', 'Lorsque Formaplane trouve un profil correspondant, ajoutez-le à votre réseau plutôt que de créer une seconde fiche.', 'Les formateurs de votre réseau, vos notes et vos informations internes restent propres à votre organisme : les autres OF ne consultent pas cette liste.', 'Lorsqu’un formateur revendique son profil, ses informations personnelles de référence sont maintenues par lui et peuvent être utilisées par ses différents OF partenaires.'],
-    tip: 'Formaplane distingue le profil partagé du formateur et la relation privée que chaque organisme entretient avec lui.',
+    steps: ['Depuis « Formateurs », ajoutez un profil manuellement, recherchez un formateur existant ou utilisez l’import en masse.', 'Lorsque Clementplane trouve un profil correspondant, ajoutez-le à votre réseau plutôt que de créer une seconde fiche.', 'Les formateurs de votre réseau, vos notes et vos informations internes restent propres à votre organisme : les autres OF ne consultent pas cette liste.', 'Lorsqu’un formateur revendique son profil, ses informations personnelles de référence sont maintenues par lui et peuvent être utilisées par ses différents OF partenaires.'],
+    tip: 'Clementplane distingue le profil partagé du formateur et la relation privée que chaque organisme entretient avec lui.',
   },
   {
     id: 'of-mission', title: 'Créer une mission et trouver les bons formateurs', summary: 'Passer du besoin de formation à une sélection pertinente grâce aux disponibilités, distances, compétences et autres critères.', route: '/missions', routeLabel: 'Ouvrir mes missions',
-    steps: ['Créez la mission et renseignez sa date, son lieu, ses horaires et les informations utiles.', 'Utilisez la recherche pour identifier les formateurs les plus pertinents selon leur disponibilité, leur distance, leurs compétences et les données de votre réseau.', 'Sélectionnez un ou plusieurs profils puis envoyez les propositions directement depuis Formaplane.', 'Le formateur peut recevoir la proposition par e-mail et répondre même s’il n’utilise pas encore activement Formaplane.', 'Vous êtes averti de sa réponse et retrouvez l’état des sollicitations au même endroit, dans la mission.'],
+    steps: ['Créez la mission et renseignez sa date, son lieu, ses horaires et les informations utiles.', 'Utilisez la recherche pour identifier les formateurs les plus pertinents selon leur disponibilité, leur distance, leurs compétences et les données de votre réseau.', 'Sélectionnez un ou plusieurs profils puis envoyez les propositions directement depuis Clementplane.', 'Le formateur peut recevoir la proposition par e-mail et répondre même s’il n’utilise pas encore activement Clementplane.', 'Vous êtes averti de sa réponse et retrouvez l’état des sollicitations au même endroit, dans la mission.'],
     tip: 'L’objectif est d’éviter les recherches dans plusieurs fichiers puis les séries d’e-mails ou de SMS pour savoir qui est disponible.',
   },
   {
     id: 'of-assignment', title: 'Suivre les réponses et affecter la mission', summary: 'Voir qui a accepté ou refusé puis confirmer le formateur retenu sans perdre le fil.', route: '/missions', routeLabel: 'Suivre mes missions',
-    steps: ['Ouvrez la mission pour retrouver les propositions envoyées et leur statut.', 'Comparez les réponses reçues sans devoir reconstituer l’historique depuis votre messagerie.', 'Affectez le formateur retenu lorsque votre choix est fait.', 'Une fois la mission affectée, Formaplane met automatiquement à jour l’indisponibilité du formateur pour cette période.'],
+    steps: ['Ouvrez la mission pour retrouver les propositions envoyées et leur statut.', 'Comparez les réponses reçues sans devoir reconstituer l’historique depuis votre messagerie.', 'Affectez le formateur retenu lorsque votre choix est fait.', 'Une fois la mission affectée, Clementplane met automatiquement à jour l’indisponibilité du formateur pour cette période.'],
     tip: 'Les autres organismes n’ont pas accès au contenu de votre mission. Ils voient simplement que le formateur n’est plus disponible sur le créneau concerné.',
   },
   {
     id: 'of-availability', title: 'Consulter un planning formateur à jour', summary: 'Savoir quand un partenaire est disponible sans lui redemander son planning à chaque besoin.', route: '/listing', routeLabel: 'Voir mes formateurs',
-    steps: ['Ouvrez la fiche d’un formateur de votre réseau.', 'Consultez ses disponibilités mises à jour dans Formaplane.', 'Utilisez cette information au moment de préparer une mission ou une proposition.', 'Lorsque le formateur actualise son planning, vous bénéficiez de la nouvelle information sans qu’un nouveau fichier ou message soit nécessaire.'],
-    tip: 'Le partage par e-mail peut attirer votre attention sur une mise à jour, mais Formaplane reste la source à consulter pour disposer de l’état le plus récent.',
+    steps: ['Ouvrez la fiche d’un formateur de votre réseau.', 'Consultez ses disponibilités mises à jour dans Clementplane.', 'Utilisez cette information au moment de préparer une mission ou une proposition.', 'Lorsque le formateur actualise son planning, vous bénéficiez de la nouvelle information sans qu’un nouveau fichier ou message soit nécessaire.'],
+    tip: 'Le partage par e-mail peut attirer votre attention sur une mise à jour, mais Clementplane reste la source à consulter pour disposer de l’état le plus récent.',
   },
   {
     id: 'of-privacy', title: 'Comprendre ce qui est partagé — et ce qui reste privé', summary: 'Distinguer votre réseau interne du profil que le formateur partage avec ses organismes partenaires.', route: '/listing', routeLabel: 'Voir mon réseau',
@@ -81,13 +81,13 @@ export const organizationTutorials = [
 export const trainerTutorials = [
   {
     id: 'trainer-profile', title: 'Garder un profil fiable pour mes OF partenaires', summary: 'Maintenir une seule fiche de référence plutôt que transmettre les mêmes informations à chaque organisme.', route: '/formateur/profil', routeLabel: 'Ouvrir mon profil',
-    steps: ['Ouvrez « Mon profil » et vérifiez vos coordonnées, votre localisation, vos compétences et votre matériel.', 'Mettez à jour les informations qui ont changé.', 'Enregistrez vos modifications : votre profil revendiqué devient votre référence dans Formaplane.', 'Les organismes partenaires qui travaillent avec vous peuvent ainsi consulter une information cohérente et récente.'],
-    tip: 'Votre profil professionnel peut être utilisé par vos organismes partenaires, mais Formaplane n’a pas vocation à exposer librement votre adresse précise ou votre agenda personnel.',
+    steps: ['Ouvrez « Mon profil » et vérifiez vos coordonnées, votre localisation, vos compétences et votre matériel.', 'Mettez à jour les informations qui ont changé.', 'Enregistrez vos modifications : votre profil revendiqué devient votre référence dans Clementplane.', 'Les organismes partenaires qui travaillent avec vous peuvent ainsi consulter une information cohérente et récente.'],
+    tip: 'Votre profil professionnel peut être utilisé par vos organismes partenaires, mais Clementplane n’a pas vocation à exposer librement votre adresse précise ou votre agenda personnel.',
   },
   {
     id: 'trainer-availability', title: 'Mettre mon planning à jour une seule fois', summary: 'Informer mes OF partenaires en temps réel sans renvoyer constamment un planning par e-mail, SMS ou WhatsApp.', route: '/formateur/disponibilites', routeLabel: 'Gérer mes disponibilités',
-    steps: ['Ouvrez « Mes disponibilités » et choisissez la période à mettre à jour.', 'Indiquez les jours où vous êtes disponible ou indisponible et ajoutez une note si nécessaire.', 'Enregistrez vos changements dès que votre situation évolue.', 'Les organismes partenaires peuvent ensuite consulter l’état actuel dans Formaplane sans vous redemander un fichier à jour.'],
-    tip: 'Formaplane devient le point de référence pour votre disponibilité professionnelle : vous mettez à jour l’information, vos partenaires consultent la dernière version.',
+    steps: ['Ouvrez « Mes disponibilités » et choisissez la période à mettre à jour.', 'Indiquez les jours où vous êtes disponible ou indisponible et ajoutez une note si nécessaire.', 'Enregistrez vos changements dès que votre situation évolue.', 'Les organismes partenaires peuvent ensuite consulter l’état actuel dans Clementplane sans vous redemander un fichier à jour.'],
+    tip: 'Clementplane devient le point de référence pour votre disponibilité professionnelle : vous mettez à jour l’information, vos partenaires consultent la dernière version.',
   },
   {
     id: 'trainer-automatic', title: 'Comprendre les indisponibilités automatiques', summary: 'Une mission affectée bloque automatiquement le créneau pour les autres organismes.', route: '/formateur/missions', routeLabel: 'Voir mes missions',
@@ -95,55 +95,55 @@ export const trainerTutorials = [
     tip: 'Vous partagez votre disponibilité utile au travail, pas un agenda public avec le détail de vos activités.',
   },
   {
-    id: 'trainer-organizations', title: 'Gérer mes organismes partenaires', summary: 'Centraliser mes contacts OF, voir lesquels utilisent Formaplane et les inviter à rejoindre la plateforme.', route: '/formateur/mes-of', routeLabel: 'Ouvrir Mes OF',
-    steps: ['Ouvrez « Mes OF » pour retrouver les organismes avec lesquels vous travaillez.', 'Ajoutez ou mettez à jour un organisme partenaire et vérifiez s’il utilise déjà Formaplane.', 'S’il n’est pas encore inscrit, utilisez « Inviter sur Formaplane » : une nouvelle invitation ne peut pas être renvoyée avant 7 jours complets.', 'Lorsqu’un OF rejoint Formaplane, il peut consulter votre fiche et vous ajouter à son réseau afin d’accéder directement à vos disponibilités à jour.'],
-    tip: 'Plus vos organismes partenaires utilisent Formaplane, moins vous avez besoin de leur renvoyer votre planning à chaque modification.',
+    id: 'trainer-organizations', title: 'Gérer mes organismes partenaires', summary: 'Centraliser mes contacts OF, voir lesquels utilisent Clementplane et les inviter à rejoindre la plateforme.', route: '/formateur/mes-of', routeLabel: 'Ouvrir Mes OF',
+    steps: ['Ouvrez « Mes OF » pour retrouver les organismes avec lesquels vous travaillez.', 'Ajoutez ou mettez à jour un organisme partenaire et vérifiez s’il utilise déjà Clementplane.', 'S’il n’est pas encore inscrit, utilisez « Inviter sur Clementplane » : une nouvelle invitation ne peut pas être renvoyée avant 7 jours complets.', 'Lorsqu’un OF rejoint Clementplane, il peut consulter votre fiche et vous ajouter à son réseau afin d’accéder directement à vos disponibilités à jour.'],
+    tip: 'Plus vos organismes partenaires utilisent Clementplane, moins vous avez besoin de leur renvoyer votre planning à chaque modification.',
   },
   {
-    id: 'trainer-share', title: 'Partager mes disponibilités avec un organisme', summary: 'Utiliser l’e-mail ou le PDF lorsque l’organisme ne consulte pas encore directement votre planning dans Formaplane.', route: '/formateur/partage-disponibilites', routeLabel: 'Partager mes disponibilités',
-    steps: ['Sélectionnez un organisme enregistré dans « Mes OF ».', 'Choisissez les mois de disponibilités à partager.', 'Vérifiez le destinataire puis envoyez le partage depuis Formaplane.', 'Après un envoi, un délai de 20 jours complets s’applique pour ce même couple formateur + contact afin d’éviter les relances répétées.'],
-    tip: 'Le plus simple reste d’inviter l’organisme à utiliser Formaplane : il pourra alors consulter directement vos disponibilités à jour sans nouvel envoi.',
+    id: 'trainer-share', title: 'Partager mes disponibilités avec un organisme', summary: 'Utiliser l’e-mail ou le PDF lorsque l’organisme ne consulte pas encore directement votre planning dans Clementplane.', route: '/formateur/partage-disponibilites', routeLabel: 'Partager mes disponibilités',
+    steps: ['Sélectionnez un organisme enregistré dans « Mes OF ».', 'Choisissez les mois de disponibilités à partager.', 'Vérifiez le destinataire puis envoyez le partage depuis Clementplane.', 'Après un envoi, un délai de 20 jours complets s’applique pour ce même couple formateur + contact afin d’éviter les relances répétées.'],
+    tip: 'Le plus simple reste d’inviter l’organisme à utiliser Clementplane : il pourra alors consulter directement vos disponibilités à jour sans nouvel envoi.',
   },
   {
     id: 'trainer-proposals', title: 'Répondre simplement à une proposition de mission', summary: 'Recevoir les informations utiles et accepter ou refuser sans multiplier les échanges.', route: '/formateur/propositions', routeLabel: 'Voir mes propositions',
-    steps: ['Consultez la proposition reçue et les informations de la mission.', 'Acceptez ou refusez selon votre disponibilité et votre intérêt.', 'Votre réponse est enregistrée dans Formaplane et l’organisme est informé.', 'Si l’organisme vous retient ensuite, la mission confirmée rejoint votre suivi et votre planning se met à jour automatiquement.'],
+    steps: ['Consultez la proposition reçue et les informations de la mission.', 'Acceptez ou refusez selon votre disponibilité et votre intérêt.', 'Votre réponse est enregistrée dans Clementplane et l’organisme est informé.', 'Si l’organisme vous retient ensuite, la mission confirmée rejoint votre suivi et votre planning se met à jour automatiquement.'],
   },
   {
     id: 'trainer-missions', title: 'Retrouver mon planning de missions', summary: 'Centraliser mes interventions professionnelles sans partager le détail de mon agenda personnel.', route: '/formateur/missions', routeLabel: 'Voir mes missions',
-    steps: ['Ouvrez « Mes missions » pour retrouver les interventions qui vous concernent.', 'Sélectionnez une mission pour consulter ses informations utiles.', 'Utilisez ce suivi comme vue professionnelle de vos engagements Formaplane.', 'Vos organismes partenaires n’accèdent pas pour autant à la totalité de ce planning : ils voient principalement les informations nécessaires à leur collaboration avec vous et votre disponibilité.'],
+    steps: ['Ouvrez « Mes missions » pour retrouver les interventions qui vous concernent.', 'Sélectionnez une mission pour consulter ses informations utiles.', 'Utilisez ce suivi comme vue professionnelle de vos engagements Clementplane.', 'Vos organismes partenaires n’accèdent pas pour autant à la totalité de ce planning : ils voient principalement les informations nécessaires à leur collaboration avec vous et votre disponibilité.'],
   },
 ];
 
 export const faqItems = [
-  { question: 'Ma liste de formateurs est-elle visible par les autres organismes ?', answer: 'Non. Le réseau que vous construisez ou importez dans Formaplane est propre à votre organisme. Les autres OF ne peuvent pas parcourir votre liste, vos notes ni vos informations internes comme s’il s’agissait d’une base de données commune.', audiences: ['organization'], category: 'Confidentialité' },
+  { question: 'Ma liste de formateurs est-elle visible par les autres organismes ?', answer: 'Non. Le réseau que vous construisez ou importez dans Clementplane est propre à votre organisme. Les autres OF ne peuvent pas parcourir votre liste, vos notes ni vos informations internes comme s’il s’agissait d’une base de données commune.', audiences: ['organization'], category: 'Confidentialité' },
   { question: 'Le profil d’un formateur peut-il être consulté par plusieurs organismes ?', answer: 'Oui, lorsqu’un formateur travaille avec plusieurs organismes partenaires, son profil de référence peut être utilisé dans ces différentes relations. Cela évite qu’il existe plusieurs versions contradictoires de ses informations. En revanche, les données privées propres à chaque organisme restent séparées.', audiences: ['organization', 'trainer'], category: 'Confidentialité' },
-  { question: 'Les organismes voient-ils le détail de toutes les missions d’un formateur ?', answer: 'Non. Formaplane permet de partager l’information utile de disponibilité sans transformer le planning du formateur en agenda public. Lorsqu’un créneau est occupé, un autre organisme doit surtout savoir que le formateur n’est pas disponible, pas nécessairement pourquoi ni pour qui.', audiences: ['organization', 'trainer'], category: 'Confidentialité' },
+  { question: 'Les organismes voient-ils le détail de toutes les missions d’un formateur ?', answer: 'Non. Clementplane permet de partager l’information utile de disponibilité sans transformer le planning du formateur en agenda public. Lorsqu’un créneau est occupé, un autre organisme doit surtout savoir que le formateur n’est pas disponible, pas nécessairement pourquoi ni pour qui.', audiences: ['organization', 'trainer'], category: 'Confidentialité' },
   { question: 'Que se passe-t-il lorsqu’une mission est affectée à un formateur ?', answer: 'La mission rejoint le suivi du formateur et le créneau concerné devient automatiquement indisponible. Le formateur n’a pas besoin de saisir une seconde fois son indisponibilité pour empêcher d’autres sollicitations sur la même période.', audiences: ['organization', 'trainer'], category: 'Planning' },
-  { question: 'Dois-je encore demander le planning d’un formateur par e-mail ?', answer: 'L’objectif est justement de ne plus avoir à le faire systématiquement. Si le formateur tient ses disponibilités à jour, son organisme partenaire peut consulter la dernière information directement dans Formaplane. Les e-mails de partage servent surtout à signaler qu’un planning a été actualisé.', audiences: ['organization'], category: 'Disponibilités' },
-  { question: 'Pourquoi maintenir mes disponibilités à jour dans Formaplane ?', answer: 'Parce qu’une seule mise à jour peut ensuite servir à vos différents organismes partenaires. Vous limitez les fichiers, captures d’écran et messages envoyés individuellement, tout en gardant la maîtrise de votre disponibilité professionnelle.', audiences: ['trainer'], category: 'Disponibilités' },
-  { question: 'Comment Formaplane aide-t-il à trouver un formateur pour une mission ?', answer: 'L’organisme crée d’abord la mission puis peut rechercher les profils pertinents en tenant compte notamment des disponibilités, de la distance, des compétences et des informations de son propre réseau. Il peut ensuite envoyer les propositions directement depuis Formaplane.', audiences: ['organization'], category: 'Missions' },
-  { question: 'Un formateur doit-il être inscrit pour recevoir une proposition ?', answer: 'Non. Formaplane permet à l’organisme d’envoyer une proposition à un formateur même si celui-ci n’utilise pas encore activement la plateforme. Il reçoit les informations par e-mail et peut répondre à la sollicitation.', audiences: ['organization'], category: 'Missions' },
+  { question: 'Dois-je encore demander le planning d’un formateur par e-mail ?', answer: 'L’objectif est justement de ne plus avoir à le faire systématiquement. Si le formateur tient ses disponibilités à jour, son organisme partenaire peut consulter la dernière information directement dans Clementplane. Les e-mails de partage servent surtout à signaler qu’un planning a été actualisé.', audiences: ['organization'], category: 'Disponibilités' },
+  { question: 'Pourquoi maintenir mes disponibilités à jour dans Clementplane ?', answer: 'Parce qu’une seule mise à jour peut ensuite servir à vos différents organismes partenaires. Vous limitez les fichiers, captures d’écran et messages envoyés individuellement, tout en gardant la maîtrise de votre disponibilité professionnelle.', audiences: ['trainer'], category: 'Disponibilités' },
+  { question: 'Comment Clementplane aide-t-il à trouver un formateur pour une mission ?', answer: 'L’organisme crée d’abord la mission puis peut rechercher les profils pertinents en tenant compte notamment des disponibilités, de la distance, des compétences et des informations de son propre réseau. Il peut ensuite envoyer les propositions directement depuis Clementplane.', audiences: ['organization'], category: 'Missions' },
+  { question: 'Un formateur doit-il être inscrit pour recevoir une proposition ?', answer: 'Non. Clementplane permet à l’organisme d’envoyer une proposition à un formateur même si celui-ci n’utilise pas encore activement la plateforme. Il reçoit les informations par e-mail et peut répondre à la sollicitation.', audiences: ['organization'], category: 'Missions' },
   { question: 'Une proposition de mission confirme-t-elle la mission ?', answer: 'Non. Une proposition permet d’abord au formateur d’indiquer s’il accepte ou refuse la sollicitation. L’organisme suit les réponses puis affecte officiellement le formateur retenu.', audiences: ['organization', 'trainer'], category: 'Missions' },
-  { question: 'Pourquoi ne puis-je pas renvoyer mes disponibilités immédiatement au même contact ?', answer: 'Formaplane applique un délai de 20 jours complets après un partage vers un même contact OF pour éviter les sollicitations répétées. Vos disponibilités peuvent néanmoins être mises à jour à tout moment et restent consultables dans Formaplane.', audiences: ['trainer'], category: 'Disponibilités' },
-  { question: 'Puis-je avoir à la fois un espace OF et un espace Formateur ?', answer: 'Oui. Lorsqu’un même compte possède les deux rôles, Formaplane propose un choix d’espace et permet ensuite de passer de l’un à l’autre.', audiences: ['organization', 'trainer'], category: 'Compte' },
-  { question: "Comment Formaplane s'assure-t-il que la plateforme reste fiable ?", answer: "Formaplane dispose de contrôles automatisés qui vérifient régulièrement ses principales fonctionnalités, certaines règles de sécurité et ses dépendances techniques. Ces contrôles sont également exécutés lors des mises à jour de la plateforme afin de détecter d'éventuelles régressions avant leur mise en ligne.", audiences: ['organization', 'trainer'], category: 'Fiabilité' },
-  { question: 'Comment contacter Formaplane si je rencontre un problème ?', answer: 'Utilisez la rubrique « Contacter Formaplane » de cette page. Elle prépare un e-mail vers contact@formaplane.fr avec le contexte technique utile.', audiences: ['organization', 'trainer'], category: 'Support' },
+  { question: 'Pourquoi ne puis-je pas renvoyer mes disponibilités immédiatement au même contact ?', answer: 'Clementplane applique un délai de 20 jours complets après un partage vers un même contact OF pour éviter les sollicitations répétées. Vos disponibilités peuvent néanmoins être mises à jour à tout moment et restent consultables dans Clementplane.', audiences: ['trainer'], category: 'Disponibilités' },
+  { question: 'Puis-je avoir à la fois un espace OF et un espace Formateur ?', answer: 'Oui. Lorsqu’un même compte possède les deux rôles, Clementplane propose un choix d’espace et permet ensuite de passer de l’un à l’autre.', audiences: ['organization', 'trainer'], category: 'Compte' },
+  { question: "Comment Clementplane s'assure-t-il que la plateforme reste fiable ?", answer: "Clementplane dispose de contrôles automatisés qui vérifient régulièrement ses principales fonctionnalités, certaines règles de sécurité et ses dépendances techniques. Ces contrôles sont également exécutés lors des mises à jour de la plateforme afin de détecter d'éventuelles régressions avant leur mise en ligne.", audiences: ['organization', 'trainer'], category: 'Fiabilité' },
+  { question: 'Comment contacter Clementplane si je rencontre un problème ?', answer: 'Utilisez la rubrique « Contacter Clementplane » de cette page. Elle prépare un e-mail vers contact@clementplane.fr avec le contexte technique utile.', audiences: ['organization', 'trainer'], category: 'Support' },
 ];
 
 export const publicRoadmap = {
   available: {
     status: 'Disponible',
-    title: 'Le cœur de Formaplane',
+    title: 'Le cœur de Clementplane',
     description: 'Réseau privé de formateurs, recherche, import, missions, propositions, disponibilités, planning, partage, Mes OF, invitations partenaires et expérience mobile optimisée.',
   },
   future: [
     'Enrichir la fiche formateur pour lui permettre de détailler davantage son profil : expériences, compétences, formations et autres informations professionnelles.',
     'Stocker les documents et données de référencement d’un formateur et permettre leur partage maîtrisé : CV, NDA, avis SIREN et autres justificatifs.',
-    'Ajouter une messagerie interne pour permettre aux organismes de formation et aux formateurs d’échanger directement dans Formaplane autour d’une session de formation.',
-    'Permettre au formateur de créer lui-même une mission dans son agenda lorsque l’organisme qui la lui confie n’utilise pas encore Formaplane, afin de centraliser son planning et de mettre automatiquement ses disponibilités à jour.',
-    'Permettre d’installer Formaplane sur un smartphone avec une icône sur l’écran d’accueil et une ouverture proche d’une application mobile.',
-    'Synchroniser automatiquement les missions Formaplane d’un formateur vers son Google Agenda, avec les informations utiles et un lien direct vers la mission.',
-    'Permettre aux apprenants d’évaluer un formateur après une mission afin de construire progressivement un système de réputation interne à Formaplane.',
+    'Ajouter une messagerie interne pour permettre aux organismes de formation et aux formateurs d’échanger directement dans Clementplane autour d’une session de formation.',
+    'Permettre au formateur de créer lui-même une mission dans son agenda lorsque l’organisme qui la lui confie n’utilise pas encore Clementplane, afin de centraliser son planning et de mettre automatiquement ses disponibilités à jour.',
+    'Permettre d’installer Clementplane sur un smartphone avec une icône sur l’écran d’accueil et une ouverture proche d’une application mobile.',
+    'Synchroniser automatiquement les missions Clementplane d’un formateur vers son Google Agenda, avec les informations utiles et un lien direct vers la mission.',
+    'Permettre aux apprenants d’évaluer un formateur après une mission afin de construire progressivement un système de réputation interne à Clementplane.',
     'Une expérience encore plus fluide pour rechercher, proposer et affecter des missions.',
     'Des améliorations régulières issues des retours des organismes et des formateurs.',
   ],

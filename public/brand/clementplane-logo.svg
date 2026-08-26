@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="240" viewBox="0 0 1000 240" role="img" aria-labelledby="title">
+  <title id="title">Clementplane</title>
+  <g transform="translate(45 55)">
+    <path d="M94 31 A46 46 0 1 0 94 97" fill="none" stroke="#1E3A8A" stroke-width="14" stroke-linecap="round"/>
+    <path d="M87 43 A32 32 0 1 0 87 85" fill="none" stroke="#3B82F6" stroke-width="12" stroke-linecap="round"/>
+    <path d="M79 54 A19 19 0 1 0 79 74" fill="none" stroke="#93C5FD" stroke-width="10" stroke-linecap="round"/>
+    <circle cx="94" cy="31" r="7" fill="#1E3A8A"/>
+    <circle cx="87" cy="43" r="6" fill="#3B82F6"/>
+    <circle cx="79" cy="54" r="5" fill="#93C5FD"/>
+  </g>
+  <text x="205" y="157" font-family="Manrope, Arial, sans-serif" font-size="84" font-weight="700" fill="#0B132B">clementplane</text>
+</svg>

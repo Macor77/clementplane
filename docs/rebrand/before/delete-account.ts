@@ -39,8 +39,8 @@ Deno.serve(async (req) => {
     if (!status?.allowed) {
       const org = status.organization_name ? ` « ${status.organization_name} »` : '';
       const message = status.reason === 'last_active_owner'
-        ? `Vous êtes le dernier propriétaire actif de l’organisme${org}. Transférez d’abord la propriété à un autre utilisateur ou contactez Clementplane.`
-        : `Vous êtes le dernier utilisateur actif de l’organisme${org}. Ajoutez d’abord un autre utilisateur ou contactez Clementplane.`;
+        ? `Vous êtes le dernier propriétaire actif de l’organisme${org}. Transférez d’abord la propriété à un autre utilisateur ou contactez Formaplane.`
+        : `Vous êtes le dernier utilisateur actif de l’organisme${org}. Ajoutez d’abord un autre utilisateur ou contactez Formaplane.`;
       return json({ success: false, code: status.reason, message }, 409);
     }
 

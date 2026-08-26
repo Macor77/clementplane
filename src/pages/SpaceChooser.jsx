@@ -70,8 +70,8 @@ export default function SpaceChooser() {
           }}
         >
           <img
-            src="/brand/formaplane-logo.svg"
-            alt="Formaplane"
+            src="/brand/clementplane-logo.svg"
+            alt="Clementplane"
             style={{
               display: 'block',
               width: '100%',
@@ -89,7 +89,7 @@ export default function SpaceChooser() {
         <h1>Bonjour {displayName}</h1>
 
         <p className="auth-description">
-          Votre compte possède plusieurs usages Formaplane.
+          Votre compte possède plusieurs usages Clementplane.
           Choisissez l’espace dans lequel vous souhaitez
           travailler.
         </p>

@@ -51,8 +51,8 @@ export default function TrainerHome() {
       <div className="auth-card">
         <div className="auth-logo">
           <img
-            src="/brand/formaplane-logo.svg"
-            alt="Formaplane"
+            src="/brand/clementplane-logo.svg"
+            alt="Clementplane"
             style={{ width: '100%', maxWidth: '320px', height: 'auto' }}
           />
         </div>
@@ -64,7 +64,7 @@ export default function TrainerHome() {
         <h1>Bonjour {firstName}</h1>
 
         <p className="auth-description">
-          Votre espace personnel Formaplane est
+          Votre espace personnel Clementplane est
           maintenant identifié. Son tableau de bord
           complet sera construit dans les prochaines
           étapes du Mini Sprint 8.3.
@@ -99,7 +99,7 @@ export default function TrainerHome() {
             }}
           >
             Fiche professionnelle rattachée à votre
-            compte Formaplane.
+            compte Clementplane.
           </p>
         </div>
 

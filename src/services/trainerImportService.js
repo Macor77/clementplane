@@ -140,7 +140,7 @@ function analyzeRows({
 
   if (headerRowIndex < 0) {
     throw new Error(
-      "Le fichier ne correspond pas au modèle Formaplane. Les 12 intitulés de colonnes n'ont pas été retrouvés.",
+      "Le fichier ne correspond pas au modèle Clementplane. Les 12 intitulés de colonnes n'ont pas été retrouvés.",
     );
   }
 
@@ -248,7 +248,7 @@ function analyzeRows({
 
     if (!email) {
       warnings.push(
-        "Aucune adresse e-mail : ce formateur ne pourra pas être invité à rejoindre Formaplane tant qu'une adresse n'aura pas été renseignée.",
+        "Aucune adresse e-mail : ce formateur ne pourra pas être invité à rejoindre Clementplane tant qu'une adresse n'aura pas été renseignée.",
       );
     }
 
@@ -457,7 +457,7 @@ export async function findTrainerImportMatches({
     );
 
     throw new Error(
-      "Impossible d'effectuer le rapprochement avec la base Formaplane.",
+      "Impossible d'effectuer le rapprochement avec la base Clementplane.",
     );
   }
 

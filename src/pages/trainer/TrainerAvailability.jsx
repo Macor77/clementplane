@@ -84,7 +84,7 @@ function formatHistoryDate(value) {
 function getHistoryActorLabel(item) {
   const actor =
     item.actor_name ||
-    'Utilisateur Formaplane';
+    'Utilisateur Clementplane';
 
   if (item.source === 'trainer') {
     return `${actor} · Formateur`;

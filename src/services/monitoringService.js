@@ -36,10 +36,10 @@ export async function reportClientError(error, context = 'unknown', metadata = {
     });
 
     if (trackingError && trackingError.message !== 'AUTH_REQUIRED') {
-      console.warn('Formaplane monitoring unavailable', trackingError);
+      console.warn('Clementplane monitoring unavailable', trackingError);
     }
   } catch (trackingError) {
-    console.warn('Formaplane monitoring unavailable', trackingError);
+    console.warn('Clementplane monitoring unavailable', trackingError);
   }
 }
 

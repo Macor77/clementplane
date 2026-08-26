@@ -8,9 +8,9 @@ const corsHeaders = {
 };
 
 const BREVO_ENDPOINT = 'https://api.brevo.com/v3/smtp/email';
-const SENDER_EMAIL = 'contact@clementplane.fr';
-const SENDER_NAME = 'Clementplane';
-const APP_URL = 'https://app.clementplane.fr';
+const SENDER_EMAIL = 'contact@formaplane.fr';
+const SENDER_NAME = 'Formaplane';
+const APP_URL = 'https://app.formaplane.fr';
 
 const jsonResponse = (
   body: Record<string, unknown>,
@@ -83,6 +83,9 @@ Deno.serve(async (req) => {
     const brevoApiKey = Deno.env.get('BREVO_API_KEY');
 
     if (!supabaseUrl || !serviceRoleKey || !brevoApiKey) {
+      console.error(
+        'Configuration serveur incomplète pour notify-mission-response.',
+      );
       return jsonResponse(
         {
           success: false,
@@ -95,11 +98,13 @@ Deno.serve(async (req) => {
 
     const body = await req.json().catch(() => ({}));
     const token = String(body?.token || '').trim();
-    const response = String(body?.response || '').trim();
+    const requestedResponse = String(
+      body?.response || '',
+    ).trim();
 
     if (
       !token ||
-      !['accepted', 'refused'].includes(response)
+      !['accepte', 'refuse'].includes(requestedResponse)
     ) {
       return jsonResponse(
         { success: false, message: 'Requête invalide.' },
@@ -118,35 +123,35 @@ Deno.serve(async (req) => {
       },
     );
 
-    const { data: target, error: targetError } =
+    const { data: relation, error: relationError } =
       await admin
-        .from('mission_change_request_trainers')
+        .from('mission_formateurs')
         .select(`
           id,
-          change_request_id,
-          mission_formateur_id,
-          trainer_id,
-          previous_status,
-          response_status,
+          mission_id,
+          formateur_id,
+          statut,
           response_comment,
-          responded_at
+          repondu_le
         `)
-        .eq('public_response_token', token)
+        .eq('proposal_token', token)
         .maybeSingle();
 
-    if (targetError || !target) {
+    if (relationError || !relation) {
       return jsonResponse(
         {
           success: false,
-          message: 'Demande de revalidation introuvable.',
+          message: 'Proposition introuvable.',
         },
         404,
       );
     }
 
+    // Empêche qu'un token ancien ou manipulé déclenche une notification
+    // ne correspondant pas à la réponse réellement enregistrée.
     if (
-      target.response_status !== response ||
-      !target.responded_at
+      relation.statut !== requestedResponse ||
+      !relation.repondu_le
     ) {
       return jsonResponse(
         {
@@ -159,25 +164,35 @@ Deno.serve(async (req) => {
     }
 
     const emailType =
-      response === 'accepted'
-        ? 'mission_change_response_accepted'
-        : 'mission_change_response_refused';
+      requestedResponse === 'accepte'
+        ? 'mission_response_accepted'
+        : 'mission_response_refused';
 
+    // Idempotence limitée à la réponse actuellement enregistrée.
+    //
+    // Une même relation mission_formateur peut être réinitialisée puis
+    // recevoir une nouvelle réponse. Dans ce cas, relation.repondu_le change
+    // et un nouvel e-mail doit être envoyé.
+    //
+    // En revanche, si le navigateur répète l'appel pour exactement la même
+    // réponse (même statut + même repondu_le), on ne renvoie pas le mail.
     const { data: existingLogs, error: existingLogsError } =
       await admin
         .from('email_logs')
         .select('id, status, metadata')
         .eq('email_type', emailType)
-        .eq(
-          'related_entity_type',
-          'mission_change_request_trainer',
-        )
-        .eq('related_entity_id', target.id)
+        .eq('related_entity_type', 'mission_formateur')
+        .eq('related_entity_id', relation.id)
         .in('status', ['pending', 'sent', 'delivered'])
         .order('created_at', { ascending: false })
         .limit(20);
 
     if (existingLogsError) {
+      console.error(
+        'Impossible de vérifier les notifications existantes :',
+        existingLogsError,
+      );
+
       return jsonResponse(
         {
           success: false,
@@ -188,9 +203,11 @@ Deno.serve(async (req) => {
       );
     }
 
-    const respondedAt = String(target.responded_at || '');
+    const currentRespondedAt = String(
+      relation.repondu_le || '',
+    );
 
-    const duplicateLog = (
+    const existingLog = (
       Array.isArray(existingLogs)
         ? existingLogs
         : []
@@ -203,47 +220,28 @@ Deno.serve(async (req) => {
 
       return (
         String(metadata?.responded_at || '') ===
-        respondedAt
+        currentRespondedAt
       );
     });
 
-    if (duplicateLog) {
+    if (existingLog) {
       return jsonResponse({
         success: true,
         duplicate: true,
-        logId: duplicateLog.id,
+        logId: existingLog.id,
       });
-    }
-
-    const { data: changeRequest, error: requestError } =
-      await admin
-        .from('mission_change_requests')
-        .select('id, mission_id, organization_id')
-        .eq('id', target.change_request_id)
-        .maybeSingle();
-
-    if (requestError || !changeRequest) {
-      return jsonResponse(
-        {
-          success: false,
-          message:
-            'Demande de modification introuvable.',
-        },
-        404,
-      );
     }
 
     const [
       { data: mission, error: missionError },
       { data: trainer, error: trainerError },
       { data: dates, error: datesError },
-      { data: organization, error: organizationError },
-      { data: members, error: membersError },
     ] = await Promise.all([
       admin
         .from('missions')
         .select(`
           id,
+          organization_id,
           intitule,
           formation,
           client,
@@ -252,33 +250,19 @@ Deno.serve(async (req) => {
           code_postal,
           ville
         `)
-        .eq('id', changeRequest.mission_id)
+        .eq('id', relation.mission_id)
         .maybeSingle(),
-
       admin
         .from('trainers')
         .select('id, prenom, nom')
-        .eq('id', target.trainer_id)
+        .eq('id', relation.formateur_id)
         .maybeSingle(),
-
       admin
         .from('mission_dates')
         .select('date, heure_debut, heure_fin')
-        .eq('mission_id', changeRequest.mission_id)
+        .eq('mission_id', relation.mission_id)
         .order('date', { ascending: true })
         .order('heure_debut', { ascending: true }),
-
-      admin
-        .from('organizations')
-        .select('id, name, legal_name')
-        .eq('id', changeRequest.organization_id)
-        .maybeSingle(),
-
-      admin
-        .from('organization_members')
-        .select('user_id, role, joined_at, created_at')
-        .eq('organization_id', changeRequest.organization_id)
-        .eq('status', 'active'),
     ]);
 
     if (missionError || !mission) {
@@ -290,7 +274,10 @@ Deno.serve(async (req) => {
 
     if (trainerError || !trainer) {
       return jsonResponse(
-        { success: false, message: 'Formateur introuvable.' },
+        {
+          success: false,
+          message: 'Formateur introuvable.',
+        },
         404,
       );
     }
@@ -306,6 +293,17 @@ Deno.serve(async (req) => {
       );
     }
 
+    const organizationId = String(
+      mission.organization_id || '',
+    );
+
+    const { data: organization, error: organizationError } =
+      await admin
+        .from('organizations')
+        .select('id, name, legal_name')
+        .eq('id', organizationId)
+        .maybeSingle();
+
     if (organizationError || !organization) {
       return jsonResponse(
         {
@@ -315,6 +313,13 @@ Deno.serve(async (req) => {
         404,
       );
     }
+
+    const { data: members, error: membersError } =
+      await admin
+        .from('organization_members')
+        .select('user_id, role, joined_at, created_at')
+        .eq('organization_id', organizationId)
+        .eq('status', 'active');
 
     if (membersError || !Array.isArray(members)) {
       return jsonResponse(
@@ -449,77 +454,23 @@ Deno.serve(async (req) => {
       })
       .join('');
 
-    const accepted = response === 'accepted';
-    const wasAssigned = target.previous_status === 'affecte';
-
     const safeTrainerName = escapeHtml(trainerName);
     const safeMissionTitle = escapeHtml(missionTitle);
     const safeOrganizationName =
       escapeHtml(organizationName);
     const safeLocation = escapeHtml(location);
     const safeComment = escapeHtml(
-      String(target.response_comment || ''),
+      String(relation.response_comment || ''),
     );
     const safeRecipientFirstName = escapeHtml(
       recipientFirstName,
     );
-
     const missionUrl =
       `${APP_URL}/missions/${mission.id}?space=organization`;
     const safeMissionUrl = escapeHtml(missionUrl);
 
-    const subject = accepted
-      ? `${trainerName} a accepté les nouvelles conditions de la mission`
-      : `${trainerName} a refusé les nouvelles conditions de la mission`;
-
-    const headline = accepted
-      ? `${safeTrainerName} maintient son accord`
-      : `${safeTrainerName} refuse les nouvelles conditions`;
-
-    const explanatoryText = accepted
-      ? (
-          wasAssigned
-            ? 'Le formateur vient de confirmer qu’il accepte les nouvelles conditions de cette mission qui était déjà confirmée.'
-            : 'Le formateur vient de confirmer qu’il maintient son accord sur cette proposition malgré les modifications.'
-        )
-      : (
-          wasAssigned
-            ? 'Le formateur ne maintient pas son accord après la modification. Son affectation n’est donc plus confirmée.'
-            : 'Le formateur ne maintient pas son accord sur la proposition après la modification.'
-        );
-
-    const actionBox = accepted
-      ? (
-          wasAssigned
-            ? `
-              <div style="margin-bottom:20px;padding:16px 17px;border:1px solid #bbf7d0;border-radius:12px;background:#f0fdf4;">
-                <div style="font-size:14px;font-weight:800;color:#15803d;margin-bottom:5px;">
-                  Revalidation acceptée
-                </div>
-                <div style="font-size:13px;line-height:1.55;color:#475569;">
-                  Le formateur maintient son accord sur les nouvelles conditions.
-                  Vous pouvez poursuivre la préparation de la mission.
-                </div>
-              </div>
-            `
-            : `
-              <div style="margin-bottom:20px;padding:16px 17px;border:1px solid #bfdbfe;border-radius:12px;background:#eff6ff;">
-                <div style="font-size:14px;font-weight:800;color:#1d4ed8;margin-bottom:5px;">
-                  Accord maintenu
-                </div>
-                <div style="font-size:13px;line-height:1.55;color:#475569;">
-                  Le formateur accepte toujours la mission avec les nouvelles conditions.
-                  Vous pouvez poursuivre votre processus d’affectation.
-                </div>
-              </div>
-            `
-        )
-      : `
-        <div style="margin-bottom:20px;padding:14px 16px;border:1px solid #fde68a;border-radius:12px;background:#fffbeb;font-size:13px;line-height:1.55;color:#854d0e;">
-          Le formateur a refusé les nouvelles conditions.
-          Revenez sur la mission dans Clementplane pour vérifier son statut et poursuivre l’organisation avec un autre formateur si nécessaire.
-        </div>
-      `;
+    const accepted =
+      requestedResponse === 'accepte';
 
     const emailPayload: Record<string, unknown> = {
       sender: {
@@ -531,18 +482,20 @@ Deno.serve(async (req) => {
         name: SENDER_NAME,
         email: SENDER_EMAIL,
       },
-      subject,
+      subject: accepted
+        ? `${trainerName} a accepté votre proposition de mission`
+        : `${trainerName} a refusé votre proposition de mission`,
       htmlContent: `
         <div style="margin:0;padding:40px 20px;background-color:#f3f6fb;font-family:Arial,Helvetica,sans-serif;color:#0f2747;">
           <div style="max-width:600px;margin:0 auto;background-color:#ffffff;border:1px solid #dbe3ef;border-radius:18px;padding:36px;box-sizing:border-box;">
-            <div style="font-size:24px;font-weight:800;margin-bottom:28px;color:#0f2747;">Clementplane</div>
+            <div style="font-size:24px;font-weight:800;margin-bottom:28px;color:#0f2747;">Formaplane</div>
 
             <div style="font-size:12px;font-weight:800;letter-spacing:1.5px;color:${accepted ? '#15803d' : '#b45309'};text-transform:uppercase;margin-bottom:10px;">
-              Réponse à une modification de mission
+              Réponse à une proposition de mission
             </div>
 
             <h1 style="margin:0 0 14px 0;font-size:25px;line-height:1.25;color:#0f2747;">
-              ${headline}
+              ${safeTrainerName} a ${accepted ? 'accepté' : 'refusé'} votre proposition
             </h1>
 
             <p style="margin:0 0 20px 0;font-size:15px;line-height:1.6;color:#5b6b82;">
@@ -550,20 +503,18 @@ Deno.serve(async (req) => {
                 safeRecipientFirstName
                   ? `Bonjour ${safeRecipientFirstName}, `
                   : ''
-              }${explanatoryText}
+              }le formateur vient de répondre à la proposition envoyée par ${safeOrganizationName}.
             </p>
 
             <div style="border:1px solid #dbe3ef;border-radius:12px;padding:18px;margin-bottom:18px;background:#f8fafc;">
               <div style="font-size:18px;font-weight:800;color:#0f2747;margin-bottom:10px;">
                 ${safeMissionTitle}
               </div>
-
               ${
                 safeLocation
                   ? `<div style="font-size:14px;color:#475569;"><strong>Lieu :</strong> ${safeLocation}</div>`
                   : ''
               }
-
               ${
                 dateRows
                   ? `<div style="margin-top:12px;font-size:13px;line-height:1.5;">${dateRows}</div>`
@@ -586,18 +537,37 @@ Deno.serve(async (req) => {
                 : ''
             }
 
-            ${actionBox}
+            ${
+              accepted
+                ? `
+                  <div style="margin-bottom:20px;padding:16px 17px;border:1px solid #bfdbfe;border-radius:12px;background:#eff6ff;">
+                    <div style="font-size:14px;font-weight:800;color:#1d4ed8;margin-bottom:5px;">
+                      Une dernière étape est nécessaire
+                    </div>
+                    <div style="font-size:13px;line-height:1.55;color:#475569;">
+                      L’acceptation du formateur ne confirme pas encore définitivement la mission.
+                      Ouvrez la mission dans Formaplane puis cliquez sur <strong>« Affecter »</strong>
+                      pour confirmer ce formateur sur la mission.
+                    </div>
+                  </div>
+                `
+                : `
+                  <div style="margin-bottom:20px;padding:14px 16px;border:1px solid #fde68a;border-radius:12px;background:#fffbeb;font-size:13px;line-height:1.55;color:#854d0e;">
+                    Le formateur a refusé cette proposition. Vous pouvez revenir sur la mission pour poursuivre votre recherche ou proposer la mission à un autre formateur.
+                  </div>
+                `
+            }
 
             <a
               href="${safeMissionUrl}"
               style="display:block;text-align:center;background:#2563eb;color:#ffffff;text-decoration:none;font-size:15px;font-weight:800;padding:14px 18px;border-radius:10px;"
             >
-              Voir la mission dans Clementplane
+              Voir la mission dans Formaplane
             </a>
 
             <div style="margin-top:26px;padding-top:18px;border-top:1px solid #dbe3ef;font-size:11px;line-height:1.5;color:#94a3b8;">
-              Clementplane<br />
-              Suivez vos propositions, revalidations et affectations simplement.
+              Formaplane<br />
+              Suivez vos propositions et affectations simplement.
             </div>
           </div>
         </div>
@@ -610,25 +580,20 @@ Deno.serve(async (req) => {
       recipient_email: recipientEmail,
       recipient_user_id: recipientUserId || null,
       requested_by_user_id: null,
-      organization_id: changeRequest.organization_id,
-      related_entity_type:
-        'mission_change_request_trainer',
-      related_entity_id: target.id,
+      organization_id: organizationId,
+      related_entity_type: 'mission_formateur',
+      related_entity_id: relation.id,
       status: 'pending',
       metadata: {
-        source:
-          'trainer_public_mission_change_response',
+        source: 'trainer_public_mission_response',
         mission_id: mission.id,
-        mission_change_request_id:
-          changeRequest.id,
         trainer_id: trainer.id,
         trainer_name: trainerName,
         organization_name: organizationName,
-        previous_status: target.previous_status,
-        response_status: response,
+        response_status: requestedResponse,
         response_comment:
-          target.response_comment || null,
-        responded_at: target.responded_at,
+          relation.response_comment || null,
+        responded_at: relation.repondu_le,
       },
     };
 
@@ -640,6 +605,10 @@ Deno.serve(async (req) => {
         .single();
 
     if (logError || !log?.id) {
+      console.error(
+        'Impossible de créer le journal e-mail :',
+        logError,
+      );
       return jsonResponse(
         {
           success: false,
@@ -700,6 +669,11 @@ Deno.serve(async (req) => {
         })
         .eq('id', log.id);
 
+      console.error(
+        'Brevo a refusé la notification de réponse :',
+        providerResponse,
+      );
+
       return jsonResponse(
         {
           success: false,
@@ -733,7 +707,7 @@ Deno.serve(async (req) => {
     });
   } catch (error) {
     console.error(
-      'Erreur notify-mission-change-response :',
+      'Erreur notify-mission-response :',
       error,
     );
 

@@ -26,7 +26,7 @@ export async function createSupportRequest({
   });
 
   if (error) {
-    console.error('Erreur de création de la demande Formaplane :', error);
+    console.error('Erreur de création de la demande Clementplane :', error);
     throw new Error("Impossible d'enregistrer votre demande pour le moment.");
   }
 

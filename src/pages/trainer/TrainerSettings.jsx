@@ -122,8 +122,8 @@ export default function TrainerSettings() {
         const org = status?.organization_name ? ` « ${status.organization_name} »` : '';
         setDeleteError(
           status?.reason === 'last_active_owner'
-            ? `Vous êtes le dernier propriétaire actif de l’organisme${org}. Transférez d’abord la propriété à un autre utilisateur ou contactez Formaplane.`
-            : `Vous êtes le dernier utilisateur actif de l’organisme${org}. Ajoutez d’abord un autre utilisateur ou contactez Formaplane.`,
+            ? `Vous êtes le dernier propriétaire actif de l’organisme${org}. Transférez d’abord la propriété à un autre utilisateur ou contactez Clementplane.`
+            : `Vous êtes le dernier utilisateur actif de l’organisme${org}. Ajoutez d’abord un autre utilisateur ou contactez Clementplane.`,
         );
         return;
       }
@@ -156,7 +156,7 @@ export default function TrainerSettings() {
         <div>
           <p className="page-eyebrow">PARAMÈTRES</p>
           <h1>Mon compte</h1>
-          <p>Gérez vos informations personnelles, votre session et vos espaces Formaplane.</p>
+          <p>Gérez vos informations personnelles, votre session et vos espaces Clementplane.</p>
         </div>
       </div>
 
@@ -292,7 +292,7 @@ export default function TrainerSettings() {
       </div>
       <div className="panel-card trainer-settings-card" style={{ marginTop: 20, border: '1px solid #fecaca' }}>
         <h2 style={{ color: '#b42318' }}>Zone de danger</h2>
-        <p>La suppression ferme définitivement votre compte Formaplane. Les données métier nécessaires aux organismes avec lesquels vous avez collaboré peuvent être conservées. Votre fiche formateur peut rester dans leur réseau sans être rattachée à un compte utilisateur.</p>
+        <p>La suppression ferme définitivement votre compte Clementplane. Les données métier nécessaires aux organismes avec lesquels vous avez collaboré peuvent être conservées. Votre fiche formateur peut rester dans leur réseau sans être rattachée à un compte utilisateur.</p>
         {!deleteOpen ? (
           <button className="button button--soft" type="button" onClick={() => setDeleteOpen(true)}>Supprimer mon compte</button>
         ) : (

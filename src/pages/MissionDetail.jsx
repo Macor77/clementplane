@@ -519,7 +519,7 @@ export default function MissionDetail() {
               isAssignment
                 ? "L'affectation"
                 : 'La désaffectation'
-            } reste bien enregistrée dans Formaplane.`,
+            } reste bien enregistrée dans Clementplane.`,
           );
         }
       }
@@ -893,7 +893,7 @@ export default function MissionDetail() {
                   letterSpacing: '.5px',
                 }}
               >
-                Envoyer maintenant avec Formaplane
+                Envoyer maintenant avec Clementplane
               </div>
 
               <label
@@ -923,8 +923,8 @@ export default function MissionDetail() {
                 />
                 <span>
                   {proposalContactTarget.isReminder
-                    ? 'Renvoyer immédiatement un e-mail via Formaplane'
-                    : 'Envoyer immédiatement la proposition par e-mail via Formaplane'}
+                    ? 'Renvoyer immédiatement un e-mail via Clementplane'
+                    : 'Envoyer immédiatement la proposition par e-mail via Clementplane'}
                   <span
                     style={{
                       display: 'block',
@@ -981,7 +981,7 @@ export default function MissionDetail() {
                   lineHeight: 1.45,
                 }}
               >
-                Ces choix n’envoient aucun message depuis Formaplane. Ils servent à enregistrer dans l’historique l’action que vous avez déjà réalisée.
+                Ces choix n’envoient aucun message depuis Clementplane. Ils servent à enregistrer dans l’historique l’action que vous avez déjà réalisée.
               </p>
 
               <div style={{ display: 'grid', gap: 7 }}>
@@ -1102,7 +1102,7 @@ export default function MissionDetail() {
             <div style={styles.modalWarning}>
               <strong>Comment les formateurs sont-ils prévenus ?</strong>
               <span>
-                Choisissez l’e-mail Formaplane ou indiquez que vous les avez déjà prévenus autrement.
+                Choisissez l’e-mail Clementplane ou indiquez que vous les avez déjà prévenus autrement.
               </span>
             </div>
 
@@ -1125,7 +1125,7 @@ export default function MissionDetail() {
                   letterSpacing: '.5px',
                 }}
               >
-                Envoyer maintenant avec Formaplane
+                Envoyer maintenant avec Clementplane
               </div>
 
               <label
@@ -1154,7 +1154,7 @@ export default function MissionDetail() {
                   onChange={() => setCancelMissionChannel('email')}
                 />
                 <span>
-                  Envoyer immédiatement un e-mail via Formaplane
+                  Envoyer immédiatement un e-mail via Clementplane
                   <span
                     style={{
                       display: 'block',
@@ -1210,7 +1210,7 @@ export default function MissionDetail() {
                   lineHeight: 1.45,
                 }}
               >
-                Ces choix n’envoient aucun message depuis Formaplane. Ils enregistrent simplement le moyen utilisé dans l’historique.
+                Ces choix n’envoient aucun message depuis Clementplane. Ils enregistrent simplement le moyen utilisé dans l’historique.
               </p>
 
               <div style={{ display: 'grid', gap: 7 }}>
@@ -1329,7 +1329,7 @@ export default function MissionDetail() {
               </strong>
 
               <span>
-                Choisissez l’e-mail Formaplane ou indiquez que vous
+                Choisissez l’e-mail Clementplane ou indiquez que vous
                 l’avez déjà prévenu par un autre moyen.
               </span>
             </div>
@@ -1353,7 +1353,7 @@ export default function MissionDetail() {
                   letterSpacing: '.5px',
                 }}
               >
-                Envoyer maintenant avec Formaplane
+                Envoyer maintenant avec Clementplane
               </div>
 
               <label
@@ -1382,7 +1382,7 @@ export default function MissionDetail() {
                   onChange={() => setAssignmentContactChannel('email')}
                 />
                 <span>
-                  Envoyer immédiatement un e-mail via Formaplane
+                  Envoyer immédiatement un e-mail via Clementplane
                   <span
                     style={{
                       display: 'block',
@@ -1437,7 +1437,7 @@ export default function MissionDetail() {
                   lineHeight: 1.45,
                 }}
               >
-                Ces choix n’envoient aucun message depuis Formaplane. Ils enregistrent simplement le moyen utilisé dans l’historique.
+                Ces choix n’envoient aucun message depuis Clementplane. Ils enregistrent simplement le moyen utilisé dans l’historique.
               </p>
 
               <div style={{ display: 'grid', gap: 7 }}>
@@ -2972,7 +2972,7 @@ function formatHistoryActor(
     item.actor_display_name ||
     (
       item.actor_type === 'system'
-        ? 'Formaplane'
+        ? 'Clementplane'
         : 'Utilisateur'
     );
 
@@ -3019,7 +3019,7 @@ function getHistoryDetail(
   }
 
   const channelLabels = {
-    email: 'E-mail Formaplane',
+    email: 'E-mail Clementplane',
     sms: 'SMS',
     whatsapp: 'WhatsApp',
     phone: 'Appel',

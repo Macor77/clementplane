@@ -73,7 +73,7 @@ function historyActorLabel(item) {
     item.actor_display_name ||
     (
       item.actor_type === 'system'
-        ? 'Formaplane'
+        ? 'Clementplane'
         : 'Utilisateur'
     );
 
@@ -402,7 +402,7 @@ export default function TrainerMissionDetail() {
           </h2>
 
           <p style={styles.coordinationText}>
-            Formaplane confirme la planification de cette mission.
+            Clementplane confirme la planification de cette mission.
             Pour préparer concrètement votre intervention, rapprochez-vous
             directement de <strong>{mission.organization_name || 'l’organisme de formation'}</strong>.
           </p>
@@ -412,7 +412,7 @@ export default function TrainerMissionDetail() {
             (accès au site, horaires pratiques, matériel ou supports,
             documents, convention ou contrat et autres éléments utiles)
             sont convenues directement entre vous et l’organisme de formation,
-            en dehors de Formaplane.
+            en dehors de Clementplane.
           </p>
 
           {mission.organization_name ? (
@@ -640,8 +640,8 @@ export default function TrainerMissionDetail() {
 
             <span>
               {mission.status === 'affecte'
-                ? 'Le désistement sera enregistré dans Formaplane, votre affectation sera libérée et l’OF sera automatiquement prévenu par e-mail. Nous vous recommandons aussi de le contacter directement si la mission est proche.'
-                : 'Le désistement sera enregistré dans Formaplane et l’OF sera automatiquement prévenu par e-mail. Vous pouvez également le contacter directement par votre moyen habituel.'}
+                ? 'Le désistement sera enregistré dans Clementplane, votre affectation sera libérée et l’OF sera automatiquement prévenu par e-mail. Nous vous recommandons aussi de le contacter directement si la mission est proche.'
+                : 'Le désistement sera enregistré dans Clementplane et l’OF sera automatiquement prévenu par e-mail. Vous pouvez également le contacter directement par votre moyen habituel.'}
             </span>
           </div>
 

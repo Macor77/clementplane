@@ -1,7 +1,7 @@
 # ROADMAP — Formaplane
 
 > Mise à jour : clôture officielle du Sprint 19 — 26 août 2026  
-> Version actuelle : `v0.19.0`
+> Version actuelle : `v0.19.6`
 
 ## Vision
 
@@ -37,6 +37,7 @@ Après le Sprint 14, la priorité est désormais de rendre Formaplane plus auton
 | 18 | Tests automatisés & surveillance | ✅ TERMINÉ |
 | 19 | Optimisation UX & expérience mobile | ✅ TERMINÉ |
 | 19.5 | Rebranding Formaplane → Clementplane | ✅ TERMINÉ |
+| 19.6 | Remplacement global du logo Clementplane | ✅ TERMINÉ |
 | 20 | Création de missions par le formateur dans son propre agenda | 🔜 À FAIRE |
 | 21 | Clementplane installable sur mobile (PWA) | 🔜 À FAIRE |
 | 22 | Synchronisation des missions avec Google Agenda | 🔜 À FAIRE |

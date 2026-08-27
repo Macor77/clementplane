@@ -79,3 +79,34 @@ npm run test:e2e
 ```
 
 Le seed est protégé par `E2E_ALLOW_RESET=true`, `E2E_PROJECT_REF` et un blocage explicite de la ref production `hctvkynrgmnxjynbncdi`. Voir `docs/E2E_SETUP.md`.
+
+## Sprint 20 — Recette PWA
+
+### Contrôles Codespaces / preview de production
+
+1. `npm ci`
+2. `npm test`
+3. `npm run lint`
+4. `npm run build`
+5. `npm run preview -- --host 0.0.0.0`
+6. Chrome DevTools → Application → Manifest : vérifier **Clementplane**, `standalone`, icônes 192/512 et couleur `#0B132B`.
+7. Chrome DevTools → Application → Service Workers : vérifier qu’un worker est activé et contrôle la page.
+8. Après un premier chargement, passer DevTools → Network → Offline : le shell doit rester visible et le message « Vous êtes hors connexion » doit apparaître.
+9. Repasser Online : le message doit disparaître et les données en ligne doivent pouvoir être rechargées.
+10. Après un nouveau build/déploiement, ouvrir l’ancienne PWA : la notification de nouvelle version doit apparaître puis le bouton **Mettre à jour** doit activer la nouvelle version.
+
+### Contrôles mobile réel
+
+- Android / Chrome : installation, icône, lancement standalone, navigation, fermeture/réouverture, offline/online.
+- iPhone / Safari : aide « Partager → Sur l’écran d’accueil → Ajouter », icône, lancement standalone, safe areas, navigation, modales, clavier, fermeture/réouverture, offline/online.
+- Dans les deux cas, vérifier que Clementplane ne prétend jamais permettre une saisie métier hors connexion et qu’aucune donnée Supabase ancienne n’est présentée comme une donnée hors ligne synchronisable.
+
+
+### Sprint 20 — invitation et statistiques PWA
+
+1. Utilisateur authentifié sur Android/Chrome avec PWA non installée : l’invitation **Clementplane sur votre téléphone** doit proposer **Installer Clementplane** dès que le navigateur expose l’installation native.
+2. Fermer l’invitation : elle ne doit plus réapparaître pendant 7 jours sur ce navigateur.
+3. Installer puis lancer Clementplane depuis l’icône : l’invitation d’installation ne doit pas apparaître dans la PWA.
+4. iPhone/iPad : le bouton d’installation doit afficher l’aide **Partager → Sur l’écran d’accueil → Ajouter**.
+5. Après migration Supabase, ouvrir une session depuis le navigateur puis depuis la PWA et vérifier que `product_events` reçoit `app_opened` avec `access_mode` respectivement `browser` et `pwa`.
+6. Dans `/admin`, vérifier la section **Application mobile / PWA** : utilisateurs PWA, taux global, détail OF/Formateurs et répartition des ouvertures sur 30 jours.

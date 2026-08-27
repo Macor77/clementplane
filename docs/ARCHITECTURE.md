@@ -1,14 +1,14 @@
-# ARCHITECTURE - Formaplane
+# ARCHITECTURE — Clementplane
 
-Version : 10.0
-Dernière mise à jour : 18/08/2026
-Correspond au Sprint 10 terminé et validé.
+Version : 0.20
+Dernière mise à jour : 27/08/2026
+Correspond au Sprint 20 terminé et validé.
 
 ------------------------------------------------------------------------
 
 # Objectif
 
-Ce document décrit l'architecture technique de Formaplane et les
+Ce document décrit l'architecture technique de Clementplane et les
 principes qui guident son évolution.
 
 L'objectif est de conserver une architecture :
@@ -328,7 +328,7 @@ Les composants ont été optimisés afin de conserver une hauteur fixe des cellu
 
 # Évolutions Sprint 8 — Authentification et architecture multi-organismes
 
-Le Sprint 8 introduit une couche d'identité et de rattachement permettant à Formaplane de fonctionner avec plusieurs utilisateurs, plusieurs organismes et des profils formateurs partagés.
+Le Sprint 8 introduit une couche d'identité et de rattachement permettant à Clementplane de fonctionner avec plusieurs utilisateurs, plusieurs organismes et des profils formateurs partagés.
 
 ## Modèle d'identité
 
@@ -506,7 +506,7 @@ Le besoin métier de prévention des doubles affectations est ainsi concilié av
 
 # État architectural après le Sprint 8
 
-Formaplane n'est plus architecturé comme une application mono-organisme avec un futur multi-tenant théorique.
+Clementplane n'est plus architecturé comme une application mono-organisme avec un futur multi-tenant théorique.
 
 Les briques fondamentales du multi-organismes sont désormais présentes :
 
@@ -527,7 +527,7 @@ Les briques fondamentales du multi-organismes sont désormais présentes :
 
 ## Identité Formaplane
 
-Le produit est désormais exploité sous le nom Formaplane. Les ressources publiques de marque sont regroupées sous `public/brand/`.
+À partir du Sprint 9, le produit est exploité sous le nom Formaplane. Les ressources publiques de marque sont regroupées sous `public/brand/`.
 
 ## Confidentialité du réseau formateurs
 
@@ -560,7 +560,21 @@ Le projet contient une Edge Function `delete-account` et un service `accountDele
 
 # État architectural après le Sprint 10
 
-Formaplane dispose désormais d'un socle pré-bêta multi-organismes : authentification, espaces OF/formateur, confidentialité renforcée, réseau partagé, référentiels, workflow mission traçable, revalidation et prévention des doubles affectations. Le Sprint 11 peut se concentrer sur les e-mails transactionnels sans remettre en cause ce socle.
+Clementplane dispose désormais d'un socle pré-bêta multi-organismes : authentification, espaces OF/formateur, confidentialité renforcée, réseau partagé, référentiels, workflow mission traçable, revalidation et prévention des doubles affectations. Le Sprint 11 peut se concentrer sur les e-mails transactionnels sans remettre en cause ce socle.
+
+# Évolution Sprint 19.5 — Rebranding Clementplane
+
+Le produit est renommé **Clementplane** avant son lancement public.
+
+Le rebranding porte sur :
+- le nom du produit ;
+- les domaines ;
+- les e-mails ;
+- les ressources publiques ;
+- les textes applicatifs ;
+- les ressources de marque regroupées sous `public/brand/`.
+
+Le fonctionnement métier et l’architecture multi-organismes restent inchangés.
 
 # Évolutions Sprint 11 — Couche transactionnelle et parcours publics
 
@@ -570,14 +584,14 @@ Les communications métier reposent désormais sur :
 - le frontend React/Vite pour déclencher les actions et recueillir le choix de canal ;
 - Supabase pour la persistance, les RPC métier et la sécurité ;
 - des Supabase Edge Functions pour les notifications transactionnelles ;
-- le service d'envoi d'e-mails configuré pour Formaplane ;
+- le service d'envoi d'e-mails configuré pour Clementplane ;
 - Vercel pour l'application web publique.
 
 Le déclenchement d'un e-mail est séparé autant que possible de l'enregistrement de l'action métier : une erreur d'e-mail ne doit pas annuler une décision métier déjà enregistrée.
 
 ## Parcours publics sécurisés
 
-Certains destinataires ne disposent pas encore de compte Formaplane. Des parcours publics dédiés permettent de répondre aux propositions ou aux demandes de revalidation prévues à cet effet, sans exposer le reste des données de l'application.
+Certains destinataires ne disposent pas encore de compte Clementplane. Des parcours publics dédiés permettent de répondre aux propositions ou aux demandes de revalidation prévues à cet effet, sans exposer le reste des données de l'application.
 
 Les liens et fonctions publiques doivent rester limités au contexte nécessaire à l'action et utiliser les mécanismes de sécurité prévus par les migrations/RPC correspondantes.
 
@@ -591,4 +605,42 @@ Les réponses et désistements peuvent déclencher une notification vers l'organ
 
 ## État architectural après le Sprint 11
 
-Formaplane dispose maintenant d'un workflow complet OF ↔ formateur couvrant proposition, réponse, affectation, désaffectation, modification importante, revalidation, annulation et désistement, avec prise en charge des utilisateurs inscrits et de certains parcours publics pour les destinataires non inscrits.
+Clementplane dispose maintenant d'un workflow complet OF ↔ formateur couvrant proposition, réponse, affectation, désaffectation, modification importante, revalidation, annulation et désistement, avec prise en charge des utilisateurs inscrits et de certains parcours publics pour les destinataires non inscrits.
+
+------------------------------------------------------------------------
+
+# Évolutions architecturales Sprints 12 à 20
+
+## Partage des disponibilités
+
+Le partage de disponibilités s’appuie sur les disponibilités réelles du formateur, un carnet privé de contacts OF, les journaux d’e-mails et un contrôle serveur du délai anti-spam.
+
+## Administration et instrumentation
+
+L’administration repose notamment sur `platform_admins`, `is_platform_admin()`, `support_requests` et `product_events`.
+
+Le Sprint 20 réutilise `product_events` pour enregistrer `app_opened` avec un mode d’accès limité à `pwa` ou `browser`.
+
+Aucune donnée matérielle du téléphone n’est stockée.
+
+## PWA — Sprint 20
+
+La PWA repose notamment sur Vite, `vite-plugin-pwa`, Workbox, `pwa.config.js`, `src/components/pwa/PwaManager.jsx` et `src/pwa/pwaEnvironment.js`.
+
+Le build génère notamment `manifest.webmanifest`, `sw.js` et les fichiers Workbox nécessaires.
+
+Le service worker conserve uniquement le shell et les ressources statiques utiles au démarrage. Les données métier Supabase ne constituent pas une base hors connexion synchronisable.
+
+En cas de perte du réseau, le shell peut rester visible et Clementplane affiche un message hors connexion. Au retour du réseau, le fonctionnement normal reprend.
+
+## Installation mobile
+
+Sur Chromium compatible, Clementplane utilise `beforeinstallprompt` lorsqu’il est disponible.
+
+Sur iPhone/iPad, l’installation reste pilotée par Safari : Partager → Sur l’écran d’accueil → Ajouter.
+
+L’état d’installation reste propre à l’appareil et au navigateur ; il n’est pas enregistré comme un attribut global du compte utilisateur.
+
+## État architectural après le Sprint 20
+
+Clementplane est une application web SaaS multi-organismes disposant d’un frontend React/Vite, d’un backend Supabase/PostgreSQL, d’Edge Functions, d’une couche transactionnelle Brevo, d’une administration interne, de tests automatisés, d’un déploiement Vercel et d’une PWA installable sans duplication du produit en application native.

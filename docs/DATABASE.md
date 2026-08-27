@@ -1,15 +1,15 @@
-# DATABASE - Formaplane
+# DATABASE — Clementplane
 
-Version : 10.0\
-Dernière mise à jour : 18/08/2026\
-Correspond au Sprint 10 terminé et validé.
+Version : 0.20
+Dernière mise à jour : 27/08/2026
+Correspond au Sprint 20 terminé et validé.
 
 ------------------------------------------------------------------------
 
 # Objectif
 
 Ce document décrit la structure de la base de données PostgreSQL
-utilisée par Formaplane.
+utilisée par Clementplane.
 
 La base est hébergée sur Supabase et constitue l'unique source de vérité
 des données métier.
@@ -313,3 +313,40 @@ Les migrations du Sprint 11 ajoutent les informations nécessaires pour distingu
 ## Sécurité des réponses publiques
 
 Les parcours destinés aux formateurs sans compte utilisent des fonctions dédiées et un périmètre de données limité. Les RPC authentifiées restent utilisées pour les actions propres aux utilisateurs connectés.
+
+
+------------------------------------------------------------------------
+
+# Évolutions de la base — Sprints 12 à 20
+
+## Partage des disponibilités
+
+Les migrations des Sprints 12 et 13 ajoutent les contacts de partage, le statut de référencement du contact, l’historique des partages et les garde-fous serveur nécessaires au délai anti-spam de 20 jours et à la réservation atomique d’un envoi.
+
+## Support, contact public et mini-CRM
+
+Les tables et fonctions liées à `support_requests` et aux demandes de contact public permettent de centraliser les demandes issues de l’application et de la landing page. Le Sprint 17 enrichit cette couche pour l’Admin et les statistiques.
+
+## Administration et communications nouveautés
+
+Le Sprint 17 ajoute les structures nécessaires aux statistiques d’administration, à l’historique des communications « nouveautés » et à la gestion de leurs destinataires. Le désabonnement des nouveautés reste distinct des e-mails opérationnels.
+
+La migration `20260825094000_enforce_single_platform_admin.sql` impose le garde-fou correspondant à l’administration unique prévue pour Clementplane.
+
+## Monitoring
+
+Le Sprint 18 utilise `product_events` pour la journalisation non bloquante d’événements produit, notamment les erreurs client authentifiées via les RPC sécurisées prévues à cet effet.
+
+## Invitations OF — Sprint 19
+
+La migration `20260826110000_sprint19_trainer_organizations_invitations.sql` prend en charge le suivi des invitations envoyées par un formateur à ses organismes partenaires et les informations nécessaires au parcours d’inscription associé.
+
+## Analytics PWA — Sprint 20
+
+La migration `20260827113000_sprint20_pwa_analytics.sql` réutilise `product_events` pour enregistrer l’événement `app_opened` et son `access_mode` (`pwa` ou `browser`).
+
+La fonction d’administration `admin_pwa_stats()` fournit les agrégats nécessaires au suivi de l’adoption PWA. Aucun identifiant matériel du téléphone n’est nécessaire à cette mesure.
+
+# État de la base après le Sprint 20
+
+Supabase/PostgreSQL reste l’unique source de vérité des données métier. La PWA n’introduit pas de base locale métier ni de mécanisme de synchronisation offline concurrent. Les règles RLS, RPC et contraintes serveur restent les garde-fous de référence pour le cloisonnement multi-organismes et les opérations sensibles.

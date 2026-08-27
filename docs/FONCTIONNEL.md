@@ -1,15 +1,14 @@
-# FONCTIONNEL - Formaplane
+# FONCTIONNEL — Clementplane
 
-Version : 10.0
-Dernière mise à jour : 18/08/2026
-Correspond au Sprint 10 terminé et validé.
+Version : 0.20
+Dernière mise à jour : 27/08/2026
+Correspond au Sprint 20 terminé et validé.
 
 ------------------------------------------------------------------------
 
 # Présentation
 
-Formaplane est un logiciel de gestion des formateurs et des missions
-destiné aux organismes de formation.
+Clementplane est une plateforme collaborative de gestion des relations entre organismes de formation et formateurs indépendants.
 
 Son objectif est de permettre à un coordinateur de préparer, proposer,
 affecter et suivre une mission depuis une seule interface.
@@ -418,3 +417,56 @@ Dans le second cas, l'affectation est libérée et la mission redevient à pourv
 ## Principe des liens e-mail
 
 Un e-mail transactionnel doit conduire vers l'action ou l'objet métier concerné, et non vers une page d'accueil générique lorsque le contexte permet un lien direct.
+
+
+------------------------------------------------------------------------
+
+# Évolutions fonctionnelles — Sprints 12 à 20
+
+## Partage des disponibilités — Sprints 12 et 13
+
+Le formateur peut partager ses disponibilités avec ses contacts OF depuis Clementplane. Le planning transmis reflète l’état utile au destinataire sans exposer le détail confidentiel des missions confiées par d’autres organismes.
+
+Le partage est protégé par un délai anti-spam de 20 jours pour un même couple formateur + destinataire. Le contrôle est réalisé côté serveur et l’interface indique quand un nouvel envoi sera possible.
+
+## Harmonisation des communications — Sprint 14
+
+Les principales communications OF liées aux missions utilisent des parcours et modales cohérents. Les e-mails transactionnels restent séparés de l’action métier : une décision enregistrée ne doit pas être annulée par un échec d’envoi.
+
+## Découvrir Clementplane — Sprint 15
+
+La rubrique « Découvrir Clementplane » regroupe les explications produit, tutoriels pas à pas, FAQ, roadmap publique et contact support. Elle est revue à chaque clôture de sprint lorsque les évolutions le nécessitent.
+
+## Site public — Sprint 16
+
+Clementplane dispose d’une landing page publique présentant la proposition de valeur pour les organismes et les formateurs ainsi qu’un formulaire de prise de contact.
+
+## Administration et statistiques — Sprint 17
+
+L’espace Admin centralise les principaux indicateurs d’inscription et d’activité, un mini-CRM pour les demandes publiques/support et l’envoi d’e-mails de nouveautés avec gestion du désabonnement spécifique à ces communications.
+
+## Qualité et surveillance — Sprint 18
+
+Le produit dispose de tests Vitest, de contrats de sécurité, de scénarios Playwright préparés et d’une CI. Les erreurs client authentifiées peuvent être journalisées sans bloquer l’utilisateur.
+
+## UX et mobile — Sprint 19
+
+Les plannings OF et Formateur ont été simplifiés avec des filtres plus lisibles et un accès au détail d’une journée. L’espace Formateur a été optimisé pour mobile. La rubrique « Mes OF » permet de gérer les organismes partenaires et de les inviter à rejoindre Clementplane.
+
+## Rebranding — Sprints 19.5 et 19.6
+
+Le produit a été renommé Formaplane → Clementplane avant son lancement public. Les domaines, textes, e-mails, ressources de marque, favicon et icônes ont été alignés sur l’identité Clementplane et le pack logo final.
+
+## PWA — Sprint 20
+
+Clementplane est installable sur Android et iPhone/iPad comme Progressive Web App. Une invitation d’installation est proposée de manière non intrusive ; si elle est fermée sans installation, elle peut être reproposée après 7 jours.
+
+Sur Android compatible, Clementplane utilise la fenêtre native d’installation. Sur iPhone/iPad, l’utilisateur est guidé vers Safari → Partager → Sur l’écran d’accueil → Ajouter. Un guide manuel est également disponible dans « Découvrir Clementplane ».
+
+Une fois lancé depuis l’icône, Clementplane fonctionne en mode `standalone`. Le shell et les ressources statiques peuvent rester disponibles hors connexion, mais les données métier nécessitent Internet et ne sont pas présentées comme synchronisables hors ligne.
+
+L’Admin mesure l’adoption réelle de la PWA et distingue les ouvertures `pwa` et `browser`.
+
+# État fonctionnel après le Sprint 20
+
+Clementplane couvre le cycle principal OF ↔ formateur, le partage des disponibilités, l’administration, l’aide utilisateur et l’usage mobile installable. La priorité suivante est la création autonome de missions par le formateur afin que Clementplane puisse devenir son planning professionnel de référence, y compris pour des missions confiées par des OF extérieurs à la plateforme.

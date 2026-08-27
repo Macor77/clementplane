@@ -1,8 +1,8 @@
-# E2E Playwright — préparation pour activation future
+# E2E Playwright — configuration Clementplane
 
 ## Décision Sprint 18
 
-Formaplane **ne crée pas de projet Supabase E2E payant pour le moment**. Les scénarios Playwright, les helpers et le mécanisme de seed/reset sont conservés dans le dépôt afin de pouvoir activer de vrais tests E2E plus tard sans repartir de zéro.
+Clementplane **ne crée pas de projet Supabase E2E payant pour le moment**. Les scénarios Playwright, les helpers et le mécanisme de seed/reset sont conservés dans le dépôt afin de pouvoir activer de vrais tests E2E plus tard sans repartir de zéro.
 
 La CI active du Sprint 18 reste gratuite et exécute automatiquement :
 
@@ -62,3 +62,16 @@ Le seed ne fait aucun `TRUNCATE` global. Il ne doit travailler que sur les ident
 ## E-mails
 
 Les scénarios Playwright ne doivent jamais envoyer de vrais e-mails. Les tests unitaires de la Livraison B restent responsables de la logique d'e-mailing.
+
+
+## Mise à jour Sprint 20
+
+Le test `tests/e2e/specs/05-pwa-shell.spec.js` vérifie le shell et les métadonnées PWA sans écrire dans Supabase. Il peut donc être exécuté localement indépendamment d’un projet Supabase E2E :
+
+```bash
+npx playwright install chromium
+npx playwright install-deps chromium
+npx playwright test tests/e2e/specs/05-pwa-shell.spec.js
+```
+
+Les scénarios Playwright qui créent, modifient ou suppriment des données métier restent soumis aux garde-fous E2E et ne doivent jamais viser la production.

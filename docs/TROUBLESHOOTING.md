@@ -1,6 +1,6 @@
-# Formaplane — Guide de dépannage
+# Clementplane — Guide de dépannage
 
-Ce document regroupe les procédures de dépannage déjà rencontrées et validées pendant le développement de Formaplane.
+Ce document regroupe les procédures de dépannage déjà rencontrées et validées pendant le développement de Clementplane.
 
 L'objectif est d'éviter de recommencer un diagnostic complet lorsqu'un problème connu réapparaît.
 
@@ -366,3 +366,27 @@ Dans ce cas, le diagnostic local ne doit plus être poursuivi inutilement : vér
 Lorsqu'un problème déjà documenté ici réapparaît, appliquer d'abord la procédure existante avant de recommencer un diagnostic complet.
 
 Chaque fois qu'une nouvelle cause réelle est identifiée et validée, mettre ce document à jour afin que la procédure suivante soit plus courte, plus fiable et plus efficace.
+
+
+---
+
+# Playwright — Chromium ne démarre pas dans Codespaces
+
+## Symptômes
+
+Playwright indique que l’exécutable Chromium est absent, ou Chromium échoue avec une bibliothèque système manquante telle que `libatk-1.0.so.0`.
+
+## Correction validée
+
+```bash
+npx playwright install chromium
+npx playwright install-deps chromium
+```
+
+Puis relancer le test concerné, par exemple :
+
+```bash
+npx playwright test tests/e2e/specs/05-pwa-shell.spec.js
+```
+
+Les dossiers `test-results/` et `playwright-report/` sont des artefacts temporaires et ne doivent pas être intégrés à une archive de release.

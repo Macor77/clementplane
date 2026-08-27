@@ -1,8 +1,8 @@
-# Tests automatisés — Sprint 18
+# Tests automatisés et recette — Clementplane v0.20.0
 
 ## Objectif
 
-Le Sprint 18 introduit un filet de sécurité automatisé autour des règles métier les plus sensibles de Formaplane, sans jamais exécuter de tests destructifs sur la production.
+Le dispositif de tests introduit au Sprint 18 protège les règles métier sensibles de Clementplane. Le Sprint 20 ajoute la recette PWA, tout en conservant l’interdiction absolue des tests destructifs sur la production.
 
 ## Commandes
 
@@ -25,9 +25,9 @@ Les tests de `tests/contracts` vérifient que les migrations de référence cons
 
 Ces tests sont volontairement distincts de vrais tests d'intégration base. Ils empêchent une régression dans le code versionné, mais ne prouvent pas à eux seuls l'état d'une base déployée.
 
-## Couche 3 — E2E Playwright préparé, activation différée
+## Couche 3 — E2E Playwright : tests isolés et activation contrôlée
 
-Les parcours Playwright sont présents dans le dépôt mais ne sont pas exécutés automatiquement pendant le Sprint 18. Leur activation nécessite un environnement Supabase séparé de la production. La création d’un projet E2E permanent payant a été volontairement différée tant que son coût n’est pas justifié par l’usage.
+Les parcours Playwright nécessitant des données métier restent conditionnés à un environnement Supabase E2E séparé de la production. Les tests de shell ne nécessitant pas d’écriture métier, comme le contrôle des métadonnées PWA du Sprint 20, peuvent être exécutés localement sans projet Supabase E2E.
 
 ## Règle absolue
 
@@ -110,3 +110,22 @@ Le seed est protégé par `E2E_ALLOW_RESET=true`, `E2E_PROJECT_REF` et un blocag
 4. iPhone/iPad : le bouton d’installation doit afficher l’aide **Partager → Sur l’écran d’accueil → Ajouter**.
 5. Après migration Supabase, ouvrir une session depuis le navigateur puis depuis la PWA et vérifier que `product_events` reçoit `app_opened` avec `access_mode` respectivement `browser` et `pwa`.
 6. Dans `/admin`, vérifier la section **Application mobile / PWA** : utilisateurs PWA, taux global, détail OF/Formateurs et répartition des ouvertures sur 30 jours.
+
+
+## Clôture Sprint 20 — résultats validés
+
+La recette finale du Sprint 20 a confirmé :
+
+- `npm ci` réussi ;
+- 19 fichiers de tests Vitest réussis, soit 78 tests sur 78 ;
+- `npm run lint` : 0 erreur et 2 warnings React Hooks connus ;
+- `npm run build` réussi avec génération de `manifest.webmanifest`, `sw.js` et Workbox ;
+- `npx playwright test tests/e2e/specs/05-pwa-shell.spec.js` réussi après installation des dépendances navigateur nécessaires ;
+- installation Android réelle validée ;
+- lancement depuis l’icône et mode standalone validés ;
+- comportement offline / retour online validé ;
+- disparition de l’invitation dans la PWA installée validée ;
+- statistiques PWA vérifiées dans l’Admin ;
+- déploiement de production Vercel validé.
+
+Le warning Vite sur la taille du bundle reste un axe d’optimisation et n’a pas bloqué la clôture du Sprint 20.

@@ -1,14 +1,14 @@
-# PRD - Formaplane
+# PRD — Clementplane
 
-Version : 10.0  
-Dernière mise à jour : 18/08/2026  
-État produit après le Sprint 10 terminé et validé.
+Version : 0.20
+Dernière mise à jour : 27/08/2026
+État produit après le Sprint 20 terminé et validé.
 
 ---
 
 # Présentation
 
-Formaplane est une plateforme de gestion des formateurs destinée aux organismes de formation.
+Clementplane est une plateforme de gestion des formateurs destinée aux organismes de formation.
 
 Son objectif est de réduire drastiquement le temps nécessaire pour :
 
@@ -44,7 +44,7 @@ Les principales difficultés sont :
 
 # Notre vision
 
-Formaplane doit devenir le point d'entrée unique de la gestion des formateurs.
+Clementplane doit devenir le point d'entrée unique de la gestion des formateurs.
 
 À terme, un organisme ne devra plus avoir besoin de plusieurs outils.
 
@@ -82,7 +82,7 @@ Le logiciel devra couvrir :
 
 # Proposition de valeur
 
-Formaplane permet :
+Clementplane permet :
 
 - de trouver rapidement le bon formateur ;
 - de comparer plusieurs profils ;
@@ -130,9 +130,9 @@ Le logiciel indique toujours le lieu réellement reconnu.
 
 ---
 
-# Fonctionnalités disponibles après le Sprint 10
+# Fonctionnalités disponibles
 
-En complément du socle initial, Formaplane dispose désormais de :
+Clementplane dispose notamment de :
 
 - création et suivi des missions ;
 - recherche et sélection de formateurs depuis une mission ;
@@ -149,18 +149,6 @@ En complément du socle initial, Formaplane dispose désormais de :
 - référentiels de compétences et de matériel ;
 - plannings OF et formateur.
 
-# Prochaines grandes étapes
-
-La priorité pré-bêta est désormais :
-
-- e-mails transactionnels via Brevo ;
-- notifications et relances ;
-- préparation et accompagnement de la bêta ;
-- poursuite progressive des fonctions SaaS et collaboratives.
-
-Le séquencement détaillé est maintenu dans `ROADMAP.md`.
-
----
 
 # Principes produit
 
@@ -178,7 +166,7 @@ Une fonctionnalité qui n'apporte aucune valeur métier ne doit pas être dével
 
 # Critères de réussite
 
-Formaplane sera considéré comme un succès lorsque :
+Clementplane sera considéré comme un succès lorsque :
 
 - un organisme pourra préparer une mission en quelques minutes ;
 - la recherche d'un formateur deviendra quasi instantanée ;
@@ -189,7 +177,7 @@ Formaplane sera considéré comme un succès lorsque :
 
 # Vision long terme
 
-À terme, Formaplane deviendra une plateforme collaborative reliant :
+À terme, Clementplane deviendra une plateforme collaborative reliant :
 
 - les organismes de formation ;
 - les formateurs indépendants ;
@@ -199,49 +187,39 @@ L'objectif n'est pas uniquement de gérer des données, mais de faciliter l'orga
 
 ---
 
-# État produit après le Sprint 10
 
-Formaplane n'est plus seulement un gestionnaire interne de fiches formateurs. Le produit permet désormais à un organisme de créer une mission, rechercher des profils, envoyer des propositions, recevoir plusieurs acceptations sous forme d'options, choisir un formateur, gérer les changements de conditions et suivre les engagements dans les plannings.
+---
 
-Le formateur possède son propre espace pour gérer ses disponibilités, propositions, missions, profil et réponses aux revalidations. L'architecture multi-organismes protège les données propres à chaque OF tout en permettant la prévention globale des conflits de planning.
+# État produit — v0.20.0
 
-Le prochain enjeu produit est de rendre ces workflows utilisables sans surveillance manuelle grâce aux communications transactionnelles et notifications avant l'ouverture de la bêta.
+Après le Sprint 20, Clementplane dispose notamment des fonctionnalités suivantes :
 
-# État produit après le Sprint 11
-
-Formaplane couvre désormais le cycle opérationnel principal entre organismes de formation et formateurs indépendants :
-
-- constitution et gestion d'un réseau de formateurs ;
-- recherche et recommandation ;
-- gestion des disponibilités ;
+- comptes OF, Formateur et double profil ;
+- réseaux privés de formateurs par organisme ;
+- profils formateurs revendiqués ;
+- disponibilités et planning ;
+- recherche par disponibilité, distance, compétences et critères métier ;
 - création et suivi des missions ;
-- propositions envoyées à plusieurs formateurs ;
-- acceptation et refus ;
-- affectation et désaffectation ;
-- modifications importantes et revalidation ;
-- annulation ;
-- désistement du formateur, y compris après affectation ;
-- historique des actions et commentaires ;
-- communications transactionnelles ;
-- parcours adaptés aux formateurs avec ou sans compte ;
-- planning OF et planning formateur.
+- propositions, réponses, options et affectations ;
+- gestion des principaux événements du cycle de vie des missions ;
+- partage des disponibilités avec protection anti-spam côté serveur ;
+- carnet de contacts et invitations OF ;
+- e-mails transactionnels ;
+- espace Admin, statistiques et mini-CRM ;
+- page Découvrir avec FAQ, tutoriels et contact ;
+- landing page publique ;
+- expérience mobile optimisée ;
+- PWA installable sur Android et iPhone/iPad ;
+- suivi Admin de l’adoption PWA.
 
-Le produit entre désormais dans une phase où l'enjeu n'est plus seulement de compléter le cœur du workflow mission, mais aussi de favoriser son adoption, son autonomie d'utilisation, sa fiabilité et son pilotage.
+## Principe produit
 
-# Priorités produit validées après le Sprint 11
+Clementplane doit réduire les doubles saisies et devenir une source de référence commune entre organismes et formateurs, tout en conservant la confidentialité des données propres à chaque organisme.
 
-## Sprint 12 — Partage des disponibilités formateur
+## Priorité après v0.20.0
 
-Permettre au formateur de partager directement ses disponibilités avec son réseau d'OF, qu'ils disposent ou non d'un compte Formaplane.
+Le Sprint 21 doit permettre au formateur de créer lui-même une mission dans son agenda lorsqu’elle lui est confiée par un organisme qui n’utilise pas Clementplane.
 
-## Sprint 13 — Tutos, explications, FAQ & transparence produit
+L’objectif est que Clementplane puisse devenir son planning professionnel de référence, même lorsqu’il travaille avec des organismes extérieurs à la plateforme.
 
-Rendre l'application compréhensible et autonome grâce à l'aide contextuelle, aux tutoriels, à la FAQ, à l'affichage de version et à une roadmap publique simplifiée.
-
-## Sprint 14 — Tests automatisés & surveillance
-
-Sécuriser les workflows critiques, les permissions et les fonctions backend, et mettre en place une surveillance adaptée avant l'élargissement de l'usage.
-
-## Sprint 15 — Dashboard Admin & statistiques d'utilisation
-
-Donner à l'administration Formaplane une vision de l'inscription, de l'activité, de l'adoption des fonctionnalités et des principaux indicateurs d'usage.
+Le Sprint 22 est consacré à la synchronisation des missions Clementplane vers Google Agenda.

@@ -1,4 +1,157 @@
-# CHANGELOG - Formaplane
+# CHANGELOG — Clementplane
+
+## v0.20.0 — Sprint 20 — PWA / Clementplane installable sur mobile — 27 août 2026
+
+### PWA et expérience mobile
+- transformation de Clementplane en Progressive Web App installable ;
+- manifest Clementplane avec identité et icônes validées ;
+- icône maskable Android ;
+- lancement en mode `standalone` depuis l’écran d’accueil ;
+- service worker généré via `vite-plugin-pwa` ;
+- précache limité au shell et aux ressources statiques ;
+- comportement hors connexion contrôlé avec message « Vous êtes hors connexion » ;
+- reprise automatique du fonctionnement normal au retour du réseau.
+
+### Installation
+- invitation « Clementplane sur votre téléphone » pour les utilisateurs connectés ;
+- bouton d’installation natif Android lorsque le navigateur expose le prompt PWA ;
+- aide spécifique iPhone/iPad : Partager → Sur l’écran d’accueil → Ajouter ;
+- fermeture de l’invitation mémorisée pendant 7 jours ;
+- masquage de l’invitation lorsque Clementplane est utilisé en mode PWA ;
+- guide pas à pas d’installation manuelle ajouté dans « Découvrir Clementplane ».
+
+### Statistiques PWA
+- ajout de l’événement `app_opened` dans l’instrumentation produit ;
+- distinction `pwa` / `browser` ;
+- aucun identifiant matériel ou modèle de téléphone stocké ;
+- ajout de `admin_pwa_stats()` ;
+- suivi Admin du nombre d’utilisateurs ayant utilisé la PWA ;
+- détail OF / Formateurs ;
+- taux d’adoption ;
+- répartition des ouvertures PWA / navigateur sur 30 jours.
+
+### Supabase
+- migration `20260827113000_sprint20_pwa_analytics.sql` ;
+- migration appliquée et vérifiée sur le projet Clementplane ;
+- réutilisation de `product_events` plutôt que création d’un système analytics parallèle.
+
+### Documentation et roadmap
+- Sprint 20 marqué terminé ;
+- Sprint 21 confirmé : création autonome de missions par le formateur ;
+- Sprint 22 confirmé : synchronisation Google Agenda ;
+- FAQ PWA ajoutée ;
+- guide d’installation mobile ajouté ;
+- version affichée mise à jour vers `v0.20.0`.
+
+### Recette
+- installation réelle Android validée ;
+- lancement depuis l’écran d’accueil validé ;
+- mode standalone validé ;
+- offline / online validé ;
+- disparition de l’invitation après installation validée ;
+- statistiques PWA vérifiées dans l’Admin ;
+- production `clementplane.fr` validée ;
+- 78/78 tests Vitest réussis ;
+- lint : 0 erreur, 2 warnings React Hooks connus ;
+- test Playwright PWA réussi ;
+- `npm ci` validé ;
+- audit npm : 0 vulnérabilité ;
+- build production PWA réussi.
+
+---
+
+
+## v0.19.6 — Sprint 19.6 — Remplacement global du logo Clementplane — 27 août 2026
+
+### Identité visuelle
+- remplacement du logo principal par le fichier officiel du pack `Clementplane_Logo_Pack_FINAL` ;
+- remplacement de la variante utilisée sur fonds navy/sombres ;
+- remplacement du symbole Clementplane utilisé dans l’application et sur le site public ;
+- conservation des URL d’assets existantes afin de ne pas modifier inutilement les composants et parcours ;
+- ajout des fichiers SVG/PNG canoniques du pack final dans les assets publics ;
+- remplacement du favicon par le `favicon.ico` officiel ;
+- ajout des icônes 16, 32, 48, 180, 192, 512 et 1024 px ainsi que de l’icône Apple Touch ;
+- mise à jour des métadonnées d’icônes dans `index.html`.
+
+### Périmètre préservé
+- aucune modification des règles métier, de la base de données ou des workflows ;
+- aucune modification des templates e-mails qui n’intégraient pas d’ancien fichier logo ;
+- aucune ancienne géométrie du logo remplacé conservée dans les assets de marque actifs.
+
+### Recette technique
+- contrôle d’identité binaire entre les assets actifs et les fichiers du pack FINAL : réussi ;
+- recherche statique de l’ancienne géométrie du logo dans les assets actifs : aucune occurrence ;
+- tests/build non exécutables dans l’environnement de préparation du ZIP : installation npm bloquée par l’absence de résolution réseau de `cdn.sheetjs.com`.
+
+
+## v0.19.5 — Sprint 19.5 — Rebranding Formaplane → Clementplane — 26 août 2026
+
+### Rebranding complet
+- renommage de l'identité applicative de Formaplane vers Clementplane ;
+- remplacement de l'identité visuelle et des logos ;
+- mise à jour des textes, interfaces et messages utilisateur ;
+- renommage des pages et composants concernés ;
+- migration des références applicatives vers Clementplane ;
+- conservation des références techniques et historiques nécessaires à la compatibilité ;
+- mise à jour du domaine applicatif vers `app.clementplane.fr` ;
+- configuration du domaine e-mail `clementplane.fr` et de l'expéditeur `contact@clementplane.fr` ;
+- mise à jour de la configuration Supabase Auth ;
+- suppression des anciens domaines Formaplane des configurations Vercel et Brevo ;
+- renommage du dépôt GitHub en `clementplane` ;
+- vérification de la configuration Vercel, Supabase et Brevo.
+
+### Recette
+- recherche globale des anciennes références effectuée ;
+- aucune ancienne URL `formaplane.fr` / `formaplane.com` dans le code actif ;
+- build Vite de production : réussi ;
+- tests automatisés : **62/62 réussis** ;
+- application déployée sur `app.clementplane.fr` et testée en conditions réelles ;
+- connexion et parcours principaux validés.
+
+## v0.19.0 — Sprint 19 — Optimisation UX & expérience mobile — 26 août 2026
+
+### UX & expérience mobile
+- refonte du socle de navigation mobile avec header compact et menu latéral dédié sur smartphone ;
+- adaptation responsive des principaux écrans Formateur et OF, sans dégrader les usages desktop ;
+- optimisation des zones tactiles, formulaires, modales, cartes, listes et espacements ;
+- transformation des disponibilités Formateur en liste mobile compacte et dépliable ;
+- adaptation du listing Formateurs en cartes mobiles plus compactes ;
+- affichage des numéros de jours dans le mini-planning du listing ;
+- suppression des principaux débordements horizontaux sur petits écrans.
+
+### Plannings OF & Formateur
+- refonte des barres de navigation et de filtres au-dessus du calendrier ;
+- filtres Formateurs + Statut côté OF et Organismes + Statut côté Formateur ;
+- affichage de tous les organismes/formateurs et statuts par défaut ;
+- ajout d’une fenêtre de détail de journée avec accès direct à la mission ;
+- suppression de la colonne latérale permanente du planning Formateur ;
+- calendrier mensuel mobile OF affiché sur 7 colonnes sans défilement horizontal, dans l’esprit d’un agenda mobile ;
+- conservation des cartes de missions existantes avec présentation compacte sur smartphone.
+
+### Mes OF & invitation des organismes
+- nouveau carnet central **Mes OF** dans l’espace Formateur ;
+- alimentation automatique de la page **Partager mes disponibilités** depuis ce carnet ;
+- statut visuel indiquant si l’OF utilise déjà Formaplane et si le formateur est déjà dans son réseau ;
+- invitation d’un OF à rejoindre Formaplane avec délai serveur de 7 jours par couple formateur + adresse e-mail ;
+- e-mail d’invitation conservant le contexte du formateur ;
+- après inscription ou connexion, redirection vers la fiche du formateur invitant ;
+- ajout du CTA **Ajouter à mon réseau** sur la fiche d’un formateur non encore référencé ;
+- consultation par un OF authentifié d’un profil Formaplane revendiqué même avant référencement, sans exposer les données internes propres aux autres OF ;
+- message pédagogique à l’entrée de **Partager mes disponibilités** pour encourager d’abord l’invitation des OF sur Formaplane.
+
+### Découvrir Formaplane & roadmap
+- version affichée mise à jour vers `v0.19.0` ;
+- retrait de l’optimisation mobile des évolutions futures puisqu’elle est désormais livrée ;
+- ajout de **Formaplane installable sur mobile (PWA)** juste après la création autonome de missions par le formateur ;
+- ajout de la **synchronisation Formaplane → Google Agenda** immédiatement après la PWA ;
+- ajout de ces deux évolutions dans la roadmap publique visible par les utilisateurs ;
+- mise à jour du guide Formateur pour présenter **Mes OF** et repositionner le partage par e-mail/PDF comme solution complémentaire.
+
+### Recette
+- recette visuelle mobile complète réalisée sur les espaces Formateur et OF ;
+- tests automatisés : **62/62 réussis** ;
+- build Vite de production : réussi ;
+- parcours réel d’invitation OF validé jusqu’à l’inscription, la fiche du formateur et l’ajout au réseau.
 
 
 ## v0.18.0 — Sprint 18 — Tests automatisés & surveillance — 25 août 2026

@@ -1,7 +1,7 @@
 # ROADMAP — Clementplane
 
-> Mise à jour : Sprint 20 PWA en cours — 27 août 2026  
-> Version actuelle : `v0.19.6`
+> Mise à jour : Sprint 20 PWA clôturé — 27 août 2026
+> Version actuelle : `v0.20.0`
 
 ## Vision
 
@@ -9,7 +9,7 @@ Clementplane est une plateforme de gestion des relations entre organismes de for
 
 Le produit permet aujourd'hui de gérer le réseau de formateurs, les disponibilités, les missions, les propositions, les affectations, les principaux événements du cycle de vie d'une mission, les communications transactionnelles et le partage des disponibilités.
 
-Après le Sprint 19.6, la priorité est de rendre Clementplane installable sur mobile, puis de renforcer son rôle de planning professionnel de référence pour les formateurs.
+Après le Sprint 20, la priorité est de renforcer Clementplane comme planning professionnel de référence pour les formateurs, en leur permettant d’y ajouter eux-mêmes les missions confiées par des organismes qui n’utilisent pas encore la plateforme.
 
 ---
 
@@ -38,7 +38,7 @@ Après le Sprint 19.6, la priorité est de rendre Clementplane installable sur m
 | 19 | Optimisation UX & expérience mobile | ✅ TERMINÉ |
 | 19.5 | Rebranding Formaplane → Clementplane | ✅ TERMINÉ |
 | 19.6 | Remplacement global du logo Clementplane | ✅ TERMINÉ |
-| 20 | Clementplane installable sur mobile (PWA) | 🚧 EN COURS |
+| 20 | Clementplane installable sur mobile (PWA) | ✅ TERMINÉ |
 | 21 | Création de missions par le formateur dans son propre agenda | 🔜 À FAIRE |
 | 22 | Synchronisation des missions avec Google Agenda | 🔜 À FAIRE |
 | 23+ | Évolutions guidées par la bêta | 🧭 PRÉVISIONNEL |
@@ -656,7 +656,7 @@ Rendre Formaplane plus agréable, plus intuitif et réellement confortable à ut
 
 ---
 
-# Sprint 20 — Clementplane installable sur mobile (PWA) 🚧
+# Sprint 20 — Clementplane installable sur mobile (PWA) ✅
 
 ### Objectif
 Permettre aux utilisateurs d’installer Clementplane sur leur smartphone et de l’ouvrir depuis une icône comme une application, sans recréer le produit en application native.
@@ -676,6 +676,42 @@ Permettre aux utilisateurs d’installer Clementplane sur leur smartphone et de 
 
 ### Enjeu produit
 Rendre l’accès quotidien à Clementplane aussi naturel qu’une application mobile tout en conservant un seul produit web à maintenir et sans introduire de risques de synchronisation sur les données métier.
+
+### Livré
+- PWA Clementplane installable sur Android et iPhone/iPad ;
+- manifest, service worker et icônes Clementplane dédiées ;
+- icône maskable pour Android ;
+- lancement en mode `standalone` depuis l’écran d’accueil ;
+- invitation « Clementplane sur votre téléphone » ;
+- bouton d’installation natif Android lorsqu’il est disponible ;
+- aide d’installation iPhone/iPad via Safari ;
+- nouvelle proposition après 7 jours lorsque l’invitation est fermée sans installation ;
+- disparition de l’invitation lorsque Clementplane est utilisé comme PWA ;
+- shell statique disponible hors connexion ;
+- message clair en cas de perte de réseau ;
+- retour automatique au fonctionnement normal au retour de la connexion ;
+- guide pas à pas d’installation manuelle dans « Découvrir Clementplane » ;
+- suivi des ouvertures `pwa` / `browser` ;
+- statistiques Admin d’adoption PWA ;
+- migration Supabase `20260827113000_sprint20_pwa_analytics.sql`.
+
+### Recette de clôture
+- installation Android réelle validée ;
+- lancement depuis l’icône validé ;
+- mode standalone validé ;
+- fonctionnement hors connexion / retour en ligne validé ;
+- disparition de l’invitation après installation validée ;
+- statistiques PWA vérifiées dans l’Admin ;
+- production `clementplane.fr` validée ;
+- 78/78 tests Vitest réussis ;
+- lint : 0 erreur, 2 warnings React Hooks connus ;
+- build PWA réussi ;
+- test Playwright PWA réussi ;
+- `npm ci` validé ;
+- audit npm : 0 vulnérabilité connue à la clôture.
+
+### Version
+`v0.20.0`
 
 ---
 
@@ -762,9 +798,7 @@ Un sprint est terminé lorsque :
 # Priorité actuelle
 
 ```text
-v0.19.0 — Sprint 19 officiellement clôturé
-↓
-Sprint 20 — Clementplane installable sur mobile (PWA)
+v0.20.0 — Sprint 20 officiellement clôturé
 ↓
 Sprint 21 — Création de missions par le formateur
 ↓

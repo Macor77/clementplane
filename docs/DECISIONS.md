@@ -1,13 +1,13 @@
-# DECISIONS - Formaplane
+# DECISIONS — Clementplane
 
-Version : 10.0  Dernière mise à jour : 18/08/2026
+Version : 0.20  Dernière mise à jour : 27/08/2026
 
 ------------------------------------------------------------------------
 
 # Objectif
 
 Ce document recense les décisions d'architecture et de conception qui
-structurent durablement Formaplane. Chaque décision est conservée afin
+structurent durablement Clementplane. Chaque décision est conservée afin
 d'expliquer les choix effectués et d'éviter de revenir sur des
 arbitrages déjà validés.
 
@@ -199,3 +199,51 @@ Un formateur doit pouvoir signaler son désistement depuis Formaplane qu'il soit
 ## Décision 25 — Les communications doivent favoriser l'adoption sans bloquer le métier
 
 Lorsqu'un destinataire n'a pas encore de compte, Formaplane peut l'inviter à créer son espace après l'action principale, sans rendre cette inscription obligatoire pour traiter la sollicitation.
+
+------------------------------------------------------------------------
+
+# Décisions Sprints 12 à 20
+
+## Décision 26 — Les disponibilités restent consultables en permanence
+
+Le partage par e-mail sert à signaler une mise à jour. Clementplane reste la source de vérité consultable par les organismes partenaires.
+
+## Décision 27 — Le partage de disponibilités est protégé côté serveur
+
+Le délai anti-spam ne repose pas uniquement sur l’interface. Le contrôle du délai de 20 jours utilise l’historique serveur du couple formateur + destinataire.
+
+## Décision 28 — Les réseaux OF restent privés
+
+Un organisme ne doit jamais disposer d’une vision du réseau interne d’un autre organisme.
+
+## Décision 29 — Les tests automatisés ne doivent jamais détruire la production
+
+Les scénarios nécessitant des écritures destructives doivent utiliser un environnement E2E séparé. La référence Supabase de production est explicitement protégée.
+
+## Décision 30 — L’instrumentation produit reste légère
+
+`product_events` mesure les usages utiles au pilotage sans enregistrer de données matérielles inutiles.
+
+## Décision 31 — Clementplane reste une seule application web
+
+La version mobile installable est une PWA. Il n’est pas créé de second produit natif Android/iOS à maintenir en parallèle.
+
+## Décision 32 — Les données métier ne sont pas synchronisées hors connexion
+
+Le service worker peut conserver le shell et les ressources statiques. Les réponses Supabase ne doivent pas être présentées comme une base métier offline synchronisable.
+
+## Décision 33 — L’installation PWA est liée à l’appareil
+
+L’état d’installation n’est pas stocké comme un attribut global du compte Clementplane. Un utilisateur changeant de téléphone peut recevoir une nouvelle proposition d’installation.
+
+## Décision 34 — Fermer l’invitation ne vaut pas refus définitif
+
+Lorsqu’un utilisateur ferme l’invitation PWA sans installer, Clementplane peut la reproposer après 7 jours.
+
+## Décision 35 — L’adoption PWA se mesure par l’usage réel
+
+L’indicateur principal est le nombre d’utilisateurs ayant effectivement ouvert Clementplane en mode PWA, ainsi que la répartition PWA / navigateur.
+
+## Décision 36 — La documentation fait partie de la définition de terminé
+
+Un sprint ne peut pas être clôturé avant la mise à jour de la documentation, de la roadmap, du changelog, de la version affichée et de la rubrique « Découvrir Clementplane » lorsque le sprint l’exige.

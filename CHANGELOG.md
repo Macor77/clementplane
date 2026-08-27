@@ -1,4 +1,64 @@
-# CHANGELOG - Formaplane
+# CHANGELOG — Clementplane
+
+## v0.20.0 — Sprint 20 — PWA / Clementplane installable sur mobile — 27 août 2026
+
+### PWA et expérience mobile
+- transformation de Clementplane en Progressive Web App installable ;
+- manifest Clementplane avec identité et icônes validées ;
+- icône maskable Android ;
+- lancement en mode `standalone` depuis l’écran d’accueil ;
+- service worker généré via `vite-plugin-pwa` ;
+- précache limité au shell et aux ressources statiques ;
+- comportement hors connexion contrôlé avec message « Vous êtes hors connexion » ;
+- reprise automatique du fonctionnement normal au retour du réseau.
+
+### Installation
+- invitation « Clementplane sur votre téléphone » pour les utilisateurs connectés ;
+- bouton d’installation natif Android lorsque le navigateur expose le prompt PWA ;
+- aide spécifique iPhone/iPad : Partager → Sur l’écran d’accueil → Ajouter ;
+- fermeture de l’invitation mémorisée pendant 7 jours ;
+- masquage de l’invitation lorsque Clementplane est utilisé en mode PWA ;
+- guide pas à pas d’installation manuelle ajouté dans « Découvrir Clementplane ».
+
+### Statistiques PWA
+- ajout de l’événement `app_opened` dans l’instrumentation produit ;
+- distinction `pwa` / `browser` ;
+- aucun identifiant matériel ou modèle de téléphone stocké ;
+- ajout de `admin_pwa_stats()` ;
+- suivi Admin du nombre d’utilisateurs ayant utilisé la PWA ;
+- détail OF / Formateurs ;
+- taux d’adoption ;
+- répartition des ouvertures PWA / navigateur sur 30 jours.
+
+### Supabase
+- migration `20260827113000_sprint20_pwa_analytics.sql` ;
+- migration appliquée et vérifiée sur le projet Clementplane ;
+- réutilisation de `product_events` plutôt que création d’un système analytics parallèle.
+
+### Documentation et roadmap
+- Sprint 20 marqué terminé ;
+- Sprint 21 confirmé : création autonome de missions par le formateur ;
+- Sprint 22 confirmé : synchronisation Google Agenda ;
+- FAQ PWA ajoutée ;
+- guide d’installation mobile ajouté ;
+- version affichée mise à jour vers `v0.20.0`.
+
+### Recette
+- installation réelle Android validée ;
+- lancement depuis l’écran d’accueil validé ;
+- mode standalone validé ;
+- offline / online validé ;
+- disparition de l’invitation après installation validée ;
+- statistiques PWA vérifiées dans l’Admin ;
+- production `clementplane.fr` validée ;
+- 78/78 tests Vitest réussis ;
+- lint : 0 erreur, 2 warnings React Hooks connus ;
+- test Playwright PWA réussi ;
+- `npm ci` validé ;
+- audit npm : 0 vulnérabilité ;
+- build production PWA réussi.
+
+---
 
 
 ## v0.19.6 — Sprint 19.6 — Remplacement global du logo Clementplane — 27 août 2026

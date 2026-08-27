@@ -60,9 +60,11 @@ function TutorialCard({ tutorial }) {
             </div>
           )}
 
-          <Link className="button button--primary" to={tutorial.route}>
-            {tutorial.routeLabel}
-          </Link>
+          {tutorial.route && tutorial.routeLabel && (
+            <Link className="button button--primary" to={tutorial.route}>
+              {tutorial.routeLabel}
+            </Link>
+          )}
         </div>
       )}
     </article>

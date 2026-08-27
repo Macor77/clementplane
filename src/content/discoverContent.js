@@ -51,7 +51,21 @@ export const discoverFeatures = [
   },
 ];
 
+const mobileInstallTutorial = {
+  id: 'mobile-install',
+  title: 'Installer Clementplane sur mon téléphone',
+  summary: 'Installer Clementplane manuellement si la proposition automatique d’installation ne s’affiche pas.',
+  steps: [
+    'Sur Android avec Chrome : ouvrez Clementplane dans Chrome, appuyez sur le menu ⋮ en haut à droite, puis choisissez « Installer l’application » ou « Ajouter à l’écran d’accueil ». Confirmez ensuite l’installation.',
+    'Sur iPhone ou iPad : ouvrez Clementplane dans Safari, appuyez sur le bouton Partager, choisissez « Sur l’écran d’accueil », puis appuyez sur « Ajouter ».',
+    'Une fois installé, Clementplane apparaît sur votre écran d’accueil comme une application classique.',
+    'Pour vos prochaines utilisations, ouvrez simplement Clementplane depuis cette icône plutôt que depuis votre navigateur.',
+  ],
+  tip: 'Si Clementplane vous propose directement le bouton « Installer Clementplane », utilisez simplement ce bouton : ces étapes servent surtout lorsque la proposition automatique n’apparaît pas.',
+};
+
 export const organizationTutorials = [
+  mobileInstallTutorial,
   {
     id: 'of-network', title: 'Construire mon réseau privé de formateurs', summary: 'Ajouter, rechercher ou importer des formateurs tout en gardant une liste propre à mon organisme.', route: '/listing', routeLabel: 'Ouvrir mes formateurs',
     steps: ['Depuis « Formateurs », ajoutez un profil manuellement, recherchez un formateur existant ou utilisez l’import en masse.', 'Lorsque Clementplane trouve un profil correspondant, ajoutez-le à votre réseau plutôt que de créer une seconde fiche.', 'Les formateurs de votre réseau, vos notes et vos informations internes restent propres à votre organisme : les autres OF ne consultent pas cette liste.', 'Lorsqu’un formateur revendique son profil, ses informations personnelles de référence sont maintenues par lui et peuvent être utilisées par ses différents OF partenaires.'],
@@ -79,6 +93,7 @@ export const organizationTutorials = [
 ];
 
 export const trainerTutorials = [
+  mobileInstallTutorial,
   {
     id: 'trainer-profile', title: 'Garder un profil fiable pour mes OF partenaires', summary: 'Maintenir une seule fiche de référence plutôt que transmettre les mêmes informations à chaque organisme.', route: '/formateur/profil', routeLabel: 'Ouvrir mon profil',
     steps: ['Ouvrez « Mon profil » et vérifiez vos coordonnées, votre localisation, vos compétences et votre matériel.', 'Mettez à jour les informations qui ont changé.', 'Enregistrez vos modifications : votre profil revendiqué devient votre référence dans Clementplane.', 'Les organismes partenaires qui travaillent avec vous peuvent ainsi consulter une information cohérente et récente.'],

@@ -5,6 +5,7 @@ import App from "./App.jsx";
 import ErrorBoundary from "./ErrorBoundary.jsx";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import { installGlobalErrorMonitoring } from "./services/monitoringService.js";
+import PwaManager from "./components/pwa/PwaManager.jsx";
 
 installGlobalErrorMonitoring();
 
@@ -13,6 +14,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <ErrorBoundary>
       <BrowserRouter>
         <AuthProvider>
+          <PwaManager />
           <App />
         </AuthProvider>
       </BrowserRouter>

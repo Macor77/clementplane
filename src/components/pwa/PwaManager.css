@@ -1,0 +1,118 @@
+.pwa-notices {
+  position: fixed;
+  right: max(16px, env(safe-area-inset-right));
+  bottom: max(16px, env(safe-area-inset-bottom));
+  left: auto;
+  z-index: 900;
+  display: grid;
+  gap: 10px;
+  width: min(430px, calc(100vw - 32px));
+  pointer-events: none;
+}
+
+.pwa-notice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 14px 14px 16px;
+  border: 1px solid rgba(11, 19, 43, 0.12);
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 0 10px 32px rgba(11, 19, 43, 0.16);
+  color: #0b132b;
+  pointer-events: auto;
+}
+
+.pwa-notice--offline {
+  border-color: rgba(151, 93, 0, 0.24);
+  background: #fff8e8;
+}
+
+.pwa-notice__text {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+  font-size: 0.9rem;
+  line-height: 1.35;
+}
+
+.pwa-notice__text strong {
+  font-size: 0.95rem;
+}
+
+.pwa-notice__actions {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  gap: 6px;
+}
+
+.pwa-notice button {
+  min-height: 44px;
+  border: 0;
+  border-radius: 10px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.pwa-notice__primary {
+  padding: 0 14px;
+  background: #0b132b;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.pwa-notice__close {
+  min-width: 44px;
+  padding: 0;
+  background: transparent;
+  color: #5a6478;
+  font-size: 1.35rem;
+}
+
+.pwa-notice button:focus-visible {
+  outline: 3px solid rgba(11, 19, 43, 0.28);
+  outline-offset: 2px;
+}
+
+@media (max-width: 640px) {
+  .pwa-notices {
+    right: max(12px, env(safe-area-inset-right));
+    bottom: max(12px, env(safe-area-inset-bottom));
+    left: max(12px, env(safe-area-inset-left));
+    width: auto;
+  }
+
+  .pwa-notice {
+    align-items: flex-start;
+    padding: 13px;
+  }
+
+  .pwa-notice__actions {
+    align-self: stretch;
+  }
+}
+
+.pwa-notice--install {
+  border-color: rgba(47, 103, 216, 0.22);
+  background: linear-gradient(135deg, #ffffff 0%, #f3f7ff 100%);
+}
+
+.pwa-notice--install .pwa-notice__primary {
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .pwa-notice--install {
+    flex-direction: column;
+  }
+
+  .pwa-notice--install .pwa-notice__actions {
+    width: 100%;
+  }
+
+  .pwa-notice--install .pwa-notice__primary {
+    flex: 1;
+  }
+}

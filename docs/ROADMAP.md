@@ -1,15 +1,15 @@
-# ROADMAP — Formaplane
+# ROADMAP — Clementplane
 
-> Mise à jour : clôture officielle du Sprint 19 — 26 août 2026  
+> Mise à jour : Sprint 20 PWA en cours — 27 août 2026  
 > Version actuelle : `v0.19.6`
 
 ## Vision
 
-Formaplane est une plateforme de gestion des relations entre organismes de formation et formateurs indépendants.
+Clementplane est une plateforme de gestion des relations entre organismes de formation et formateurs indépendants.
 
 Le produit permet aujourd'hui de gérer le réseau de formateurs, les disponibilités, les missions, les propositions, les affectations, les principaux événements du cycle de vie d'une mission, les communications transactionnelles et le partage des disponibilités.
 
-Après le Sprint 14, la priorité est désormais de rendre Formaplane plus autonome pour ses utilisateurs, préparer sa vitrine publique, puis mieux piloter et sécuriser la bêta.
+Après le Sprint 19.6, la priorité est de rendre Clementplane installable sur mobile, puis de renforcer son rôle de planning professionnel de référence pour les formateurs.
 
 ---
 
@@ -38,8 +38,8 @@ Après le Sprint 14, la priorité est désormais de rendre Formaplane plus auton
 | 19 | Optimisation UX & expérience mobile | ✅ TERMINÉ |
 | 19.5 | Rebranding Formaplane → Clementplane | ✅ TERMINÉ |
 | 19.6 | Remplacement global du logo Clementplane | ✅ TERMINÉ |
-| 20 | Création de missions par le formateur dans son propre agenda | 🔜 À FAIRE |
-| 21 | Clementplane installable sur mobile (PWA) | 🔜 À FAIRE |
+| 20 | Clementplane installable sur mobile (PWA) | 🚧 EN COURS |
+| 21 | Création de missions par le formateur dans son propre agenda | 🔜 À FAIRE |
 | 22 | Synchronisation des missions avec Google Agenda | 🔜 À FAIRE |
 | 23+ | Évolutions guidées par la bêta | 🧭 PRÉVISIONNEL |
 
@@ -656,56 +656,61 @@ Rendre Formaplane plus agréable, plus intuitif et réellement confortable à ut
 
 ---
 
-# Sprint 20 — Création de missions par le formateur 🔜
+# Sprint 20 — Clementplane installable sur mobile (PWA) 🚧
 
 ### Objectif
-Permettre au formateur d’ajouter lui-même dans son agenda Formaplane une mission confiée par un organisme qui n’utilise pas encore Formaplane.
+Permettre aux utilisateurs d’installer Clementplane sur leur smartphone et de l’ouvrir depuis une icône comme une application, sans recréer le produit en application native.
+
+### Périmètre
+- PWA installable sur Android et iPhone/iPad ;
+- invitation d’installation intégrée : bouton Android natif, aide iPhone/iPad et temporisation 7 jours après fermeture ;
+- suivi Admin de l’adoption PWA et de la répartition des ouvertures PWA / navigateur ;
+- identité visuelle Clementplane et icônes validées au Sprint 19.6 ;
+- ouverture en mode `standalone` ;
+- installation guidée, simple et non intrusive ;
+- service worker limité au shell et aux ressources statiques ;
+- aucune synchronisation métier hors connexion ni mise en cache des réponses Supabase comme source hors ligne ;
+- message clair lorsque la connexion Internet est absente ;
+- notification contrôlée lorsqu’une nouvelle version est disponible ;
+- vérification des principaux parcours en mode installé.
+
+### Enjeu produit
+Rendre l’accès quotidien à Clementplane aussi naturel qu’une application mobile tout en conservant un seul produit web à maintenir et sans introduire de risques de synchronisation sur les données métier.
+
+---
+
+# Sprint 21 — Création de missions par le formateur 🔜
+
+### Objectif
+Permettre au formateur d’ajouter lui-même dans son agenda Clementplane une mission confiée par un organisme qui n’utilise pas encore Clementplane.
 
 ### Périmètre cible
 - création d’une mission depuis l’espace Formateur ;
 - mission visible dans son planning professionnel ;
 - mise à jour automatique de ses disponibilités pour les autres organismes ;
-- distinction claire entre mission créée par un OF Formaplane et mission ajoutée personnellement par le formateur ;
+- distinction claire entre mission créée par un OF Clementplane et mission ajoutée personnellement par le formateur ;
 - respect de la confidentialité : les autres OF voient uniquement l’information utile de disponibilité.
 
 ### Enjeu produit
-Éviter au formateur de maintenir deux agendas différents et faire de Formaplane son planning professionnel de référence, même lorsque certains de ses clients OF n’utilisent pas encore la plateforme.
-
----
-
-# Sprint 21 — Clementplane installable sur mobile (PWA) 🔜
-
-### Objectif
-Permettre aux utilisateurs d’installer Formaplane sur leur smartphone et de l’ouvrir depuis une icône comme une application, sans recréer le produit en application native.
-
-### Périmètre cible
-- PWA installable sur Android et iPhone ;
-- icône Formaplane et ouverture en mode application ;
-- écran de lancement et métadonnées adaptées ;
-- invitation simple et non intrusive à installer Formaplane sur mobile ;
-- détection pour ne pas reproposer inutilement l’installation lorsqu’elle est déjà réalisée ;
-- vérification des principaux parcours dans le mode installé.
-
-### Enjeu produit
-Rendre l’accès quotidien à Formaplane aussi naturel qu’une application mobile tout en conservant un seul produit web à maintenir.
+Éviter au formateur de maintenir deux agendas différents et faire de Clementplane son planning professionnel de référence, même lorsque certains de ses clients OF n’utilisent pas encore la plateforme.
 
 ---
 
 # Sprint 22 — Synchronisation Google Agenda 🔜
 
 ### Objectif
-Permettre au formateur de retrouver automatiquement ses missions Formaplane dans son Google Agenda.
+Permettre au formateur de retrouver automatiquement ses missions Clementplane dans son Google Agenda.
 
 ### Périmètre cible
 - connexion sécurisée du compte Google du formateur ;
-- synchronisation initiale à sens unique **Formaplane → Google Agenda** ;
+- synchronisation initiale à sens unique **Clementplane → Google Agenda** ;
 - création automatique d’un événement lors de la confirmation d’une mission ;
 - mise à jour ou suppression de l’événement si la mission change ou est annulée ;
-- informations utiles dans l’événement : mission, horaires, lieu et lien direct vers Formaplane ;
+- informations utiles dans l’événement : mission, horaires, lieu et lien direct vers Clementplane ;
 - conservation de l’identifiant Google de l’événement afin d’éviter les doublons.
 
 ### Enjeu produit
-Éviter une nouvelle double saisie et permettre au formateur de conserver Google Agenda comme agenda personnel tout en utilisant Formaplane comme source métier de ses missions.
+Éviter une nouvelle double saisie et permettre au formateur de conserver Google Agenda comme agenda personnel tout en utilisant Clementplane comme source métier de ses missions.
 
 ---
 
@@ -747,10 +752,10 @@ Un sprint est terminé lorsque :
 - la version en ligne est testée ;
 - le tag de version est créé ;
 - un ZIP complet du projet est archivé ;
-- la version affichée dans Formaplane est vérifiée et mise à jour ;
-- la pertinence d'un e-mail « Nouveautés Formaplane » est décidée et, si nécessaire, la communication est envoyée aux populations pertinentes ;
+- la version affichée dans Clementplane est vérifiée et mise à jour ;
+- la pertinence d'un e-mail « Nouveautés Clementplane » est décidée et, si nécessaire, la communication est envoyée aux populations pertinentes ;
 - les « évolutions envisagées » visibles des utilisateurs sont révisées : retrait des éléments réalisés et ajout des nouvelles idées utiles aux utilisateurs ;
-- une revue « Découvrir Formaplane » est faite avec validation explicite : FAQ, tutoriels, explications et captures sont actualisés si les changements du sprint le nécessitent.
+- une revue « Découvrir Clementplane » est faite avec validation explicite : FAQ, tutoriels, explications et captures sont actualisés si les changements du sprint le nécessitent.
 
 ---
 
@@ -759,9 +764,9 @@ Un sprint est terminé lorsque :
 ```text
 v0.19.0 — Sprint 19 officiellement clôturé
 ↓
-Sprint 20 — Création de missions par le formateur
+Sprint 20 — Clementplane installable sur mobile (PWA)
 ↓
-Sprint 21 — Clementplane installable sur mobile (PWA)
+Sprint 21 — Création de missions par le formateur
 ↓
 Sprint 22 — Synchronisation Google Agenda
 ↓

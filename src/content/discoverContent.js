@@ -127,6 +127,7 @@ export const faqItems = [
   { question: 'Pourquoi ne puis-je pas renvoyer mes disponibilités immédiatement au même contact ?', answer: 'Clementplane applique un délai de 20 jours complets après un partage vers un même contact OF pour éviter les sollicitations répétées. Vos disponibilités peuvent néanmoins être mises à jour à tout moment et restent consultables dans Clementplane.', audiences: ['trainer'], category: 'Disponibilités' },
   { question: 'Puis-je avoir à la fois un espace OF et un espace Formateur ?', answer: 'Oui. Lorsqu’un même compte possède les deux rôles, Clementplane propose un choix d’espace et permet ensuite de passer de l’un à l’autre.', audiences: ['organization', 'trainer'], category: 'Compte' },
   { question: "Comment Clementplane s'assure-t-il que la plateforme reste fiable ?", answer: "Clementplane dispose de contrôles automatisés qui vérifient régulièrement ses principales fonctionnalités, certaines règles de sécurité et ses dépendances techniques. Ces contrôles sont également exécutés lors des mises à jour de la plateforme afin de détecter d'éventuelles régressions avant leur mise en ligne.", audiences: ['organization', 'trainer'], category: 'Fiabilité' },
+  { question: 'Puis-je installer Clementplane sur mon téléphone ?', answer: 'Oui. Lorsque l’installation est disponible, Clementplane vous propose directement un bouton « Installer Clementplane ». Sur Android compatible, ce bouton ouvre la fenêtre native d’installation. Sur iPhone/iPad, il affiche la marche à suivre : Partager, puis « Sur l’écran d’accueil » et « Ajouter ». Si vous fermez l’invitation sans installer, elle peut être reproposée après 7 jours. Une connexion Internet reste nécessaire pour consulter et modifier les données métier.', audiences: ['organization', 'trainer'], category: 'Mobile' },
   { question: 'Comment contacter Clementplane si je rencontre un problème ?', answer: 'Utilisez la rubrique « Contacter Clementplane » de cette page. Elle prépare un e-mail vers contact@clementplane.fr avec le contexte technique utile.', audiences: ['organization', 'trainer'], category: 'Support' },
 ];
 
@@ -134,14 +135,13 @@ export const publicRoadmap = {
   available: {
     status: 'Disponible',
     title: 'Le cœur de Clementplane',
-    description: 'Réseau privé de formateurs, recherche, import, missions, propositions, disponibilités, planning, partage, Mes OF, invitations partenaires et expérience mobile optimisée.',
+    description: 'Réseau privé de formateurs, recherche, import, missions, propositions, disponibilités, planning, partage, Mes OF, invitations partenaires, expérience mobile optimisée et installation de Clementplane sur l’écran d’accueil.',
   },
   future: [
     'Enrichir la fiche formateur pour lui permettre de détailler davantage son profil : expériences, compétences, formations et autres informations professionnelles.',
     'Stocker les documents et données de référencement d’un formateur et permettre leur partage maîtrisé : CV, NDA, avis SIREN et autres justificatifs.',
     'Ajouter une messagerie interne pour permettre aux organismes de formation et aux formateurs d’échanger directement dans Clementplane autour d’une session de formation.',
     'Permettre au formateur de créer lui-même une mission dans son agenda lorsque l’organisme qui la lui confie n’utilise pas encore Clementplane, afin de centraliser son planning et de mettre automatiquement ses disponibilités à jour.',
-    'Permettre d’installer Clementplane sur un smartphone avec une icône sur l’écran d’accueil et une ouverture proche d’une application mobile.',
     'Synchroniser automatiquement les missions Clementplane d’un formateur vers son Google Agenda, avec les informations utiles et un lien direct vers la mission.',
     'Permettre aux apprenants d’évaluer un formateur après une mission afin de construire progressivement un système de réputation interne à Clementplane.',
     'Une expérience encore plus fluide pour rechercher, proposer et affecter des missions.',

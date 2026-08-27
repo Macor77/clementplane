@@ -31,7 +31,14 @@ export async function getAdminOrganizations() {
 }
 
 export async function getAdminDashboardStats() {
-  return unwrap(await supabase.rpc('admin_dashboard_stats')) || {};
+  const [dashboardResult, pwaResult] = await Promise.all([
+    supabase.rpc('admin_dashboard_stats'),
+    supabase.rpc('admin_pwa_stats'),
+  ]);
+
+  const dashboard = unwrap(dashboardResult) || {};
+  const pwa = unwrap(pwaResult) || {};
+  return { ...dashboard, pwa };
 }
 
 export async function previewFeatureNews(audiences) {

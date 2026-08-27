@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://clementplane.fr/sitemap.xml
+Sitemap: https://www.clementplane.fr/sitemap.xml

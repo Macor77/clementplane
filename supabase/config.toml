@@ -427,3 +427,28 @@ entrypoint = "./functions/geocode/index.ts"
 [functions.brevo-webhook]
 enabled = true
 verify_jwt = false
+
+[functions.delete-account]
+enabled = true
+verify_jwt = true
+
+[functions.send-transactional-email]
+enabled = true
+verify_jwt = true
+
+[functions.notify-mission-response]
+enabled = true
+verify_jwt = false
+
+[functions.notify-mission-change-response]
+enabled = true
+verify_jwt = false
+
+[functions.submit-public-contact]
+enabled = true
+verify_jwt = true
+
+[functions.send-feature-announcement]
+enabled = true
+verify_jwt = true
+

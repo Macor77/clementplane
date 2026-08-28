@@ -1,3 +1,5 @@
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
@@ -34,7 +36,55 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const body = await req.json();
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const anonKey = Deno.env.get("SUPABASE_ANON_KEY");
+    const authorization = req.headers.get("Authorization") || "";
+
+    if (!supabaseUrl || !anonKey) {
+      console.error("Configuration Supabase manquante pour geocode.");
+      return jsonResponse(
+        { error: "Configuration serveur incomplète." },
+        500
+      );
+    }
+
+    if (!authorization.startsWith("Bearer ")) {
+      return jsonResponse(
+        { error: "Authentification requise." },
+        401
+      );
+    }
+
+    const supabase = createClient(
+      supabaseUrl,
+      anonKey,
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false,
+        },
+        global: {
+          headers: {
+            Authorization: authorization,
+          },
+        },
+      }
+    );
+
+    const token = authorization.slice("Bearer ".length).trim();
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser(token);
+
+    if (userError || !user) {
+      return jsonResponse(
+        { error: "Authentification requise." },
+        401
+      );
+    }
+
+    const body = await req.json().catch(() => ({}));
 
     const query =
       typeof body?.query === "string"
@@ -45,6 +95,15 @@ Deno.serve(async (req) => {
       return jsonResponse(
         {
           error: "Le lieu est obligatoire.",
+        },
+        400
+      );
+    }
+
+    if (query.length > 250) {
+      return jsonResponse(
+        {
+          error: "Le lieu saisi est trop long.",
         },
         400
       );
@@ -63,7 +122,7 @@ Deno.serve(async (req) => {
     const response = await fetch(url.toString(), {
       headers: {
         "User-Agent":
-          "TimeForma/1.0 (contact@alter-prevention.fr)",
+          "Clementplane/1.0 (contact@clementplane.fr)",
         "Accept-Language": "fr",
       },
     });

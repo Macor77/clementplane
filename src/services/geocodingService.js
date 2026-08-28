@@ -1,3 +1,5 @@
+import { supabase } from '../lib/supabaseClient';
+
 const sleep = (ms) =>
   new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -63,6 +65,20 @@ export async function geocodeQuery(query) {
     supabaseKey,
   } = getSupabaseConfiguration();
 
+  const {
+    data: { session },
+    error: sessionError,
+  } = await supabase.auth.getSession();
+
+  if (
+    sessionError ||
+    !session?.access_token
+  ) {
+    throw new Error(
+      'Vous devez être connecté pour utiliser le géocodage.'
+    );
+  }
+
   const response = await fetch(
     `${supabaseUrl}/functions/v1/geocode`,
     {
@@ -70,7 +86,8 @@ export async function geocodeQuery(query) {
       headers: {
         'Content-Type': 'application/json',
         apikey: supabaseKey,
-        Authorization: `Bearer ${supabaseKey}`,
+        Authorization:
+          `Bearer ${session.access_token}`,
       },
       body: JSON.stringify({
         query: normalizedQuery,

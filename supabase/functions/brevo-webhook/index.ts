@@ -9,8 +9,12 @@ const json = (body: Record<string, unknown>, status = 200) =>
 const eventDate = (payload: Record<string, unknown>) => {
   const ms = Number(payload.ts_epoch || 0);
   if (Number.isFinite(ms) && ms > 0) return new Date(ms).toISOString();
+
   const seconds = Number(payload.ts_event || payload.ts || 0);
-  if (Number.isFinite(seconds) && seconds > 0) return new Date(seconds * 1000).toISOString();
+  if (Number.isFinite(seconds) && seconds > 0) {
+    return new Date(seconds * 1000).toISOString();
+  }
+
   return new Date().toISOString();
 };
 
@@ -20,12 +24,19 @@ const extractLogId = (payload: Record<string, unknown>) => {
   return match?.[1] || null;
 };
 
+const getBearerToken = (req: Request) => {
+  const authorization = req.headers.get('Authorization') || '';
+  if (!authorization.startsWith('Bearer ')) return '';
+  return authorization.slice('Bearer '.length).trim();
+};
+
 Deno.serve(async (req) => {
   if (req.method !== 'POST') return json({ ok: false }, 405);
 
-  const expectedSecret = Deno.env.get('BREVO_WEBHOOK_SECRET') || '';
-  const suppliedSecret = new URL(req.url).searchParams.get('secret') || '';
-  if (!expectedSecret || suppliedSecret !== expectedSecret) {
+  const expectedBearerSecret = Deno.env.get('BREVO_WEBHOOK_SECRET_V2') || '';
+  const suppliedBearer = getBearerToken(req);
+
+  if (!expectedBearerSecret || suppliedBearer !== expectedBearerSecret) {
     return json({ ok: false, message: 'Unauthorized' }, 401);
   }
 
@@ -61,13 +72,23 @@ Deno.serve(async (req) => {
 
   let log: any = null;
   if (logIdFromHeader) {
-    const { data } = await admin.from('email_logs').select('*').eq('id', logIdFromHeader).maybeSingle();
+    const { data } = await admin
+      .from('email_logs')
+      .select('*')
+      .eq('id', logIdFromHeader)
+      .maybeSingle();
     log = data;
   }
+
   if (!log && providerMessageId) {
-    const { data } = await admin.from('email_logs').select('*').eq('provider_message_id', providerMessageId).maybeSingle();
+    const { data } = await admin
+      .from('email_logs')
+      .select('*')
+      .eq('provider_message_id', providerMessageId)
+      .maybeSingle();
     log = data;
   }
+
   if (!log) return json({ ok: true, ignored: true });
 
   const statusByEvent: Record<string, string> = {
@@ -81,6 +102,7 @@ Deno.serve(async (req) => {
   };
 
   const nextStatus = statusByEvent[event];
+
   const update: Record<string, unknown> = {
     last_provider_event: event,
     last_provider_event_at: occurredAt,
@@ -93,20 +115,43 @@ Deno.serve(async (req) => {
   };
 
   if (nextStatus) update.status = nextStatus;
-  if (event === 'delivered' && !log.delivered_at) update.delivered_at = occurredAt;
-  if (event === 'opened' && !log.opened_at) update.opened_at = occurredAt;
-  if (event === 'click' && !log.clicked_at) update.clicked_at = occurredAt;
-  if (['soft_bounce', 'hard_bounce', 'blocked', 'invalid', 'error'].includes(event)) {
-    update.error_message = String(payload.reason || event).slice(0, 1000);
+  if (event === 'delivered' && !log.delivered_at) {
+    update.delivered_at = occurredAt;
+  }
+  if (event === 'opened' && !log.opened_at) {
+    update.opened_at = occurredAt;
+  }
+  if (event === 'click' && !log.clicked_at) {
+    update.clicked_at = occurredAt;
+  }
+
+  if (
+    ['soft_bounce', 'hard_bounce', 'blocked', 'invalid', 'error']
+      .includes(event)
+  ) {
+    update.error_message =
+      String(payload.reason || event).slice(0, 1000);
     update.failed_at = occurredAt;
   }
 
-  await admin.from('email_logs').update(update).eq('id', log.id);
+  await admin
+    .from('email_logs')
+    .update(update)
+    .eq('id', log.id);
 
   if (
     log.related_entity_type === 'mission_formateur' &&
     log.related_entity_id &&
-    ['delivered', 'opened', 'click', 'soft_bounce', 'hard_bounce', 'blocked', 'invalid', 'error'].includes(event)
+    [
+      'delivered',
+      'opened',
+      'click',
+      'soft_bounce',
+      'hard_bounce',
+      'blocked',
+      'invalid',
+      'error',
+    ].includes(event)
   ) {
     const { data: mf } = await admin
       .from('mission_formateurs')
@@ -120,33 +165,40 @@ Deno.serve(async (req) => {
         opened: 'email_opened',
         click: 'email_clicked',
       };
-      const action = actionByEvent[event] || 'email_delivery_failed';
+      const action =
+        actionByEvent[event] || 'email_delivery_failed';
+
       const { data: existing } = await admin
         .from('mission_trainer_history')
         .select('id')
         .eq('mission_formateur_id', mf.id)
         .eq('action', action)
-        .contains('details', { email_log_id: log.id, brevo_event: event })
+        .contains('details', {
+          email_log_id: log.id,
+          brevo_event: event,
+        })
         .limit(1);
 
       if (!existing?.length) {
-        await admin.from('mission_trainer_history').insert({
-          mission_id: mf.mission_id,
-          trainer_id: mf.formateur_id,
-          mission_formateur_id: mf.id,
-          action,
-          previous_status: mf.statut,
-          new_status: mf.statut,
-          actor_type: 'system',
-          actor_display_name: 'Clementplane',
-          details: {
-            email_log_id: log.id,
-            brevo_event: event,
-            recipient_email: log.recipient_email,
-            reason: payload.reason || null,
-          },
-          created_at: occurredAt,
-        });
+        await admin
+          .from('mission_trainer_history')
+          .insert({
+            mission_id: mf.mission_id,
+            trainer_id: mf.formateur_id,
+            mission_formateur_id: mf.id,
+            action,
+            previous_status: mf.statut,
+            new_status: mf.statut,
+            actor_type: 'system',
+            actor_display_name: 'Clementplane',
+            details: {
+              email_log_id: log.id,
+              brevo_event: event,
+              recipient_email: log.recipient_email,
+              reason: payload.reason || null,
+            },
+            created_at: occurredAt,
+          });
       }
     }
   }

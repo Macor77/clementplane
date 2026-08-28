@@ -2511,7 +2511,7 @@ Deno.serve(async (req) => {
           related_entity_type:'mission_formateur', related_entity_id:target.id,
           status:'pending', metadata:{ source:'mission_cancellation', mission_id:missionId, trainer_id:target.formateur_id },
         });
-        results.push({ trainerId:target.formateur_id, success:Boolean(sent?.success) });
+        results.push({ trainerId:target.formateur_id, success:Boolean(sent?.logId) });
       }
 
       const sentCount = results.filter((item)=>item.success).length;
@@ -2587,7 +2587,7 @@ Deno.serve(async (req) => {
         related_entity_type:'mission_formateur', related_entity_id:target.id,
         status:'pending', metadata:{ source:'mission_withdrawal_notification', mission_id:mission.id, trainer_id:target.formateur_id },
       });
-      return jsonResponse({ success:Boolean(sent?.success), recipientEmail });
+      return jsonResponse({ success:Boolean(sent?.logId), recipientEmail });
 
     } else if (
       body.type === 'mission_unassignment_notification'
@@ -2889,7 +2889,7 @@ Deno.serve(async (req) => {
 
       return jsonResponse({
         success:
-          Boolean(sent?.success),
+          Boolean(sent?.logId),
         recipientEmail,
       });
 

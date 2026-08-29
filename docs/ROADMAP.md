@@ -781,6 +781,7 @@ Un sprint est terminé lorsque :
 - la recette est validée ;
 - Supabase est vérifié ;
 - la documentation est mise à jour ;
+- le contrôle d’impact légal / RGPD est effectué : CGU, politique de confidentialité, mentions légales, politique cookies/traceurs, registre RGPD, sous-traitants/DPA et procédures internes sont vérifiés ; le résultat est explicitement acté (« aucune modification nécessaire » ou documents/actions à mettre à jour) ;
 - la roadmap est synchronisée ;
 - le CHANGELOG est mis à jour ;
 - le code est poussé sur GitHub ;

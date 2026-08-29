@@ -2,7 +2,7 @@
 
 Version : 0.20
 Dernière mise à jour : 27/08/2026
-Correspond au Sprint 20 terminé et validé.
+Correspond au Sprint 20.5 terminé et validé.
 
 ------------------------------------------------------------------------
 
@@ -261,9 +261,16 @@ Le formateur dispose d'un espace dédié lui permettant notamment de :
 
 ## Disponibilités et historique
 
-Les disponibilités appartiennent au profil formateur et peuvent être mises à jour depuis plusieurs espaces autorisés.
+Les disponibilités sont déclarées à deux niveaux distincts :
+
+- la disponibilité globale déclarée par le formateur ;
+- la déclaration locale d'un organisme de formation pour ce formateur.
 
 Chaque modification est historisée afin de conserver la traçabilité.
+
+Pour un OF donné, l'état effectif affiché est déterminé par la déclaration la plus récente entre celle du formateur et celle de cet OF. La déclaration locale de l'OF reste conservée séparément : une modification du formateur ne l'efface pas et l'OF peut réaffirmer directement sa propre déclaration.
+
+Une modification de disponibilité par un OF s'applique uniquement à cet OF. Elle ne modifie ni la déclaration globale du formateur ni les déclarations des autres OF.
 
 L'affichage de l'auteur respecte la confidentialité :
 
@@ -456,6 +463,18 @@ Les plannings OF et Formateur ont été simplifiés avec des filtres plus lisibl
 ## Rebranding — Sprints 19.5 et 19.6
 
 Le produit a été renommé Formaplane → Clementplane avant son lancement public. Les domaines, textes, e-mails, ressources de marque, favicon et icônes ont été alignés sur l’identité Clementplane et le pack logo final.
+
+## Disponibilités OF / formateur — Sprint 20.5
+
+Le planning d'un OF distingue la déclaration globale du formateur de la déclaration propre à cet OF.
+
+Lorsque les deux sont renseignées pour une même journée, la déclaration la plus récente détermine l'état effectif visible par cet OF. Une déclaration du formateur peut donc temporairement prendre le dessus sur une déclaration locale de l'OF.
+
+La déclaration locale reste conservée. L'OF peut ensuite réaffirmer directement son statut souhaité depuis son interface, sans devoir passer d'abord par l'état opposé.
+
+La modification faite par un OF reste strictement locale à cet OF : elle n'écrase pas la disponibilité du formateur et ne modifie pas les autres organismes.
+
+Les états calculés à partir des missions et des conflits de planning restent distincts des déclarations de disponibilité.
 
 ## PWA — Sprint 20
 

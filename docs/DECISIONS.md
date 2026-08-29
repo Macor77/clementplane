@@ -216,6 +216,16 @@ Le délai anti-spam ne repose pas uniquement sur l’interface. Le contrôle du 
 
 Un organisme ne doit jamais disposer d’une vision du réseau interne d’un autre organisme.
 
+## Décision 32 — Les déclarations de disponibilité OF et formateur restent séparées
+
+La disponibilité globale déclarée par le formateur et la disponibilité déclarée localement par un OF sont deux données métier distinctes.
+
+Pour un OF donné, lorsque les deux déclarations existent, la plus récemment modifiée détermine l'état effectif affiché. Une modification du formateur peut donc prendre le dessus sur une déclaration locale de l'OF.
+
+La déclaration locale n'est jamais supprimée par cette priorité. L'OF peut réaffirmer directement sa propre déclaration depuis son interface. Une modification faite par un OF reste limitée à cet OF et ne modifie ni le formateur ni les autres organismes.
+
+Les états calculés liés aux missions et aux conflits de planning restent distincts des déclarations de disponibilité.
+
 ## Décision 29 — Les tests automatisés ne doivent jamais détruire la production
 
 Les scénarios nécessitant des écritures destructives doivent utiliser un environnement E2E séparé. La référence Supabase de production est explicitement protégée.

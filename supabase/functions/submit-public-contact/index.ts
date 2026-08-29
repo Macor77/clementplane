@@ -113,6 +113,23 @@ Deno.serve(async (req) => {
   const windowMs = 15 * 60 * 1000;
   const maxRequests = 4;
 
+  // RGPD / minimisation : les empreintes utilisées uniquement pour
+  // l'anti-spam n'ont pas vocation à être conservées durablement.
+  const rateLimitRetentionMs = 24 * 60 * 60 * 1000;
+  const rateLimitRetentionCutoff = new Date(
+    now.getTime() - rateLimitRetentionMs,
+  ).toISOString();
+
+  const { error: rateCleanupError } = await admin
+    .from('public_contact_rate_limits')
+    .delete()
+    .lt('updated_at', rateLimitRetentionCutoff);
+
+  if (rateCleanupError) {
+    // Une erreur de nettoyage ne doit pas rendre le formulaire indisponible.
+    console.error('Rate-limit cleanup error', rateCleanupError);
+  }
+
   const { data: rateRow, error: rateReadError } = await admin
     .from('public_contact_rate_limits')
     .select('identifier_hash, window_started_at, request_count')

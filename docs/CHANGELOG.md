@@ -1,5 +1,24 @@
 # CHANGELOG — Clementplane
 
+## v0.20.5 — Sprint 20.5 — Disponibilités OF / formateur et flux mission — 29 août 2026
+
+### Disponibilités multi-sources
+- séparation entre la disponibilité globale déclarée par le formateur et la déclaration locale d'un OF ;
+- calcul de l'état effectif d'un OF selon la déclaration la plus récente lorsque les deux sources sont renseignées ;
+- conservation indépendante de la déclaration locale de l'OF ;
+- possibilité pour l'OF de réaffirmer directement son statut sans devoir passer par l'état opposé ;
+- cloisonnement des modifications locales : un OF ne modifie ni la disponibilité globale du formateur ni celles des autres OF.
+
+### Flux mission
+- sélection d'un formateur possible même lorsque sa disponibilité déclarée est « Indisponible » ;
+- suppression du blocage artificiel lié à une autre mission déjà affectée ;
+- absence de mutation automatique des propositions acceptées lors d'un conflit de disponibilité.
+
+### Sécurité et tests
+- lecture des disponibilités OF via RPC sécurisée ;
+- ajout des tables et migrations nécessaires au cloisonnement des déclarations ;
+- tests contractuels Sprint 20.5 : **10/10 réussis**.
+
 ## v0.20.0 — Sprint 20 — PWA / Clementplane installable sur mobile — 27 août 2026
 
 ### PWA et expérience mobile

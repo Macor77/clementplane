@@ -1,4 +1,5 @@
 import { supabase } from '../lib/supabaseClient';
+import { LEGAL_VERSIONS } from '../constants/legal';
 
 
 export async function signUpOrganization({
@@ -8,7 +9,9 @@ export async function signUpOrganization({
   lastName,
   organizationName,
   emailRedirectTo = null,
+  legalAccepted,
 }) {
+  if (!legalAccepted) throw new Error('LEGAL_ACCEPTANCE_REQUIRED');
   const { data, error } =
     await supabase.auth.signUp({
       email:
@@ -26,6 +29,18 @@ export async function signUpOrganization({
 
           signup_intent:
             'organization',
+
+          terms_accepted:
+            true,
+
+          terms_version:
+            LEGAL_VERSIONS.cgu,
+
+          privacy_acknowledged:
+            true,
+
+          privacy_version:
+            LEGAL_VERSIONS.privacy,
 
           organization_name:
             organizationName.trim(),

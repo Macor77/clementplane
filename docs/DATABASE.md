@@ -2,7 +2,7 @@
 
 Version : 0.20
 Dernière mise à jour : 27/08/2026
-Correspond au Sprint 20 terminé et validé.
+Correspond au Sprint 20.5 terminé et validé.
 
 ------------------------------------------------------------------------
 
@@ -45,7 +45,9 @@ Principales informations :
 
 ## trainer_availability
 
-Contient uniquement les disponibilités déclarées par le formateur.
+Contient uniquement les disponibilités globales déclarées par le formateur.
+
+Les déclarations effectuées par un OF ne sont pas écrites dans cette table.
 
 Colonnes principales :
 
@@ -318,6 +320,19 @@ Les parcours destinés aux formateurs sans compte utilisent des fonctions dédi�
 ------------------------------------------------------------------------
 
 # Évolutions de la base — Sprints 12 à 20
+
+## Disponibilités OF / formateur — Sprint 20.5
+
+La table `organization_trainer_availability` conserve les déclarations de disponibilité propres à un couple OF + formateur.
+
+Les deux sources restent indépendantes :
+
+- `trainer_availability` = déclaration globale du formateur ;
+- `organization_trainer_availability` = déclaration locale d'un OF.
+
+La RPC `get_organization_trainer_availability` calcule l'état effectif pour un OF. Lorsque les deux déclarations sont renseignées, celle dont `updated_at` est la plus récente est retenue. La déclaration locale de l'OF reste conservée même lorsqu'une modification plus récente du formateur devient prioritaire.
+
+La lecture de la disponibilité globale passe par les fonctions sécurisées prévues à cet effet ; la table globale n'est pas exposée en lecture directe aux utilisateurs.
 
 ## Partage des disponibilités
 

@@ -843,11 +843,6 @@ export async function updateMissionFormateurStatus(
       throw new Error('Ce formateur doit d’abord valider les nouvelles conditions de la mission avant de pouvoir être affecté.');
     }
 
-    await assertTrainerCanBeAffected({
-      missionId,
-      formateurId,
-    });
-
     const { data, error } = await supabase.rpc(
       'assign_mission_trainer',
       {
@@ -1034,73 +1029,15 @@ function buildMissionFormateurStatusPayload(
 }
 
 /**
- * Empêche l'affectation si le formateur est déjà affecté sur une autre
- * mission comportant au moins une date commune.
- *
- * Aucun détail sur l'autre mission n'est retourné.
- */
-async function assertTrainerCanBeAffected({
-  missionId,
-  formateurId,
-}) {
-  const { data, error } = await supabase.rpc(
-    'trainer_has_affected_conflict',
-    {
-      p_mission_id:
-        missionId,
-      p_trainer_id:
-        formateurId,
-    },
-  );
-
-  if (error) {
-    throw error;
-  }
-
-  if (data === true) {
-    throw new Error(
-      "Ce formateur n'est plus disponible sur cette période.",
-    );
-  }
-}
-
-/**
- * Recalcule les statuts automatiques d'un ou plusieurs formateurs.
- *
- * - Une proposition acceptée qui chevauche une mission affectée passe
- *   à "indisponible_affecte_ailleurs".
- * - Si le conflit disparaît, elle revient automatiquement à "accepte".
+ * Les conflits de missions ne bloquent plus l'affectation.
+ * La détection reste portée par les vues/plannings qui affichent les missions
+ * concurrentes, sans modifier automatiquement le statut des propositions.
  */
 async function reconcileTrainerConflicts(
   trainerIds,
 ) {
-  const uniqueTrainerIds = [
-    ...new Set(
-      (trainerIds || []).filter(Boolean),
-    ),
-  ];
-
-  for (const trainerId of uniqueTrainerIds) {
-    await reconcileSingleTrainerConflicts(
-      trainerId,
-    );
-  }
-}
-
-async function reconcileSingleTrainerConflicts(
-  trainerId,
-) {
-  const { error } = await supabase.rpc(
-    'reconcile_trainer_conflicts_safe',
-    {
-      p_trainer_id:
-        trainerId,
-    },
-  );
-
-  if (error) {
-    throw error;
-  }
+  // Compatibilité avec les workflows existants : aucune mutation automatique.
+  return trainerIds;
 }
 
 async function getMissionTrainerIds(

@@ -19,3 +19,5 @@
 .public-contact-form__privacy{margin:0!important;color:#667085!important;font-size:12px!important;line-height:1.5!important}
 .public-contact-form__honeypot{position:absolute!important;left:-10000px!important;width:1px!important;height:1px!important;overflow:hidden!important}
 @media(max-width:620px){.public-contact-form__row{grid-template-columns:1fr}}
+
+.public-contact-form__privacy{margin:0;color:#667085;font-size:12px;line-height:1.5}.public-contact-form__privacy a{color:#1d4ed8;font-weight:700}

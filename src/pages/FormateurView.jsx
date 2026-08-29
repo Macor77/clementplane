@@ -20,6 +20,7 @@ import {
   createOrganizationAvailabilityNote,
   deleteOrganizationAvailabilityNote,
   getOrganizationAvailabilityHistory,
+  getAvailabilitiesForMonth,
   getOrganizationAvailabilityNotes,
   setOrganizationTrainerAvailability,
   updateOrganizationAvailabilityNote,
@@ -475,25 +476,13 @@ export default function FormateurView() {
           noteRows,
           historyRows,
         ] = await Promise.all([
-          supabase
-            .from(
-              'trainer_availability',
-            )
-            .select(
-              'id, trainer_id, day, status, updated_at',
-            )
-            .eq(
-              'trainer_id',
-              trainerId,
-            )
-            .gte(
-              'day',
-              fromISO,
-            )
-            .lte(
-              'day',
-              toISO,
-            ),
+          getAvailabilitiesForMonth({
+            organizationId:
+              currentOrganization?.id,
+            trainerIds: [trainerId],
+            startDay: fromISO,
+            endDay: toISO,
+          }),
 
           getTrainerMissionCommitments({
             trainerIds: [
@@ -556,7 +545,7 @@ export default function FormateurView() {
 
         for (
           const row of
-          availabilityResult.data ||
+          availabilityResult ||
           []
         ) {
           map[row.day] = {
@@ -564,7 +553,7 @@ export default function FormateurView() {
               row.status,
 
             declaredStatus:
-              row.status,
+              row.declared_status ?? '',
 
             source:
               'availability',
@@ -997,8 +986,12 @@ export default function FormateurView() {
         '';
 
 
+      const effective =
+        availability[iso]?.status ?? '';
+
       if (
-        current === status ||
+        (current === status &&
+          effective === status) ||
         savingDay
       ) {
         return;
@@ -2163,6 +2156,9 @@ export default function FormateurView() {
                       currentStatus={
                         declaredStatus
                       }
+                      effectiveStatus={
+                        status
+                      }
                       saving={
                         savingDay ===
                         iso
@@ -2779,6 +2775,7 @@ export default function FormateurView() {
 function StatusButtons({
   iso,
   currentStatus,
+  effectiveStatus,
   saving,
   onChange,
 }) {
@@ -2831,8 +2828,8 @@ function StatusButtons({
       {options.map(
         (option) => {
           const active =
-            currentStatus ===
-            option.value;
+            currentStatus === option.value &&
+            effectiveStatus === option.value;
 
           return (
             <button

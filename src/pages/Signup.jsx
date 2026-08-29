@@ -48,6 +48,8 @@ export default function Signup() {
     setConfirmationRequired,
   ] = useState(false);
 
+  const [legalAccepted, setLegalAccepted] = useState(false);
+
 
   const [
     showPassword,
@@ -98,13 +100,21 @@ export default function Signup() {
         return;
       }
 
+      if (!legalAccepted) {
+        setError(
+          "Vous devez accepter les Conditions générales d’utilisation et avoir pris connaissance de la Politique de confidentialité.",
+        );
+        return;
+      }
+
       setSubmitting(true);
 
       try {
         const data =
-          await signUpTrainer(
-            form,
-          );
+          await signUpTrainer({
+            ...form,
+            legalAccepted,
+          });
 
         if (data.session) {
           navigate(
@@ -406,6 +416,21 @@ export default function Signup() {
             </div>
           ) : null}
 
+
+          <label className="auth-legal-consent">
+            <input
+              type="checkbox"
+              checked={legalAccepted}
+              onChange={(event) => setLegalAccepted(event.target.checked)}
+              disabled={submitting}
+              required
+            />
+            <span>
+              J’accepte les <Link to="/cgu" target="_blank">Conditions générales d’utilisation</Link>{' '}
+              et reconnais avoir pris connaissance de la{' '}
+              <Link to="/confidentialite" target="_blank">Politique de confidentialité</Link>.
+            </span>
+          </label>
 
           <button
             className="auth-button"

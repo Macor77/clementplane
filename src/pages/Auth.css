@@ -189,3 +189,5 @@
   background: #f1f5f9;
   color: #3b82f6;
 }
+
+.auth-legal-consent{display:flex!important;align-items:flex-start;gap:10px;margin:4px 0 6px;color:#475569;font-size:13px;line-height:1.5}.auth-legal-consent input{width:auto!important;margin-top:3px;flex:0 0 auto}.auth-legal-consent a{color:#2563eb;font-weight:700;text-decoration:none}.auth-legal-consent a:hover{text-decoration:underline}

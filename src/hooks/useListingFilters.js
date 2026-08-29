@@ -84,6 +84,7 @@ const getAvailabilityRange = (
 };
 
 export default function useListingFilters({
+  organizationId,
   formateurs,
   sortList,
 }) {
@@ -156,6 +157,7 @@ export default function useListingFilters({
       try {
         const rows =
           await getAvailabilitiesForMonth({
+            organizationId,
             trainerIds,
             startDay: range.startDay,
             endDay: range.endDay,
@@ -202,7 +204,7 @@ export default function useListingFilters({
     return () => {
       cancelled = true;
     };
-  }, [availabilityRange, trainerIds]);
+  }, [availabilityRange, trainerIds, organizationId]);
 
   useEffect(() => {
     const filtered = formateurs.filter(

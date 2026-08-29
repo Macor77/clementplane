@@ -137,6 +137,7 @@ export default function usePlanningAvailability({
         ] =
           await Promise.all([
             getAvailabilitiesForMonth({
+              organizationId: currentOrganization?.id,
               trainerIds,
               startDay,
               endDay,

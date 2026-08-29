@@ -34,6 +34,7 @@ import PublicLanding from './pages/PublicLanding';
 import AdminApp from './pages/admin/AdminApp';
 import FeatureNewsUnsubscribe from './pages/FeatureNewsUnsubscribe';
 import OrganizationInvitationLanding from './pages/OrganizationInvitationLanding';
+import LegalPage from './pages/LegalPage';
 
 import TrainerClaimStart from './pages/TrainerClaimStart';
 import SpaceChooser from './pages/SpaceChooser';
@@ -675,6 +676,14 @@ export default function App() {
         />
       </Routes>
     );
+  }
+
+  if (
+    ['/mentions-legales', '/cgu', '/confidentialite', '/traceurs'].includes(
+      location.pathname,
+    )
+  ) {
+    return <LegalPage />;
   }
 
   if (

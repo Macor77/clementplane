@@ -57,6 +57,8 @@ export default function OrganizationSignup() {
     setConfirmationRequired,
   ] = useState(false);
 
+  const [legalAccepted, setLegalAccepted] = useState(false);
+
   const [
     invitationTrainerName,
     setInvitationTrainerName,
@@ -181,6 +183,14 @@ export default function OrganizationSignup() {
       }
 
 
+      if (!legalAccepted) {
+        setError(
+          "Vous devez accepter les Conditions générales d’utilisation et avoir pris connaissance de la Politique de confidentialité.",
+        );
+        return;
+      }
+
+
       setSubmitting(
         true,
       );
@@ -194,6 +204,7 @@ export default function OrganizationSignup() {
               invitationToken
                 ? `${window.location.origin}/invitation-of/${encodeURIComponent(invitationToken)}`
                 : null,
+            legalAccepted,
           });
 
 
@@ -536,6 +547,21 @@ export default function OrganizationSignup() {
             </Link>
           ) : null}
 
+
+          <label className="auth-legal-consent">
+            <input
+              type="checkbox"
+              checked={legalAccepted}
+              onChange={(event) => setLegalAccepted(event.target.checked)}
+              disabled={submitting}
+              required
+            />
+            <span>
+              J’accepte les <Link to="/cgu" target="_blank">Conditions générales d’utilisation</Link>{' '}
+              et reconnais avoir pris connaissance de la{' '}
+              <Link to="/confidentialite" target="_blank">Politique de confidentialité</Link>.
+            </span>
+          </label>
 
           <button
             className="auth-button"

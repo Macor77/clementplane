@@ -2,7 +2,7 @@
 
 Version : 0.20
 Dernière mise à jour : 27/08/2026
-Correspond au Sprint 20 terminé et validé.
+Correspond au Sprint 20.5 terminé et validé.
 
 ------------------------------------------------------------------------
 
@@ -414,7 +414,18 @@ Le contexte React d'authentification :
 
 ## Disponibilités
 
-L'architecture des disponibilités évolue pour gérer plusieurs sources de modification et leur historique.
+L'architecture des disponibilités distingue la déclaration globale du formateur et la déclaration locale d'un organisme.
+
+- `trainer_availability` porte la déclaration globale du formateur ;
+- `organization_trainer_availability` porte la déclaration propre à un OF ;
+- les deux déclarations sont conservées séparément ;
+- la RPC sécurisée `get_organization_trainer_availability` calcule l'état effectif visible par l'OF.
+
+Lorsque les deux sources sont renseignées pour une même journée, la déclaration la plus récente selon `updated_at` est retenue comme état effectif.
+
+Ainsi, si un OF déclare « Disponible » puis que le formateur déclare « Indisponible », l'OF voit « Indisponible ». L'OF conserve cependant sa déclaration locale et peut la réaffirmer directement, sans devoir d'abord sélectionner l'état opposé.
+
+Une modification locale d'un OF ne modifie ni la déclaration globale du formateur ni celles des autres OF.
 
 Les migrations du Sprint 8 introduisent ou renforcent :
 
@@ -610,6 +621,10 @@ Clementplane dispose maintenant d'un workflow complet OF ↔ formateur couvrant 
 ------------------------------------------------------------------------
 
 # Évolutions architecturales Sprints 12 à 20
+
+## Disponibilités OF / formateur — Sprint 20.5
+
+Le calcul des disponibilités OF utilise désormais deux sources séparées. La priorité entre les deux déclarations est temporelle (`updated_at`) lorsque les deux sont renseignées. Cette logique permet à une modification récente du formateur de devenir visible chez un OF sans supprimer la déclaration locale de celui-ci.
 
 ## Partage des disponibilités
 

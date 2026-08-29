@@ -447,6 +447,27 @@ export default function Settings() {
           </button>
         </div>
 
+        <div
+          style={{
+            borderTop: '1px solid #e5e7eb',
+            paddingTop: '24px',
+            marginTop: '28px',
+          }}
+        >
+          <h3 style={{ marginTop: 0 }}>Informations légales</h3>
+
+          <p style={{ color: '#64748b', marginBottom: '14px' }}>
+            Consultez les documents juridiques et les informations relatives à la protection de vos données.
+          </p>
+
+          <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap' }}>
+            <a href="/mentions-legales">Mentions légales</a>
+            <a href="/cgu">CGU</a>
+            <a href="/confidentialite">Confidentialité</a>
+            <a href="/traceurs">Traceurs</a>
+          </div>
+        </div>
+
         <div style={{ borderTop: '1px solid #fecaca', paddingTop: '24px', marginTop: '28px' }}>
           <h3 style={{ marginTop: 0, color: '#b42318' }}>Zone de danger</h3>
           <p style={{ color: '#64748b', marginBottom: '18px' }}>La suppression ferme définitivement votre compte Clementplane. Elle ne supprime pas automatiquement les données métier appartenant à votre organisme. Si vous êtes le dernier utilisateur actif ou le dernier propriétaire de votre organisme, la suppression autonome sera bloquée.</p>

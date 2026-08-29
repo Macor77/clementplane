@@ -290,6 +290,17 @@ export default function TrainerSettings() {
           </button>
         </div>
       </div>
+      <div className="panel-card trainer-settings-card" style={{ marginTop: 20 }}>
+        <h2>Informations légales</h2>
+        <p>Consultez les documents juridiques et les informations relatives à la protection de vos données.</p>
+        <div className="trainer-settings-actions">
+          <a href="/mentions-legales">Mentions légales</a>
+          <a href="/cgu">CGU</a>
+          <a href="/confidentialite">Confidentialité</a>
+          <a href="/traceurs">Traceurs</a>
+        </div>
+      </div>
+
       <div className="panel-card trainer-settings-card" style={{ marginTop: 20, border: '1px solid #fecaca' }}>
         <h2 style={{ color: '#b42318' }}>Zone de danger</h2>
         <p>La suppression ferme définitivement votre compte Clementplane. Les données métier nécessaires aux organismes avec lesquels vous avez collaboré peuvent être conservées. Votre fiche formateur peut rester dans leur réseau sans être rattachée à un compte utilisateur.</p>

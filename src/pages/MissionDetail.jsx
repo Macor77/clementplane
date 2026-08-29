@@ -3415,10 +3415,6 @@ function TrainerRow({
         label="Sélectionner"
         loading={loading}
         primary
-        disabled={
-          trainer.availability
-            ?.status === 'unavailable'
-        }
         onClick={onSelect}
       />
     </article>

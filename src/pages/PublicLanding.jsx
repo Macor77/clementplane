@@ -418,6 +418,11 @@ export default function PublicLanding() {
                 </label>
               </div>
 
+              <p className="public-contact-form__privacy">
+                Les informations saisies servent uniquement à traiter votre demande.{' '}
+                <Link to="/confidentialite">En savoir plus sur vos données.</Link>
+              </p>
+
               <button
                 className="public-button public-contact-form__submit"
                 type="submit"
@@ -476,7 +481,7 @@ export default function PublicLanding() {
         </div>
       )}
 
-      <footer className="public-footer"><div className="public-wrap public-footer__inner"><img src="/brand/clementplane-logo-light.svg" alt="Clementplane" /><p>La collaboration entre organismes de formation et formateurs indépendants, plus simplement.</p><div><Link to="/connexion">Connexion</Link><a href="#faq">FAQ</a><a href="mailto:contact@clementplane.fr">Contact</a></div></div></footer>
+      <footer className="public-footer"><div className="public-wrap public-footer__inner"><img src="/brand/clementplane-logo-light.svg" alt="Clementplane" /><p>La collaboration entre organismes de formation et formateurs indépendants, plus simplement.</p><div><Link to="/connexion">Connexion</Link><Link to="/mentions-legales">Mentions légales</Link><Link to="/cgu">CGU</Link><Link to="/confidentialite">Confidentialité</Link><Link to="/traceurs">Traceurs</Link><a href="mailto:contact@clementplane.fr">Contact</a></div></div></footer>
     </div>
   );
 }

@@ -17,6 +17,13 @@ describe('Sprint 20 PWA adoption UI', () => {
     expect(source).not.toMatch(/showInstallHint && !needRefresh && \(deferredPrompt \|\| ios\)/);
   });
 
+  it('automatically applies PWA updates to avoid stale frontend versions', () => {
+    const source = read('src/components/pwa/PwaManager.jsx');
+    expect(source).toMatch(/updateServiceWorker\(true\)/);
+    expect(source).toMatch(/useEffect[\s\S]*needRefresh[\s\S]*updateServiceWorker\(true\)/);
+    expect(source).not.toMatch(/setNeedRefresh\(false\)/);
+  });
+
   it('tracks authenticated openings with pwa or browser access mode', () => {
     const source = read('src/components/pwa/PwaManager.jsx');
     expect(source).toMatch(/trackProductEvent\('app_opened'/);

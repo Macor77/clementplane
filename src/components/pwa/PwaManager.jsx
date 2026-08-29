@@ -43,7 +43,7 @@ export default function PwaManager() {
   const mobile = isMobileDevice(navigator);
 
   const {
-    needRefresh: [needRefresh, setNeedRefresh],
+    needRefresh: [needRefresh],
     updateServiceWorker,
   } = useRegisterSW();
 
@@ -83,6 +83,11 @@ export default function PwaManager() {
     };
   }, []);
 
+
+  useEffect(() => {
+    if (!needRefresh) return;
+    updateServiceWorker(true);
+  }, [needRefresh, updateServiceWorker]);
 
   useEffect(() => {
     const userId = session?.user?.id;
@@ -134,20 +139,7 @@ export default function PwaManager() {
         </div>
       )}
 
-      {needRefresh && (
-        <div className="pwa-notice" role="status">
-          <div className="pwa-notice__text">
-            <strong>Nouvelle version disponible</strong>
-            <span>Une nouvelle version de Clementplane est prête.</span>
-          </div>
-          <div className="pwa-notice__actions">
-            <button type="button" className="pwa-notice__primary" onClick={() => updateServiceWorker(true)}>
-              Mettre à jour
-            </button>
-            <button type="button" className="pwa-notice__close" onClick={() => setNeedRefresh(false)} aria-label="Fermer la notification de mise à jour">×</button>
-          </div>
-        </div>
-      )}
+
 
       {session?.user && online && showInstallHint && !needRefresh && mobile && (
         <div className="pwa-notice pwa-notice--install" role="status">

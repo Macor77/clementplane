@@ -71,6 +71,7 @@ export async function getMissionRecommendations(
     missionCommitmentMap,
   ] = await Promise.all([
     loadMissionAvailabilities({
+      organizationId: mission.organization_id,
       trainerIds,
       missionDates,
     }),
@@ -208,6 +209,7 @@ async function calculateMissionDistances({
 }
 
 async function loadMissionAvailabilities({
+  organizationId,
   trainerIds,
   missionDates,
 }) {
@@ -220,6 +222,7 @@ async function loadMissionAvailabilities({
 
   const rows =
     await getAvailabilitiesForMonth({
+      organizationId,
       trainerIds,
       startDay: missionDates[0],
       endDay:

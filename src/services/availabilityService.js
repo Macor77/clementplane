@@ -1,9 +1,7 @@
 import { supabase } from '../lib/supabaseClient';
 
-const TABLE = 'trainer_availability';
-
-
 export async function getAvailabilitiesForMonth({
+  organizationId,
   trainerIds,
   startDay,
   endDay,
@@ -15,14 +13,19 @@ export async function getAvailabilitiesForMonth({
     return [];
   }
 
-  const { data, error } = await supabase
-    .from(TABLE)
-    .select(
-      'id, trainer_id, day, status, updated_at',
-    )
-    .in('trainer_id', trainerIds)
-    .gte('day', startDay)
-    .lte('day', endDay);
+  if (!organizationId) {
+    return [];
+  }
+
+  const { data, error } = await supabase.rpc(
+    'get_organization_trainer_availability',
+    {
+      p_organization_id: organizationId,
+      p_trainer_ids: trainerIds,
+      p_start_day: startDay,
+      p_end_day: endDay,
+    },
+  );
 
   if (error) {
     throw error;

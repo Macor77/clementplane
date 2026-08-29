@@ -75,6 +75,7 @@ export default function Listing() {
     availabilityLoading,
     availabilityError,
   } = useListingFilters({
+    organizationId: currentOrganization?.id,
     formateurs,
     sortList,
   });

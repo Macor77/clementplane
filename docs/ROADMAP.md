@@ -806,3 +806,6 @@ Sprint 22 — Synchronisation Google Agenda
 ↓
 Sprint 23+ — Évolutions guidées par la bêta
 ```
+
+### Amélioration ultérieure — avertissement sur conflit de disponibilité
+Lorsqu’un formateur consulte une proposition de mission alors qu’il est déjà indiqué comme indisponible ou déjà en mission sur le créneau concerné, Clementplane devra afficher un avertissement informatif clair. Cet avertissement ne devra pas bloquer l’acceptation ou la gestion de la proposition.

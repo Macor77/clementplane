@@ -1,5 +1,13 @@
 # CHANGELOG — Clementplane
 
+## v0.20.6 — Sprint 20.6 — Suivi des améliorations — 31 août 2026
+
+- ajout d'un registre privé des bugs, améliorations, idées et autres sujets dans l'Admin ;
+- filtres par statut, catégorie et priorité, avec recherche textuelle ;
+- suivi automatique des dates de création et de résolution ;
+- accès Supabase réservé à l'administrateur de plateforme ;
+- 97/97 tests Vitest réussis, build réussi et lint sans erreur.
+
 ## v0.20.0 — Sprint 20 — PWA / Clementplane installable sur mobile — 27 août 2026
 
 ### PWA et expérience mobile
@@ -925,4 +933,3 @@ Les parcours de partage privé et public ont été testés fonctionnellement. Le
 # Prochaine étape
 
 Sprint 17 — Dashboard Admin, mini-CRM & statistiques d'utilisation.
-

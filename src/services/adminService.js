@@ -22,6 +22,36 @@ export async function updateAdminSupportRequest(id, { status, priority, internal
   }));
 }
 
+export async function getAdminImprovementItems() {
+  return unwrap(await supabase.rpc('admin_list_improvement_items')) || [];
+}
+
+export async function createAdminImprovementItem(item) {
+  return unwrap(await supabase.rpc('admin_create_improvement_item', {
+    p_title: item.title,
+    p_description: item.description,
+    p_origin: item.origin,
+    p_category: item.category,
+    p_priority: item.priority,
+  }));
+}
+
+export async function updateAdminImprovementItem(id, item) {
+  return unwrap(await supabase.rpc('admin_update_improvement_item', {
+    p_id: id,
+    p_title: item.title,
+    p_description: item.description,
+    p_origin: item.origin,
+    p_category: item.category,
+    p_priority: item.priority,
+    p_status: item.status,
+  }));
+}
+
+export async function deleteAdminImprovementItem(id) {
+  return unwrap(await supabase.rpc('admin_delete_improvement_item', { p_id: id }));
+}
+
 export async function getAdminAccounts() {
   return unwrap(await supabase.rpc('admin_list_accounts')) || [];
 }

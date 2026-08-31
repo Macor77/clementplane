@@ -1,12 +1,16 @@
 import { useEffect, useMemo, useState } from 'react';
 import { NavLink, Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { getAdminAccounts, getAdminDashboardStats, getAdminOrganizations, getAdminSupportRequests, getFeatureNewsHistory, isPlatformAdmin, previewFeatureNews, sendFeatureAnnouncement, updateAdminSupportRequest } from '../../services/adminService';
+import { createAdminImprovementItem, deleteAdminImprovementItem, getAdminAccounts, getAdminDashboardStats, getAdminImprovementItems, getAdminOrganizations, getAdminSupportRequests, getFeatureNewsHistory, isPlatformAdmin, previewFeatureNews, sendFeatureAnnouncement, updateAdminImprovementItem, updateAdminSupportRequest } from '../../services/adminService';
+import { buildImprovementPayload, filterImprovementItems } from '../../utils/adminImprovements';
 import './AdminApp.css';
 
 const statusLabels = { new: 'Nouveau', in_progress: 'En cours', resolved: 'Résolu', closed: 'Clos' };
 const priorityLabels = { low: 'Basse', normal: 'Normale', high: 'Haute', urgent: 'Urgente' };
 const profileLabels = { organization: 'OF', trainer: 'Formateur', both: 'Double profil', other: 'Prospect' };
+const improvementCategoryLabels = { bug: 'Bug', improvement: 'Amélioration', idea: 'Idée', other: 'Autre' };
+const improvementPriorityLabels = { low: 'Basse', normal: 'Normale', high: 'Haute', blocking: 'Bloquante' };
+const improvementStatusLabels = { to_do: 'À traiter', completed: 'Traitement terminé' };
 
 function formatDate(value) {
   if (!value) return '—';
@@ -97,6 +101,45 @@ function Organizations() {
   const [rows,setRows]=useState([]); useEffect(()=>{getAdminOrganizations().then(setRows)},[]); return <div><div className="admin-heading"><div><span className="admin-kicker">Réseau Clementplane</span><h1>Organismes</h1><p>Vue de consultation des organismes présents sur la plateforme.</p></div></div><div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>Création</th><th>Organisme</th><th>Membres</th><th>Formateurs du réseau</th><th>État</th></tr></thead><tbody>{rows.map((r)=><tr key={r.id}><td>{formatDate(r.created_at)}</td><td><strong>{r.name}</strong></td><td>{r.member_count}</td><td>{r.trainer_count}</td><td>{r.status}</td></tr>)}</tbody></table></div></div>;
 }
 
+const emptyImprovement = { title: '', description: '', origin: '', category: 'improvement', priority: 'normal', status: 'to_do' };
+
+function ImprovementPanel({ item, onClose, onSaved, onDeleted }) {
+  const [values, setValues] = useState(item || emptyImprovement);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
+  const change = (key) => (event) => setValues((current) => ({ ...current, [key]: event.target.value }));
+  const save = async () => {
+    setSaving(true); setError('');
+    try {
+      const payload = buildImprovementPayload(values);
+      if (item) await updateAdminImprovementItem(item.id, { ...payload, status: values.status });
+      else await createAdminImprovementItem(payload);
+      await onSaved();
+    } catch (err) {
+      setError(err.message || 'Impossible d’enregistrer cet élément.');
+    } finally { setSaving(false); }
+  };
+  const remove = async () => {
+    if (!item || !window.confirm('Supprimer définitivement cet élément ?')) return;
+    setSaving(true); setError('');
+    try { await deleteAdminImprovementItem(item.id); await onDeleted(); }
+    catch (err) { setError(err.message || 'Suppression impossible.'); setSaving(false); }
+  };
+  return <div className="admin-overlay" onMouseDown={onClose}><aside className="admin-panel admin-improvement-panel" onMouseDown={(event)=>event.stopPropagation()}><button className="admin-panel-close" onClick={onClose}>×</button><span className="admin-kicker">{item ? `Créé le ${formatDate(item.created_at)}` : 'Nouvel élément'}</span><h2>{item ? 'Modifier l’élément' : 'Ajouter un élément'}</h2>{item?.completed_at&&<p className="admin-contact">Terminé le {formatDate(item.completed_at)}</p>}<label>Titre<input maxLength="200" value={values.title} onChange={change('title')} placeholder="Résumé clair du sujet" /></label><label>Note explicative<textarea rows="7" maxLength="10000" value={values.description} onChange={change('description')} placeholder="Décris le problème, l’amélioration souhaitée ou l’idée…" /></label><label>Origine <small>Facultatif</small><input maxLength="300" value={values.origin||''} onChange={change('origin')} placeholder="Ex. Chéhine, Safetyformations, Test Vincent" /></label><div className="admin-form-grid"><label>Catégorie<select value={values.category} onChange={change('category')}>{Object.entries(improvementCategoryLabels).map(([value,label])=><option key={value} value={value}>{label}</option>)}</select></label><label>Priorité<select value={values.priority} onChange={change('priority')}>{Object.entries(improvementPriorityLabels).map(([value,label])=><option key={value} value={value}>{label}</option>)}</select></label>{item&&<label>Statut<select value={values.status} onChange={change('status')}>{Object.entries(improvementStatusLabels).map(([value,label])=><option key={value} value={value}>{label}</option>)}</select></label>}</div>{error&&<div className="admin-error">{error}</div>}<div className="admin-actions">{item&&<button className="admin-danger" disabled={saving} onClick={remove}>Supprimer</button>}<button className="admin-primary" disabled={saving} onClick={save}>{saving?'Enregistrement…':'Enregistrer'}</button></div></aside></div>;
+}
+
+function Improvements() {
+  const [rows,setRows]=useState([]); const [selected,setSelected]=useState(undefined);
+  const [filters,setFilters]=useState({status:'to_do',category:'all',priority:'all',query:''});
+  const [loading,setLoading]=useState(true); const [error,setError]=useState('');
+  const reload=async()=>{setLoading(true);setError('');try{setRows(await getAdminImprovementItems());}catch(err){setError(err.message||'Impossible de charger les éléments.');}finally{setLoading(false);}};
+  useEffect(()=>{reload()},[]);
+  const filtered=useMemo(()=>filterImprovementItems(rows,filters),[rows,filters]);
+  const setFilter=(key)=>(event)=>setFilters((current)=>({...current,[key]:event.target.value}));
+  const closeAndReload=async()=>{await reload();setSelected(undefined);};
+  return <div><div className="admin-heading"><div><span className="admin-kicker">Pilotage produit</span><h1>Suivi des améliorations</h1><p>Centralise les bugs, améliorations et idées à intégrer aux prochains sprints.</p></div><button className="admin-primary" onClick={()=>setSelected(null)}>+ Ajouter un élément</button></div><div className="admin-improvement-summary"><strong>{rows.filter((row)=>row.status==='to_do').length}</strong><span>élément(s) à traiter</span><strong>{rows.filter((row)=>row.status==='completed').length}</strong><span>terminé(s)</span></div><div className="admin-toolbar admin-toolbar--improvements"><input placeholder="Rechercher dans le titre, la note ou l’origine…" value={filters.query} onChange={setFilter('query')}/><select value={filters.status} onChange={setFilter('status')}><option value="to_do">À traiter</option><option value="completed">Traitement terminé</option><option value="all">Tous les statuts</option></select><select value={filters.category} onChange={setFilter('category')}><option value="all">Toutes les catégories</option>{Object.entries(improvementCategoryLabels).map(([value,label])=><option key={value} value={value}>{label}</option>)}</select><select value={filters.priority} onChange={setFilter('priority')}><option value="all">Toutes les priorités</option>{Object.entries(improvementPriorityLabels).map(([value,label])=><option key={value} value={value}>{label}</option>)}</select></div>{error?<div className="admin-error">{error}</div>:loading?<div className="admin-loading-inline">Chargement des améliorations…</div>:filtered.length===0?<div className="admin-empty">Aucun élément ne correspond aux filtres sélectionnés.</div>:<div className="admin-table-wrap"><table className="admin-table admin-improvements-table"><thead><tr><th>Création</th><th>Élément</th><th>Origine</th><th>Catégorie</th><th>Priorité</th><th>Statut</th><th>Résolution</th></tr></thead><tbody>{filtered.map((item)=><tr key={item.id} onClick={()=>setSelected(item)}><td>{formatDate(item.created_at)}</td><td><strong>{item.title}</strong><small>{item.description}</small></td><td>{item.origin||'—'}</td><td><span className={`admin-pill admin-pill--category-${item.category}`}>{improvementCategoryLabels[item.category]}</span></td><td><span className={`admin-pill admin-pill--priority-${item.priority}`}>{improvementPriorityLabels[item.priority]}</span></td><td><span className={`admin-pill admin-pill--${item.status}`}>{improvementStatusLabels[item.status]}</span></td><td>{formatDate(item.completed_at)}</td></tr>)}</tbody></table></div>}{selected!==undefined&&<ImprovementPanel item={selected} onClose={()=>setSelected(undefined)} onSaved={closeAndReload} onDeleted={closeAndReload}/>}</div>;
+}
+
 export default function AdminApp() {
   const { signOut } = useAuth();
   const location = useLocation();
@@ -125,9 +168,12 @@ export default function AdminApp() {
     case '/admin/communications':
       content = <Communications />;
       break;
+    case '/admin/ameliorations':
+      content = <Improvements />;
+      break;
     default:
       return <Navigate to="/admin" replace />;
   }
 
-  return <div className="admin-shell"><aside className="admin-sidebar"><img src="/brand/clementplane-logo-light.svg" alt="Clementplane" /><span className="admin-sidebar-label">ADMINISTRATION</span><nav><NavLink end to="/admin">⌂ <span>Dashboard</span></NavLink><NavLink to="/admin/crm">✉ <span>Mini-CRM</span></NavLink><NavLink to="/admin/utilisateurs">♙ <span>Utilisateurs</span></NavLink><NavLink to="/admin/organismes">▣ <span>Organismes</span></NavLink><NavLink to="/admin/communications">✦ <span>Nouveautés</span></NavLink></nav><div className="admin-sidebar-footer"><a href="/">← Revenir à Clementplane</a><button onClick={signOut}>Se déconnecter</button></div></aside><main className="admin-main">{content}</main></div>;
+  return <div className="admin-shell"><aside className="admin-sidebar"><img src="/brand/clementplane-logo-light.svg" alt="Clementplane" /><span className="admin-sidebar-label">ADMINISTRATION</span><nav><NavLink end to="/admin">⌂ <span>Dashboard</span></NavLink><NavLink to="/admin/crm">✉ <span>Mini-CRM</span></NavLink><NavLink to="/admin/ameliorations">✓ <span>Améliorations</span></NavLink><NavLink to="/admin/utilisateurs">♙ <span>Utilisateurs</span></NavLink><NavLink to="/admin/organismes">▣ <span>Organismes</span></NavLink><NavLink to="/admin/communications">✦ <span>Nouveautés</span></NavLink></nav><div className="admin-sidebar-footer"><a href="/">← Revenir à Clementplane</a><button onClick={signOut}>Se déconnecter</button></div></aside><main className="admin-main">{content}</main></div>;
 }

@@ -1,7 +1,7 @@
 # ROADMAP — Clementplane
 
 > Mise à jour : Sprint 20 PWA clôturé — 27 août 2026
-> Version actuelle : `v0.20.0`
+> Version actuelle : `v0.20.6`
 
 ## Vision
 
@@ -798,7 +798,7 @@ Un sprint est terminé lorsque :
 # Priorité actuelle
 
 ```text
-v0.20.0 — Sprint 20 officiellement clôturé
+v0.20.6 — Sprint 20.6 officiellement clôturé
 ↓
 Sprint 21 — Création de missions par le formateur
 ↓

@@ -1,5 +1,27 @@
 # CHANGELOG — Clementplane
 
+## v0.20.6 — Sprint 20.6 — Suivi des améliorations — 31 août 2026
+
+### Administration
+- ajout de la page privée « Suivi des améliorations » dans le menu Admin ;
+- création, modification, clôture, réouverture et suppression d'un élément ;
+- titre et note explicative obligatoires, origine libre facultative ;
+- catégories Bug, Amélioration, Idée et Autre ;
+- priorités Basse, Normale, Haute et Bloquante ;
+- filtres par statut, catégorie et priorité, complétés par une recherche textuelle ;
+- date de création automatique et date de résolution automatique.
+
+### Sécurité et recette
+- stockage Supabase inaccessible directement aux rôles `anon` et `authenticated` ;
+- opérations exposées uniquement via des RPC vérifiant l'administrateur de plateforme ;
+- 97/97 tests Vitest réussis ;
+- build de production réussi ;
+- lint sans erreur, avec 2 avertissements React Hooks préexistants.
+
+### Revue « Découvrir Clementplane »
+- version affichée mise à jour vers `v0.20.6` ;
+- aucune modification de FAQ ou de tutoriel nécessaire : la fonctionnalité est strictement interne à l'administration.
+
 ## v0.20.5 — Sprint 20.5 — Disponibilités OF / formateur et flux mission — 29 août 2026
 
 ### Disponibilités multi-sources
@@ -944,4 +966,3 @@ Les parcours de partage privé et public ont été testés fonctionnellement. Le
 # Prochaine étape
 
 Sprint 17 — Dashboard Admin, mini-CRM & statistiques d'utilisation.
-

@@ -1,7 +1,7 @@
 # ROADMAP — Clementplane
 
-> Mise à jour : Sprint 20.5 clôturé — 29 août 2026
-> Version actuelle : `v0.20.5`
+> Mise à jour : Sprint 20.6 clôturé — 31 août 2026
+> Version actuelle : `v0.20.6`
 
 ## Vision
 
@@ -799,7 +799,7 @@ Un sprint est terminé lorsque :
 # Priorité actuelle
 
 ```text
-v0.20.5 — Sprint 20.5 officiellement clôturé
+v0.20.6 — Sprint 20.6 officiellement clôturé
 ↓
 Sprint 21 — Création de missions par le formateur
 ↓

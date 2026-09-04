@@ -625,8 +625,6 @@ export default function TrainerAvailability() {
           );
         }
 
-
-        await loadMonth();
       } catch (saveError) {
         console.error(
           saveError,

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 
 import { signUpTrainer } from '../services/authService';
+import { getSignupErrorMessage } from '../utils/authErrorMessages';
 
 import './Auth.css';
 
@@ -135,21 +136,9 @@ export default function Signup() {
           signupError,
         );
 
-        if (
-          signupError?.message
-            ?.toLowerCase()
-            .includes(
-              'already registered',
-            )
-        ) {
-          setError(
-            'Un compte existe déjà avec cette adresse e-mail.',
-          );
-        } else {
-          setError(
-            "Impossible de créer le compte pour le moment. Réessayez dans quelques instants.",
-          );
-        }
+        setError(
+          getSignupErrorMessage(signupError),
+        );
       } finally {
         setSubmitting(false);
       }

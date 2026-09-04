@@ -17,6 +17,8 @@ import {
   getPublicTrainerOrganizationInvitation,
 } from '../services/trainerOrganizationsService';
 
+import { getSignupErrorMessage } from '../utils/authErrorMessages';
+
 import './Auth.css';
 
 
@@ -237,21 +239,15 @@ export default function OrganizationSignup() {
         );
 
 
-        if (
-          signupError?.message
-            ?.toLowerCase()
-            .includes(
-              'already registered',
-            )
-        ) {
-          setError(
-            'Un compte existe déjà avec cette adresse e-mail. Connectez-vous avec ce compte pour ajouter ensuite un espace organisme.',
-          );
-        } else {
-          setError(
-            "Impossible de créer l'organisme pour le moment. Réessayez dans quelques instants.",
-          );
-        }
+        const signupMessage = getSignupErrorMessage(
+          signupError,
+          "Impossible de créer l'organisme pour le moment. Réessayez dans quelques instants.",
+        );
+        setError(
+          signupMessage === 'Un compte existe déjà avec cette adresse e-mail.'
+            ? 'Un compte existe déjà avec cette adresse e-mail. Connectez-vous avec ce compte pour ajouter ensuite un espace organisme.'
+            : signupMessage,
+        );
       } finally {
         setSubmitting(
           false,

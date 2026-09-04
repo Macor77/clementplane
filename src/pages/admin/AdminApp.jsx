@@ -81,8 +81,30 @@ function RequestPanel({ request, onClose, onSaved }) {
 }
 
 function Accounts() {
-  const [rows,setRows]=useState([]); const [query,setQuery]=useState(''); useEffect(()=>{getAdminAccounts().then(setRows)},[]); const filtered=rows.filter((r)=>`${r.first_name||''} ${r.last_name||''} ${r.email||''} ${r.organization_names||''}`.toLowerCase().includes(query.toLowerCase()));
-  return <div><div className="admin-heading"><div><span className="admin-kicker">Comptes</span><h1>Utilisateurs</h1><p>Consultation des comptes et de leur profil Clementplane.</p></div></div><div className="admin-toolbar"><input placeholder="Rechercher un utilisateur…" value={query} onChange={(e)=>setQuery(e.target.value)} /></div><div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>Inscription</th><th>Utilisateur</th><th>Profil</th><th>Organisme</th><th>État</th></tr></thead><tbody>{filtered.map((r)=><tr key={r.user_id}><td>{formatDate(r.created_at)}</td><td><strong>{[r.first_name,r.last_name].filter(Boolean).join(' ') || '—'}</strong><small>{r.email}</small></td><td>{r.has_organization && r.has_trainer ? 'Double profil' : r.has_organization ? 'OF' : r.has_trainer ? 'Formateur' : 'Compte seul'}</td><td>{r.organization_names || '—'}</td><td>{r.account_status}</td></tr>)}</tbody></table></div></div>;
+  const [rows, setRows] = useState([]);
+  const [query, setQuery] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    let active = true;
+    getAdminAccounts()
+      .then((data) => { if (active) setRows(data); })
+      .catch((err) => {
+        console.error(err);
+        if (active) setError('Impossible de charger les utilisateurs.');
+      })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, []);
+
+  const filtered = rows.filter((r) =>
+    `${r.first_name || ''} ${r.last_name || ''} ${r.email || ''} ${r.organization_names || ''}`
+      .toLowerCase()
+      .includes(query.toLowerCase()),
+  );
+
+  return <div><div className="admin-heading"><div><span className="admin-kicker">Comptes</span><h1>Utilisateurs</h1><p>Consultation des comptes OF et formateurs présents dans Clementplane.</p></div></div><div className="admin-toolbar"><input placeholder="Rechercher un utilisateur…" value={query} onChange={(e)=>setQuery(e.target.value)} /></div>{loading ? <div className="admin-loading-inline">Chargement des utilisateurs…</div> : error ? <div className="admin-error">{error}</div> : <div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>Inscription</th><th>Utilisateur</th><th>Profil</th><th>Organisme</th><th>État</th></tr></thead><tbody>{filtered.map((r)=><tr key={r.user_id}><td>{formatDate(r.created_at)}</td><td><strong>{[r.first_name,r.last_name].filter(Boolean).join(' ') || '—'}</strong><small>{r.email}</small></td><td>{r.has_organization && r.has_trainer ? 'Double profil' : r.has_organization ? 'OF' : r.has_trainer ? 'Formateur' : 'Compte seul'}</td><td>{r.organization_names || '—'}</td><td>{r.account_status}</td></tr>)}{filtered.length === 0 && <tr><td colSpan="5" className="admin-empty">Aucun utilisateur à afficher.</td></tr>}</tbody></table></div>}</div>;
 }
 
 function Communications() {

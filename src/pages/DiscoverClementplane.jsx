@@ -1,16 +1,17 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
+import TutorialLibrary from '../components/tutorials/TutorialLibrary';
 import { useAuth } from '../context/AuthContext';
 import { createSupportRequest } from '../services/supportRequestService';
+import { trackProductEvent } from '../services/productAnalyticsService';
 import {
   FORMPLANE_VERSION,
   discoverFeatures,
   faqItems,
-  organizationTutorials,
   publicRoadmap,
-  trainerTutorials,
 } from '../content/discoverContent';
+import { getTutorialsForAudience } from '../content/tutorialLibrary';
 
 import './DiscoverClementplane.css';
 
@@ -24,52 +25,6 @@ const contactCategories = [
   { key: 'privacy_data', label: 'Confidentialité / données' },
   { key: 'other', label: 'Autre demande' },
 ];
-
-function TutorialCard({ tutorial }) {
-  const [open, setOpen] = useState(false);
-
-  return (
-    <article className={`discover-tutorial${open ? ' discover-tutorial--open' : ''}`}>
-      <button
-        type="button"
-        className="discover-tutorial__summary"
-        onClick={() => setOpen((value) => !value)}
-        aria-expanded={open}
-      >
-        <span className="discover-tutorial__icon" aria-hidden="true">•</span>
-        <span className="discover-tutorial__copy">
-          <strong>{tutorial.title}</strong>
-          <span>{tutorial.summary}</span>
-        </span>
-        <span className="discover-tutorial__time">Guide pas à pas</span>
-        <span className="discover-tutorial__chevron" aria-hidden="true">⌄</span>
-      </button>
-
-      {open && (
-        <div className="discover-tutorial__content">
-          <ol>
-            {tutorial.steps.map((step) => (
-              <li key={step}>{step}</li>
-            ))}
-          </ol>
-
-          {tutorial.tip && (
-            <div className="discover-tip">
-              <strong>À savoir</strong>
-              <span>{tutorial.tip}</span>
-            </div>
-          )}
-
-          {tutorial.route && tutorial.routeLabel && (
-            <Link className="button button--primary" to={tutorial.route}>
-              {tutorial.routeLabel}
-            </Link>
-          )}
-        </div>
-      )}
-    </article>
-  );
-}
 
 export default function DiscoverClementplane({ audience }) {
   const location = useLocation();
@@ -85,7 +40,16 @@ export default function DiscoverClementplane({ audience }) {
   const [contactFeedback, setContactFeedback] = useState(null);
 
   const isTrainer = audience === 'trainer';
-  const tutorials = isTrainer ? trainerTutorials : organizationTutorials;
+  const tutorials = getTutorialsForAudience(audience);
+
+  const trackTutorialInteraction = (action, tutorial, stepIndex) => {
+    trackProductEvent('tutorial_interaction', audience, {
+      action,
+      tutorial_id: tutorial.id,
+      step: stepIndex + 1,
+      total_steps: tutorial.steps.length,
+    }).catch(() => {});
+  };
 
   useEffect(() => {
     if (location.hash !== '#contact') return;
@@ -198,14 +162,10 @@ export default function DiscoverClementplane({ audience }) {
             <p className="page-eyebrow">GUIDES PAS À PAS</p>
             <h2 id="tutorials-title">Comment faire dans Clementplane ?</h2>
           </div>
-          <p>Ouvrez un guide pour suivre les étapes. Les captures d’écran pourront être ajoutées ensuite au fil de la stabilisation de l’interface.</p>
+          <p>Choisissez un tutoriel illustré. Chaque étape montre l’action à réaliser et ce qui se passe ensuite.</p>
         </div>
 
-        <div className="discover-tutorial-list">
-          {tutorials.map((tutorial) => (
-            <TutorialCard tutorial={tutorial} key={tutorial.id} />
-          ))}
-        </div>
+        <TutorialLibrary tutorials={tutorials} onEvent={trackTutorialInteraction} />
       </section>
 
       <section className="discover-section" id="faq" aria-labelledby="faq-title">

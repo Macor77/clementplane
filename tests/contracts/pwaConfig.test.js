@@ -36,4 +36,11 @@ describe('Clementplane PWA configuration', () => {
     const runtimeCaching = PWA_OPTIONS.workbox?.runtimeCaching || [];
     expect(JSON.stringify(runtimeCaching)).not.toMatch(/supabase/i);
   });
+
+  it('lets tutorial PDFs bypass the SPA navigation fallback', () => {
+    const denylist = PWA_OPTIONS.workbox?.navigateFallbackDenylist || [];
+
+    expect(denylist.some((pattern) => pattern.test('/tutorials/pdf/guide.pdf'))).toBe(true);
+    expect(denylist.some((pattern) => pattern.test('/decouvrir'))).toBe(false);
+  });
 });

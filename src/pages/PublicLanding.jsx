@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import TutorialLibrary from '../components/tutorials/TutorialLibrary';
 import { faqItems } from '../content/discoverContent';
+import { getPublicTutorials } from '../content/tutorialLibrary';
 import { submitPublicContact } from '../services/publicContactService';
 import './PublicLanding.css';
 
@@ -13,6 +15,8 @@ const publicFaq = faqItems.filter((item) =>
     'Un formateur doit-il être inscrit pour recevoir une proposition ?',
   ].includes(item.question),
 );
+
+const publicTutorials = getPublicTutorials();
 
 const features = [
   ['Disponibilités partagées', 'Le formateur tient son planning professionnel à jour une seule fois. Ses partenaires consultent la dernière information utile.'],
@@ -130,6 +134,7 @@ export default function PublicLanding() {
             <a href="#fonctionnalites">Fonctionnalités</a>
             <a href="#of">Pour les OF</a>
             <a href="#formateurs">Pour les formateurs</a>
+            <a href="#tutoriels">Tutoriels</a>
             <a href="#faq">FAQ</a>
           </nav>
           <div className="public-header__actions">
@@ -316,6 +321,17 @@ export default function PublicLanding() {
             <figure className="public-diagram">
               <img src={visuals.diagrams.privacy} alt="Schéma montrant deux réseaux privés d’organismes de formation partageant un même formateur sans accès croisé" loading="lazy" />
             </figure>
+          </div>
+        </section>
+
+        <section className="public-section public-section--tutorials" id="tutoriels">
+          <div className="public-wrap">
+            <div className="public-section-heading public-section-heading--center public-tutorials-heading">
+              <p className="public-eyebrow">TUTORIELS ILLUSTRÉS</p>
+              <h2>Voir Clementplane en action.</h2>
+              <p>Découvrez les parcours essentiels avec de véritables écrans de l’application et comprenez ce que chaque action provoque ensuite.</p>
+            </div>
+            <TutorialLibrary tutorials={publicTutorials} compact />
           </div>
         </section>
 

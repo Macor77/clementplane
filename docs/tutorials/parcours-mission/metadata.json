@@ -1,0 +1,20 @@
+{
+  "id": "parcours-mission-accepter-affecter",
+  "title": "Répondre à une proposition de mission et comprendre la suite",
+  "audiences": ["FORMATEUR", "OF"],
+  "type": "PARCOURS_CROISE",
+  "priority": "INDISPENSABLE",
+  "estimated_minutes": 3,
+  "steps": 7,
+  "screenshots": 7,
+  "verified_on": "2026-09-19",
+  "environment": "documentation-demo",
+  "production_data_used": false,
+  "external_messages_sent": false,
+  "demo_entities": {
+    "trainer": "Camille Moreau",
+    "organization": "Horizon Formation",
+    "client": "Atelier Nova",
+    "mission_reference": "HF-2026-001"
+  }
+}

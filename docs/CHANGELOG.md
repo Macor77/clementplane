@@ -1,5 +1,23 @@
 # CHANGELOG — Clementplane
 
+## Bibliothèque de tutoriels illustrés — chantier documentaire indépendant
+
+### Application
+- remplacement des anciens guides textuels de « Découvrir Clementplane » par une bibliothèque de 11 tutoriels illustrés avec la véritable interface Clementplane et des données fictives ;
+- filtrage automatique des tutoriels selon le profil Formateur ou Organisme de formation ;
+- consultation dans un carrousel responsive avec navigation clavier, indication de progression et explication systématique de la conséquence de chaque action ;
+- téléchargement du PDF complet de chaque tutoriel ;
+- suivi anonymisé des ouvertures, étapes, téléchargements et fins de tutoriels dans les statistiques produit existantes.
+
+### Site public
+- ajout d’une sélection de 4 parcours essentiels présentant concrètement la création d’une mission, la recherche d’un formateur et le parcours croisé de proposition jusqu’à l’affectation ;
+- réutilisation du même composant et des mêmes contenus que dans l’application afin d’éviter les divergences documentaires.
+
+### Sécurité et confidentialité
+- captures réalisées uniquement avec des comptes et informations de démonstration fictifs ;
+- aucun contenu utilisateur saisi n’est envoyé dans les statistiques ;
+- événement statistique réservé aux utilisateurs authentifiés et limité à l’identifiant du tutoriel, l’action et la progression.
+
 ## v0.20.6 — Sprint 20.6 — Suivi des améliorations — 31 août 2026
 
 ### Administration

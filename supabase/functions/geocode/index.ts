@@ -109,31 +109,34 @@ Deno.serve(async (req) => {
       );
     }
 
-    const url = new URL(
-      "https://nominatim.openstreetmap.org/search"
-    );
+    // Service français IGN / Base Adresse Nationale.
+    // Le client ajoute « France » pour l'ancien fournisseur international.
+    const addressQuery = query.replace(/(?:,\s*|\s+)France\s*$/i, '').trim();
+    if (!addressQuery || /^France$/i.test(addressQuery)) {
+      return jsonResponse({ error: "Précisez une ville ou une adresse." }, 400);
+    }
 
-    url.searchParams.set("q", query);
-    url.searchParams.set("format", "jsonv2");
+    const url = new URL("https://data.geopf.fr/geocodage/search");
+
+    url.searchParams.set("q", addressQuery);
+    url.searchParams.set("index", "address");
     url.searchParams.set("limit", "1");
-    url.searchParams.set("countrycodes", "fr");
-    url.searchParams.set("addressdetails", "1");
 
     const response = await fetch(url.toString(), {
+      signal: AbortSignal.timeout(10000),
       headers: {
-        "User-Agent":
-          "Clementplane/1.0 (contact@clementplane.fr)",
-        "Accept-Language": "fr",
+        "Accept": "application/json",
       },
     });
 
     if (!response.ok) {
       throw new Error(
-        `Erreur Nominatim : ${response.status}`
+        `Erreur IGN : ${response.status}`
       );
     }
 
-    const results = await response.json();
+    const payload = await response.json();
+    const results = payload?.features;
 
     if (
       !Array.isArray(results) ||
@@ -148,40 +151,34 @@ Deno.serve(async (req) => {
     }
 
     const result = results[0];
+    const properties = result.properties ?? {};
+    if (typeof properties.score !== 'number' || properties.score < 0.4) {
+      return jsonResponse({ error: "Lieu introuvable ou trop imprécis." }, 404);
+    }
 
-    const latitude = Number(result.lat);
-    const longitude = Number(result.lon);
+    // GeoJSON utilise l'ordre longitude, latitude.
+    const [longitude, latitude] = result.geometry?.coordinates ?? [];
 
     if (
+      result.geometry?.type !== 'Point' ||
       !Number.isFinite(latitude) ||
-      !Number.isFinite(longitude)
+      !Number.isFinite(longitude) ||
+      Math.abs(latitude) > 90 ||
+      Math.abs(longitude) > 180
     ) {
       throw new Error(
         "Coordonnées invalides reçues."
       );
     }
 
-    const address = result.address ?? {};
-
-    const city =
-      address.city ??
-      address.town ??
-      address.village ??
-      address.municipality ??
-      address.hamlet ??
-      "";
-
-    const postcode = address.postcode ?? "";
-
-    const department =
-      address.county ??
-      address.state_district ??
-      "";
+    const city = properties.city ?? properties.municipality ?? "";
+    const postcode = properties.postcode ?? "";
+    const department = String(properties.context ?? '').split(',')[1]?.trim() ?? "";
 
     return jsonResponse({
       latitude,
       longitude,
-      displayName: result.display_name ?? query,
+      displayName: properties.label ?? query,
       city,
       postcode,
       department,

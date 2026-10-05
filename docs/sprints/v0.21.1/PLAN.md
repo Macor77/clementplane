@@ -27,5 +27,5 @@ Contraintes globales : v0.21.1 ; aucun envoi ; aucune production avant accord ; 
 ## Tâche 3 — clôture préparée
 - [x] Suite, SQL, build, PWA, revue indépendante.
 - [x] Documentation, RGPD, aides, version v0.21.1, changelogs et roadmaps.
-- [ ] Commit, push branche, PR, archive reproductible et brouillon release si disponible.
-- [ ] Bilan précis et demande finale limitée aux actions de production nécessaires.
+- [x] Commit, publication branche et PR brouillon #4 ; script d’archive reproductible et notes de release.
+- [x] Bilan de recette locale/connectée et contrôle de clôture ; production encore soumise à accord distinct.

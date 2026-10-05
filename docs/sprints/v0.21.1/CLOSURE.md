@@ -1,6 +1,6 @@
 # v0.21.1 — suivi de clôture
 
-**Statut : développé et vérifié localement, recette distante et production non réalisées. Sprint non clos.**
+**Statut : développé et vérifié localement ; migrations et recette API distante validées ; recette navigateur connectée validée ; production non réalisée. Sprint non clos.**
 
 ## Référence et preuves
 Base : main 97e13a1e6e68824dba77c5349d46951b5e0da588. Branche : feature/v0.21.1-personal-missions. Cible : v0.21.1 (package, lock et version UI alignés). Aucun changement de production.
@@ -19,12 +19,12 @@ Base : main 97e13a1e6e68824dba77c5349d46951b5e0da588. Branche : feature/v0.21.1-
 |---|---|
 | Développement et correction | Préparés sur branche dédiée |
 | Recette locale | Validée comme indiqué ci-dessus |
-| Supabase | Production inspectée en lecture, migration non appliquée |
-| Recette connectée, OF et double espace | À faire sur environnement autorisé |
+| Supabase | Deux migrations appliquées sur documentation-demo après autorisation explicite ; production inchangée |
+| Recette connectée, OF et double espace | API CRUD/RLS et cycle OF validés ; navigateur desktop/mobile validé |
 | Documentation et changelogs | Actualisés avec statut de préparation |
 | Roadmaps | Synchronisées sur v0.21.1, sans prétendre à une livraison |
 | Version affichée | v0.21.1 dans le code ; production non vérifiée |
-| GitHub | Commit local réalisé ; push refusé par contrôle automatique, PR non créée |
+| GitHub | Branche publiée et PR brouillon #4 créée après autorisation explicite ; aucune fusion |
 | Vercel et version en ligne | Non déployés ; accord requis |
 | Tag et release | Notes rédigées ; tag final et release publiable différés |
 | Archive | Script reproductible de préparation ; archive finale à régénérer sur commit livré |
@@ -43,12 +43,16 @@ Base : main 97e13a1e6e68824dba77c5349d46951b5e0da588. Branche : feature/v0.21.1-
 - Procédure de violation : inchangée ; droits : périmètre de recherche complété.
 Cette revue porte sur l’impact fonctionnel du changement, pas sur un nouvel audit juridique global.
 
-## Blocage distant et autorisation précise attendue
-Le contrôle automatique a refusé `apply_migration` sur la branche existante **documentation-demo**, projet **jqhbrkyeawtsuzrzrnvm** (parent production hctvkynrgmnxjynbncdi). Motif : mutation distante de schéma/RPC sensibles sur un projet non explicitement autorisé. Aucune tentative indirecte ni aucune modification distante.
+## Recette distante autorisée et production restante
+L’utilisateur a directement autorisé la publication publique de la branche/PR et l’utilisation de **documentation-demo**, projet **jqhbrkyeawtsuzrzrnvm**. Les deux migrations v0.21.1 y sont appliquées sans réinitialisation. Les fixtures sont isolées et fictives ; aucun envoi de message.
 
-Demander l’autorisation d’utiliser cette branche de test pour appliquer **uniquement** `20261005113329_personal_trainer_missions.sql`, créer des données fictives isolées, exécuter la recette connectée et nettoyer ces seules données. Ne pas réinitialiser la branche ; ne pas toucher à ses données existantes ni envoyer des messages. Son état MIGRATIONS_FAILED doit être vérifié avant mutation ; le schéma de base est présent, mais la compatibilité complète reste à contrôler.
+- API réelle : création, relecture, modification, révision, annulation, doublon UUID, RLS autre formateur/OF/anon, propriétaires immuables et disponibilités manuelles préservées.
+- Cycle OF réel : acceptation malgré chevauchement personnel, affectation, modification/revalidation, réaffectation et annulation. Cloisonnement inter-OF, double espace et conservation de l’engagement personnel validés.
+- Navigateur connecté : 2 tests passent (1440/390 px), création/rechargement/modification/liens/planning/annulation, accès étranger refusé, zéro appel de notification. Captures fictives contrôlées.
+- Nettoyage : zéro compte/formateur/OF/mission de recette restant ; cascade Auth des missions personnelles vérifiée avant suppression des formateurs. Zéro journal d’e-mail pour les comptes fictifs. Les relations mission/formateur sont supprimées avant la mission pour respecter le trigger historique existant.
+- Inscriptions : test SQL de l’ancienne et nouvelle notice, acknowledgments obligatoires et version exacte persistée ; les comptes fictifs ont été créés avec la nouvelle version.
 
-La production requiert ensuite un accord distinct, après recette : migration additive, déploiement frontend, vérification, tag v0.21.1, ZIP et release. `tutorial_analytics` apparaît dans git mais pas dans l’historique distant inspecté : ne pas exécuter un `db push` global à l’aveugle.
+La production requiert un accord distinct, après recette : les deux migrations ciblées avant frontend, fusion/déploiement, vérification en ligne, tag v0.21.1, ZIP et release. `tutorial_analytics` apparaît dans git mais pas dans l’historique distant inspecté : ne pas exécuter un `db push` global à l’aveugle.
 
 ## Reproduction
 ```sh
@@ -62,5 +66,12 @@ npx playwright test tests/e2e/specs/05-pwa-shell.spec.js tests/e2e/specs/06-pers
 ```
 Dans cet environnement, le téléchargement Playwright était incomplet : exécution avec Chromium 153 installé séparément, `PLAYWRIGHT_CHROMIUM_EXECUTABLE` et `PLAYWRIGHT_VIDEO_OFF=1`. La CI utilise l’installation standard ; résultat CI à contrôler sur la PR.
 
-## Blocage de publication GitHub
-Le dépôt Macor77/clementplane est **public** (vérifié via connecteur, propriétaire Macor77, droits push/admin confirmés). Le contrôle automatique a refusé le push, puis l’a refusé à nouveau après vérification du dépôt et contrôle des ajouts, au motif que le texte joint ne constituait pas une autorisation utilisateur directe de publication publique. Aucun autre moyen de push n’a été tenté. La PR n’est pas créée. Demander une autorisation directement dans la conversation pour publier le code et la documentation de cette branche sur ce dépôt public.
+## Publication GitHub
+PR brouillon : https://github.com/Macor77/clementplane/pull/4. Dépôt public autorisé explicitement. L’aperçu Vercel du premier commit publié est réussi ; aucun résultat GitHub Actions remonté au contrôle. Ne pas confondre aperçu et déploiement de production.
+
+## Reproduire la recette connectée
+Les scripts `personal-missions-login.mjs`, `personal-missions-connected.mjs` et `personal-missions-of-connected.mjs` nécessitent des fixtures fictives précréées hors du dépôt : credentials.json (project, quatre users/emails/password, deux trainers, deux orgs, mission et relation de proposition avec token), public-key.json (url et clé anon publique), sessions.json généré par login. Ne jamais archiver ces fichiers. Les deux premiers comptes sont formateurs, les deux suivants propriétaires d’OF ; le premier formateur a aussi un espace OF. Les relations OF/formateurs et dates de mission sont définies pour octobre 2026. Les scripts API s’exécutent dans cet ordre : login, personal-missions-connected, personal-missions-of-connected ; ils produisent des comptes rendus locaux sans credentials. Le scénario navigateur se lance ensuite, sans mocks métier.
+
+Fournir explicitement `E2E_PERSONAL_DATA_DIR` (dossier externe, terminé par /) et `E2E_PROJECT_REF`. Les scripts refusent la production et les projets incohérents. Renouveler les sessions avant la recette. Pour une recette ultérieure, adapter ensemble les dates fixtures/API/navigateur et le mois affiché. Ne pas réutiliser ces fixtures pour un deuxième cycle OF après annulation terminale.
+
+Le Chromium isolé de cet environnement a nécessité `PLAYWRIGHT_PROXY` et `PLAYWRIGHT_TEST_PROXY_TLS=1` pour son proxy de test. Ce réglage TLS est limité à Playwright, désactivé par défaut et n’affecte pas l’application. Les assertions connectées attendent jusqu’à 30 s pour les latences réseau. Les traces de recette sont exclues du lint et de git.

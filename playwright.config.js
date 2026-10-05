@@ -8,6 +8,8 @@ export default defineConfig({
   reporter: process.env.CI ? [['html', { open: 'never' }], ['list']] : 'list',
   use: {
     baseURL: 'http://127.0.0.1:4173',
+    ignoreHTTPSErrors: process.env.PLAYWRIGHT_TEST_PROXY_TLS === '1',
+    ...(process.env.PLAYWRIGHT_PROXY ? { proxy: { server: process.env.PLAYWRIGHT_PROXY, bypass: '127.0.0.1,localhost' } } : {}),
     launchOptions: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE, args: ['--no-sandbox'] } : {},
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',

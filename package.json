@@ -17,7 +17,7 @@
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:report": "playwright show-report",
     "e2e:seed": "node scripts/e2e/reset-and-seed.mjs",
-    "test:personal-sql": "node scripts/testing/personal-missions-sql.mjs"
+    "test:personal-sql": "node scripts/testing/personal-missions-sql.mjs && node scripts/testing/legal-versions-sql.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.75.0",

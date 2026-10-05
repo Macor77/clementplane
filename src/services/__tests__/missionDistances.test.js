@@ -64,6 +64,13 @@ describe('recherche de formateur depuis une mission', () => {
     expect(result.formateurs.map((trainer) => trainer.distance)).toEqual([null, null]);
     expect(result.recognizedPlace).toBeNull();
   });
+  it('ne remplace pas la mission par 0, 0 quand le service de localisation échoue', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    geocodeQuery.mockRejectedValue(new Error('Erreur fournisseur : 403'));
+    const result = await getMissionRecommendations({ ville: 'Paris', latitude: null, longitude: null });
+    expect(result.formateurs.every((trainer) => trainer.distance === null)).toBe(true);
+    expect(result.recognizedPlace).toBeNull();
+  });
   it('classe le formateur localisé avant celui dont les coordonnées manquent', async () => {
     geocodeQuery.mockResolvedValue({ ...paris, displayName: 'Paris' });
     const result = await getMissionRecommendations({ ville: 'Paris' });

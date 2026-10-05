@@ -1,3 +1,4 @@
+import { countUniqueMissions, missionHref } from '../../utils/personalMissions';
 import {
   useEffect,
   useMemo,
@@ -11,8 +12,8 @@ import PlanningDayModal from '../../components/planning/PlanningDayModal';
 import { filterTrainerPlanningItems, getTrainerDayItems, getTrainerOrganizationOptions } from '../../utils/planningFilters';
 
 import {
-  getMyMissionProposals,
-} from '../../services/trainerProposalService';
+  getMyAgendaMissions,
+} from '../../services/trainerAgendaService';
 
 
 function pad(value) {
@@ -194,6 +195,7 @@ function getPlanningItems(
       }
 
       items.push({
+        origin: proposal.origin,
         id: `${proposal.mission_formateur_id}-${missionDate.date}`,
 
         missionFormateurId:
@@ -313,7 +315,7 @@ export default function TrainerPlanning() {
 
       try {
         const rows =
-          await getMyMissionProposals();
+          await getMyAgendaMissions();
 
         if (active) {
           setProposals(
@@ -443,21 +445,8 @@ export default function TrainerPlanning() {
     );
 
 
-  const optionCount =
-    monthItems.filter(
-      (item) =>
-        item.status ===
-        'accepte',
-    ).length;
-
-
-  const missionCount =
-    monthItems.filter(
-      (item) =>
-        item.status ===
-        'affecte',
-    ).length;
-
+  const optionCount = countUniqueMissions(monthItems.filter(item => item.status === 'accepte'));
+  const missionCount = countUniqueMissions(monthItems.filter(item => item.status === 'affecte'));
 
   const changeMonth =
     (offset) => {
@@ -533,6 +522,8 @@ export default function TrainerPlanning() {
       ) : null}
 
 
+      <Link className="button button--primary" to="/formateur/missions/nouvelle">Ajouter une mission</Link>
+      {!loading && !error && !planningItems.length && <p>Votre agenda est prêt : ajoutez une intervention pour commencer.</p>}
       <div className="trainer-planning-summary">
 
         <div className="trainer-planning-summary__item">
@@ -824,7 +815,7 @@ export default function TrainerPlanning() {
                 >
                   <div className="planning-day-summary__top">
                     <span className={`planning-day-summary__status planning-day-summary__status--${item.status === 'affecte' ? 'mission' : 'option'}`}>
-                      {getStatusLabel(item.status)}
+                      {item.origin === 'personal' ? 'Personnelle · ' : ''}{getStatusLabel(item.status)}
                     </span>
                     {item.startTime ? <strong>{formatTime(item.startTime)}</strong> : null}
                   </div>
@@ -838,7 +829,7 @@ export default function TrainerPlanning() {
                     ) : null}
                   </div>
                   <Link
-                    to={`/formateur/missions/${item.missionId}`}
+                    to={missionHref(item)}
                     className="button button--primary planning-day-summary__action"
                   >
                     Voir la mission

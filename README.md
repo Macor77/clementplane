@@ -16,7 +16,7 @@ Elle centralise notamment :
 
 ## Version actuelle
 
-**v0.20.0 — Sprint 20 : PWA / Clementplane installable sur mobile**
+**v0.21.1 — Agenda autonome du formateur (branche de préparation, non déployée)**
 
 Clementplane peut désormais être installé sur Android et iPhone/iPad et lancé depuis l’écran d’accueil comme une application.
 
@@ -118,8 +118,8 @@ La roadmap principale existe également à la racine dans `ROADMAP.md`.
 - Production : `clementplane.fr`
 - Supabase : backend et base PostgreSQL
 
-## Prochain sprint
+## Sprint en préparation
 
-**Sprint 21 — Création autonome de missions par le formateur**
+**v0.21.1 — Création autonome de missions par le formateur**
 
 Objectif : permettre au formateur d’ajouter à son agenda Clementplane une mission confiée par un organisme qui n’utilise pas encore la plateforme, afin que Clementplane devienne son planning professionnel de référence.

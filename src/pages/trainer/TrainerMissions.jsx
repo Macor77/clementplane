@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getMyTrainerMissions } from '../../services/trainerProposalService';
+import { getMyAgendaMissionList } from '../../services/trainerAgendaService';
+import { missionHref } from '../../utils/personalMissions';
 
 function sortedDates(mission) {
   return [...(Array.isArray(mission?.dates) ? mission.dates : [])]
@@ -47,7 +48,7 @@ export default function TrainerMissions() {
     let active = true;
     (async () => {
       try {
-        const rows = await getMyTrainerMissions();
+        const rows = await getMyAgendaMissionList();
         if (active) setMissions(rows);
       } catch (e) {
         console.error(e);
@@ -78,11 +79,11 @@ export default function TrainerMissions() {
   return <div className="trainer-missions-page" style={styles.page}>
     <div className="page-heading">
       <div><p className="page-eyebrow">MISSIONS</p><h1>Mes missions</h1>
-        <p>Retrouvez les missions que vous avez acceptées et celles confirmées par l’organisme de formation.</p></div>
+        <p>Vos interventions personnelles et les missions reçues de vos organismes, au même endroit.</p></div><Link className="button button--primary" to="/formateur/missions/nouvelle">Ajouter une mission</Link>
     </div>
     {error ? <div className="alert alert--error">{error}</div> : null}
     {loading ? <div style={styles.empty}>Chargement de vos missions…</div> : null}
-    {!loading && !error && missions.length === 0 ? <div style={styles.empty}><strong>Aucune mission pour le moment.</strong><span>Les missions acceptées ou confirmées apparaîtront ici.</span></div> : null}
+    {!loading && !error && missions.length === 0 ? <div style={styles.empty}><strong>Aucune mission pour le moment.</strong><span>Ajoutez votre première intervention, même si votre client n’utilise pas Clementplane.</span></div> : null}
     {!loading && grouped.map((group) => <section key={group.key} style={styles.monthSection}>
       <div style={styles.monthSeparator}><span>{monthLabel(group.key)}</span><div /></div>
       <div style={styles.list}>{group.missions.map((mission) => {
@@ -91,7 +92,7 @@ export default function TrainerMissions() {
           <div style={styles.main}>
             <strong style={styles.period}>{formatPeriod(mission)}</strong>
             <div style={styles.meta}>
-              <span>{mission.mission_title || 'Mission de formation'}</span>
+              <span>{mission.origin === 'personal' ? 'Personnelle · ' : 'Reçue d’un OF · '}{mission.mission_title || 'Mission de formation'}</span>
               {mission.organization_name ? (
                 <span style={styles.organization}>
                   OF : <strong>{mission.organization_name}</strong>
@@ -118,7 +119,7 @@ export default function TrainerMissions() {
                 : statusLabel(mission.status)}
             </span>
           </div>
-          <Link className={mission.pending_change ? 'button button--primary' : 'button button--soft'} to={`/formateur/missions/${mission.mission_id}`}>
+          <Link className={mission.pending_change ? 'button button--primary' : 'button button--soft'} to={missionHref(mission)}>
             {mission.pending_change ? 'Consulter la mission' : 'Ouvrir'}
           </Link>
         </article>;

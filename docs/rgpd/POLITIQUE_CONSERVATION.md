@@ -16,3 +16,6 @@ Version : 29/08/2026. Principe : aucune donnée n’est conservée sans finalit�
 | Missions / relations OF-formateur | durée opérationnelle puis historique professionnel justifié | suppression/anonymisation selon obligations et défense des droits |
 
 Les purges longues (6/12 mois, 3 ans) doivent être automatisées après stabilisation du mécanisme de planification en production. Une revue manuelle trimestrielle est requise tant que l’automatisation n’est pas en place.
+
+## Missions personnelles — v0.21.1
+Les missions personnelles suivent le besoin professionnel et la vie du compte. Une annulation conserve le dossier privé et son horodatage ; elle ne constitue pas un effacement. La suppression du compte supprime ces missions via `owner_user_id` (cascade Auth), même lorsque la fiche formateur reste référencée par des OF. Les demandes individuelles sont traitées par la procédure d’exercice des droits. Aucun nouveau traitement Brevo, traceur ou sous-traitant.

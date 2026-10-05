@@ -1,3 +1,12 @@
+# v0.21.1 — Missions personnelles du formateur (préparation, non déployée)
+
+- Création autonome, consultation, modification et annulation d’interventions privées, avec plusieurs dates, horaires, client libre, lieu, notes et rémunération HT facultative avec unité.
+- Intégration dans Mes missions, Mon planning, prochaine mission et disponibilités ; compteurs par mission distincte.
+- Engagements quotidiens dérivés sans écraser les déclarations ; OF : indisponibilité neutre uniquement.
+- Validation SQL, RLS propriétaire, verrouillage optimiste et UUID stable ; suppression avec le compte.
+- Aide Découvrir, FAQ, documentation et information de confidentialité actualisées.
+- Migration et recette distante non effectuées ; clôture officielle en attente. Voir docs/sprints/v0.21.1/CLOSURE.md.
+
 # CHANGELOG — Clementplane
 
 ## v0.20.6 — Sprint 20.6 — Suivi des améliorations — 31 août 2026

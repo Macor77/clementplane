@@ -1,4 +1,4 @@
-export const FORMPLANE_VERSION = 'v0.20.6';
+export const FORMPLANE_VERSION = 'v0.21.1';
 
 export const discoverFeatures = [
   {
@@ -93,6 +93,9 @@ export const organizationTutorials = [
 ];
 
 export const trainerTutorials = [
+  { id: 'trainer-personal-mission', title: 'Ajouter mes propres interventions', summary: 'Utiliser mon agenda sans imposer Clementplane à mes clients.', route: '/formateur/missions/nouvelle', routeLabel: 'Ajouter une mission',
+    steps: ['Depuis Mes missions, Mon planning ou l’accueil, choisissez Ajouter une mission.', 'Saisissez un intitulé et au moins une date. Les horaires, le client, le lieu, les notes et la rémunération HT sont facultatifs.', 'Vous pouvez reprendre un nom de Mes OF : cela ne partage pas la mission et n’envoie aucun message.', 'Enregistrez : la mission est confirmée et apparaît dans votre agenda. Une intervention courte bloque aussi toute la journée pour les OF.', 'Ouvrez la mission pour la modifier ou l’annuler. Une annulation conserve la trace et préserve vos autres engagements et disponibilités.'],
+    tip: 'Les conflits sont signalés sans bloquer. Les données restent privées ; connexion nécessaire, aucune synchronisation Google ou Outlook dans cette version.' },
   mobileInstallTutorial,
   {
     id: 'trainer-profile', title: 'Garder un profil fiable pour mes OF partenaires', summary: 'Maintenir une seule fiche de référence plutôt que transmettre les mêmes informations à chaque organisme.', route: '/formateur/profil', routeLabel: 'Ouvrir mon profil',
@@ -130,6 +133,8 @@ export const trainerTutorials = [
 ];
 
 export const faqItems = [
+  { question: 'Puis-je utiliser Clementplane si mes clients ne sont pas inscrits ?', answer: 'Oui. Ajoutez une mission personnelle avec un intitulé et une ou plusieurs dates. Elle est confirmée sans validation d’un OF et rejoint votre agenda. Aucun client n’est invité ou averti automatiquement.', audiences: ['trainer'], category: 'Missions' },
+  { question: 'Que voient mes OF de mes missions personnelles ?', answer: 'Seulement une indisponibilité neutre à la journée, même pour une intervention courte. Le titre, le client, le tarif, les notes et les horaires restent privés. Modifier ou annuler une mission conserve vos autres engagements et vos disponibilités manuelles.', audiences: ['trainer', 'organization'], category: 'Confidentialité' },
   { question: 'Ma liste de formateurs est-elle visible par les autres organismes ?', answer: 'Non. Le réseau que vous construisez ou importez dans Clementplane est propre à votre organisme. Les autres OF ne peuvent pas parcourir votre liste, vos notes ni vos informations internes comme s’il s’agissait d’une base de données commune.', audiences: ['organization'], category: 'Confidentialité' },
   { question: 'Le profil d’un formateur peut-il être consulté par plusieurs organismes ?', answer: 'Oui, lorsqu’un formateur travaille avec plusieurs organismes partenaires, son profil de référence peut être utilisé dans ces différentes relations. Cela évite qu’il existe plusieurs versions contradictoires de ses informations. En revanche, les données privées propres à chaque organisme restent séparées.', audiences: ['organization', 'trainer'], category: 'Confidentialité' },
   { question: 'Les organismes voient-ils le détail de toutes les missions d’un formateur ?', answer: 'Non. Clementplane permet de partager l’information utile de disponibilité sans transformer le planning du formateur en agenda public. Lorsqu’un créneau est occupé, un autre organisme doit surtout savoir que le formateur n’est pas disponible, pas nécessairement pourquoi ni pour qui.', audiences: ['organization', 'trainer'], category: 'Confidentialité' },
@@ -150,13 +155,12 @@ export const publicRoadmap = {
   available: {
     status: 'Disponible',
     title: 'Le cœur de Clementplane',
-    description: 'Réseau privé de formateurs, recherche, import, missions, propositions, disponibilités, planning, partage, Mes OF, invitations partenaires, expérience mobile optimisée et installation de Clementplane sur l’écran d’accueil.',
+    description: 'Missions personnelles privées dans l’agenda du formateur, réseau privé de formateurs, recherche, import, missions OF, propositions, disponibilités, planning, partage, Mes OF, invitations partenaires, expérience mobile optimisée et installation de Clementplane sur l’écran d’accueil.',
   },
   future: [
     'Enrichir la fiche formateur pour lui permettre de détailler davantage son profil : expériences, compétences, formations et autres informations professionnelles.',
     'Stocker les documents et données de référencement d’un formateur et permettre leur partage maîtrisé : CV, NDA, avis SIREN et autres justificatifs.',
     'Ajouter une messagerie interne pour permettre aux organismes de formation et aux formateurs d’échanger directement dans Clementplane autour d’une session de formation.',
-    'Permettre au formateur de créer lui-même une mission dans son agenda lorsque l’organisme qui la lui confie n’utilise pas encore Clementplane, afin de centraliser son planning et de mettre automatiquement ses disponibilités à jour.',
     'Synchroniser automatiquement les missions Clementplane d’un formateur vers son Google Agenda, avec les informations utiles et un lien direct vers la mission.',
     'Permettre aux apprenants d’évaluer un formateur après une mission afin de construire progressivement un système de réputation interne à Clementplane.',
     'Une expérience encore plus fluide pour rechercher, proposer et affecter des missions.',

@@ -1,3 +1,5 @@
+import PersonalMissionForm from '../../pages/trainer/PersonalMissionForm';
+import PersonalMissionDetail from '../../pages/trainer/PersonalMissionDetail';
 import { NavLink, Route, Routes, useNavigate } from 'react-router-dom';
 
 import TrainerDashboard from '../../pages/trainer/TrainerDashboard';
@@ -235,6 +237,9 @@ export default function TrainerApp() {
 
       <main className="app-main">
         <Routes>
+          <Route path="/formateur/missions/nouvelle" element={<PersonalMissionForm />} />
+          <Route path="/formateur/missions/personnelles/:id" element={<PersonalMissionDetail />} />
+          <Route path="/formateur/missions/personnelles/:id/modifier" element={<PersonalMissionForm />} />
           <Route
             path="/formateur/espace"
             element={<TrainerDashboard />}

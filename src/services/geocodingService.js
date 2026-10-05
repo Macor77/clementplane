@@ -3,9 +3,22 @@ import { supabase } from '../lib/supabaseClient';
 const sleep = (ms) =>
   new Promise((resolve) => setTimeout(resolve, ms));
 
+const isValidCoordinate = (value, limit) => {
+  // Number(null), Number('') et Number(false) valent 0 :
+  // vérifier la présence et le type avant toute conversion.
+  if (
+    (typeof value !== 'number' && typeof value !== 'string') ||
+    (typeof value === 'string' && !value.trim())
+  ) {
+    return false;
+  }
+
+  const coordinate = Number(value);
+  return Number.isFinite(coordinate) && Math.abs(coordinate) <= limit;
+};
+
 export const hasValidCoords = (lat, lon) =>
-  Number.isFinite(Number(lat)) &&
-  Number.isFinite(Number(lon));
+  isValidCoordinate(lat, 90) && isValidCoordinate(lon, 180);
 
 const buildGeocodeQueries = (formateur) => {
   const codePostal = String(

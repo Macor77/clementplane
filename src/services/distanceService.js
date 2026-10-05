@@ -38,9 +38,14 @@ export const buildDistanceMap = ({
   hasValidCoords,
 }) => {
   const newMap = new Map();
+  const hasValidTarget = hasValidCoords(
+    targetCoords?.latitude,
+    targetCoords?.longitude,
+  );
 
   for (const formateur of formateurs) {
     if (
+      hasValidTarget &&
       hasValidCoords(
         formateur.latitude,
         formateur.longitude,

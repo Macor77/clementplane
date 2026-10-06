@@ -4,9 +4,9 @@ import { getPersonalMission, savePersonalMission } from '../../services/personal
 import { getMyTrainerOrganizations } from '../../services/trainerOrganizationsService';
 import { getMyAgendaMissions } from '../../services/trainerAgendaService';
 import { getMyTrainerAvailability } from '../../services/trainerAvailabilityService';
-import { findMissionConflicts } from '../../utils/personalMissions';
+import { findMissionConflicts, shouldSuggestOrganization } from '../../utils/personalMissions';
 import '../../styles/personalMissions.css';
-const blank = () => ({title:'',formation:'',client_name:'',location:'',private_notes:'',fee:'',fee_unit:'mission',dates:[{date:'',heure_debut:'',heure_fin:''}]});
+const blank = () => ({title:'',formation:'',client_name:'',site_name:'',address:'',postal_code:'',city:'',private_notes:'',fee:'',fee_unit:'mission',dates:[{date:'',heure_debut:'',heure_fin:''}]});
 export default function PersonalMissionForm() {
   const {id}=useParams(); const navigate=useNavigate(); const stableId=useRef(id || crypto.randomUUID());
   const savingRef=useRef(false);
@@ -40,7 +40,7 @@ export default function PersonalMissionForm() {
   async function submit(event){
     event.preventDefault(); if(savingRef.current)return;
     savingRef.current=true;setSaving(true);setError('');
-    try{const row=await savePersonalMission({id:stableId.current,revision,input:form});navigate(`/formateur/missions/personnelles/${row.id}`,{replace:true,state:{saved:true}});}
+    try{const row=await savePersonalMission({id:stableId.current,revision,input:form});const suggestedOrganization=revision==null&&shouldSuggestOrganization(form.client_name,contacts)?form.client_name.trim():'';navigate(`/formateur/missions/personnelles/${row.id}`,{replace:true,state:{saved:true,suggestedOrganization}});}
     catch(e){setError(e.message);}
     finally{savingRef.current=false;setSaving(false);}
   }
@@ -50,12 +50,16 @@ export default function PersonalMissionForm() {
     {loading?<p role="status">Chargement…</p>:loadError?<p role="alert">{loadError}</p>:<form onSubmit={submit} className="personal-mission-form">
       <p className="personal-mission-info">Ces informations restent privées. Aucun contact ne reçoit de message. Une intervention, même courte, bloque la journée entière dans vos disponibilités partagées.</p>
       <fieldset disabled={saving}><legend>Votre intervention</legend>
-        <label>Intitulé *<input required maxLength={200} value={form.title} onChange={e=>set('title',e.target.value)} placeholder="Ex. Formation SST — groupe du matin" /></label>
+        <label>Client final *<input required maxLength={200} value={form.title} onChange={e=>set('title',e.target.value)} placeholder="Ex. Entreprise Dupont" /></label>
         <label>Formation<input maxLength={200} value={form.formation} onChange={e=>set('formation',e.target.value)} placeholder="Ex. SST, incendie…" /></label>
-        {contacts.length>0&&<label>Reprendre un nom depuis Mes OF<select defaultValue="" onChange={e=>{const c=contacts.find(c=>c.id===e.target.value);if(c)set('client_name',c.organization_name);}}><option value="">Choisir un contact (facultatif)</option>{contacts.map(c=><option key={c.id} value={c.id}>{c.organization_name}</option>)}</select><small>Seul le nom est copié ; aucun compte OF n’est associé à la mission.</small></label>}
+        {contacts.length>0&&<label>Reprendre un donneur d’ordre depuis Mes OF<select defaultValue="" onChange={e=>{const c=contacts.find(c=>c.id===e.target.value);if(c)set('client_name',c.organization_name);}}><option value="">Choisir un contact (facultatif)</option>{contacts.map(c=><option key={c.id} value={c.id}>{c.organization_name}</option>)}</select><small>Seul le nom est copié ; aucun compte OF n’est associé à la mission.</small></label>}
         {contactWarning&&<p role="status">{contactWarning}</p>}
-        <label>Donneur d’ordre ou client direct<input maxLength={200} value={form.client_name} onChange={e=>set('client_name',e.target.value)} /></label>
-        <label>Lieu<input maxLength={500} value={form.location} onChange={e=>set('location',e.target.value)} placeholder="Adresse, ville ou visioconférence" /></label>
+        <label>Donneur d’ordre<input maxLength={200} value={form.client_name} onChange={e=>set('client_name',e.target.value)} /></label>
+      </fieldset>
+      <fieldset disabled={saving}><legend>Lieu de la formation</legend>
+        <label>Nom du site<input maxLength={200} value={form.site_name} onChange={e=>set('site_name',e.target.value)} placeholder="Ex. Théâtre de Chelles, siège social, agence…" /><small>Facultatif. Cette information ne sert pas au calcul des distances.</small></label>
+        <label>Adresse<input maxLength={300} value={form.address} onChange={e=>set('address',e.target.value)} placeholder="Ex. 10 rue de la Formation (facultatif)" /><small>Facultative. Si elle n’est pas renseignée, Clementplane utilisera le code postal et la ville pour le calcul de proximité.</small></label>
+        <div className="personal-mission-location-grid"><label>Code postal *<input required maxLength={20} value={form.postal_code} onChange={e=>set('postal_code',e.target.value)} placeholder="93200" /></label><label>Ville *<input required maxLength={200} value={form.city} onChange={e=>set('city',e.target.value)} placeholder="Saint-Denis" /></label></div>
       </fieldset>
       <fieldset disabled={saving}><legend>Dates et horaires</legend><p>Au moins une date. Les horaires sont facultatifs ; si vous les précisez, renseignez le début et la fin.</p>
         {form.dates.map((d,i)=><div className="personal-mission-date" key={i}>

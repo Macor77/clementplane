@@ -1,6 +1,6 @@
 import { supabase } from '../lib/supabaseClient';
 import { validatePersonalMission } from '../utils/personalMissions';
-const fields = 'id,trainer_id,title,formation,client_name,location,dates,private_notes,fee,fee_unit,status,created_at,updated_at,cancelled_at,revision';
+const fields = 'id,trainer_id,title,formation,client_name,site_name,address,postal_code,city,location,dates,private_notes,fee,fee_unit,status,created_at,updated_at,cancelled_at,revision';
 export async function getPersonalMissions() {
   const {data,error}=await supabase.from('trainer_personal_missions').select(fields).order('created_at',{ascending:false});
   if(error) throw error;

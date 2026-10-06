@@ -1,3 +1,4 @@
+import { missionHref, feeUnitLabels } from '../../utils/personalMissions';
 import {
   useEffect,
   useMemo,
@@ -9,8 +10,8 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
 import {
-  getMyMissionProposals,
-} from '../../services/trainerProposalService';
+  getMyAgendaMissions,
+} from '../../services/trainerAgendaService';
 
 import {
   getMyTrainerAvailability,
@@ -236,7 +237,7 @@ export default function TrainerDashboard() {
           availabilityRows,
         ] =
           await Promise.all([
-            getMyMissionProposals(),
+            getMyAgendaMissions(),
 
             getMyTrainerAvailability({
               startDay:
@@ -349,6 +350,7 @@ export default function TrainerDashboard() {
     useMemo(
       () =>
         availability
+          .map(row => ({...row, status: proposals.some(m => m.status === 'affecte' && m.dates?.some(d => d.date === row.day)) ? 'indispo' : row.status}))
           .filter(
             (row) =>
               row.status === 'dispo' ||
@@ -361,7 +363,7 @@ export default function TrainerDashboard() {
               ),
           )
           .slice(0, 5),
-      [availability],
+      [availability, proposals],
     );
 
 
@@ -405,6 +407,7 @@ export default function TrainerDashboard() {
       ) : null}
 
 
+      <Link className="button button--primary" to="/formateur/missions/nouvelle">Ajouter une mission</Link>
       <div className="trainer-dashboard-stats">
 
         <Link
@@ -513,6 +516,7 @@ export default function TrainerDashboard() {
 
           {nextMission ? (
             <div className="trainer-dashboard-next__content">
+              <Link to={missionHref(nextMission)}>{nextMission.origin === "personal" ? "Ouvrir ma mission personnelle" : "Ouvrir la mission"}</Link>
 
               <div className="trainer-dashboard-next__date">
 
@@ -599,7 +603,7 @@ export default function TrainerDashboard() {
                         nextMission
                           .offered_fee
                       }{' '}
-                      €
+                      €{nextMission.origin === "personal" ? ` HT / ${feeUnitLabels[nextMission.fee_unit]}` : ""}
                     </strong>
                   </div>
                 ) : null}
@@ -616,11 +620,7 @@ export default function TrainerDashboard() {
               </strong>
 
               <span>
-                Une mission devient
-                confirmée lorsque
-                l’organisme de formation
-                vous affecte
-                définitivement.
+                Ajoutez une intervention personnelle ou retrouvez ici les missions confirmées par vos organismes.
               </span>
 
             </div>

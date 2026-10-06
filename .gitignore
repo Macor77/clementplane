@@ -30,3 +30,7 @@ dist-ssr
 .worktrees/
 .vercel
 .env*
+
+# Browser test artifacts (may contain authenticated state)
+test-results/
+playwright-report/

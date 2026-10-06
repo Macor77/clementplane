@@ -47,6 +47,7 @@ function StatusPill({ children, tone = 'neutral' }) {
 
 export default function TrainerOrganizations() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const requestedOrganizationName = searchParams.get('nom') || '';
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -54,7 +55,7 @@ export default function TrainerOrganizations() {
   const [deletingId, setDeletingId] = useState(null);
   const [editingId, setEditingId] = useState(null);
   const [formOpen, setFormOpen] = useState(searchParams.get('ajouter') === '1');
-  const [form, setForm] = useState(EMPTY_FORM);
+  const [form, setForm] = useState(() => ({ ...EMPTY_FORM, organizationName: requestedOrganizationName }));
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
@@ -79,8 +80,12 @@ export default function TrainerOrganizations() {
   useEffect(() => {
     if (searchParams.get('ajouter') === '1') {
       setFormOpen(true);
+      setForm((current) => ({
+        ...current,
+        organizationName: current.organizationName || requestedOrganizationName,
+      }));
     }
-  }, [searchParams]);
+  }, [requestedOrganizationName, searchParams]);
 
   const registeredCount = useMemo(
     () => contacts.filter((contact) => contact.is_on_formaplane).length,
@@ -93,6 +98,7 @@ export default function TrainerOrganizations() {
     setFormOpen(false);
     const next = new URLSearchParams(searchParams);
     next.delete('ajouter');
+    next.delete('nom');
     setSearchParams(next, { replace: true });
   };
 

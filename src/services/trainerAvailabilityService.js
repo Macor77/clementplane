@@ -81,6 +81,12 @@ export async function getMyTrainerMission(
   }
 
 
+  const {data: personal, error: personalError} = await supabase.from('trainer_personal_missions')
+    .select('id,title,formation,location,dates,status').eq('id',missionId).maybeSingle();
+  if (personalError) throw personalError;
+  if (personal) return {id:personal.id,relation_status:personal.status === 'confirmed' ? 'affecte' : 'annule',
+    title:personal.title,formation:personal.formation,lieu:personal.location,dates:personal.dates,origin:'personal'};
+
   const { data, error } = await supabase.rpc(
     'get_my_trainer_mission',
     {

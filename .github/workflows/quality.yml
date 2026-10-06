@@ -35,6 +35,9 @@ jobs:
       - name: Run automated tests
         run: npm test
 
+      - name: Test personal mission SQL and RLS
+        run: npm run test:personal-sql
+
       - name: Audit production dependencies
         run: npm audit --audit-level=high
 
@@ -45,4 +48,4 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Run PWA browser test
-        run: npx playwright test tests/e2e/specs/05-pwa-shell.spec.js
+        run: npx playwright test tests/e2e/specs/05-pwa-shell.spec.js tests/e2e/specs/06-personal-missions-ui.spec.js

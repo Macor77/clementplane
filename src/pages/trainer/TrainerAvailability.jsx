@@ -1,3 +1,4 @@
+import { missionHref } from '../../utils/personalMissions';
 import {
   useCallback,
   useEffect,
@@ -431,6 +432,7 @@ export default function TrainerAvailability() {
           }
 
           commitmentMap[row.day].push({
+            origin: row.mission_formateur_id ? 'organization' : 'personal',
             status: row.status || '',
             missionId: row.mission_id || null,
             missionFormateurId:
@@ -442,7 +444,7 @@ export default function TrainerAvailability() {
               row.organization_id || null,
             organizationName:
               row.organization_name ||
-              'Organisme de formation',
+              (row.mission_formateur_id ? 'Organisme de formation' : 'Mission personnelle'),
           });
         }
 
@@ -1090,7 +1092,7 @@ export default function TrainerAvailability() {
                           {missionId ? (
                             <Link
                               className="trainer-availability-mobile-day__mission-link"
-                              to={`/formateur/missions/${missionId}`}
+                              to={missionHref(missionCommitment)}
                             >
                               Voir la mission
                             </Link>
@@ -1333,7 +1335,7 @@ export default function TrainerAvailability() {
 
                           {missionId ? (
                             <Link
-                              to={`/formateur/missions/${missionId}`}
+                              to={missionHref(missionCommitment)}
                               onClick={(event) => event.stopPropagation()}
                               style={{
                                 display: 'grid',

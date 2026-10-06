@@ -1,3 +1,9 @@
+# Suivi v0.21.1 — 5 octobre 2026
+
+Version cible imposée : **v0.21.1** pour le sprint Agenda autonome du formateur. Ne pas utiliser v0.21.0. Implémentation préparée sur branche dédiée ; aucun déploiement ni clôture officielle à ce stade. Les versions futures seront décidées au pilotage à partir de cette nouvelle série.
+
+La procédure « Méthode de clôture d’un sprint » ci-dessous reste obligatoire à chaque sprint. Suivi détaillé, preuves et gates restants : `docs/sprints/v0.21.1/CLOSURE.md`. La synchronisation des agendas externes reste hors périmètre de cette livraison.
+
 # ROADMAP — Clementplane
 
 > Mise à jour : Sprint 20 PWA clôturé — 27 août 2026

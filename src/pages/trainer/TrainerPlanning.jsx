@@ -1,3 +1,4 @@
+import { countUniqueMissions, missionHref } from '../../utils/personalMissions';
 import {
   useEffect,
   useMemo,
@@ -11,8 +12,8 @@ import PlanningDayModal from '../../components/planning/PlanningDayModal';
 import { filterTrainerPlanningItems, getTrainerDayItems, getTrainerOrganizationOptions } from '../../utils/planningFilters';
 
 import {
-  getMyMissionProposals,
-} from '../../services/trainerProposalService';
+  getMyAgendaMissions,
+} from '../../services/trainerAgendaService';
 
 
 function pad(value) {
@@ -194,6 +195,7 @@ function getPlanningItems(
       }
 
       items.push({
+        origin: proposal.origin,
         id: `${proposal.mission_formateur_id}-${missionDate.date}`,
 
         missionFormateurId:
@@ -218,6 +220,14 @@ function getPlanningItems(
           proposal.client ||
           '',
 
+        clientFinal:
+          proposal.client_final ||
+          '',
+
+        orderGiver:
+          proposal.order_giver ||
+          '',
+
         organizationId:
           proposal.organization_id ||
           null,
@@ -226,14 +236,9 @@ function getPlanningItems(
           proposal.organization_name ||
           '',
 
-        location:
-          [
-            proposal.location,
-            proposal.postal_code,
-            proposal.city,
-          ]
-            .filter(Boolean)
-            .join(' '),
+        location: proposal.origin === 'personal'
+          ? proposal.location || ''
+          : [proposal.location, proposal.postal_code, proposal.city].filter(Boolean).join(' '),
 
         offeredFee:
           proposal.offered_fee,
@@ -313,7 +318,7 @@ export default function TrainerPlanning() {
 
       try {
         const rows =
-          await getMyMissionProposals();
+          await getMyAgendaMissions();
 
         if (active) {
           setProposals(
@@ -443,21 +448,8 @@ export default function TrainerPlanning() {
     );
 
 
-  const optionCount =
-    monthItems.filter(
-      (item) =>
-        item.status ===
-        'accepte',
-    ).length;
-
-
-  const missionCount =
-    monthItems.filter(
-      (item) =>
-        item.status ===
-        'affecte',
-    ).length;
-
+  const optionCount = countUniqueMissions(monthItems.filter(item => item.status === 'accepte'));
+  const missionCount = countUniqueMissions(monthItems.filter(item => item.status === 'affecte'));
 
   const changeMonth =
     (offset) => {
@@ -533,6 +525,8 @@ export default function TrainerPlanning() {
       ) : null}
 
 
+      <Link className="button button--primary" to="/formateur/missions/nouvelle">Ajouter une mission</Link>
+      {!loading && !error && !planningItems.length && <p>Votre agenda est prêt : ajoutez une intervention pour commencer.</p>}
       <div className="trainer-planning-summary">
 
         <div className="trainer-planning-summary__item">
@@ -824,21 +818,23 @@ export default function TrainerPlanning() {
                 >
                   <div className="planning-day-summary__top">
                     <span className={`planning-day-summary__status planning-day-summary__status--${item.status === 'affecte' ? 'mission' : 'option'}`}>
-                      {getStatusLabel(item.status)}
+                      {item.origin === 'personal' ? 'Personnelle · ' : ''}{getStatusLabel(item.status)}
                     </span>
                     {item.startTime ? <strong>{formatTime(item.startTime)}</strong> : null}
                   </div>
                   <h3>{item.formation || item.title}</h3>
                   <div className="planning-day-summary__meta">
-                    {item.organizationName ? <p><span>Organisme</span><strong>{item.organizationName}</strong></p> : null}
-                    {item.client ? <p><span>Client</span><strong>{item.client}</strong></p> : null}
+                    {item.origin === 'personal' && item.clientFinal ? <p><span>Client final</span><strong>{item.clientFinal}</strong></p> : null}
+                    {item.origin === 'personal' && item.orderGiver ? <p><span>Donneur d’ordre</span><strong>{item.orderGiver}</strong></p> : null}
+                    {item.origin !== 'personal' && item.organizationName ? <p><span>Organisme</span><strong>{item.organizationName}</strong></p> : null}
+                    {item.origin !== 'personal' && item.client ? <p><span>Client</span><strong>{item.client}</strong></p> : null}
                     {item.location ? <p><span>Lieu</span><strong>{item.location}</strong></p> : null}
                     {(item.startTime || item.endTime) ? (
                       <p><span>Horaires</span><strong>{[formatTime(item.startTime), formatTime(item.endTime)].filter(Boolean).join(' – ')}</strong></p>
                     ) : null}
                   </div>
                   <Link
-                    to={`/formateur/missions/${item.missionId}`}
+                    to={missionHref(item)}
                     className="button button--primary planning-day-summary__action"
                   >
                     Voir la mission

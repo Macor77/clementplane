@@ -50,7 +50,8 @@ export function validatePersonalMission(input) {
 
 export function personalMissionToAgenda(row) {
   return {...row, origin:'personal', mission_id:row.id, mission_formateur_id:`personal:${row.id}`, mission_title:clean(row.formation) || clean(row.title),
-    status:row.status === 'cancelled' ? 'annule' : 'affecte', client:row.client_name, organization_id:null, organization_name:'',
+    status:row.status === 'cancelled' ? 'annule' : 'affecte', client_final:clean(row.title), order_giver:clean(row.client_name),
+    client:'', organization_id:null, organization_name:'',
     offered_fee:row.fee, mission_notes:row.private_notes, pending_change:null};
 }
 export function missionHref(row) {

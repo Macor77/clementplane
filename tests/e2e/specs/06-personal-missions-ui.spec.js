@@ -56,7 +56,7 @@ for (const viewport of [{width:1440,height:1000},{width:390,height:844}]) {
     await expect(page.getByRole('dialog',{name:'Ajouter ce donneur d’ordre à Mes OF ?'})).toBeVisible();
     if(viewport.width<600){
       await page.getByRole('button',{name:'Oui, l’ajouter'}).click();
-      await expect(page).toHaveURL(/\/formateur\/organismes\?ajouter=1&nom=Atelier(?:%20|\+)D%C3%A9mo/);
+      await expect(page).toHaveURL(/\/formateur\/mes-of\?ajouter=1&nom=Atelier(?:%20|\+)D%C3%A9mo/);
       await page.goBack();
       await expect(page.getByRole('dialog',{name:'Ajouter ce donneur d’ordre à Mes OF ?'})).toBeVisible();
     }
@@ -77,6 +77,13 @@ for (const viewport of [{width:1440,height:1000},{width:390,height:844}]) {
     await page.goto('/formateur/planning');
     await expect(page.locator('.trainer-planning-summary__item').filter({hasText:'confirmée'}).locator('strong')).toHaveText('1');
     await page.locator('.trainer-planning-day').filter({hasText:'SST modifiée'}).first().click();
+    const daySummary=page.locator('.planning-day-summary').filter({hasText:'SST modifiée'});
+    await expect(daySummary).toContainText('Client final');
+    await expect(daySummary).toContainText('Entreprise cliente fictive');
+    await expect(daySummary).toContainText('Donneur d’ordre');
+    await expect(daySummary).toContainText('Atelier Démo');
+    await expect(daySummary).toContainText('Centre Démo, 10 rue de la Formation, 93200 Saint-Denis');
+    await expect(daySummary).not.toContainText('93200 Saint-Denis 93200 Saint-Denis');
     await page.getByRole('link',{name:'Voir la mission'}).click();
     await expect(page.getByRole('heading',{name:'SST modifiée'})).toBeVisible();
     await page.screenshot({path:`test-results/personal-detail-${viewport.width}.png`,fullPage:true});

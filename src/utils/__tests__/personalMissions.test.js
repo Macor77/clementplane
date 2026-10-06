@@ -30,6 +30,8 @@ describe('missions personnelles', () => {
     const row=personalMissionToAgenda({...input,id:'abc',status:'confirmed',client_name:'Client test'});
     expect(row.origin).toBe('personal'); expect(row.organization_id).toBeNull();
     expect(row.mission_title).toBe('SST');
+    expect(row.client_final).toBe('Client final');
+    expect(row.order_giver).toBe('Client test');
     expect(row.status).toBe('affecte'); expect(missionHref(row)).toBe('/formateur/missions/personnelles/abc');
   });
   it('exige le code postal et la ville du lieu de formation', () => {

@@ -220,6 +220,14 @@ function getPlanningItems(
           proposal.client ||
           '',
 
+        clientFinal:
+          proposal.client_final ||
+          '',
+
+        orderGiver:
+          proposal.order_giver ||
+          '',
+
         organizationId:
           proposal.organization_id ||
           null,
@@ -228,14 +236,9 @@ function getPlanningItems(
           proposal.organization_name ||
           '',
 
-        location:
-          [
-            proposal.location,
-            proposal.postal_code,
-            proposal.city,
-          ]
-            .filter(Boolean)
-            .join(' '),
+        location: proposal.origin === 'personal'
+          ? proposal.location || ''
+          : [proposal.location, proposal.postal_code, proposal.city].filter(Boolean).join(' '),
 
         offeredFee:
           proposal.offered_fee,
@@ -821,8 +824,10 @@ export default function TrainerPlanning() {
                   </div>
                   <h3>{item.formation || item.title}</h3>
                   <div className="planning-day-summary__meta">
-                    {item.organizationName ? <p><span>Organisme</span><strong>{item.organizationName}</strong></p> : null}
-                    {item.client ? <p><span>Client</span><strong>{item.client}</strong></p> : null}
+                    {item.origin === 'personal' && item.clientFinal ? <p><span>Client final</span><strong>{item.clientFinal}</strong></p> : null}
+                    {item.origin === 'personal' && item.orderGiver ? <p><span>Donneur d’ordre</span><strong>{item.orderGiver}</strong></p> : null}
+                    {item.origin !== 'personal' && item.organizationName ? <p><span>Organisme</span><strong>{item.organizationName}</strong></p> : null}
+                    {item.origin !== 'personal' && item.client ? <p><span>Client</span><strong>{item.client}</strong></p> : null}
                     {item.location ? <p><span>Lieu</span><strong>{item.location}</strong></p> : null}
                     {(item.startTime || item.endTime) ? (
                       <p><span>Horaires</span><strong>{[formatTime(item.startTime), formatTime(item.endTime)].filter(Boolean).join(' – ')}</strong></p>

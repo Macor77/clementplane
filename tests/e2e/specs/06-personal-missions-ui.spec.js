@@ -35,7 +35,7 @@ for (const viewport of [{width:1440,height:1000},{width:390,height:844}]) {
     await page.goto('/formateur/missions');
     await page.getByRole('link',{name:'Ajouter une mission',exact:true}).click();
     await page.getByLabel('Client final *').fill('Entreprise cliente fictive');
-    await page.getByLabel('Formation').fill('SST — groupe du matin');
+    await page.getByLabel('Formation',{exact:true}).fill('SST — groupe du matin');
     await page.getByLabel('Date 1',{exact:true}).fill(day);
     await page.getByLabel('Début 1',{exact:true}).fill('09:00');await page.getByLabel('Fin 1',{exact:true}).fill('12:00');
     await page.getByRole('button',{name:'Ajouter une date'}).click();

@@ -18,16 +18,22 @@ insert into organizations values ('30000000-0000-0000-0000-000000000001','OF tes
 insert into organization_members values ('30000000-0000-0000-0000-000000000001','20000000-0000-0000-0000-000000000003');
 insert into organization_trainers values ('30000000-0000-0000-0000-000000000001','10000000-0000-0000-0000-000000000001');
 insert into trainer_availability values ('10000000-0000-0000-0000-000000000001','2026-10-12','indispo');`);
-await db.exec(fs.readFileSync(process.argv[2] || 'supabase/migrations/20261005113329_personal_trainer_missions.sql','utf8'));
+const migrations=process.argv.slice(2);
+for(const migration of (migrations.length?migrations:[
+  'supabase/migrations/20261005113329_personal_trainer_missions.sql',
+  'supabase/migrations/20261006050812_structure_personal_mission_location.sql',
+])) await db.exec(fs.readFileSync(migration,'utf8'));
 const login=async n=>db.exec(`reset role;set role authenticated;select set_config('request.jwt.claim.sub','20000000-0000-0000-0000-00000000000${n}',false);`);
 const id='40000000-0000-0000-0000-000000000001';
-const insert=`insert into trainer_personal_missions(id,title,dates,private_notes,fee,fee_unit) values ('${id}','SECRET','[{"date":"2026-10-12"}]','PRIVATE',200,'day')`;
+const insert=`insert into trainer_personal_missions(id,title,formation,site_name,address,postal_code,city,location,dates,private_notes,fee,fee_unit) values ('${id}','SECRET CLIENT','SECRET FORMATION','Centre Démo','10 rue de la Formation','93200','Saint-Denis','Centre Démo, 10 rue de la Formation, 93200 Saint-Denis','[{"date":"2026-10-12"}]','PRIVATE',200,'day')`;
 await login(1); await db.exec(insert);
 assert.equal((await db.query('select * from trainer_personal_missions')).rows.length,1);
+assert.equal((await db.query(`select mission_title from get_my_trainer_commitments_with_mission('2026-10-01','2026-10-31') where mission_id='${id}'`)).rows[0].mission_title,'SECRET FORMATION');
 await assert.rejects(()=>db.exec(insert));
 await assert.rejects(()=>db.exec(`update trainer_personal_missions set trainer_id='10000000-0000-0000-0000-000000000002'`));
 for(const dates of ['[]','[{"date":"2026-02-30"}]','[{"date":"2026-10-12","heure_debut":"19:00","heure_fin":"09:00"}]','[{"date":"2026-10-12"},{"date":"2026-10-12"}]']) await assert.rejects(()=>db.exec(`update trainer_personal_missions set dates='${dates}'`));
-await db.exec(`insert into trainer_personal_missions(title,dates) values ('Second','[{"date":"2026-10-12"}]')`);
+await assert.rejects(()=>db.exec(`insert into trainer_personal_missions(title,formation,postal_code,dates) values ('Second','SST','93200','[{"date":"2026-10-12"}]')`));
+await db.exec(`insert into trainer_personal_missions(title,formation,postal_code,city,location,dates) values ('Second','SST','93200','Saint-Denis','93200 Saint-Denis','[{"date":"2026-10-12"}]')`);
 assert.equal((await db.query("select * from get_my_trainer_commitments_with_mission('2026-10-01','2026-10-31')")).rows.length,2);
 await db.exec(`update trainer_personal_missions set dates='[{"date":"2026-10-13"}]' where id='${id}'`);
 const moved=(await db.query("select day::text from get_my_trainer_commitments_with_mission('2026-10-01','2026-10-31') order by day")).rows;

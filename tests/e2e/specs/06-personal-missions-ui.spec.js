@@ -56,7 +56,7 @@ for (const viewport of [{width:1440,height:1000},{width:390,height:844}]) {
     await expect(page.getByRole('dialog',{name:'Ajouter ce donneur d’ordre à Mes OF ?'})).toBeVisible();
     if(viewport.width<600){
       await page.getByRole('button',{name:'Oui, l’ajouter'}).click();
-      await expect(page.getByLabel('Organisme de formation')).toHaveValue('Atelier Démo');
+      await expect(page).toHaveURL(/\/formateur\/organismes\?ajouter=1&nom=Atelier(?:%20|\+)D%C3%A9mo/);
       await page.goBack();
       await expect(page.getByRole('dialog',{name:'Ajouter ce donneur d’ordre à Mes OF ?'})).toBeVisible();
     }
@@ -64,7 +64,7 @@ for (const viewport of [{width:1440,height:1000},{width:390,height:844}]) {
     await expect(page.getByRole('heading',{name:'SST — groupe du matin',exact:true})).toBeVisible();
     await page.reload();await expect(page.getByText('Note confidentielle fictive',{exact:true})).toBeVisible();
     await page.getByRole('link',{name:'Modifier',exact:true}).click();
-    await page.getByLabel('Formation').fill('SST modifiée');
+    await page.getByLabel('Formation',{exact:true}).fill('SST modifiée');
     await page.getByRole('button',{name:'Enregistrer les modifications'}).click();
     await expect(page.getByRole('heading',{name:'SST modifiée'})).toBeVisible();
     await page.goto('/formateur/espace');

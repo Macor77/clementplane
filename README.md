@@ -16,7 +16,7 @@ Elle centralise notamment :
 
 ## Version actuelle
 
-**v0.21.1 — Agenda autonome du formateur (livrée le 6 octobre 2026)**
+**V1.1 — Agenda autonome du formateur (livrée le 6 octobre 2026)**
 
 Clementplane peut désormais être installé sur Android et iPhone/iPad et lancé depuis l’écran d’accueil comme une application.
 
@@ -120,6 +120,10 @@ La roadmap principale existe également à la racine dans `ROADMAP.md`.
 
 ## Dernier sprint livré
 
-**v0.21.1 — Création autonome de missions par le formateur**
+**V1.1 — Création autonome de missions par le formateur**
 
 Objectif : permettre au formateur d’ajouter à son agenda Clementplane une mission confiée par un organisme qui n’utilise pas encore la plateforme, afin que Clementplane devienne son planning professionnel de référence.
+
+## Rectification de version — 6 octobre 2026
+
+À la demande de Vincent, la livraison porte le nom **V1.1**, version technique et tag `v1.1.0`. Le périmètre et les migrations de v0.21.1 restent identiques. Dossier de clôture historique : `docs/sprints/v0.21.1/CLOSURE.md`. Notes définitives : `docs/releases/v1.1.0.md`.

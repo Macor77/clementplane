@@ -1,13 +1,13 @@
-# Suivi v0.21.1 — 6 octobre 2026
+# Suivi V1.1 — 6 octobre 2026
 
-Version cible imposée : **v0.21.1** pour le sprint Agenda autonome du formateur. Ne pas utiliser v0.21.0. Livraison de production validée ; sprint clôturé avec documentation, tag et archive de release. Les versions futures seront décidées au pilotage à partir de cette nouvelle série.
+Version cible imposée : **V1.1** (version technique `1.1.0`) pour le sprint Agenda autonome du formateur. La dénomination v0.21.1 utilisée pendant la préparation est remplacée par V1.1. Livraison de production validée ; sprint clôturé avec documentation, tag et archive de release. Les versions futures seront décidées au pilotage à partir de cette nouvelle série.
 
 La procédure « Méthode de clôture d’un sprint » ci-dessous reste obligatoire à chaque sprint. Suivi détaillé, preuves de livraison : `docs/sprints/v0.21.1/CLOSURE.md`. La synchronisation des agendas externes reste hors périmètre de cette livraison.
 
 # ROADMAP — Clementplane
 
-> Mise à jour : v0.21.1 livrée — 6 octobre 2026
-> Version actuelle : `v0.21.1`
+> Mise à jour : V1.1 livrée — 6 octobre 2026
+> Version actuelle : `1.1.0`
 
 ## Vision
 
@@ -805,7 +805,7 @@ Un sprint est terminé lorsque :
 # Priorité actuelle
 
 ```text
-v0.21.1 — Missions personnelles livrées et sprint clôturé
+V1.1 — Missions personnelles livrées et sprint clôturé
 ↓
 Sprint 22 — Synchronisation Google Agenda
 ↓
@@ -814,3 +814,7 @@ Sprint 23+ — Évolutions guidées par la bêta
 
 ### Amélioration ultérieure — avertissement sur conflit de disponibilité
 Lorsqu’un formateur consulte une proposition de mission alors qu’il est déjà indiqué comme indisponible ou déjà en mission sur le créneau concerné, Clementplane devra afficher un avertissement informatif clair. Cet avertissement ne devra pas bloquer l’acceptation ou la gestion de la proposition.
+
+## Rectification de version — 6 octobre 2026
+
+À la demande de Vincent, la livraison porte le nom **V1.1**, version technique et tag `v1.1.0`. Le périmètre et les migrations de v0.21.1 restent identiques. Dossier de clôture historique : `docs/sprints/v0.21.1/CLOSURE.md`. Notes définitives : `docs/releases/v1.1.0.md`.

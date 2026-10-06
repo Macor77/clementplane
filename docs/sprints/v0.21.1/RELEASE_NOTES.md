@@ -1,3 +1,5 @@
+> **Rectification du 6 octobre 2026 : cette livraison est désormais V1.1 (version technique/tag v1.1.0).** Le dossier conserve son chemin historique ; les preuves, migrations et périmètre ci-dessous restent valables. L’ancien tag et sa release sont conservés. Voir `docs/releases/v1.1.0.md` pour la version définitive.
+
 # Clementplane v0.21.1 — L’agenda autonome du formateur
 
 Livrée le 6 octobre 2026 sur https://www.clementplane.fr.

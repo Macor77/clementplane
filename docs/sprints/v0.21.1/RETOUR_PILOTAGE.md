@@ -1,3 +1,5 @@
+> **Rectification du 6 octobre 2026 : cette livraison est désormais V1.1 (version technique/tag v1.1.0).** Le dossier conserve son chemin historique ; les preuves, migrations et périmètre ci-dessous restent valables. L’ancien tag et sa release sont conservés. Voir `docs/releases/v1.1.0.md` pour la version définitive.
+
 # Retour au pilotage — v0.21.1 clôturée
 
 Livrée en production le 6 octobre 2026 et validée par Vincent. PR #4 fusionnée, commit applicatif 55ba895abaa23ca92d63b5bf9ef9f4f9b50ce0d7. Tag/release v0.21.1 et archive de clôture associés au commit documentaire final.

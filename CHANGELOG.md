@@ -1,3 +1,10 @@
+# V1.1 / v1.1.0 — Rectification de numérotation — 6 octobre 2026
+
+- Nom de livraison corrigé à la demande de Vincent : **V1.1**, version technique et tag `v1.1.0`.
+- Même périmètre fonctionnel que la livraison v0.21.1 ci-dessous ; aucune nouvelle migration.
+- Version affichée, package/lock, documentation et notes de release harmonisés.
+- L’ancien tag v0.21.1 est conservé pour la traçabilité. Notes : docs/releases/v1.1.0.md.
+
 # v0.21.1 — Missions personnelles du formateur — livrée le 6 octobre 2026
 
 - Création autonome, consultation, modification et annulation d’interventions privées, avec plusieurs dates, horaires, client libre, lieu, notes et rémunération HT facultative avec unité.

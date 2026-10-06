@@ -1,6 +1,6 @@
 # Ajouter une mission personnelle
 
-Version v0.21.1 en préparation. Capture de la vraie interface locale, avec données entièrement fictives et API de test simulée.
+Version v0.21.1 livrée. Capture de la vraie interface locale, avec données entièrement fictives et API de test simulée.
 
 1. Dans l’accueil formateur, Mes missions ou Mon planning, choisissez **Ajouter une mission**.
 2. Renseignez l’intitulé et une première date. Ajoutez d’autres dates si nécessaire. Les horaires sont facultatifs et doivent être saisis par paire.

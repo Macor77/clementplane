@@ -16,7 +16,7 @@ Elle centralise notamment :
 
 ## Version actuelle
 
-**v0.21.1 — Agenda autonome du formateur (branche de préparation, non déployée)**
+**v0.21.1 — Agenda autonome du formateur (livrée le 6 octobre 2026)**
 
 Clementplane peut désormais être installé sur Android et iPhone/iPad et lancé depuis l’écran d’accueil comme une application.
 
@@ -118,7 +118,7 @@ La roadmap principale existe également à la racine dans `ROADMAP.md`.
 - Production : `clementplane.fr`
 - Supabase : backend et base PostgreSQL
 
-## Sprint en préparation
+## Dernier sprint livré
 
 **v0.21.1 — Création autonome de missions par le formateur**
 

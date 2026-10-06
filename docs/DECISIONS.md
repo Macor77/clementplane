@@ -259,6 +259,6 @@ L’indicateur principal est le nombre d’utilisateurs ayant effectivement ouve
 Un sprint ne peut pas être clôturé avant la mise à jour de la documentation, de la roadmap, du changelog, de la version affichée et de la rubrique « Découvrir Clementplane » lorsque le sprint l’exige.
 
 
-## v0.21.1 — préparation
+## v0.21.1 — livrée le 6 octobre 2026
 
 Modèle privé distinct retenu pour éviter d’étendre les permissions et triggers du modèle OF. Dates JSON validées serveur pour une mutation atomique ; UUID stable pour les retries ; revision optimiste. L’engagement ne prouve ni réalisation ni paiement. Dernière modification OF/formateur reste la règle de disponibilité déclarée hors engagements. Version cible v0.21.1. Clôture obligatoirement conforme à docs/ROADMAP.md ; production après accord.

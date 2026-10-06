@@ -1,13 +1,13 @@
-# Suivi v0.21.1 — 5 octobre 2026
+# Suivi v0.21.1 — 6 octobre 2026
 
-Version cible imposée : **v0.21.1** pour le sprint Agenda autonome du formateur. Ne pas utiliser v0.21.0. Implémentation préparée sur branche dédiée ; aucun déploiement ni clôture officielle à ce stade. Les versions futures seront décidées au pilotage à partir de cette nouvelle série.
+Version cible imposée : **v0.21.1** pour le sprint Agenda autonome du formateur. Ne pas utiliser v0.21.0. Livraison de production validée ; sprint clôturé avec documentation, tag et archive de release. Les versions futures seront décidées au pilotage à partir de cette nouvelle série.
 
-La procédure « Méthode de clôture d’un sprint » ci-dessous reste obligatoire à chaque sprint. Suivi détaillé, preuves et gates restants : `docs/sprints/v0.21.1/CLOSURE.md`. La synchronisation des agendas externes reste hors périmètre de cette livraison.
+La procédure « Méthode de clôture d’un sprint » ci-dessous reste obligatoire à chaque sprint. Suivi détaillé, preuves de livraison : `docs/sprints/v0.21.1/CLOSURE.md`. La synchronisation des agendas externes reste hors périmètre de cette livraison.
 
 # ROADMAP — Clementplane
 
-> Mise à jour : Sprint 20.6 clôturé — 31 août 2026
-> Version actuelle : `v0.20.6`
+> Mise à jour : v0.21.1 livrée — 6 octobre 2026
+> Version actuelle : `v0.21.1`
 
 ## Vision
 
@@ -45,7 +45,7 @@ Après le Sprint 20, la priorité est de renforcer Clementplane comme planning p
 | 19.5 | Rebranding Formaplane → Clementplane | ✅ TERMINÉ |
 | 19.6 | Remplacement global du logo Clementplane | ✅ TERMINÉ |
 | 20 | Clementplane installable sur mobile (PWA) | ✅ TERMINÉ |
-| 21 | Création de missions par le formateur dans son propre agenda | 🔜 À FAIRE |
+| 21 / v0.21.1 | Création de missions par le formateur dans son propre agenda | ✅ TERMINÉ |
 | 22 | Synchronisation des missions avec Google Agenda | 🔜 À FAIRE |
 | 23+ | Évolutions guidées par la bêta | 🧭 PRÉVISIONNEL |
 
@@ -721,7 +721,7 @@ Rendre l’accès quotidien à Clementplane aussi naturel qu’une application m
 
 ---
 
-# Sprint 21 — Création de missions par le formateur 🔜
+# Sprint 21 / v0.21.1 — Création de missions par le formateur ✅
 
 ### Objectif
 Permettre au formateur d’ajouter lui-même dans son agenda Clementplane une mission confiée par un organisme qui n’utilise pas encore Clementplane.
@@ -805,9 +805,7 @@ Un sprint est terminé lorsque :
 # Priorité actuelle
 
 ```text
-v0.20.6 — Sprint 20.6 officiellement clôturé
-↓
-Sprint 21 — Création de missions par le formateur
+v0.21.1 — Missions personnelles livrées et sprint clôturé
 ↓
 Sprint 22 — Synchronisation Google Agenda
 ↓

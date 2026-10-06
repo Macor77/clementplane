@@ -491,6 +491,6 @@ L’Admin mesure l’adoption réelle de la PWA et distingue les ouvertures `pwa
 Clementplane couvre le cycle principal OF ↔ formateur, le partage des disponibilités, l’administration, l’aide utilisateur et l’usage mobile installable. La priorité suivante est la création autonome de missions par le formateur afin que Clementplane puisse devenir son planning professionnel de référence, y compris pour des missions confiées par des OF extérieurs à la plateforme.
 
 
-## v0.21.1 — préparation
+## v0.21.1 — livrée le 6 octobre 2026
 
-Le formateur peut Ajouter une mission depuis son accueil, Mes missions ou Mon planning. Intitulé et date requis, autres champs facultatifs. Mes OF copie seulement le nom du donneur d’ordre. Les conflits informent sans bloquer. Une date confirmée bloque la journée partagée. Modification possible avant annulation ; annulation conserve la trace, sans libérer un autre engagement. Aucun envoi automatique, aucune synchronisation externe, connexion requise.
+Le formateur peut Ajouter une mission depuis son accueil, Mes missions ou Mon planning. Client final, date, code postal et ville requis ; autres champs selon le formulaire. Mes OF copie seulement le nom du donneur d’ordre. Les conflits informent sans bloquer. Une date confirmée bloque la journée partagée. Modification possible avant annulation ; annulation conserve la trace, sans libérer un autre engagement. Aucun envoi automatique, aucune synchronisation externe, connexion requise.

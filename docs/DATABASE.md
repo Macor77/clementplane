@@ -367,6 +367,6 @@ La fonction d’administration `admin_pwa_stats()` fournit les agrégats nécess
 Supabase/PostgreSQL reste l’unique source de vérité des données métier. La PWA n’introduit pas de base locale métier ni de mécanisme de synchronisation offline concurrent. Les règles RLS, RPC et contraintes serveur restent les garde-fous de référence pour le cloisonnement multi-organismes et les opérations sensibles.
 
 
-## v0.21.1 — préparation
+## v0.21.1 — livrée le 6 octobre 2026
 
-Table trainer_personal_missions : id stable, owner_user_id (Auth, cascade), trainer_id, title, formation, client_name libre, location, dates JSON (1–100 journées uniques avec horaires par paire), private_notes, fee/fee_unit, status confirmed/cancelled, revision et horodatages serveur. RLS propriétaire ; colonne de propriété non insérable/modifiable côté client. Annulation terminale. RPC d’engagement existantes étendues sans changer leurs signatures ; détail formateur et agrégat neutre OF. Migration : 20261005113329_personal_trainer_missions.sql, non appliquée à distance.
+Table trainer_personal_missions : id stable, owner_user_id (Auth, cascade), trainer_id, title, formation, client_name libre, location, dates JSON (1–100 journées uniques avec horaires par paire), private_notes, fee/fee_unit, status confirmed/cancelled, revision et horodatages serveur. RLS propriétaire ; colonne de propriété non insérable/modifiable côté client. Annulation terminale. RPC d’engagement existantes étendues sans changer leurs signatures ; détail formateur et agrégat neutre OF. Trois migrations appliquées en production ; correspondance des versions dans docs/sprints/v0.21.1/CLOSURE.md. Adresse structurée : site_name, address, postal_code et city.

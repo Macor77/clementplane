@@ -1,17 +1,9 @@
-# Retour au pilotage — v0.21.1
+# Retour au pilotage — v0.21.1 clôturée
 
-Développé et publié en branche de recette : création/consultation/modification/annulation de missions personnelles privées, dates multiples, client libre ou nom copié de Mes OF, notes et rémunération HT avec unité ; intégration Mes missions/Mon planning/accueil/disponibilités. Engagements quotidiens dérivés, alertes de chevauchement non bloquantes, compteurs de missions distinctes.
+Livrée en production le 6 octobre 2026 et validée par Vincent. PR #4 fusionnée, commit applicatif 55ba895abaa23ca92d63b5bf9ef9f4f9b50ce0d7. Tag/release v0.21.1 et archive de clôture associés au commit documentaire final.
 
-Branche : feature/v0.21.1-personal-missions. PR brouillon : https://github.com/Macor77/clementplane/pull/4. Référence exacte dans SOURCE_COMMIT.txt de l’archive. Aucune fusion, aucun tag final, aucune release de production.
+Livré : agenda autonome, missions personnelles privées multidates, création/modification/annulation, intégration accueil/missions/planning/disponibilités, lieu structuré, client final et donneur d’ordre distincts, proposition d’ajout à Mes OF avec nom prérempli. Missions OF historiques préservées. Aucun envoi automatique.
 
-Les deux migrations `20261005113329_personal_trainer_missions.sql` et `20261005135703_personal_missions_privacy_version_compatibility.sql` sont appliquées sur documentation-demo, après autorisation directe. La seconde évite une régression des inscriptions lors de la mise à jour de la notice. Production inchangée.
+Validation : 159 tests Vitest, 3 parcours Playwright CI, SQL/RLS et inscriptions, build réussi, lint 0 erreur/2 avertissements préexistants. Trois migrations appliquées et vérifiées en production. Preuves et correspondance des migrations : CLOSURE.md. Archive : Clementplane_v0.21.1_Sprint_Closure.zip, référence exacte dans SOURCE_COMMIT.txt.
 
-Tests : 157 tests Vitest ; SQL RLS/mutations/dates/engagements/effacement compte et compatibilité des inscriptions ; 3 tests navigateur simulés (PWA, cycle personnel desktop/mobile). API réelle CRUD/RLS, OF et double espace validés. Deux parcours navigateur connectés passent (1440/390 px), avec inspection visuelle et zéro appel de notification. Build réussi ; lint 0 erreur/2 avertissements préexistants ; audit 0 high/critical et 3 moderate Vitest.
-
-Décisions : modèle privé distinct du modèle OF, origine explicite dans la lecture d’agenda commune, dates JSON validées atomiquement, UUID stable, contrôle de révision, annulation terminale, pas d’envoi. Déclarations OF/formateur conservent la priorité de dernière modification existante.
-
-Documentation : technique, fonctionnelle, base, décisions, README, changelogs, roadmaps, FAQ/Découvrir, tutoriel et capture fictive, confidentialité/registre/conservation/droits. Autres documents légaux revus sans changement identifié pour ce périmètre.
-
-Archive de préparation : Clementplane_v0.21.1_Preparation.zip (source complète du commit, hors anciens ZIP/variables locales ; SOURCE_COMMIT.txt). Ce n’est pas une archive de sprint officiellement clos.
-
-Suite logique : vérifier la CI ; accord distinct de production ; migration, déploiement, vérification et clôture selon docs/ROADMAP.md. Ne pas démarrer la synchronisation d’agendas tant que ce socle n’est pas livré et vérifié. Aucun e-mail de nouveautés envoyé.
+Points ouverts : e-mail nouveautés différé, aucun envoi autorisé ; synchronisation externe, statistiques/BPF, facturation et suivi des paiements hors périmètre. Reprendre la priorisation avec les retours des formateurs ; la roadmap conserve Google Agenda comme piste suivante, sans lancer automatiquement ce chantier ni fixer sa version.

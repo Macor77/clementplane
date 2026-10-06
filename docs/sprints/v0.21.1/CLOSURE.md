@@ -1,37 +1,39 @@
-# v0.21.1 — suivi de clôture
+# v0.21.1 — Clôture du sprint, 6 octobre 2026
 
-**Statut : développé et vérifié localement ; migrations et recette API distante validées ; recette navigateur connectée validée ; production non réalisée. Sprint non clos.**
+**Livrée en production et validée par Vincent. Clôture documentaire, tag et release autorisés le 6 octobre 2026.**
 
-## Référence et preuves
-Base : main 97e13a1e6e68824dba77c5349d46951b5e0da588. Branche : feature/v0.21.1-personal-missions. Cible : v0.21.1 (package, lock et version UI alignés). Aucun changement de production.
+## Livraison et preuves
+- PR #4 fusionnée : https://github.com/Macor77/clementplane/pull/4
+- Correctif du patch : e2138a7a437c7ec4c7675daff697dca672dc2496.
+- Commit applicatif de production : 55ba895abaa23ca92d63b5bf9ef9f4f9b50ce0d7.
+- CI après fusion : https://github.com/Macor77/clementplane/actions/runs/37449273527 — toutes les étapes réussies.
+- Vercel Production : https://vercel.com/formaplane/clementplane/4cX5Wrb8LyPJ23ePwR9JQhvvGoBD — succès.
+- https://www.clementplane.fr répond HTTP 200 ; bundle contrôlé : version 0.21.1, Client final, Donneur d’ordre, route /formateur/mes-of?ajouter=1&nom= et projet Supabase de production.
+- Vitest : 159 tests, 33 fichiers ; Playwright CI : 3 tests (PWA, parcours personnel 1440/390 px, API simulée).
+- Tests SQL/RLS et compatibilité des inscriptions réussis ; npm ci, build et diff --check réussis ; lint 0 erreur et 2 avertissements préexistants.
+- La recette connectée antérieure a été réalisée sur documentation-demo ; aucune nouvelle fixture métier créée en production pour cette clôture.
 
-- Vitest : 157 tests / 33 fichiers passent, avec variables de test CI.
-- SQL PostgreSQL isolé (PGlite) : migration exécutée ; propriétaire/autre formateur/OF/anon, accès direct, propriété immuable, dates invalides et doublons, chevauchements, changement de dates, annulation, disponibilités manuelles préservées, suppression du compte en cascade. Fixtures minimales : ce test ne remplace pas la recette du schéma Supabase complet.
-- Playwright : 3 tests passent (PWA et parcours personnel 1440 px / 390 px). API simulée, aucune donnée réelle. Création, erreur réseau avec saisies conservées, rechargement, modification, accueil, liens disponibilités desktop/mobile, compte multidate, planning, annulation ; zéro appel de notification.
-- Build de production : réussi. Avertissement de taille du bundle déjà présent, non traité dans ce sprint.
-- ESLint : 0 erreur, 2 avertissements préexistants (usePlanningAvailability, TrainerSearch).
-- npm audit : 0 high/critical, 3 moderate sur Vitest/@vitest/mocker/@vitest/coverage-v8. Pas de mise à jour majeure aveugle.
-- Revue indépendante : lien personnel incorrect depuis Mes disponibilités identifié et corrigé ; recette navigateur couvre les deux variantes.
-- Capture mobile contrôlée visuellement, entièrement fictive ; tutoriel source ajouté.
+## Migrations de production
+Projet : hctvkynrgmnxjynbncdi. Application ciblée avant frontend, sans db push global.
 
-## Procédure du dépôt — contrôle explicite
-| Étape obligatoire | État |
+| Fichier source | Version enregistrée par le connecteur |
 |---|---|
-| Développement et correction | Préparés sur branche dédiée |
-| Recette locale | Validée comme indiqué ci-dessus |
-| Supabase | Deux migrations appliquées sur documentation-demo après autorisation explicite ; production inchangée |
-| Recette connectée, OF et double espace | API CRUD/RLS et cycle OF validés ; navigateur desktop/mobile validé |
-| Documentation et changelogs | Actualisés avec statut de préparation |
-| Roadmaps | Synchronisées sur v0.21.1, sans prétendre à une livraison |
-| Version affichée | v0.21.1 dans le code ; production non vérifiée |
-| GitHub | Branche publiée et PR brouillon #4 créée après autorisation explicite ; aucune fusion |
-| Vercel et version en ligne | Non déployés ; accord requis |
-| Tag et release | Notes rédigées ; tag final et release publiable différés |
-| Archive | Script reproductible de préparation ; archive finale à régénérer sur commit livré |
-| Découvrir / FAQ / tutoriels | Revue effectuée, contenus et capture fictive actualisés |
-| Évolutions envisagées | Mission personnelle retirée des fonctions futures dans le code destiné au prochain déploiement |
-| E-mail nouveautés | Pertinent pour les formateurs après livraison ; aucun envoi autorisé ou effectué |
+| 20261005113329_personal_trainer_missions.sql | 20261006102026 |
+| 20261005135703_personal_missions_privacy_version_compatibility.sql | 20261006102038 |
+| 20261006050812_structure_personal_mission_location.sql | 20261006102048 |
 
+Les noms et contenus des migrations ont été conservés. Les horodatages distants diffèrent des noms des fichiers : réconcilier explicitement l’historique avant tout futur db push, sans réexécuter ces migrations. tutorial_analytics reste hors de ce déploiement ciblé.
+
+Vérification après migration : RLS activée, 3 politiques propriétaires, lecture anon interdite, 4 colonnes d’adresse présentes et droits de saisie authenticated accordés. Les RPC privilégiées gardent leurs contrôles d’identité/appartenance. Les avis Supabase sur les fonctions SECURITY DEFINER sont à interpréter avec ces contrôles ; aucun élargissement des droits n’a été effectué pour supprimer un avis.
+
+## Documentation et périmètre
+README, changelogs, roadmaps, documents techniques/fonctionnels/base/décisions, tutoriel et retour au pilotage actualisés. Formation en titre, client final/donneur d’ordre distincts, adresse structurée sans duplication et ajout Mes OF prérempli documentés. FAQ/Découvrir et évolutions envisagées ont été revus : les missions personnelles figurent dans les fonctions disponibles ; les captures sont fictives.
+
+Release : v0.21.1. Le tag cible le commit de clôture documentaire, dont le code applicatif est identique au commit de production ci-dessus. L’archive Clementplane_v0.21.1_Sprint_Closure.zip contient les fichiers suivis de ce commit et SOURCE_COMMIT.txt ; anciens ZIP et fichiers .env exclus. La publication GitHub et ses contrôles finaux sont vérifiables sur la release.
+
+Communication nouveautés : pertinente pour les formateurs, mais différée ; aucun envoi autorisé ou réalisé. Synchronisation Google/Outlook/Apple, statistiques/BPF, facturation et suivi du paiement hors périmètre. Le prochain sprint reste à prioriser au pilotage.
+
+## Revue légale et recette historique
 ## Revue d’impact légal / RGPD
 - Politique de confidentialité et version privacy : catégories de données personnelles et cloisonnement précisés.
 - Registre : traitement des missions personnelles ajouté.
@@ -43,35 +45,5 @@ Base : main 97e13a1e6e68824dba77c5349d46951b5e0da588. Branche : feature/v0.21.1-
 - Procédure de violation : inchangée ; droits : périmètre de recherche complété.
 Cette revue porte sur l’impact fonctionnel du changement, pas sur un nouvel audit juridique global.
 
-## Recette distante autorisée et production restante
-L’utilisateur a directement autorisé la publication publique de la branche/PR et l’utilisation de **documentation-demo**, projet **jqhbrkyeawtsuzrzrnvm**. Les deux migrations v0.21.1 y sont appliquées sans réinitialisation. Les fixtures sont isolées et fictives ; aucun envoi de message.
 
-- API réelle : création, relecture, modification, révision, annulation, doublon UUID, RLS autre formateur/OF/anon, propriétaires immuables et disponibilités manuelles préservées.
-- Cycle OF réel : acceptation malgré chevauchement personnel, affectation, modification/revalidation, réaffectation et annulation. Cloisonnement inter-OF, double espace et conservation de l’engagement personnel validés.
-- Navigateur connecté : 2 tests passent (1440/390 px), création/rechargement/modification/liens/planning/annulation, accès étranger refusé, zéro appel de notification. Captures fictives contrôlées.
-- Nettoyage : zéro compte/formateur/OF/mission de recette restant ; cascade Auth des missions personnelles vérifiée avant suppression des formateurs. Zéro journal d’e-mail pour les comptes fictifs. Les relations mission/formateur sont supprimées avant la mission pour respecter le trigger historique existant.
-- Inscriptions : test SQL de l’ancienne et nouvelle notice, acknowledgments obligatoires et version exacte persistée ; les comptes fictifs ont été créés avec la nouvelle version.
-
-La production requiert un accord distinct, après recette : les deux migrations ciblées avant frontend, fusion/déploiement, vérification en ligne, tag v0.21.1, ZIP et release. `tutorial_analytics` apparaît dans git mais pas dans l’historique distant inspecté : ne pas exécuter un `db push` global à l’aveugle.
-
-## Reproduction
-```sh
-npm ci
-VITE_SUPABASE_URL=https://example.supabase.co VITE_SUPABASE_ANON_KEY=ci-test-anon-key npm test
-npm run test:personal-sql
-npm run lint
-VITE_SUPABASE_URL=https://example.supabase.co VITE_SUPABASE_ANON_KEY=ci-test-anon-key npm run build
-npx playwright install --with-deps chromium
-npx playwright test tests/e2e/specs/05-pwa-shell.spec.js tests/e2e/specs/06-personal-missions-ui.spec.js
-```
-Dans cet environnement, le téléchargement Playwright était incomplet : exécution avec Chromium 153 installé séparément, `PLAYWRIGHT_CHROMIUM_EXECUTABLE` et `PLAYWRIGHT_VIDEO_OFF=1`. La CI utilise l’installation standard ; résultat CI à contrôler sur la PR.
-
-## Publication GitHub
-PR brouillon : https://github.com/Macor77/clementplane/pull/4. Dépôt public autorisé explicitement. L’aperçu Vercel du premier commit publié est réussi ; aucun résultat GitHub Actions remonté au contrôle. Ne pas confondre aperçu et déploiement de production.
-
-## Reproduire la recette connectée
-Les scripts `personal-missions-login.mjs`, `personal-missions-connected.mjs` et `personal-missions-of-connected.mjs` nécessitent des fixtures fictives précréées hors du dépôt : credentials.json (project, quatre users/emails/password, deux trainers, deux orgs, mission et relation de proposition avec token), public-key.json (url et clé anon publique), sessions.json généré par login. Ne jamais archiver ces fichiers. Les deux premiers comptes sont formateurs, les deux suivants propriétaires d’OF ; le premier formateur a aussi un espace OF. Les relations OF/formateurs et dates de mission sont définies pour octobre 2026. Les scripts API s’exécutent dans cet ordre : login, personal-missions-connected, personal-missions-of-connected ; ils produisent des comptes rendus locaux sans credentials. Le scénario navigateur se lance ensuite, sans mocks métier.
-
-Fournir explicitement `E2E_PERSONAL_DATA_DIR` (dossier externe, terminé par /) et `E2E_PROJECT_REF`. Les scripts refusent la production et les projets incohérents. Renouveler les sessions avant la recette. Pour une recette ultérieure, adapter ensemble les dates fixtures/API/navigateur et le mois affiché. Ne pas réutiliser ces fixtures pour un deuxième cycle OF après annulation terminale.
-
-Le Chromium isolé de cet environnement a nécessité `PLAYWRIGHT_PROXY` et `PLAYWRIGHT_TEST_PROXY_TLS=1` pour son proxy de test. Ce réglage TLS est limité à Playwright, désactivé par défaut et n’affecte pas l’application. Les assertions connectées attendent jusqu’à 30 s pour les latences réseau. Les traces de recette sont exclues du lint et de git.
+Les scripts de reproduction et les choix initiaux sont conservés dans PLAN.md et DESIGN.md ; PR_DRAFT.md est un document historique de préparation.

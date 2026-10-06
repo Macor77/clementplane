@@ -1,3 +1,5 @@
+> Document historique de préparation. État final : PR #4 fusionnée le 6 octobre 2026 ; voir CLOSURE.md.
+
 # feat: v0.21.1 — agenda autonome et missions personnelles du formateur
 
 ## Pourquoi

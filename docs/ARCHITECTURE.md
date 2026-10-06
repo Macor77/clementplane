@@ -661,6 +661,6 @@ L’état d’installation reste propre à l’appareil et au navigateur ; il n�
 Clementplane est une application web SaaS multi-organismes disposant d’un frontend React/Vite, d’un backend Supabase/PostgreSQL, d’Edge Functions, d’une couche transactionnelle Brevo, d’une administration interne, de tests automatisés, d’un déploiement Vercel et d’une PWA installable sans duplication du produit en application native.
 
 
-## v0.21.1 — préparation
+## v0.21.1 — livrée le 6 octobre 2026
 
 Le service trainerAgendaService combine les propositions OF et trainer_personal_missions avec une origine explicite et une navigation dédiée. Les listes/planning/tableau de bord partagent cette lecture. Les RPC d’engagement servent aussi à la recherche OF et au partage des disponibilités. Les disponibilités déclarées ne sont jamais modifiées par le CRUD personnel. Pas de trigger e-mail ni de liaison automatique aux organisations.

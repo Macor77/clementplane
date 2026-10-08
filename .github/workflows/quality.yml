@@ -19,6 +19,7 @@ jobs:
     env:
       VITE_SUPABASE_URL: https://example.supabase.co
       VITE_SUPABASE_ANON_KEY: ci-test-anon-key
+      VITE_GOOGLE_CALENDAR_ENABLED: true
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -38,6 +39,9 @@ jobs:
       - name: Test personal mission SQL and RLS
         run: npm run test:personal-sql
 
+      - name: Test calendar SQL and security
+        run: node scripts/testing/calendar-sync-sql.mjs
+
       - name: Audit production dependencies
         run: npm audit --audit-level=high
 
@@ -48,4 +52,4 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Run PWA browser test
-        run: npx playwright test tests/e2e/specs/05-pwa-shell.spec.js tests/e2e/specs/06-personal-missions-ui.spec.js
+        run: npx playwright test tests/e2e/specs/05-pwa-shell.spec.js tests/e2e/specs/06-personal-missions-ui.spec.js tests/e2e/specs/08-google-calendar-ui.spec.js

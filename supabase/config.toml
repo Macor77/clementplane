@@ -452,3 +452,10 @@ verify_jwt = true
 enabled = true
 verify_jwt = true
 
+
+[functions.google-calendar]
+verify_jwt = true
+
+# Custom server-to-server secret verified inside the handler before any database call.
+[functions.google-calendar-worker]
+verify_jwt = false

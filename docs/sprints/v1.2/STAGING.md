@@ -43,5 +43,10 @@ Contrôle pg_net : ses grants PUBLIC sont une contrainte de Supabase hébergé, 
 
 Le script opérationnel ajoute désormais un garde-fou NOLOGIN et documente le contrôle Data API préalable. Le déploiement du scheduler a une entrée distante distincte des trois migrations métier ; sa correspondance doit être contrôlée avant toute opération globale.
 
+## Préversion Vercel
+Après accord explicite, trois variables Config ont été ajoutées uniquement à la branche feature/v1.2-google-calendar en Preview : VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY (clé publique anon de recette) et VITE_GOOGLE_CALENDAR_ENABLED=true. Les variables globales et celles des autres branches n’ont pas été modifiées.
+
+Redéploiement sans cache du commit a8cf43b8714619036242f978a9a78a167aae8be9 : Ready le 8 octobre 2026 à 11:02 UTC, durée 23 secondes. Le domaine stable de la branche affiche l’application. Le plugin Vercel est installé mais refuse le périmètre équipe (403) ; la configuration a été effectuée via la session web autorisée. Preuves visuelles conservées dans le dossier privé du titulaire.
+
 ## Suite
-Raccorder la préversion Vercel à la base isolée, contrôler l’accès au callback et réaliser la recette Google autorisée. L’intégration Vercel n’est pas encore connectée. Google Cloud reste inaccessible dans le navigateur de cette session ; le titulaire effectue sa configuration depuis son propre navigateur. Aucune disponibilité publique à annoncer. PR et release restent en brouillon.
+La préversion Vercel est configurée pour la base isolée et redéployée. La page de connexion s’affiche ; le callback sans intention OAuth revient à la connexion. La tentative avec le formulaire sécurisé a été refusée (« Adresse e-mail ou mot de passe incorrect »). Rétablir l’accès à un compte fictif autorisé, puis réaliser le parcours OAuth et la recette Google. Google Cloud reste inaccessible dans le navigateur de cette session ; le titulaire effectue sa configuration depuis son propre navigateur. Aucune disponibilité publique à annoncer. PR et release restent en brouillon.

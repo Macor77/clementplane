@@ -1,30 +1,15 @@
-# Progress — docs/sprints/v1.2/PLAN.md
-- Audit initial effectué ; base 159 tests PASS (variables Supabase fictives nécessaires).
-- Décision : le mandat autonome dispense de redemander les validations de conception courantes. Production demeure un gate explicite.
-- Interfaces projection/provider/persistence planifiées ; aucune divergence identifiée.
-- Google Cloud non accessible par les plugins trouvés ; recette réelle et publication OAuth restent des gates externes.
-- Task 1: projection/provider/chiffrement tests RED puis 31 PASS. Tests explicites états, journées, DST, revalidation, options, tombstone, concurrence, collision, erreur/quota.
-- Task 2: migration additive et fixture SQL isolée. Une erreur de fixture (table sans schéma sous search_path vide) corrigée ; le schéma réel utilise bien public.
-- Task 3 : API utilisateur, OAuth PKCE, worker autonome et borne d'exécution implémentés. Reprise par cycle persistée pour les lots interrompus.
-- Revue indépendante réalisée sur 5f4ef50..c91f827. Quatre problèmes importants reproduits : déconnexion/OAuth, générations après annulations répétées, reprise 412/DB temporaire, dates temporairement vides. Correctifs avec tests RED→GREEN ; suite 207/207 PASS, SQL PASS.
-- Décision de revue : aucune validation Google réelle, scheduler de recette ou partage Google ne peut être déclarée sans accès au projet/comptes de test. Coût si ignoré : intégration impossible à qualifier pour la production ; conservé comme gate bloquant.
-- Mineur différé : après un refus OAuth, l'état peut rester en chargement jusqu'au rafraîchissement manuel ou périodique (15 s). Le message d'erreur est immédiat. À examiner lors de la recette OAuth.
-- Contrôle UI local bloqué : binaire Chromium absent ; tentative d'installation sans binaire utilisable. Scénarios desktop/mobile/callback ajoutés au workflow Quality pour exécution GitHub.
-- Notice confidentialité du 08/10 ajoutée en préversion, avec migration de compatibilité préservant les deux versions précédentes. Test SQL inscriptions compatible PASS.
-- Premier passage GitHub Actions : tests, SQL, audit et build PASS ; 4 scénarios navigateur PASS et 2 FAIL sur l'assertion synchrone check() d'une case contrôlée par réponse serveur. Test corrigé pour cliquer puis attendre l'état confirmé ; les valeurs effectivement envoyées restent vérifiées. Nouvelle exécution requise.
+# V1.2 — Avancement
 
-- Relance Quality 37737354470 sur 45c12ce : 207 tests + SQL + audit + build + 6 scénarios navigateur PASS. Captures desktop/mobile fictives inspectées ; aucun débordement horizontal détecté. Le bandeau fixe mobile peut recouvrir du contenu dans une capture longue de composant, selon la position de défilement. Recette Google réelle toujours non réalisée.
+| Étape | État |
+| --- | --- |
+| Développement et protections | Préparés et testés |
+| Recette isolée et préversion | Opérationnelles |
+| Retour OAuth PWA | Corrigé et vérifié |
+| Connexion Google réelle et premières journées | Réussies |
+| Statuts métier, revalidation, annulation et expiration autonome | Vérifiés côté serveur |
+| Confidentialité et partages Google | Qualification incomplète |
+| Reconnexion et appareil PWA réel | À terminer |
+| Publication Google pour tous | Non effectuée |
+| Fusion, production, tag et release publique | Non effectués |
 
-- Release GitHub brouillon créée avec archive ; Google Cloud indisponible dans le navigateur. Prérequis de la base isolée contrôlés.
-- Après accords explicites : trois migrations calendrier appliquées uniquement en recette. Neuf contrôles SQL d'intégration passent avec les droits permanents, sans grants sources temporaires ; cinq contrôles de notice PASS. Écritures de test annulées et état des fixtures préservé. Identifiants et correspondances distantes consignés dans le rapport privé du titulaire.
-- CI 37743245393 et 37743876956 réussies. Nouvelle vérification Google Cloud : Site Unavailable persiste dans ce navigateur ; aucune configuration OAuth/fonction/cron ni production modifiée.
-
-- Configuration Google effectuée par le titulaire depuis son navigateur : captures confirmant projet dédié, API active, audience externe avec testeur et scopes minimaux enregistrés ; identifiant du client Web créé reçu, sans secret. URI persistée, statut Testing et vérification restent à contrôler.
-- Deux fonctions Google déployées en version 1 sur la recette ; statut ACTIVE et POST sans authentification refusés (HTTP 401). Secrets, raccordement Vercel, cron et recette Google réelle restent en attente. Aucun changement de production.
-- CI 37745568026 du dernier état documentaire précédent réussie.
-
-- Configuration Supabase terminée via navigateur autorisé : deux valeurs Google confirmées, quatre paramètres de recette et deux clés indépendantes générées dans Vault puis enregistrées côté Edge ; empreintes concordantes, aucune valeur secrète publiée.
-- Scheduler installé ; pause de contrôle après découverte des grants PUBLIC standards de pg_net. Inspection officielle : grants imposés par la plateforme, pas de révocation possible pour postgres. Data API refuse net (406/PGRST106), rôles clients NOLOGIN, aucun LOGIN personnalisé ni RPC public lisant ces tables détecté. Scheduler réactivé après ces contrôles ; circuit réel HTTP 200 / processed: 0 vérifié, sans connexion ni événement Google. Script opérationnel et procédure renforcés.
-- Vercel non connecté : raccordement de la préversion puis recette Google réelle toujours bloquants. Production inchangée.
-
-- Vercel installé ; API refusée sur le périmètre équipe (403), session web utilisée après accord. Trois variables Config ajoutées uniquement en Preview sur feature/v1.2-google-calendar. Redéploiement sans cache du commit a8cf43b : Ready en 23 s. Accueil/connexion accessibles ; callback sans intention OAuth revient à la connexion. Le formulaire sécurisé renvoie « Adresse e-mail ou mot de passe incorrect ». Aucun parcours OAuth réel effectué ; accès au compte fictif requis pour poursuivre. Production inchangée.
+La priorité reste la qualification externe décrite dans [ACCEPTANCE.md](ACCEPTANCE.md). Les tests automatisés et correspondances serveur ne remplacent pas l'inspection Google ni les essais avec des lecteurs distincts. Les preuves opérationnelles sont conservées en privé.

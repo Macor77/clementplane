@@ -1,6 +1,6 @@
 # V1.2 — Configuration et exploitation
 
-Statut : trois migrations appliquées sur environnement isolé de recette après accords ; lecture serveur et neuf contrôles SQL vérifiés avec les droits permanents. Les deux fonctions Google sont déployées sur la recette, avec refus HTTP 401 des appels non authentifiés. Les huit paramètres Edge sont enregistrés en mode testing et le scheduler à une minute répond HTTP 200 sans travail à traiter. Aucun changement de production effectué.
+Statut : préversion opérationnelle sur données métier fictives, connexion Google réelle et cycles serveur vérifiés. Accès limité aux testeurs ; qualification détaillée incomplète. Voir ACCEPTANCE.md pour les preuves et limites. Cette procédure décrit l'installation et l'exploitation sans publier les paramètres propres aux environnements.
 
 ## Configuration exacte
 Frontend (build de recette) : `VITE_GOOGLE_CALENDAR_ENABLED=true`, variables Supabase d'un environnement isolé. En production garder le flag absent/false tant que les gates ne sont pas validés.
@@ -21,7 +21,7 @@ Edge secrets, saisis dans le gestionnaire de secrets autorisé (jamais dans le c
 Supabase fournit déjà SUPABASE_URL et SUPABASE_SERVICE_ROLE_KEY aux Edge Functions. Aucun secret ne commence par VITE_. Les wrappers Google épinglent supabase-js 2.75.0. Client SDK navigateur existant inchangé.
 
 ## Projet Google
-Les captures transmises par le titulaire confirment un projet Google dédié, Calendar API activée, une audience externe avec un testeur et les seuls scopes openid, email et calendar.app.created enregistrés. Le titulaire a ensuite transmis l’identifiant du client Web créé. Le secret reste hors conversation. La persistance de l’URI de retour exacte, le statut Testing et les exigences de vérification restent à contrôler. Aucun parcours OAuth réel validé. Les identifiants propres à l’environnement ne sont pas publiés ici.
+La connexion réelle en recette valide le parcours OAuth et son URI de retour. Cela ne valide pas l'ouverture à tous les utilisateurs. Vérifier séparément dans Google Auth Platform l'audience et les exigences applicables avant publication. Conserver identifiants et preuves opérationnelles dans le dossier privé.
 
 1. Identifier/créer un projet dédié et activer Calendar API. Utiliser un projet/client distinct pour recette et production.
 2. Application externe ; nom Clementplane ; adresse support maîtrisée ; domaine canonique vérifié ; accueil, politique de confidentialité et CGU publics cohérents. Inspecter Google Auth Platform > Branding/Audience/Data Access/Verification Center.
@@ -32,7 +32,7 @@ Les captures transmises par le titulaire confirment un projet Google dédié, Ca
 7. Ne passer en public qu'après recette réelle, politiques accessibles et statut Google permettant le public cible. Certaines organisations Google peuvent interdire l'application indépendamment de Clementplane.
 
 ## Migration et historique
-Fichiers additifs : `supabase/migrations/20261008054625_google_calendar_sync.sql`, `supabase/migrations/20261008061224_google_calendar_privacy_notice.sql` (compatibilité des anciennes notices conservée) et `supabase/migrations/20261008072003_google_calendar_service_read_access.sql`. Créés avec la CLI locale. Tests PGlite et contrôles sur environnement isolé de recette réalisés : voir STAGING.md pour les versions distantes et la recette réussie avec les droits permanents. Commencer par une base de recette incluant les tables/versions existantes. La fixture SQL réduit le schéma au contrat requis et ne remplace pas une répétition de toutes les migrations.
+Fichiers additifs : `supabase/migrations/20261008054625_google_calendar_sync.sql`, `supabase/migrations/20261008061224_google_calendar_privacy_notice.sql` (compatibilité des anciennes notices conservée) et `supabase/migrations/20261008072003_google_calendar_service_read_access.sql`. Créés avec la CLI locale. Tests PGlite et contrôles sur environnement isolé de recette réalisés : voir STAGING.md pour la méthode de recette ; les correspondances de versions distantes et les preuves de droits permanents sont conservées dans le rapport privé. Commencer par une base de recette incluant les tables/versions existantes. La fixture SQL réduit le schéma au contrat requis et ne remplace pas une répétition de toutes les migrations.
 
 Production : comparer nom ET contenu des trois migrations V1.1 documentées dans DESIGN.md. Elles existent déjà sous des horodatages différents. Conserver leur correspondance et appliquer uniquement les nouvelles migrations validées après accord explicite, y compris le correctif de permissions si retenu. Ne pas lancer `db push` global, ne pas réappliquer ni réparer les entrées à l'aveugle. `tutorial_analytics` n'est pas inclus.
 

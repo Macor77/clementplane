@@ -1,25 +1,30 @@
-# Recette — état à compléter uniquement sur preuves
+# V1.2 — État de la recette
 
-| Critère | Automatisé local | Recette Google réelle |
-|---|---|---|
-| OAuth/PKCE/state/refus/reconnexion | tests unitaires de protections ; pas encore bout en bout OAuth | non réalisée |
-| Proposition → option → confirmation, identité stable | testé | non réalisée |
-| Missions personnelles / annulation | projection et non-régression existante | non réalisée |
-| Refus / expiration / désistement / désaffectation | projection testée | non réalisée |
-| Multidates / journées / DST | projection testée | non réalisée |
-| Revalidation | anciennes conditions et acceptation testées | non réalisée |
-| Erreurs/quota / reprise / simultanéité | provider/queue testés | non réalisée |
-| Navigateur fermé | scheduler de recette actif, cycle à vide HTTP 200 vérifié ; mutation navigateur fermé non testée | non réalisée |
-| Partage freeBusyReader / reader / writer / owner | règles documentées, payload privé testé | non réalisée |
-| Aucun invité / notification | payload sans invités et sendUpdates=none testés | non réalisée |
-| Retrait rémunération/notes | reconstruction testée | non réalisée |
-| Isolation / événements externes | SQL + provider testés | non réalisée |
-| Desktop / mobile / PWA | desktop 1440/mobile 390 + callback simulés PASS ; shell PWA PASS ; PWA OAuth sur appareil non vérifiée | non réalisée |
+Recette réelle sur données métier fictives et compte Google propriétaire autorisé. Accès limité aux testeurs ; sprint non clôturé.
 
-## Protocole connecté obligatoire
-Utiliser une base Supabase isolée et deux comptes Clementplane fictifs, un OF fictif, un compte Google propriétaire autorisé et deux comptes Google lecteurs de test autorisés. Ne créer/modifier aucune vraie mission et n'ajouter aucun invité. Passer successivement par tous les états de la table ci-dessus. Fermer Clementplane entre deux modifications serveur et attendre le cron. Accorder manuellement, uniquement entre les comptes de test convenus, chaque niveau de consultation Google puis vérifier ce qui est affiché. Vérifier l'absence de mails/invitations avec chaque mutation. Photographier seulement des données fictives.
+Une vérification serveur signifie que le moteur déployé a traité la vraie API Google, terminé sans erreur et enregistré les correspondances attendues. Elle ne prouve pas, à elle seule, les descriptions ou les droits de consultation Google.
 
-Consigner : date, environnement, commit exact, modes OAuth/API, scopes accordés, navigateur/PWA, résultat par ligne et éventuels écarts. Un test simulé PASS ne rend aucune case de la dernière colonne PASS.
+| Critère | État vérifié | Limite restante |
+| --- | --- | --- |
+| OAuth | Connexion réelle réussie ; callback PWA corrigé et vérifié avec service worker actif | Refus, déconnexion et reconnexion réels à terminer |
+| Import et doublons | Trois journées personnelles initiales ; identifiant stable lors des mises à jour et après perte simulée de la correspondance serveur | Suppression manuelle dans Google à contrôler |
+| Proposition → option → confirmation | Trois états traités par le moteur réel ; identifiant Google inchangé | Intitulés et disponibilité de chaque état à inspecter |
+| Missions personnelles | Création et annulation par l’interface ; modification, ajout/retrait de journées et annulation synchronisés | Descriptions distantes détaillées à inspecter |
+| Refus, désistement, désaffectation, annulation OF et retrait | Événements concernés supprimés par le moteur réel | Parcours OF complets couverts par la non-régression, pas intégralement rejoués dans cette recette |
+| Expiration | Proposition exportée avant échéance puis retirée par le cycle périodique, sans nouvelle mutation ni relance client | Vérification serveur ; contenu détaillé Google non inspecté |
+| Multidates, horaires, journée entière, changement d'heure | Trois journées visibles dans Google ; horaires locaux corrects avant/après le changement d'heure | Appareil mobile réel à terminer |
+| Revalidation | Ancienne journée conservée en attente ; nouvelle journée synchronisée après acceptation via le RPC métier du formateur | Avertissement et description Google détaillés à inspecter |
+| Erreurs, quotas, simultanéité | Tests automatisés des erreurs fournisseur, verrous et reprises | Pas d'incident Google réel provoqué |
+| Application fermée | Mutation serveur synchronisée après fermeture de l'onglet de recette, sans relance depuis cet onglet | Inventaire complet des autres onglets indisponible ; ne pas assimiler à une fermeture de tout le navigateur |
+| Partages Google | Événements privés et règles couverts automatiquement et documentés | Comptes de consultation distincts à désigner et autoriser ; aucun partage automatique |
+| Invités et notifications | Payload sans invités, rappels désactivés et sendUpdates=none vérifiés automatiquement | Inspection Google réelle à terminer |
+| Rémunération et notes | Activation puis désactivation par l'interface ; cycles réels terminés ; réglages finaux désactivés | Retrait des champs dans le contenu distant non inspecté |
+| Isolation et événements externes | Mission d'un autre formateur et sélection interne exclues du moteur réel | Événement ajouté manuellement dans Google à vérifier |
+| Non-régression | 211 tests et CI applicative réussis : SQL/RLS, audit, compilation, scénario PWA | Relancer après correction applicative |
+| Desktop, mobile et PWA | Interface desktop/mobile simulée, callback avec service worker, connexion desktop réelle | PWA sur appareil réel à terminer |
 
-## Préparation du parcours réel — 8 octobre 2026
-Préversion Vercel configurée avec les paramètres publics de la base isolée, activation limitée à la branche de recette et redéploiement Ready (commit a8cf43b). La connexion Clementplane est accessible. La tentative via le formulaire sécurisé est refusée pour identifiants incorrects : aucune session fictive ouverte, aucun consentement Google ni calendrier créé pendant ce contrôle. Toutes les cases de recette Google réelle restent non réalisées.
+## Blocage et protocole restant
+
+Le navigateur refuse l'observation détaillée d'un événement Google après ouverture. Les états serveur et la vue du calendrier fournissent des preuves partielles ; aucun contournement ni extraction de session ou jeton n'est utilisé.
+
+Reprendre les contrôles détaillés lorsque l'inspection sera possible. Tester freeBusyReader, reader, writer et owner avec des comptes Google distincts autorisés, sans vrai partenaire ni invité. Captures publiques : interface réelle et données entièrement fictives. Les relevés précis et identifiants de fixtures restent dans le rapport privé.

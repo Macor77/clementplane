@@ -1,4 +1,5 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { buildClaimInvitation, neutralizeActionLinks, withTextAlternative } from '../_shared/transactional-email.js';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -891,43 +892,16 @@ const buildInfrastructureTestEmail = (recipientEmail: string) => ({
   tags: ['infrastructure_test'],
 });
 
-const buildTrainerClaimInvitationEmail = ({
-  recipientEmail,
-  trainerFirstName,
-  organizationName,
-}: {
+const buildTrainerClaimInvitationEmail = (options: {
   recipientEmail: string;
   trainerFirstName: string;
   organizationName: string;
-}) => {
-  const signupUrl = `${APP_URL}/inscription?invitation=trainer&email=${encodeURIComponent(recipientEmail)}`;
-  const loginUrl = `${APP_URL}/connexion`;
-  const safeFirstName = escapeHtml(trainerFirstName || 'Bonjour');
-  const safeOrganizationName = escapeHtml(organizationName || 'Un organisme de formation partenaire');
-
-  return {
-    sender: { name: SENDER_NAME, email: SENDER_EMAIL },
-    to: [{ email: recipientEmail }],
-    replyTo: { name: SENDER_NAME, email: SENDER_EMAIL },
-    subject: `${organizationName} vous invite à rejoindre Clementplane`,
-    htmlContent: `
-      <div style="margin:0;padding:40px 20px;background-color:#f3f6fb;font-family:Arial,Helvetica,sans-serif;color:#0f2747;">
-        <div style="max-width:600px;margin:0 auto;background-color:#ffffff;border:1px solid #dbe3ef;border-radius:18px;padding:40px;box-sizing:border-box;">
-          <div style="font-size:24px;font-weight:800;margin-bottom:32px;color:#0f2747;">Clementplane</div>
-          <div style="font-size:12px;font-weight:800;letter-spacing:1.5px;color:#2563eb;text-transform:uppercase;margin-bottom:12px;">Invitation formateur</div>
-          <h1 style="margin:0 0 16px 0;font-size:28px;line-height:1.25;color:#0f2747;">${safeFirstName}, ${safeOrganizationName} vous invite à rejoindre Clementplane</h1>
-          <p style="margin:0 0 16px 0;font-size:16px;line-height:1.65;color:#5b6b82;">${safeOrganizationName} vous a ajouté à son réseau de formateurs sur Clementplane.</p>
-          <p style="margin:0 0 16px 0;font-size:16px;line-height:1.65;color:#5b6b82;">En créant gratuitement votre espace et en revendiquant votre fiche, vous pourrez <strong style="color:#334155;">renseigner vos disponibilités une seule fois et les partager en direct avec tous vos organismes de formation partenaires</strong>, retrouver vos propositions de missions et faciliter vos échanges avec eux.</p>
-          <p style="margin:0 0 28px 0;font-size:14px;line-height:1.6;color:#7b8798;">Votre inscription reste facultative : ${safeOrganizationName} peut continuer à gérer votre fiche même sans compte Clementplane.</p>
-          <a href="${signupUrl}" style="display:block;background-color:#2563eb;color:#ffffff;text-decoration:none;text-align:center;font-size:16px;font-weight:700;padding:15px 24px;border-radius:10px;">Créer mon compte et revendiquer ma fiche</a>
-          <p style="margin:22px 0 0;font-size:14px;line-height:1.6;color:#64748b;text-align:center;">Vous avez déjà un compte Clementplane ? <a href="${loginUrl}" style="color:#2563eb;font-weight:700;">Connectez-vous</a> avec cette adresse e-mail : Clementplane vous proposera automatiquement la fiche correspondante.</p>
-          <div style="margin-top:32px;padding-top:22px;border-top:1px solid #e5eaf1;font-size:12px;line-height:1.6;color:#94a0b2;">Clementplane<br>Facilitez vos disponibilités, propositions et missions avec vos organismes partenaires.</div>
-        </div>
-      </div>
-    `,
-    tags: ['trainer_claim_invitation'],
-  };
-};
+}) => buildClaimInvitation({
+  ...options,
+  appUrl: APP_URL,
+  senderName: SENDER_NAME,
+  senderEmail: SENDER_EMAIL,
+});
 
 
 const buildMissionCancellationEmail = ({
@@ -1332,12 +1306,6 @@ Deno.serve(async (req) => {
       return shouldSendCopy ? senderCopyEmail : null;
     };
 
-    const neutralizeActionLinks = (html: string) =>
-      String(html || '')
-        .replace(/<(script|form)\b[^>]*>[\s\S]*?<\/\1>/gi, '')
-        .replace(/\s(?:href|action|formaction|onclick)=("[^"]*"|'[^']*'|[^\s>]+)/gi, '')
-        .replace(/https?:\/\/[^\s<"']+/gi, '[lien retiré]');
-
     const buildSecureSenderCopyPayload = (
       originalPayload: Record<string, unknown>,
       senderCopyEmail: string,
@@ -1397,7 +1365,7 @@ Deno.serve(async (req) => {
             'api-key': brevoApiKey,
             'content-type': 'application/json',
           },
-          body: JSON.stringify(copyPayload),
+          body: JSON.stringify(withTextAlternative(copyPayload)),
         });
 
         const raw = await response.text();
@@ -1453,7 +1421,7 @@ Deno.serve(async (req) => {
       const response = await fetch(BREVO_ENDPOINT, {
         method: 'POST',
         headers: { accept: 'application/json', 'api-key': brevoApiKey, 'content-type': 'application/json' },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(withTextAlternative(payload)),
       });
 
       const raw = await response.text();
@@ -3283,7 +3251,7 @@ Deno.serve(async (req) => {
         'api-key': brevoApiKey,
         'content-type': 'application/json',
       },
-      body: JSON.stringify(emailPayload),
+      body: JSON.stringify(withTextAlternative(emailPayload)),
     });
 
     const rawProviderResponse = await brevoResponse.text();

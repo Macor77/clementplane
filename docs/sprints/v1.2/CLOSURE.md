@@ -1,47 +1,33 @@
-# V1.2 — Livraison de développement conditionnelle
+# V1.2 — Livraison conditionnelle, état du 8 octobre 2026
 
-Date : 8 octobre 2026. **Sprint non clôturé : recette Google réelle et autorisation de production en attente.**
+**Sprint non clôturé. PR et release en brouillon. Production inchangée en V1.1.**
 
 ## Livré
-Code de synchronisation unidirectionnelle volontaire : calendrier dédié, correspondance des statuts réels, revalidation, multidates, fuseau Europe/Paris, historique, événements privés et options d'export. OAuth/PKCE côté serveur, jetons chiffrés, file durable, traitements exclusifs, reprises et rapprochement ; aucune invitation et aucune lecture des agendas personnels. Interface formateur, FAQ/tutoriel et accueil missions personnelles mis à jour. Procédure d'exploitation, recette, RGPD et notes de préversion préparées.
+Synchronisation unidirectionnelle volontaire, calendrier Google dédié, statuts métier, revalidation, multidates, horaires et historique. Événements privés, options d'export désactivées, aucun invité. OAuth serveur/PKCE, jetons chiffrés, file durable, verrous, reprises et rapprochement. Paramètres formateur, accueil missions personnelles, aide et procédures préparés.
 
-## Preuves et limites
-- Base V1.1 : 159 tests. Livraison : 207 tests, dont 48 nouveaux, exécutés avec succès localement et dans le premier passage CI de la PR.
-- Contrôles SQL calendrier/RLS et compatibilité des inscriptions réussis. Fixture PGlite réduite : ne remplace pas l'application des migrations sur un Supabase isolé complet.
-- Build V1.2 préversion réussi. Lint : aucune erreur ; deux avertissements préexistants.
-- Audit des dépendances de Quality réussi.
-- Revue indépendante effectuée. Quatre problèmes importants reproduits et corrigés : concurrence OAuth/déconnexion, générations d'événements après annulations répétées, reprise ETag/DB temporaire, état transitoire sans dates. Tests de régression exécutés.
-- Six scénarios navigateur PASS dans Quality 37737354470 sur 45c12ce : métadonnées PWA, missions personnelles desktop/mobile, paramètres Google desktop/mobile et callback simulé. Captures fictives desktop/mobile inspectées ; OAuth PWA réel non validé.
-- Aucun test avec compte Google réel, aucun test effectif de partage Google, aucun scheduler installé. Aucun secret OAuth disponible ni console Google inspectée. Pas de captures présentées comme preuves Google.
+## Vérifications
+207 tests automatisés, six scénarios navigateur, SQL/RLS, audit et build réussis sur la livraison applicative. Revue indépendante : quatre problèmes importants reproduits et corrigés avec régressions. Lint sans erreur, deux avertissements préexistants. Captures fictives desktop/mobile inspectées ; aucun test Google réel ni OAuth PWA sur appareil validé.
 
-## Traçabilité
-Base main et production auditée : `5f4ef5066f1130ccb76565e8e42236acb3f8668a`, V1.1, tag `v1.1.0`. Branche : `feature/v1.2-google-calendar`. PR brouillon : https://github.com/Macor77/clementplane/pull/5 . Première publication : `dde67f26c0db97e138095af2b0438b77957b48b1`, arbre identique au développement local `23de69b` (`f1031888301504149e4a112ac80abdc3ff7d26a1`). Les modifications locales ont été regroupées dans ce commit de publication via le connecteur.
+Après autorisation, les deux migrations principales ont été appliquées uniquement à documentation-demo. Neuf contrôles d'intégration SQL et cinq contrôles de notice réussis. Les tests serveur utilisaient des droits sources minimaux temporaires, entièrement annulés avec les fixtures : la démo possède un ancien écart de permissions. Ce résultat ne signifie pas que le worker fonctionne déjà en recette.
 
-Version package : `1.2.0-beta.1`. Aucun tag V1.2 ou release publié ; notes dans `docs/releases/v1.2.0-beta.1.md`. Le connecteur GitHub disponible ne crée ni tag ni release ; une autre voie autorisée est nécessaire pour enregistrer la release en brouillon.
+Le correctif persistant de permissions est préparé et testé (RED 42501 puis GREEN), mais son application a été refusée avant exécution par auto-review et attend un accord ciblé. Aucun nouveau WARN dans le contrôle sécurité ; trois INFO attendus pour les tables serveur avec RLS sans politique utilisateur. Preuves, limites et correspondances dans [STAGING.md](STAGING.md).
 
-## Environnements et migrations
-Production Supabase auditée en lecture seule ; aucune mutation de production. Deux migrations nouvelles préparées : `20261008054625_google_calendar_sync.sql` et `20261008061224_google_calendar_privacy_notice.sql`. Cron séparé, désactivé tant que non configuré. Les trois correspondances d'historique V1.1 sont documentées dans DESIGN.md ; aucun replay global. Aucune fusion ni mise en production réalisée.
+## Références
+- Branche : feature/v1.2-google-calendar ; PR brouillon : https://github.com/Macor77/clementplane/pull/5 .
+- Base main et production auditée : 5f4ef5066f1130ccb76565e8e42236acb3f8668a, V1.1 / v1.1.0.
+- Commit applicatif initial publié : dde67f26c0db97e138095af2b0438b77957b48b1. Premier ensemble intégralement vert : 45c12ce1db380de626cfac456435061423bc20de. Point de sauvegarde : 3bf84508af23b117e14522b0009d8bf587d09a44. Correctif de permissions et recette SQL : 3851f871ab56d0ca76a719c179a479e840453f14.
+- CI applicative vérifiée : https://github.com/Macor77/clementplane/actions/runs/37737796659 . CI du correctif : https://github.com/Macor77/clementplane/actions/runs/37743245393 .
+- Release enregistrée en brouillon, préversion, archive jointe : https://github.com/Macor77/clementplane/releases/tag/untagged-4c58d7bb2695088cbd25 . Tag prévu v1.2.0-beta.1, à créer lors de la publication ; aucun tag V1.2 publié.
+
+## Environnements
+Production hctvkynrgmnxjynbncdi : lectures de contrôle uniquement. Recette jqhbrkyeawtsuzrzrnvm / documentation-demo : migrations google_calendar_sync et google_calendar_privacy_notice appliquées, respectivement versions 20261008071104 et 20261008071114. Troisième correctif local 20261008072003_google_calendar_service_read_access.sql non appliqué. Aucun reset ou rejeu global.
+
+Aucune fonction Google ni scheduler déployés. Aucun secret/client OAuth configuré dans cette session. Google Cloud affiche Site Unavailable dans le navigateur après rechargement ; cause non établie. Aucun compte Google réel testé.
 
 ## Sauvegarde
-L'archive de préparation contient les fichiers modifiés, un patch applicable à la base V1.1 et un manifeste d'empreintes. Elle exclut `.env`, node_modules, journaux, bases de données, comptes OAuth, anciennes archives et pièces métier. Les scénarios utilisent des identités fictives. Elle représente la livraison de développement ; une archive finale avec preuves Google devra suivre la recette, puis le tag/release au statut adapté.
+Clementplane-V1.2-preparation-2026-10-08.zip, jointe à la release : fichiers modifiés au commit 3bf8450, patch de restauration vérifié contre V1.1, captures fictives et manifeste. SHA-256 : 4d0637408f665205428f412fe3ab4d3ace39f0415114592da205c89dad73a24c. Aucun .env, base de données, jeton, journal ou pièce métier réelle. Cette archive reste un point de sauvegarde antérieur aux compléments de recette ; ceux-ci sont versionnés dans la PR. Archive finale à produire après recette Google complète.
 
-## Risques et suite
-Priorité de roadmap : terminer la qualification Google avant d'ouvrir d'autres fournisseurs. Points bloquants : environnement isolé, projet/client OAuth, URL de recette, testeurs autorisés, publication/branding Google, recette de partage et PWA. Vérifier les journaux d'accès de la route callback (query strings) et les paramètres de conservation avant activation. La classification des scopes et le statut réel de vérification sont à constater dans la console.
+## Étapes bloquantes
+Autoriser le correctif serveur minimal sur documentation-demo ; vérifier ensuite la lecture sans droits temporaires. Configurer Google Cloud/OAuth et les testeurs autorisés, puis fonctions/cron de recette. Qualifier droits de partage, absence d'invitations, fonctionnement navigateur fermé et PWA. Valider RGPD, journaux callback et audience/publication Google. Accord final explicite avant fusion, production ou publication.
 
-Pas de dépense engagée. API Calendar standard annoncée sans coût additionnel ; quotas/propositions de hausse et consommation Supabase à confirmer selon le projet. Montée en charge à mesurer, le rapprochement lit les événements suivis. Dette connue : récupération manuelle d'une création de calendrier au résultat incertain ; après refus OAuth, chargement possible jusqu'au rafraîchissement à 15 secondes ; revue RGPD selon le type de compte Google ; validation PWA authentifiée sur appareils réels.
-
-Consulter OPERATIONS.md et ACCEPTANCE.md avant toute activation. Ne pas demander de mot de passe ou secret dans le chat. La fusion et le déploiement restent soumis à l'accord final explicite, après preuves de recette.
-
-
-## Actualisation du 8 octobre — accès navigateur autorisé
-- Release GitHub enregistrée en **brouillon**, marquée préversion : https://github.com/Macor77/clementplane/releases/tag/untagged-4c58d7bb2695088cbd25 . Nom de tag prévu `v1.2.0-beta.1` ; GitHub indique que le tag sera créé à la publication. Aucune publication effectuée.
-- Archive de préparation jointe et état uploaded vérifié : 484 801 octets, SHA-256 `4d0637408f665205428f412fe3ab4d3ace39f0415114592da205c89dad73a24c`, source `3bf84508af23b117e14522b0009d8bf587d09a44`. L'archive conserve volontairement son état documentaire antérieur à ce brouillon.
-- Google Cloud affiche « Site Unavailable » dans le navigateur de cette session après un rechargement. Aucun projet/client OAuth inspecté ou créé ; aucune recette Google réelle. La cause exacte n'est pas établie.
-- Environnement isolé existant retrouvé : `documentation-demo`, projet `jqhbrkyeawtsuzrzrnvm`, organisation Alter Prévention. Lecture seule : 3 comptes fictifs (domaines .test/.invalid), 2 formateurs, 2 missions OF et 2 missions personnelles ; les 3 RPC sources nécessaires existent. Les documents antérieurs confirment son usage de recette.
-- Le statut historique de branche reste MIGRATIONS_FAILED, mais la base répond et les migrations de missions personnelles y existent. Ne pas réinitialiser ni rejouer son historique.
-- L'application de `google_calendar_sync` a été **refusée avant exécution par le contrôle automatique d'approbation** : ajout persistant de tables, droits et déclencheurs sur une branche existante nécessitant un accord explicite pour cette mutation. La seconde migration n'a pas été tentée. Aucun changement de schéma ni déploiement effectué.
-- Prochaine autorisation concrète demandée : appliquer uniquement les deux migrations nouvelles Google Agenda/notice sur `documentation-demo`, puis vérifier les fonctions sources, l'isolation et les droits ; aucun changement en production et aucune nouvelle ressource payante.
-
-
-## Actualisation — migrations de recette autorisées
-Les deux migrations sont désormais appliquées sur documentation-demo, avec correspondances d'horodatages documentées dans [STAGING.md](STAGING.md). Les tests d'intégration SQL et de compatibilité de notice ont réussi, avec rollback des écritures de test. Un écart de permissions historique propre à la démo a nécessité des droits serveur temporaires pour la recette. Le correctif persistant minimal est préparé dans `20261008072003_google_calendar_service_read_access.sql`, testé localement, mais son application a été refusée par auto-review avant exécution : accord ciblé supplémentaire requis. Production inchangée ; Google réel, fonctions et cron toujours non qualifiés. L'archive jointe à la release demeure le point de sauvegarde du commit 3bf8450, antérieur à ces compléments.
+Aucune nouvelle dépense engagée. Mesurer consommation/quotas avant montée en charge. La récupération manuelle d'une création de calendrier incertaine et le bref chargement après refus OAuth restent documentés. Priorité de roadmap : achever la qualification Google avant d'autres fournisseurs. Voir OPERATIONS.md, ACCEPTANCE.md et RETOUR_PILOTAGE.md.

@@ -4,7 +4,7 @@
 Le cahier des charges fourni le 8 octobre 2026 fait autorité. Synchronisation volontaire Clementplane → Google, un compte par formateur, calendrier secondaire Clementplane, aucune lecture des agendas personnels. Vincent autorise conception, développement, tests et PR autonomes ; fusion, migration et déploiement de production restent soumis à son accord final.
 
 ## Audit au 8 octobre
-Base main 5f4ef5066f1130ccb76565e8e42236acb3f8668a, package 1.1.0, dernière release v1.1.0. Statut Vercel de ce commit : success. Base de tests : 159/159, 33 fichiers, avec variables CI fictives. Projet Supabase hctvkynrgmnxjynbncdi actif. Pas de fonction Google déployée ; pg_cron et pg_net absents (Vault présent). Aucun accès Google Cloud/OAuth disponible par les connecteurs examinés ; configuration et publication non attestées.
+Base main 5f4ef5066f1130ccb76565e8e42236acb3f8668a, package 1.1.0, dernière release v1.1.0. Statut Vercel de ce commit : success. Base de tests : 159/159, 33 fichiers, avec variables CI fictives. Pas de fonction Google déployée. Identifiants et détails d'infrastructure conservés dans les comptes rendus privés du titulaire. Aucun accès Google Cloud/OAuth disponible par les connecteurs examinés ; configuration et publication non attestées.
 
 Historique confirmé en lecture seule : personal_trainer_missions=20261006102026, personal_missions_privacy_version_compatibility=20261006102038, structure_personal_mission_location=20261006102048. Les fichiers locaux portent respectivement 20261005113329, 20261005135703, 20261006050812. Ne pas modifier cet historique ni lancer db push global. tutorial_analytics est encore local uniquement.
 

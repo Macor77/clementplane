@@ -1,14 +1,22 @@
--- Only run against the isolated documentation-demo project jqhbrkyeawtsuzrzrnvm.
--- Never run on production. All fixture grants and writes are rolled back.
+-- Run only on the isolated fictitious-data acceptance environment.
+-- Never run on production. All fixture writes are rolled back.
+-- The three calendar migrations must already be applied; no source grants here.
 begin;
 do $guard$ begin
  assert not exists(select 1 from auth.users where email !~ '@[^@]+\.(test|invalid)$'),'Only fictitious test accounts are allowed';
 end $guard$;
--- Fixture-only prerequisite alignment: the existing demo predates the production
--- service_role grants. These grants and every test write are rolled back below.
-grant select (id,user_id) on public.trainers to service_role;
-grant select (id,statut,adresse) on public.missions to service_role;
-grant execute on function public.get_my_mission_proposals(),public.get_my_pending_mission_change(uuid),public.get_my_mission_organization_contact(uuid) to service_role;
+do $permissions$ begin
+ assert has_column_privilege('service_role','public.trainers','id','SELECT'),'Missing trainer id read';
+ assert has_column_privilege('service_role','public.trainers','user_id','SELECT'),'Missing trainer owner read';
+ assert has_column_privilege('service_role','public.missions','id','SELECT'),'Missing mission id read';
+ assert has_column_privilege('service_role','public.missions','statut','SELECT'),'Missing mission status read';
+ assert has_column_privilege('service_role','public.missions','adresse','SELECT'),'Missing mission address read';
+ assert has_function_privilege('service_role','public.get_my_mission_proposals()','EXECUTE'),'Missing proposals read';
+ assert has_function_privilege('service_role','public.get_my_pending_mission_change(uuid)','EXECUTE'),'Missing pending read';
+ assert has_function_privilege('service_role','public.get_my_mission_organization_contact(uuid)','EXECUTE'),'Missing contact read';
+ assert not has_table_privilege('service_role','public.trainers','SELECT'),'Unexpected whole-table trainer read';
+ assert not has_table_privilege('service_role','public.missions','UPDATE'),'Unexpected mission write';
+end $permissions$;
 create temp table calendar_test_report(check_name text,passed boolean);
 grant select,insert on calendar_test_report to service_role;
 do $test$

@@ -1,6 +1,6 @@
 # V1.2 — Configuration et exploitation
 
-Statut : deux migrations principales appliquées sur documentation-demo après accord ; correctif de lecture serveur préparé et en attente. Aucun changement de production effectué.
+Statut : trois migrations appliquées sur environnement isolé de recette après accords ; lecture serveur et neuf contrôles SQL vérifiés avec les droits permanents. Aucun changement de production effectué.
 
 ## Configuration exacte
 Frontend (build de recette) : `VITE_GOOGLE_CALENDAR_ENABLED=true`, variables Supabase d'un environnement isolé. En production garder le flag absent/false tant que les gates ne sont pas validés.
@@ -30,7 +30,7 @@ Supabase fournit déjà SUPABASE_URL et SUPABASE_SERVICE_ROLE_KEY aux Edge Funct
 7. Ne passer en public qu'après recette réelle, politiques accessibles et statut Google permettant le public cible. Certaines organisations Google peuvent interdire l'application indépendamment de Clementplane.
 
 ## Migration et historique
-Fichiers additifs : `supabase/migrations/20261008054625_google_calendar_sync.sql` et `supabase/migrations/20261008061224_google_calendar_privacy_notice.sql` (compatibilité des anciennes notices conservée). Créé avec la CLI locale. Tests PGlite et contrôles sur documentation-demo réalisés : voir STAGING.md pour les versions distantes, les tests avec droits temporaires et le correctif de permissions encore non appliqué. Commencer par une base de recette incluant les tables/versions existantes. La fixture SQL réduit le schéma au contrat requis et ne remplace pas une répétition de toutes les migrations.
+Fichiers additifs : `supabase/migrations/20261008054625_google_calendar_sync.sql`, `supabase/migrations/20261008061224_google_calendar_privacy_notice.sql` (compatibilité des anciennes notices conservée) et `supabase/migrations/20261008072003_google_calendar_service_read_access.sql`. Créés avec la CLI locale. Tests PGlite et contrôles sur environnement isolé de recette réalisés : voir STAGING.md pour les versions distantes et la recette réussie avec les droits permanents. Commencer par une base de recette incluant les tables/versions existantes. La fixture SQL réduit le schéma au contrat requis et ne remplace pas une répétition de toutes les migrations.
 
 Production : comparer nom ET contenu des trois migrations V1.1 documentées dans DESIGN.md. Elles existent déjà sous des horodatages différents. Conserver leur correspondance et appliquer uniquement les nouvelles migrations validées après accord explicite, y compris le correctif de permissions si retenu. Ne pas lancer `db push` global, ne pas réappliquer ni réparer les entrées à l'aveugle. `tutorial_analytics` n'est pas inclus.
 
@@ -58,4 +58,4 @@ Désactiver GOOGLE_CALENDAR_MODE et le flag UI puis suspendre le cron. Ne pas su
 
 
 ## Pré requis de lecture du rôle serveur
-Voir STAGING.md : l'ancien environnement documentation-demo n'avait pas les privilèges sources déjà présents en production. `20261008072003_google_calendar_service_read_access.sql` apporte uniquement SELECT sur cinq colonnes et EXECUTE sur trois RPC au rôle service_role ; aucune permission navigateur. Correctif préparé, non appliqué en attente d'accord. Ne pas confondre BYPASSRLS et privilège SELECT. Vérifier ces prérequis avant activation du worker.
+Voir STAGING.md : l'ancien environnement environnement isolé de recette n'avait pas les privilèges sources déjà présents en production. `20261008072003_google_calendar_service_read_access.sql` apporte uniquement SELECT sur cinq colonnes et EXECUTE sur trois RPC au rôle service_role ; aucune permission navigateur. Correctif appliqué sur la démo après accord, correspondance distante consignée dans le rapport privé ; lecture et intégration vérifiées sans grants temporaires. Ne pas confondre BYPASSRLS et privilège SELECT. Vérifier ces prérequis avant activation du worker dans tout autre environnement.

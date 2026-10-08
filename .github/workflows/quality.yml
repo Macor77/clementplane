@@ -53,3 +53,14 @@ jobs:
 
       - name: Run PWA browser test
         run: npx playwright test tests/e2e/specs/05-pwa-shell.spec.js tests/e2e/specs/06-personal-missions-ui.spec.js tests/e2e/specs/08-google-calendar-ui.spec.js
+
+      - name: Keep fictitious browser acceptance evidence
+        if: always()
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: browser-acceptance
+          path: |
+            test-results/
+            playwright-report/
+          retention-days: 7
+          if-no-files-found: ignore

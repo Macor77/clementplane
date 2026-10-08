@@ -55,3 +55,7 @@ L'usage standard Calendar API est annoncé sans coût additionnel ; quotas révi
 
 ## Réversibilité
 Désactiver GOOGLE_CALENDAR_MODE et le flag UI puis suspendre le cron. Ne pas supprimer tables, calendriers, jetons ou historiques en masse. Le métier Clementplane ne dépend d'aucun appel Google. Les triggers n'émettent que des mises à jour de queue transactionnelles.
+
+
+## Pré requis de lecture du rôle serveur
+Voir STAGING.md : l'ancien environnement documentation-demo n'avait pas les privilèges sources déjà présents en production. `20261008072003_google_calendar_service_read_access.sql` apporte uniquement SELECT sur cinq colonnes et EXECUTE sur trois RPC au rôle service_role ; aucune permission navigateur. Correctif préparé, non appliqué en attente d'accord. Ne pas confondre BYPASSRLS et privilège SELECT. Vérifier ces prérequis avant activation du worker.

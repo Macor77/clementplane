@@ -11,10 +11,18 @@ create table trainer_personal_missions(id uuid primary key,owner_user_id uuid,tr
 create function get_my_mission_proposals() returns table(mission_id uuid,status text) language sql as $$ select id,'affecte' from public.missions where false $$;
 create function get_my_pending_mission_change(uuid) returns table(request_id uuid) language sql as $$select null::uuid where false$$;
 create function get_my_mission_organization_contact(uuid) returns table(contact_name text,contact_email text,contact_phone text) language sql as $$select null::text,null::text,null::text where false$$;
-grant usage on schema auth to service_role;grant select on all tables in schema auth,public to service_role;grant execute on all functions in schema public,auth to service_role;
+-- Reproduce the older demo schema: service_role bypasses RLS but does not
+-- automatically inherit table privileges or the trainer RPC grants.
+grant usage on schema auth to service_role;
+grant select on public.trainer_personal_missions to service_role;
+grant execute on function auth.uid() to service_role;
+revoke execute on function get_my_mission_proposals(),get_my_pending_mission_change(uuid),get_my_mission_organization_contact(uuid) from public;
 insert into auth.users values ('20000000-0000-0000-0000-000000000001'),('20000000-0000-0000-0000-000000000002');
 insert into trainers values ('10000000-0000-0000-0000-000000000001','20000000-0000-0000-0000-000000000001');`);
 await db.exec(fs.readFileSync('supabase/migrations/20261008054625_google_calendar_sync.sql','utf8'));
+await db.exec(fs.readFileSync('supabase/migrations/20261008072003_google_calendar_service_read_access.sql','utf8'));
+assert.equal((await db.query("select has_table_privilege('service_role','missions','UPDATE') as allowed")).rows[0].allowed,false,'Source read grant must not allow writes');
+assert.equal((await db.query("select has_table_privilege('service_role','trainers','SELECT') as allowed")).rows[0].allowed,false,'Trainer grant remains column-specific');
 const uid='20000000-0000-0000-0000-000000000001';
 await db.exec(`insert into calendar_connections(user_id,status,token_ciphertext) values ('${uid}','active','encrypted');`);
 const cid=(await db.query('select id from calendar_connections')).rows[0].id;

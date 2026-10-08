@@ -23,7 +23,10 @@ for(const width of [1440,390])test(`Google settings ${width}px (API simulated)`,
  await page.setViewportSize({width,height:900});const actions=await setup(page);await page.goto('/formateur/parametres');
  const card=page.locator('#google-agenda');await expect(card.getByRole('heading',{name:'Google Agenda'})).toBeVisible();await expect(card).toContainText('Accès de test');
  await expect(card.getByLabel('Inclure la rémunération')).not.toBeChecked();await expect(card.getByLabel('Inclure mes notes privées')).not.toBeChecked();
- await card.getByLabel('Inclure la rémunération').check();await expect(card.getByLabel('Inclure la rémunération')).toBeChecked();await card.getByLabel('Inclure la rémunération').uncheck();
+ // This controlled input reflects the server acknowledgement, not an optimistic local toggle.
+ // check()/uncheck() assert synchronously after clicking, before the async request can finish.
+ await card.getByLabel('Inclure la rémunération').click();await expect(card.getByLabel('Inclure la rémunération')).toBeChecked();
+ await card.getByLabel('Inclure la rémunération').click();await expect(card.getByLabel('Inclure la rémunération')).not.toBeChecked();
  await card.locator('summary').click();await expect(card).toContainText('Partager votre agenda principal ne partage pas automatiquement ce calendrier');
  await card.getByRole('button',{name:'Relancer la synchronisation'}).click();await expect(card).toContainText('Synchronisation demandée');
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);

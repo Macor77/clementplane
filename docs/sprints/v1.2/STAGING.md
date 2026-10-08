@@ -30,9 +30,18 @@ Le correctif accorde uniquement au rôle serveur SELECT sur trainers(id, user_id
 Le test local avait reproduit l'absence de permissions (42501), puis réussi avec le correctif. La recette réelle confirme désormais son application persistante. CI [37743245393](https://github.com/Macor77/clementplane/actions/runs/37743245393) et [37743876956](https://github.com/Macor77/clementplane/actions/runs/37743876956) réussies, tests navigateur inclus.
 
 ## Fonctions et configuration Google
-Les fonctions `google-calendar` et `google-calendar-worker` sont déployées en version 1, statut ACTIVE, uniquement sur la recette. La première conserve la vérification JWT ; le worker contrôle son secret dédié dans le handler. Les deux appels POST sans authentification retournent HTTP 401. Aucun secret ajouté ni cron installé à ce stade ; ces contrôles ne valident pas encore un parcours authentifié ou Google.
+Les fonctions `google-calendar` et `google-calendar-worker` sont déployées en version 1, statut ACTIVE, uniquement sur la recette. La première conserve la vérification JWT ; le worker contrôle son secret dédié dans le handler. Les deux appels POST sans authentification retournent HTTP 401. Ces contrôles ne valident pas encore un parcours OAuth authentifié ou Google.
 
 Les captures transmises par le titulaire confirment un projet Google dédié, Calendar API activée, une audience externe avec un testeur et les seuls scopes openid, email et calendar.app.created enregistrés. Le titulaire a ensuite transmis l’identifiant du client Web créé. Le secret reste hors conversation. La persistance de l’URI de retour exacte, le statut Testing et les exigences de vérification restent à contrôler.
 
+## Configuration et scheduler
+Les huit paramètres Edge sont maintenant enregistrés sur la recette. L’identifiant client a été contrôlé par empreinte ; la valeur du secret Google n’a pas été lue. Le mode testing est limité aux deux comptes Clementplane fictifs. Les clés indépendantes de chiffrement et du worker ont été générées avec 32 octets aléatoires, conservées dans Vault et copiées dans les secrets Edge ; leurs empreintes concordent.
+
+Le scheduler est actif à une minute. Un déclenchement planifié et les réponses HTTP 200 du worker avec processed: 0 sont vérifiés ; zéro connexion et zéro événement Google. Cela valide le circuit scheduler → worker → base, pas OAuth ni la synchronisation réelle.
+
+Contrôle pg_net : ses grants PUBLIC sont une contrainte de Supabase hébergé, non révocables par postgres. Le scheduler a été suspendu pendant l’inspection puis réactivé après vérification : rôles clients NOLOGIN, aucun rôle LOGIN personnalisé, aucun RPC public lisant les tables net détecté, et accès Data API au schéma net refusé (HTTP 406 / PGRST106). Vault est illisible par anon/authenticated. Les identifiants SQL directs restent réservés aux opérateurs de confiance.
+
+Le script opérationnel ajoute désormais un garde-fou NOLOGIN et documente le contrôle Data API préalable. Le déploiement du scheduler a une entrée distante distincte des trois migrations métier ; sa correspondance doit être contrôlée avant toute opération globale.
+
 ## Suite
-Enregistrer les secrets directement dans Supabase, raccorder la préversion Vercel à la base isolée, contrôler l’accès au callback, puis installer le cron et réaliser la recette Google autorisée. Google Cloud reste inaccessible dans le navigateur de cette session ; le titulaire effectue sa configuration depuis son propre navigateur. Aucune disponibilité publique à annoncer. PR et release restent en brouillon.
+Raccorder la préversion Vercel à la base isolée, contrôler l’accès au callback et réaliser la recette Google autorisée. L’intégration Vercel n’est pas encore connectée. Google Cloud reste inaccessible dans le navigateur de cette session ; le titulaire effectue sa configuration depuis son propre navigateur. Aucune disponibilité publique à annoncer. PR et release restent en brouillon.

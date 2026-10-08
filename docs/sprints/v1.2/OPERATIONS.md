@@ -1,6 +1,6 @@
 # V1.2 — Configuration et exploitation
 
-Statut : trois migrations appliquées sur environnement isolé de recette après accords ; lecture serveur et neuf contrôles SQL vérifiés avec les droits permanents. Les deux fonctions Google sont déployées sur la recette, avec refus HTTP 401 des appels non authentifiés. Secrets et scheduler restent à configurer. Aucun changement de production effectué.
+Statut : trois migrations appliquées sur environnement isolé de recette après accords ; lecture serveur et neuf contrôles SQL vérifiés avec les droits permanents. Les deux fonctions Google sont déployées sur la recette, avec refus HTTP 401 des appels non authentifiés. Les huit paramètres Edge sont enregistrés en mode testing et le scheduler à une minute répond HTTP 200 sans travail à traiter. Aucun changement de production effectué.
 
 ## Configuration exacte
 Frontend (build de recette) : `VITE_GOOGLE_CALENDAR_ENABLED=true`, variables Supabase d'un environnement isolé. En production garder le flag absent/false tant que les gates ne sont pas validés.
@@ -38,7 +38,12 @@ Production : comparer nom ET contenu des trois migrations V1.1 documentées dans
 
 Les deux Edge Functions sont déployées en version 1 sur la recette : google-calendar vérification JWT activée + Auth.getUser ; google-calendar-worker vérification JWT désactivée car secret dédié contrôlé dans le corps du handler avant tout accès. Le worker n'accepte que POST et son en-tête secret. Aucun endpoint ne prend l'identité à synchroniser depuis un navigateur.
 
-Configurer les deux noms Vault puis appliquer `supabase/operations/google-calendar-cron.sql` uniquement dans l'environnement convenu. Le cron n'est volontairement pas installé par la migration métier. Fréquence une minute ; traitement borné, reprise et contrôle périodique de chaque connexion active (environ 5 à 7 minutes, plus délai de queue). Échecs/quota : backoff exponentiel aléatoire, Retry-After si présent. Les expirations sont évaluées côté serveur même navigateur fermé.
+En recette, les deux noms Vault sont configurés et le scheduler a été installé et vérifié. Pour un autre environnement, configurer les deux noms Vault puis appliquer `supabase/operations/google-calendar-cron.sql` uniquement dans l'environnement convenu. Le cron n'est volontairement pas installé par la migration métier. Fréquence une minute ; traitement borné, reprise et contrôle périodique de chaque connexion active (environ 5 à 7 minutes, plus délai de queue). Échecs/quota : backoff exponentiel aléatoire, Retry-After si présent. Les expirations sont évaluées côté serveur même navigateur fermé.
+
+## Sécurité du scheduler
+Contrôle pg_net : ses grants PUBLIC sont une contrainte de Supabase hébergé, non révocables par postgres. Le scheduler a été suspendu pendant l’inspection puis réactivé après vérification : rôles clients NOLOGIN, aucun rôle LOGIN personnalisé, aucun RPC public lisant les tables net détecté, et accès Data API au schéma net refusé (HTTP 406 / PGRST106). Vault est illisible par anon/authenticated. Les identifiants SQL directs restent réservés aux opérateurs de confiance.
+
+Avant toute installation ailleurs, vérifier explicitement le refus Data API de Accept-Profile: net (PGRST106), les rôles LOGIN et les RPC pouvant lire les tables réseau. Ne pas tenter un REVOKE inefficace sur les objets appartenant à supabase_admin. Voir la [documentation Supabase](https://supabase.com/docs/guides/troubleshooting/revoking-access-to-pg_net-objects-has-no-effect-0bbc16). Le secret du worker ne donne aucun accès utilisateur à l’API Google ; il déclenche uniquement le traitement serveur borné. Ne pas exposer net et ne pas distribuer d’accès SQL direct non maîtrisé.
 
 ## Surveillance
 Mesures sans données métier/secrets : nombre de connexions par statut, queue overdue, max(now-last_success_at), erreurs normalisées et durée des workers. Ne jamais journaliser requêtes OAuth, Authorization, corps Google, titres/descriptions, table de jetons ou queues pg_net. Restreindre les logs d'accès à la route OAuth et leurs durées ; vérifier la politique Vercel concernant les query strings avant activation. Ne conserver aucune capture d'un consentement contenant une vraie identité.

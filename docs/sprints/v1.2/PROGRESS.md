@@ -22,3 +22,7 @@
 - Configuration Google effectuée par le titulaire depuis son navigateur : captures confirmant projet dédié, API active, audience externe avec testeur et scopes minimaux enregistrés ; identifiant du client Web créé reçu, sans secret. URI persistée, statut Testing et vérification restent à contrôler.
 - Deux fonctions Google déployées en version 1 sur la recette ; statut ACTIVE et POST sans authentification refusés (HTTP 401). Secrets, raccordement Vercel, cron et recette Google réelle restent en attente. Aucun changement de production.
 - CI 37745568026 du dernier état documentaire précédent réussie.
+
+- Configuration Supabase terminée via navigateur autorisé : deux valeurs Google confirmées, quatre paramètres de recette et deux clés indépendantes générées dans Vault puis enregistrées côté Edge ; empreintes concordantes, aucune valeur secrète publiée.
+- Scheduler installé ; pause de contrôle après découverte des grants PUBLIC standards de pg_net. Inspection officielle : grants imposés par la plateforme, pas de révocation possible pour postgres. Data API refuse net (406/PGRST106), rôles clients NOLOGIN, aucun LOGIN personnalisé ni RPC public lisant ces tables détecté. Scheduler réactivé après ces contrôles ; circuit réel HTTP 200 / processed: 0 vérifié, sans connexion ni événement Google. Script opérationnel et procédure renforcés.
+- Vercel non connecté : raccordement de la préversion puis recette Google réelle toujours bloquants. Production inchangée.

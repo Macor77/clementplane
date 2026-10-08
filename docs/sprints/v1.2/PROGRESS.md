@@ -7,7 +7,8 @@
 | Retour OAuth PWA | Corrigé et vérifié |
 | Connexion Google réelle et premières journées | Réussies |
 | Statuts métier, revalidation, annulation et expiration autonome | Vérifiés côté serveur |
-| Confidentialité et partages Google | Qualification incomplète |
+| Propriétés Google et retrait des champs optionnels | Vérifiés avec le compte propriétaire |
+| Confidentialité selon les droits de partage | Comptes lecteurs désignés ; qualification incomplète |
 | Reconnexion et appareil PWA réel | À terminer |
 | Publication Google pour tous | Non effectuée |
 | Fusion, production, tag et release publique | Non effectués |

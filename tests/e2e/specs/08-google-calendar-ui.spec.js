@@ -34,6 +34,11 @@ for(const width of [1440,390])test(`Google settings ${width}px (API simulated)`,
  await card.getByRole('button',{name:'Déconnecter Google',exact:true}).click();await card.getByRole('button',{name:'Confirmer la déconnexion'}).click();await expect(card).toContainText('Google est déconnecté');await expect(card.getByRole('button',{name:'Connecter Google',exact:true})).toBeVisible();
  expect(actions.filter(a=>a.action==='settings').map(a=>a.include_fee)).toEqual([true,false]);expect(actions.filter(a=>a.action==='disconnect')).toHaveLength(1);
 });
-test('OAuth callback rejects unsolicited state and strips authorization query',async({page})=>{
- await setup(page);await page.goto('/google-calendar-callback.html?code=FAKE_CODE&state=unrequested');await expect(page).toHaveURL(/\/formateur\/parametres#google-agenda$/);await expect(page.locator('#google-agenda')).toContainText('La connexion Google n’a pas abouti');expect(await page.evaluate(()=>sessionStorage.getItem('cp_google_oauth_return'))).toBeNull();
+test('OAuth callback bypasses installed PWA, rejects unsolicited state and strips authorization query',async({page})=>{
+ await setup(page);
+ await page.goto('/formateur/parametres');
+ await page.evaluate(()=>navigator.serviceWorker.ready);
+ await page.reload();
+ await page.waitForFunction(()=>Boolean(navigator.serviceWorker.controller));
+ await page.goto('/google-calendar-callback.html?code=FAKE_CODE&state=unrequested');await expect(page).toHaveURL(/\/formateur\/parametres#google-agenda$/);await expect(page.locator('#google-agenda')).toContainText('La connexion Google n’a pas abouti');expect(await page.evaluate(()=>sessionStorage.getItem('cp_google_oauth_return'))).toBeNull();
 });

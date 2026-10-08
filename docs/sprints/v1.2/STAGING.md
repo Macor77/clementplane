@@ -29,5 +29,10 @@ Le correctif accorde uniquement au rôle serveur SELECT sur trainers(id, user_id
 
 Le test local avait reproduit l'absence de permissions (42501), puis réussi avec le correctif. La recette réelle confirme désormais son application persistante. CI [37743245393](https://github.com/Macor77/clementplane/actions/runs/37743245393) et [37743876956](https://github.com/Macor77/clementplane/actions/runs/37743876956) réussies, tests navigateur inclus.
 
+## Fonctions et configuration Google
+Les fonctions `google-calendar` et `google-calendar-worker` sont déployées en version 1, statut ACTIVE, uniquement sur la recette. La première conserve la vérification JWT ; le worker contrôle son secret dédié dans le handler. Les deux appels POST sans authentification retournent HTTP 401. Aucun secret ajouté ni cron installé à ce stade ; ces contrôles ne valident pas encore un parcours authentifié ou Google.
+
+Les captures transmises par le titulaire confirment un projet Google dédié, Calendar API activée, une audience externe avec un testeur et les seuls scopes openid, email et calendar.app.created enregistrés. Le titulaire a ensuite transmis l’identifiant du client Web créé. Le secret reste hors conversation. La persistance de l’URI de retour exacte, le statut Testing et les exigences de vérification restent à contrôler.
+
 ## Suite
-Configuration OAuth, fonctions/cron et recette Google autorisée restent à réaliser. Google Cloud affiche toujours « Site Unavailable » dans le navigateur de cette session. Aucun déploiement Edge ou scheduler effectué, aucune disponibilité publique à annoncer. PR et release restent en brouillon.
+Enregistrer les secrets directement dans Supabase, raccorder la préversion Vercel à la base isolée, contrôler l’accès au callback, puis installer le cron et réaliser la recette Google autorisée. Google Cloud reste inaccessible dans le navigateur de cette session ; le titulaire effectue sa configuration depuis son propre navigateur. Aucune disponibilité publique à annoncer. PR et release restent en brouillon.

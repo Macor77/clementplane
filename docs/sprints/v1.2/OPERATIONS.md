@@ -1,6 +1,6 @@
 # V1.2 — Configuration et exploitation
 
-Statut : trois migrations appliquées sur environnement isolé de recette après accords ; lecture serveur et neuf contrôles SQL vérifiés avec les droits permanents. Aucun changement de production effectué.
+Statut : trois migrations appliquées sur environnement isolé de recette après accords ; lecture serveur et neuf contrôles SQL vérifiés avec les droits permanents. Les deux fonctions Google sont déployées sur la recette, avec refus HTTP 401 des appels non authentifiés. Secrets et scheduler restent à configurer. Aucun changement de production effectué.
 
 ## Configuration exacte
 Frontend (build de recette) : `VITE_GOOGLE_CALENDAR_ENABLED=true`, variables Supabase d'un environnement isolé. En production garder le flag absent/false tant que les gates ne sont pas validés.
@@ -20,12 +20,14 @@ Edge secrets, saisis dans le gestionnaire de secrets autorisé (jamais dans le c
 
 Supabase fournit déjà SUPABASE_URL et SUPABASE_SERVICE_ROLE_KEY aux Edge Functions. Aucun secret ne commence par VITE_. Les wrappers Google épinglent supabase-js 2.75.0. Client SDK navigateur existant inchangé.
 
-## Projet Google (non vérifié faute d'accès)
+## Projet Google
+Les captures transmises par le titulaire confirment un projet Google dédié, Calendar API activée, une audience externe avec un testeur et les seuls scopes openid, email et calendar.app.created enregistrés. Le titulaire a ensuite transmis l’identifiant du client Web créé. Le secret reste hors conversation. La persistance de l’URI de retour exacte, le statut Testing et les exigences de vérification restent à contrôler. Aucun parcours OAuth réel validé. Les identifiants propres à l’environnement ne sont pas publiés ici.
+
 1. Identifier/créer un projet dédié et activer Calendar API. Utiliser un projet/client distinct pour recette et production.
 2. Application externe ; nom Clementplane ; adresse support maîtrisée ; domaine canonique vérifié ; accueil, politique de confidentialité et CGU publics cohérents. Inspecter Google Auth Platform > Branding/Audience/Data Access/Verification Center.
 3. Scopes stricts : `openid`, `email`, `https://www.googleapis.com/auth/calendar.app.created`. Les méthodes calendars.insert et events.get/list/insert/update/delete acceptent ce périmètre ; calendarList.list ne l'accepte pas. On conserve l'identifiant du calendrier pour le retrouver, sans demander la liste des agendas.
 4. OAuth Web, URL de retour exacte ci-dessus. Ne pas réutiliser les URL de retour Supabase Auth : cette connexion est distincte de la connexion à Clementplane.
-5. En Testing, inscrire les comptes Google fictifs autorisés. Le serveur restreint aussi les UUID Clementplane testeurs. Jetons d'actualisation limités à 7 jours pour cette configuration.
+5. En Testing, inscrire les comptes Google de test autorisés ; utiliser uniquement des données métier fictives. Le serveur restreint aussi les UUID Clementplane testeurs. Jetons d'actualisation limités à 7 jours pour cette configuration.
 6. Vérifier dans la console la classification actuelle des scopes et les exigences de branding/vérification ; ne pas assimiler « In production » à « vérifié ». Le résultat exact de cette inspection est un gate, pas une hypothèse du code.
 7. Ne passer en public qu'après recette réelle, politiques accessibles et statut Google permettant le public cible. Certaines organisations Google peuvent interdire l'application indépendamment de Clementplane.
 
@@ -34,7 +36,7 @@ Fichiers additifs : `supabase/migrations/20261008054625_google_calendar_sync.sql
 
 Production : comparer nom ET contenu des trois migrations V1.1 documentées dans DESIGN.md. Elles existent déjà sous des horodatages différents. Conserver leur correspondance et appliquer uniquement les nouvelles migrations validées après accord explicite, y compris le correctif de permissions si retenu. Ne pas lancer `db push` global, ne pas réappliquer ni réparer les entrées à l'aveugle. `tutorial_analytics` n'est pas inclus.
 
-Déployer les deux Edge Functions d'abord sur la recette : google-calendar vérification JWT activée + Auth.getUser ; google-calendar-worker vérification JWT désactivée car secret dédié contrôlé dans le corps du handler avant tout accès. Le worker n'accepte que POST et son en-tête secret. Aucun endpoint ne prend l'identité à synchroniser depuis un navigateur.
+Les deux Edge Functions sont déployées en version 1 sur la recette : google-calendar vérification JWT activée + Auth.getUser ; google-calendar-worker vérification JWT désactivée car secret dédié contrôlé dans le corps du handler avant tout accès. Le worker n'accepte que POST et son en-tête secret. Aucun endpoint ne prend l'identité à synchroniser depuis un navigateur.
 
 Configurer les deux noms Vault puis appliquer `supabase/operations/google-calendar-cron.sql` uniquement dans l'environnement convenu. Le cron n'est volontairement pas installé par la migration métier. Fréquence une minute ; traitement borné, reprise et contrôle périodique de chaque connexion active (environ 5 à 7 minutes, plus délai de queue). Échecs/quota : backoff exponentiel aléatoire, Retry-After si présent. Les expirations sont évaluées côté serveur même navigateur fermé.
 
@@ -58,4 +60,4 @@ Désactiver GOOGLE_CALENDAR_MODE et le flag UI puis suspendre le cron. Ne pas su
 
 
 ## Pré requis de lecture du rôle serveur
-Voir STAGING.md : l'ancien environnement environnement isolé de recette n'avait pas les privilèges sources déjà présents en production. `20261008072003_google_calendar_service_read_access.sql` apporte uniquement SELECT sur cinq colonnes et EXECUTE sur trois RPC au rôle service_role ; aucune permission navigateur. Correctif appliqué sur la démo après accord, correspondance distante consignée dans le rapport privé ; lecture et intégration vérifiées sans grants temporaires. Ne pas confondre BYPASSRLS et privilège SELECT. Vérifier ces prérequis avant activation du worker dans tout autre environnement.
+Voir STAGING.md : l'ancien environnement isolé de recette n'avait pas les privilèges sources déjà présents en production. `20261008072003_google_calendar_service_read_access.sql` apporte uniquement SELECT sur cinq colonnes et EXECUTE sur trois RPC au rôle service_role ; aucune permission navigateur. Correctif appliqué sur la démo après accord, correspondance distante consignée dans le rapport privé ; lecture et intégration vérifiées sans grants temporaires. Ne pas confondre BYPASSRLS et privilège SELECT. Vérifier ces prérequis avant activation du worker dans tout autre environnement.

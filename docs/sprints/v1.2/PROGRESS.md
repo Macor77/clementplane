@@ -18,3 +18,7 @@
 - Release GitHub brouillon créée avec archive ; Google Cloud indisponible dans le navigateur. Prérequis de la base isolée contrôlés.
 - Après accords explicites : trois migrations calendrier appliquées uniquement en recette. Neuf contrôles SQL d'intégration passent avec les droits permanents, sans grants sources temporaires ; cinq contrôles de notice PASS. Écritures de test annulées et état des fixtures préservé. Identifiants et correspondances distantes consignés dans le rapport privé du titulaire.
 - CI 37743245393 et 37743876956 réussies. Nouvelle vérification Google Cloud : Site Unavailable persiste dans ce navigateur ; aucune configuration OAuth/fonction/cron ni production modifiée.
+
+- Configuration Google effectuée par le titulaire depuis son navigateur : captures confirmant projet dédié, API active, audience externe avec testeur et scopes minimaux enregistrés ; identifiant du client Web créé reçu, sans secret. URI persistée, statut Testing et vérification restent à contrôler.
+- Deux fonctions Google déployées en version 1 sur la recette ; statut ACTIVE et POST sans authentification refusés (HTTP 401). Secrets, raccordement Vercel, cron et recette Google réelle restent en attente. Aucun changement de production.
+- CI 37745568026 du dernier état documentaire précédent réussie.

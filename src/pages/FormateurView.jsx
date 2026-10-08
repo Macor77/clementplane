@@ -377,7 +377,7 @@ export default function FormateurView() {
   const latestSuccessfulInvitation =
     invitationHistory.find(
       (entry) =>
-        entry.status === 'sent' &&
+        ['sent', 'delivered'].includes(entry.status) &&
         entry.sent_at,
     ) || null;
 
@@ -1587,18 +1587,24 @@ export default function FormateurView() {
                           style={{
                             fontWeight: 700,
                             color:
-                              entry.status === 'sent'
+                              ['sent', 'delivered'].includes(entry.status)
                                 ? '#15803d'
-                                : entry.status === 'failed'
+                                : ['failed', 'hard_bounce', 'soft_bounce', 'blocked', 'invalid'].includes(entry.status)
                                   ? '#b42318'
                                   : '#64748b',
                           }}
                         >
-                          {entry.status === 'sent'
-                            ? 'Invitation envoyée'
-                            : entry.status === 'failed'
-                              ? 'Échec de l’envoi'
-                              : 'Envoi en cours'}
+                          {({
+                            sent: 'Invitation envoyée',
+                            delivered: 'Invitation livrée',
+                            failed: 'Échec de l’envoi',
+                            hard_bounce: 'Adresse refusée',
+                            soft_bounce: 'Livraison temporairement impossible',
+                            blocked: 'Invitation bloquée',
+                            invalid: 'Adresse invalide',
+                            deferred: 'Livraison différée',
+                            pending: 'Envoi en cours',
+                          }[entry.status] || 'Statut non disponible')}
                         </span>
                       </div>
                     );

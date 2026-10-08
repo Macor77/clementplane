@@ -11,7 +11,7 @@ Code de synchronisation unidirectionnelle volontaire : calendrier dédié, corre
 - Build V1.2 préversion réussi. Lint : aucune erreur ; deux avertissements préexistants.
 - Audit des dépendances de Quality réussi.
 - Revue indépendante effectuée. Quatre problèmes importants reproduits et corrigés : concurrence OAuth/déconnexion, générations d'événements après annulations répétées, reprise ETag/DB temporaire, état transitoire sans dates. Tests de régression exécutés.
-- Scénarios navigateur desktop/mobile/callback et PWA préparés ; résultat final CI à consigner dans le retour de pilotage.
+- Six scénarios navigateur PASS dans Quality 37737354470 sur 45c12ce : métadonnées PWA, missions personnelles desktop/mobile, paramètres Google desktop/mobile et callback simulé. Captures fictives desktop/mobile inspectées ; OAuth PWA réel non validé.
 - Aucun test avec compte Google réel, aucun test effectif de partage Google, aucun scheduler installé. Aucun secret OAuth disponible ni console Google inspectée. Pas de captures présentées comme preuves Google.
 
 ## Traçabilité

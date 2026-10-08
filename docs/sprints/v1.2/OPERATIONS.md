@@ -32,7 +32,7 @@ Supabase fournit déjà SUPABASE_URL et SUPABASE_SERVICE_ROLE_KEY aux Edge Funct
 ## Migration et historique
 Fichiers additifs : `supabase/migrations/20261008054625_google_calendar_sync.sql` et `supabase/migrations/20261008061224_google_calendar_privacy_notice.sql` (compatibilité des anciennes notices conservée). Créé avec la CLI locale. Tests PGlite isolés ; pas encore appliqué sur une instance Supabase de recette. Commencer par une base de recette incluant les tables/versions existantes. La fixture SQL réduit le schéma au contrat requis et ne remplace pas une répétition de toutes les migrations.
 
-Production : comparer nom ET contenu des trois migrations V1.1 documentées dans DESIGN.md. Elles existent déjà sous des horodatages différents. Conserver leur correspondance et appliquer uniquement cette nouvelle migration après accord explicite. Ne pas lancer `db push` global, ne pas réappliquer ni réparer les entrées à l'aveugle. `tutorial_analytics` n'est pas inclus.
+Production : comparer nom ET contenu des trois migrations V1.1 documentées dans DESIGN.md. Elles existent déjà sous des horodatages différents. Conserver leur correspondance et appliquer uniquement ces deux nouvelles migrations après accord explicite. Ne pas lancer `db push` global, ne pas réappliquer ni réparer les entrées à l'aveugle. `tutorial_analytics` n'est pas inclus.
 
 Déployer les deux Edge Functions d'abord sur la recette : google-calendar vérification JWT activée + Auth.getUser ; google-calendar-worker vérification JWT désactivée car secret dédié contrôlé dans le corps du handler avant tout accès. Le worker n'accepte que POST et son en-tête secret. Aucun endpoint ne prend l'identité à synchroniser depuis un navigateur.
 

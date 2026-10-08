@@ -12,3 +12,5 @@
 - Contrôle UI local bloqué : binaire Chromium absent ; tentative d'installation sans binaire utilisable. Scénarios desktop/mobile/callback ajoutés au workflow Quality pour exécution GitHub.
 - Notice confidentialité du 08/10 ajoutée en préversion, avec migration de compatibilité préservant les deux versions précédentes. Test SQL inscriptions compatible PASS.
 - Premier passage GitHub Actions : tests, SQL, audit et build PASS ; 4 scénarios navigateur PASS et 2 FAIL sur l'assertion synchrone check() d'une case contrôlée par réponse serveur. Test corrigé pour cliquer puis attendre l'état confirmé ; les valeurs effectivement envoyées restent vérifiées. Nouvelle exécution requise.
+
+- Relance Quality 37737354470 sur 45c12ce : 207 tests + SQL + audit + build + 6 scénarios navigateur PASS. Captures desktop/mobile fictives inspectées ; aucun débordement horizontal détecté. Le bandeau fixe mobile peut recouvrir du contenu dans une capture longue de composant, selon la position de défilement. Recette Google réelle toujours non réalisée.

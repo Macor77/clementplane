@@ -14,7 +14,7 @@
 | Aucun invité / notification | payload sans invités et sendUpdates=none testés | non réalisée |
 | Retrait rémunération/notes | reconstruction testée | non réalisée |
 | Isolation / événements externes | SQL + provider testés | non réalisée |
-| Desktop / mobile / PWA | scénarios Playwright ajoutés ; résultat à renseigner | non réalisée |
+| Desktop / mobile / PWA | desktop 1440/mobile 390 + callback simulés PASS ; shell PWA PASS ; PWA OAuth sur appareil non vérifiée | non réalisée |
 
 ## Protocole connecté obligatoire
 Utiliser une base Supabase isolée et deux comptes Clementplane fictifs, un OF fictif, un compte Google propriétaire autorisé et deux comptes Google lecteurs de test autorisés. Ne créer/modifier aucune vraie mission et n'ajouter aucun invité. Passer successivement par tous les états de la table ci-dessus. Fermer Clementplane entre deux modifications serveur et attendre le cron. Accorder manuellement, uniquement entre les comptes de test convenus, chaque niveau de consultation Google puis vérifier ce qui est affiché. Vérifier l'absence de mails/invitations avec chaque mutation. Photographier seulement des données fictives.

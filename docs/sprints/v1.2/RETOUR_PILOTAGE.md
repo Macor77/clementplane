@@ -29,3 +29,13 @@ Le projet Google Cloud, ses clients OAuth, domaines/retours, audience et vérifi
 Aucune dépense engagée. Usage Calendar standard annoncé sans coût additionnel ; quotas, demandes de hausse et consommation Supabase à vérifier dans le projet réel. Mesurer le coût du rapprochement avant montée en charge. Revue RGPD et conservation des journaux OAuth à finaliser. Récupération manuelle prévue pour une création de calendrier au résultat incertain ; bref chargement possible après un refus OAuth.
 
 La priorité suivante est la qualification de V1.2, sans ouvrir Outlook/iCloud, BPF ou facturation. Ne pas annoncer Google disponible, fusionner ou déployer avant cette recette et l'accord final explicite.
+
+
+## Actualisation du 8 octobre — accès navigateur autorisé
+- Release GitHub enregistrée en **brouillon**, marquée préversion : https://github.com/Macor77/clementplane/releases/tag/untagged-4c58d7bb2695088cbd25 . Nom de tag prévu `v1.2.0-beta.1` ; GitHub indique que le tag sera créé à la publication. Aucune publication effectuée.
+- Archive de préparation jointe et état uploaded vérifié : 484 801 octets, SHA-256 `4d0637408f665205428f412fe3ab4d3ace39f0415114592da205c89dad73a24c`, source `3bf84508af23b117e14522b0009d8bf587d09a44`. L'archive conserve volontairement son état documentaire antérieur à ce brouillon.
+- Google Cloud affiche « Site Unavailable » dans le navigateur de cette session après un rechargement. Aucun projet/client OAuth inspecté ou créé ; aucune recette Google réelle. La cause exacte n'est pas établie.
+- Environnement isolé existant retrouvé : `documentation-demo`, projet `jqhbrkyeawtsuzrzrnvm`, organisation Alter Prévention. Lecture seule : 3 comptes fictifs (domaines .test/.invalid), 2 formateurs, 2 missions OF et 2 missions personnelles ; les 3 RPC sources nécessaires existent. Les documents antérieurs confirment son usage de recette.
+- Le statut historique de branche reste MIGRATIONS_FAILED, mais la base répond et les migrations de missions personnelles y existent. Ne pas réinitialiser ni rejouer son historique.
+- L'application de `google_calendar_sync` a été **refusée avant exécution par le contrôle automatique d'approbation** : ajout persistant de tables, droits et déclencheurs sur une branche existante nécessitant un accord explicite pour cette mutation. La seconde migration n'a pas été tentée. Aucun changement de schéma ni déploiement effectué.
+- Prochaine autorisation concrète demandée : appliquer uniquement les deux migrations nouvelles Google Agenda/notice sur `documentation-demo`, puis vérifier les fonctions sources, l'isolation et les droits ; aucun changement en production et aucune nouvelle ressource payante.

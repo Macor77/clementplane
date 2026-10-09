@@ -16,7 +16,7 @@ Contrôles SQL d’isolation et de droits, connexion réelle et cycles Google r�
 
 ## Sécurité
 
-Le 9 octobre, la déconnexion via Clementplane a retiré le jeton serveur et conservé les trois événements Google. La reconnexion du même propriétaire a repris sur le calendrier existant ; cycle terminé sans erreur et identifiants inchangés. Le retour d’une annulation après expiration a été rejeté ; le refus dans le délai de validité reste à rejouer. Aucun changement de fixture ni de partage pendant ce contrôle.
+Le 9 octobre, la déconnexion via Clementplane a retiré le jeton serveur et conservé les trois événements Google. La reconnexion du même propriétaire a repris sur le calendrier existant ; cycle terminé sans erreur et identifiants inchangés. Le retour d’une annulation après expiration et un refus dans le délai de validité ont été rejetés sans réactivation. Le message de refus explicite est observé, puis la reconnexion finale a terminé son cycle sur les mêmes événements. Aucun changement de fixture ni de partage pendant ce contrôle.
 
 Ne lire ni exporter jetons, secrets, en-têtes ou corps OAuth. Ne pas exposer les schémas réseau/Vault. Vérifier les rôles et RPC privilégiés avant installation ailleurs. Aucun partage avec un tiers ni modification automatique des permissions Google.
 

@@ -12,7 +12,7 @@ Fonctions Edge, paramètres et scheduler configurés ; appels sans authentificat
 
 ## Vérification
 
-Contrôles SQL d’isolation et de droits, connexion réelle et cycles Google réussis. Mutations limitées aux fixtures dédiées. Contrôler les identifiants et suppressions après achèvement du moteur, pas sur la simple mise en file. Les propriétés et descriptions distantes ont ensuite été inspectées via Google Calendar avec le compte propriétaire du seul calendrier de recette. Les contrôles avec les comptes lecteurs distincts restent à terminer.
+Contrôles SQL d’isolation et de droits, connexion réelle et cycles Google réussis. Mutations limitées aux fixtures dédiées. Contrôler les identifiants et suppressions après achèvement du moteur, pas sur la simple mise en file. Les propriétés et descriptions distantes ont ensuite été inspectées via Google Calendar avec le compte propriétaire du seul calendrier de recette. Deux sessions Google distinctes ont confirmé les vues en disponibilités seules et en lecture des détails. Le cas d’édition reste non testé : les autorisations sont indisponibles dans le partage. Aucune modification des règles d’organisation pour contourner cette limite.
 
 ## Sécurité
 

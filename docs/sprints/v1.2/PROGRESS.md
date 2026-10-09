@@ -8,9 +8,10 @@
 | Connexion Google réelle et premières journées | Réussies |
 | Statuts métier, revalidation, annulation et expiration autonome | Vérifiés côté serveur |
 | Propriétés Google et retrait des champs optionnels | Vérifiés avec le compte propriétaire |
-| Confidentialité selon les droits de partage | Comptes lecteurs désignés ; qualification incomplète |
+| Confidentialité en disponibilités seules et lecture des détails | Vérifiée avec deux comptes Google distincts le 9 octobre |
+| Droits d’édition Google | Non testés : options indisponibles dans le partage de recette |
 | Reconnexion et appareil PWA réel | À terminer |
 | Publication Google pour tous | Non effectuée |
 | Fusion, production, tag et release publique | Non effectués |
 
-La priorité reste la qualification externe décrite dans [ACCEPTANCE.md](ACCEPTANCE.md). Les tests automatisés et correspondances serveur ne remplacent pas l'inspection Google ni les essais avec des lecteurs distincts. Les preuves opérationnelles sont conservées en privé.
+La priorité reste le refus/déconnexion/reconnexion OAuth, puis la PWA sur appareil réel et les conditions de publication décrites dans [ACCEPTANCE.md](ACCEPTANCE.md). La session de recette doit être réauthentifiée pour reprendre les parcours OAuth. Les preuves des lectures réelles et leurs limites sont conservées en privé. Le cas d’édition n’est pas déclaré réussi.

@@ -40,7 +40,7 @@ Europe/Paris est le fuseau métier des dates existantes dépourvues de zone. Hor
 
 Reconnexion du même compte Google : réutilisation du calendrier et des identités conservées. Un compte différent est refusé explicitement pour prévenir une copie involontaire. Si création du calendrier interrompue avec résultat incertain, ne pas créer automatiquement un second calendrier : intervention de récupération documentée.
 
-Les paramètres de partage du calendrier sont indépendants. Les lecteurs limités ne voient pas les détails privés ; writer/owner peuvent les voir. Les vues réelles avec comptes distincts restent à tester. Aucune ACL modifiée automatiquement.
+Les paramètres de partage du calendrier sont indépendants. Les deux modes de lecture ont été vérifiés avec des comptes distincts : détails privés masqués. Certains droits avancés donnent accès aux détails privés ; Google distingue désormais une édition limitée préservant le masquage et une édition avec accès aux détails. Ces droits d’édition restent non testés dans l’environnement de recette, où ils sont indisponibles. Aucune ACL modifiée automatiquement. Voir ACCEPTANCE.md pour les observations et limites.
 
 ## Gates externes
 Pas de déclaration de disponibilité publique avant projet OAuth, URL exacte, comptes de recette, publication/branding et recette réelle validés. Mode Testing : utilisateurs inscrits, refresh tokens de 7 jours pour ces scopes. Classification exacte des scopes à vérifier dans Google Auth Platform. Pas de mot de passe/secret dans le chat. API standard annoncée sans coût additionnel ; quotas et éventuelles hausses/billing à vérifier avant activation. Hébergement/cron consomment les quotas Supabase existants.

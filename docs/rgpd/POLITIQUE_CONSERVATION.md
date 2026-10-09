@@ -19,3 +19,5 @@ Les purges longues (6/12 mois, 3 ans) doivent être automatisées après stabili
 
 ## Missions personnelles — v0.21.1
 Les missions personnelles suivent le besoin professionnel et la vie du compte. Une annulation conserve le dossier privé et son horodatage ; elle ne constitue pas un effacement. La suppression du compte supprime ces missions via `owner_user_id` (cascade Auth), même lorsque la fiche formateur reste référencée par des OF. Les demandes individuelles sont traitées par la procédure d’exercice des droits. Aucun nouveau traitement Brevo, traceur ou sous-traitant.
+
+V1.2 en préparation : états OAuth 10 minutes, nettoyés par le worker ; secrets chiffrés supprimés à la déconnexion ; identifiant du compte/calendrier et correspondances techniques conservés jusqu'à suppression du compte Clementplane pour éviter une duplication lors d'une reconnexion. Les copies Google ne sont pas effacées automatiquement ; expliquer au titulaire comment les supprimer dans Google. Aucun corps OAuth/événement dans les journaux ni archives de clôture.

@@ -10,3 +10,6 @@ Version : 29/08/2026. Vérifier au moins annuellement les DPA, sous-traitants ul
 | Google Workspace | messagerie et outils de communication | traitements selon configuration et CDPA Google | conserver CDPA et liste des subprocessors |
 
 Pour les données traitées par Clementplane pour le compte d’un OF, prévoir dans le cadre contractuel les clauses nécessaires au titre de l’article 28 RGPD lorsque Clementplane agit comme sous-traitant.
+
+### V1.2 : connexion au Google Agenda du formateur
+Préparation, pas de mise en service publique. Ne pas assimiler le compte Google personnel/Workspace choisi par le formateur au contrat Google Workspace de Clementplane : qualification, conditions Google API/User Data Policy, localisation et garanties de transfert à valider pour ce flux. La revue de publication doit conserver les preuves correspondantes. Le prestataire d'authentification/calendrier reçoit les données volontairement exportées ; le formateur contrôle le partage côté Google.

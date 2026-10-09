@@ -17,3 +17,6 @@ Responsable de traitement : Alter Prévention. Contact : contact@clementplane.fr
 
 ## Mesures principales
 RLS et contrôles d’autorisation, séparation des rôles, admin plateforme restreint, fonctions serveur pour opérations sensibles, liens publics à jetons et expiration, journalisation ciblée, minimisation des données visibles entre organismes.
+
+## V1.2 — Google Agenda, préparation uniquement
+Transmission facultative des informations de mission accessibles au formateur vers son compte Google choisi ; identification Google sub/e-mail, token d'accès durable chiffré, identifiant calendrier et correspondances événements. Finalité : synchronisation demandée ; base contractuelle du service optionnel à valider dans la revue de publication, autorisation OAuth et choix distincts rémunération/notes. Accès limité aux testeurs jusqu'à validation. Jeton supprimé à la déconnexion ; correspondances conservées pour reconnexion jusqu'à suppression du compte. Google peut traiter hors EEE selon le compte/conditions applicables : valider la qualification juridique et le cadre exact avant ouverture publique. Aucun élargissement aux notes internes OF, aucun marketing ou entraînement de modèles sur les données Google.

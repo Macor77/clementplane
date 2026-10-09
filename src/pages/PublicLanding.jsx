@@ -23,7 +23,7 @@ const features = [
   ['Recherche ciblée', 'Disponibilités, distance, compétences et informations de votre propre réseau aident à identifier les profils pertinents.'],
   ['Réseau privé', 'Chaque organisme conserve son propre réseau, ses notes et ses informations internes.'],
   ['Propositions de missions', 'Envoyez une proposition, centralisez les réponses et affectez ensuite le formateur retenu.'],
-  ['Planning synchronisé', 'Une mission affectée bloque automatiquement le créneau concerné dans les disponibilités du formateur.'],
+  ['Votre agenda de missions', 'Créez vos propres missions et retrouvez les propositions de vos partenaires dans un même planning, même sans OF partenaire inscrit.'],
   ['Profil professionnel', 'Le formateur maîtrise un profil de référence cohérent pour ses différentes collaborations.'],
 ];
 
@@ -223,11 +223,12 @@ export default function PublicLanding() {
             />
             <div className="public-split-copy">
               <p className="public-eyebrow">FORMATEURS INDÉPENDANTS</p>
-              <h2>Un seul planning pour vos différents partenaires.</h2>
+              <h2>Votre agenda, avec ou sans partenaire inscrit.</h2>
               <p>Mettez à jour votre disponibilité professionnelle, recevez vos propositions et retrouvez vos missions depuis votre espace Clementplane.</p>
               <ul className="public-check-list">
                 <li>Vos disponibilités à jour pour tous vos OF</li>
-                <li>Votre planning de missions centralisé</li>
+                <li>Vos propres missions, ajoutées directement dans votre agenda</li>
+                <li>Votre planning de missions centralisé, même sans OF partenaire inscrit</li>
                 <li>Réception et réponse simplifiées aux propositions de mission</li>
                 <li>Vos disponibilités actualisées automatiquement après chaque mission</li>
               </ul>

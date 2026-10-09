@@ -40,6 +40,8 @@ Europe/Paris est le fuseau métier des dates existantes dépourvues de zone. Hor
 
 Reconnexion du même compte Google : réutilisation du calendrier et des identités conservées. Un compte différent est refusé explicitement pour prévenir une copie involontaire. Si création du calendrier interrompue avec résultat incertain, ne pas créer automatiquement un second calendrier : intervention de récupération documentée.
 
+La déconnexion/reconnexion du même compte a été vérifiée en recette réelle le 9 octobre : suppression du jeton serveur, calendrier conservé, puis cycle réussi sur les mêmes trois identifiants d’événements. Le refus d’un compte différent reste couvert par les tests automatisés, sans essai réel dans ce complément.
+
 Les paramètres de partage du calendrier sont indépendants. Les deux modes de lecture ont été vérifiés avec des comptes distincts : détails privés masqués. Certains droits avancés donnent accès aux détails privés ; Google distingue désormais une édition limitée préservant le masquage et une édition avec accès aux détails. Ces droits d’édition restent non testés dans l’environnement de recette, où ils sont indisponibles. Aucune ACL modifiée automatiquement. Voir ACCEPTANCE.md pour les observations et limites.
 
 ## Gates externes

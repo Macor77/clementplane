@@ -18,9 +18,11 @@ Le 9 octobre, deux comptes distincts ont confirmé le masquage des détails priv
 
 La livraison applicative dispose de 211 tests réussis et d'une CI complète réussie : sécurité SQL/RLS, audit, compilation et scénario PWA. Deux avertissements de lint préexistants. [ACCEPTANCE.md](ACCEPTANCE.md) distingue preuves serveur, observations Google et contrôles ouverts.
 
+Déconnexion et reconnexion du même propriétaire vérifiées le 9 octobre : jeton serveur supprimé, calendrier et événements préservés, puis synchronisation terminée sur les mêmes trois identifiants sans doublon dans la fenêtre contrôlée. Un retour d’annulation expiré a été rejeté sans réactivation ; le refus avant expiration reste distinct et ouvert.
+
 ## Conditions de clôture
 
-Lectures propriétaire et deux niveaux de consultation vérifiés. Terminer refus/déconnexion/reconnexion et PWA sur appareil réel ; qualifier les droits avancés dans un environnement autorisé ou faire accepter explicitement cette réserve avant clôture. Les observations de lecture ne prouvent pas la protection contre tous les droits avancés. Qualifier audience et exigences Google, protection des données et conservation des journaux du callback.
+Lectures propriétaire, deux niveaux de consultation et déconnexion/reconnexion vérifiés. Terminer le refus OAuth avant expiration et la PWA sur appareil réel ; qualifier les droits avancés dans un environnement autorisé ou faire accepter explicitement cette réserve avant clôture. Les observations de lecture ne prouvent pas la protection contre tous les droits avancés. Qualifier audience et exigences Google, protection des données et conservation des journaux du callback.
 
 L'accès reste réservé aux testeurs. Fusion, migrations et déploiement de production, tag et publication de release nécessitent l'accord final prévu dans le mandat. Aucun accord de production n'est déduit de la recette.
 

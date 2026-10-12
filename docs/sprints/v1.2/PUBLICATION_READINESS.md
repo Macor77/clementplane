@@ -51,6 +51,8 @@ Restent le téléphone réel, les états Google enregistrés, les réglages de j
 
 ## Mise à jour du 12 octobre — UX préparée
 
-Nom personnalisé et invitation Google ajoutés sur la branche V1.2. Aucun nouveau scope OAuth ni migration requis. Le renommage des calendriers génériques existants nécessite le déploiement du code Edge/worker mis à jour dans l’environnement concerné ; la préversion frontend seule ne suffit pas. Le renommage réel avec Google reste à contrôler après ce déploiement.
+Nom personnalisé et invitation Google ajoutés sur la branche V1.2. Aucun nouveau scope OAuth. Une migration limitée aux colonnes d’identité en lecture pour service_role est requise dans les bases aux droits restreints : 20261012045140_calendar_identity_read_access.sql. Le renommage des calendriers génériques existants nécessite le déploiement du code Edge/worker mis à jour dans l’environnement concerné ; la préversion frontend seule ne suffit pas. Le renommage réel avec Google reste à contrôler après ce déploiement.
 
 Le titulaire a fourni une recette de reconnexion depuis le navigateur Android le 9 octobre et confirmé la persistance de la connexion. Il n’a pas effectué le parcours PWA installée : ne pas lever cette réserve. Les autres réserves de publication demeurent ; PR conservée en brouillon.
+
+Le 12 octobre, le contrôle automatique a rejeté l’application de cette migration au projet de recette documentation-demo (jqhbrkyeawtsuzrzrnvm), faute d’accord explicite pour cette modification des droits serveur et cette cible. Aucun droit n’a été ajouté et aucune nouvelle version Edge n’a été déployée. Accord ciblé requis pour appliquer la migration et déployer les deux fonctions calendrier en recette, puis contrôler le renommage. La production reste hors périmètre.

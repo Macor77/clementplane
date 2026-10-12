@@ -46,3 +46,5 @@ Le clic Annuler chez Google a eu lieu après les dix minutes de validité de l�
 ### Retour Android du 9 octobre
 
 Captures fournies par le titulaire : reconnexion du même compte depuis le navigateur Android (Samsung Internet probable, selon son retour), retour à Clementplane puis dernière synchronisation réussie à 16:36:06 affichée ; rémunération et notes désactivées. Le titulaire confirme que la connexion reste présente après réouverture. Le parcours depuis une PWA réellement installée n’a pas été réalisé : cette réserve demeure. Ce retour n’ajoute pas de preuve serveur des identifiants d’événements pendant le cycle mobile.
+
+Le test SQL local valide les droits de lecture limités aux colonnes d’identité pour service_role, sans lecture de l’e-mail du profil ni écriture ni élargissement des accès navigateur. La migration et le déploiement Edge en recette sont bloqués par le contrôle automatique en attente d’un accord ciblé ; le renommage Google réel n’est pas encore validé.

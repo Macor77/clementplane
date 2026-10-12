@@ -9,7 +9,12 @@ async function fakeTrainerApi(page) {
   await page.route('https://example.supabase.co/**',async route=>{
     const req=route.request();const url=new URL(req.url());const path=url.pathname;
     let data=[];let status=200;
-    if(path.includes('/functions/')) {sends++;data={success:true};}
+    if(path.endsWith('/functions/v1/google-calendar')) {
+      // Status checks are read-only. A personal mission must never start OAuth or send mail.
+      expect(req.postDataJSON().action).toBe('status');
+      data={mode:'disabled',status:'disconnected'};
+    }
+    else if(path.includes('/functions/')) {sends++;data={success:true};}
     else if(path.endsWith('/auth/v1/user'))data=user;
     else if(path.endsWith('/profiles'))data={id:user.id,first_name:'Alex',last_name:'Démo'};
     else if(path.endsWith('/trainers'))data={id:'10000000-0000-0000-0000-000000000001',prenom:'Alex',nom:'Démo',statut:'actif'};
@@ -94,3 +99,4 @@ for (const viewport of [{width:1440,height:1000},{width:390,height:844}]) {
     expect(api.rows()).toHaveLength(1);expect(api.sends()).toBe(0);
   });
 }
+

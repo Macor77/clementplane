@@ -56,3 +56,7 @@ Nom personnalisé et invitation Google ajoutés sur la branche V1.2. Aucun nouve
 Le titulaire a fourni une recette de reconnexion depuis le navigateur Android le 9 octobre et confirmé la persistance de la connexion. Il n’a pas effectué le parcours PWA installée : ne pas lever cette réserve. Les autres réserves de publication demeurent ; PR conservée en brouillon.
 
 Le 12 octobre, le contrôle automatique a rejeté l’application de cette migration au projet de recette documentation-demo (jqhbrkyeawtsuzrzrnvm), faute d’accord explicite pour cette modification des droits serveur et cette cible. Aucun droit n’a été ajouté et aucune nouvelle version Edge n’a été déployée. Accord ciblé requis pour appliquer la migration et déployer les deux fonctions calendrier en recette, puis contrôler le renommage. La production reste hors périmètre.
+
+## Autorisation reçue et activation de recette
+
+Le titulaire a explicitement autorisé les droits de lecture d’identité et le déploiement des deux fonctions Google dans documentation-demo le 12 octobre. Migration appliquée, droits vérifiés et fonctions version 5 actives. Nouveau cycle Google terminé sans erreur à 07:05:05 (Paris). Le blocage d’autorisation décrit plus haut est levé. La production demeure inchangée. Le titre visible du calendrier reste à confirmer côté propriétaire ; les réserves sur PWA réelle et publication restent ouvertes.

@@ -60,3 +60,13 @@ Le 12 octobre, le contrôle automatique a rejeté l’application de cette migra
 ## Autorisation reçue et activation de recette
 
 Le titulaire a explicitement autorisé les droits de lecture d’identité et le déploiement des deux fonctions Google dans documentation-demo le 12 octobre. Migration appliquée, droits vérifiés et fonctions version 5 actives. Nouveau cycle Google terminé sans erreur à 07:05:05 (Paris). Le blocage d’autorisation décrit plus haut est levé. La production demeure inchangée. Le titre visible du calendrier reste à confirmer côté propriétaire ; les réserves sur PWA réelle et publication restent ouvertes.
+
+## État courant — préparation du 12 octobre
+
+Le renommage visible dans Google a été confirmé par la capture du titulaire à 07:09 (Paris). CI Quality run 87 entièrement verte. Les anciennes mentions « renommage à confirmer » sont levées.
+
+Accès administratif Vercel réessayé avec l’équipe connue formaplane : refus HTTP 403, connecteur sans équipe disponible. CLI Vercel absente de cet environnement ; aucun autre identifiant opérateur disponible. Ne pas conclure sur les journaux à partir de la CI ou du statut Ready de la préversion.
+
+La documentation officielle Google/Vercel a été revue le 12 octobre. Les pages clementplane.fr, /confidentialite et /cgu ne sont pas accessibles à l’outil de consultation ; cela ne prouve pas qu’elles soient indisponibles pour un navigateur utilisateur. Les routes et textes existent dans le code. Le domaine canonique réellement utilisé en production et les pages accessibles doivent être confirmés avant saisie dans Google.
+
+Le dossier concret à compléter et la séquence de publication sont dans PUBLICATION_PLAN.md. Aucune configuration de production ni demande de validation Google soumise pendant cette préparation.

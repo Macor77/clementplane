@@ -36,7 +36,7 @@ Fichiers additifs : `supabase/migrations/20261008054625_google_calendar_sync.sql
 
 Production : comparer nom ET contenu des trois migrations V1.1 documentées dans DESIGN.md. Elles existent déjà sous des horodatages différents. Conserver leur correspondance et appliquer uniquement les nouvelles migrations validées après accord explicite, y compris le correctif de permissions si retenu. Ne pas lancer `db push` global, ne pas réappliquer ni réparer les entrées à l'aveugle. `tutorial_analytics` n'est pas inclus.
 
-Les deux Edge Functions sont déployées en version 1 sur la recette : google-calendar vérification JWT activée + Auth.getUser ; google-calendar-worker vérification JWT désactivée car secret dédié contrôlé dans le corps du handler avant tout accès. Le worker n'accepte que POST et son en-tête secret. Aucun endpoint ne prend l'identité à synchroniser depuis un navigateur.
+Les deux Edge Functions sont déployées en version 5 sur la recette : google-calendar vérification JWT activée + Auth.getUser ; google-calendar-worker vérification JWT désactivée car secret dédié contrôlé dans le corps du handler avant tout accès. Le worker n'accepte que POST et son en-tête secret. Aucun endpoint ne prend l'identité à synchroniser depuis un navigateur.
 
 En recette, les deux noms Vault sont configurés et le scheduler a été installé et vérifié. Pour un autre environnement, configurer les deux noms Vault puis appliquer `supabase/operations/google-calendar-cron.sql` uniquement dans l'environnement convenu. Le cron n'est volontairement pas installé par la migration métier. Fréquence une minute ; traitement borné, reprise et contrôle périodique de chaque connexion active (environ 5 à 7 minutes, plus délai de queue). Échecs/quota : backoff exponentiel aléatoire, Retry-After si présent. Les expirations sont évaluées côté serveur même navigateur fermé.
 
@@ -66,3 +66,8 @@ Désactiver GOOGLE_CALENDAR_MODE et le flag UI puis suspendre le cron. Ne pas su
 
 ## Pré requis de lecture du rôle serveur
 Voir STAGING.md : l'ancien environnement isolé de recette n'avait pas les privilèges sources déjà présents en production. `20261008072003_google_calendar_service_read_access.sql` apporte uniquement SELECT sur cinq colonnes et EXECUTE sur trois RPC au rôle service_role ; aucune permission navigateur. Correctif appliqué sur la démo après accord, correspondance distante consignée dans le rapport privé ; lecture et intégration vérifiées sans grants temporaires. Ne pas confondre BYPASSRLS et privilège SELECT. Vérifier ces prérequis avant activation du worker dans tout autre environnement.
+
+
+## Lecture de l’identité pour le nom du calendrier
+
+Ajouter aux migrations ciblées 20261012045140_calendar_identity_read_access.sql : SELECT des colonnes id/first_name/last_name de profiles et prenom/nom de trainers pour service_role. Aucun accès navigateur ni écriture ajouté. Appliquée et vérifiée en recette le 12 octobre après accord explicite. Comparer les privilèges existants avant installation en production.

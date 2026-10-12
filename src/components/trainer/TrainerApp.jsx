@@ -1,4 +1,5 @@
 import PersonalMissionForm from '../../pages/trainer/PersonalMissionForm';
+import GoogleCalendarInvitation from './GoogleCalendarInvitation';
 import PersonalMissionDetail from '../../pages/trainer/PersonalMissionDetail';
 import { NavLink, Route, Routes, useNavigate } from 'react-router-dom';
 
@@ -236,6 +237,7 @@ export default function TrainerApp() {
       </aside>
 
       <main className="app-main">
+        <GoogleCalendarInvitation />
         <Routes>
           <Route path="/formateur/missions/nouvelle" element={<PersonalMissionForm />} />
           <Route path="/formateur/missions/personnelles/:id" element={<PersonalMissionDetail />} />
@@ -304,3 +306,4 @@ export default function TrainerApp() {
     </div>
   );
 }
+

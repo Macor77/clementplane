@@ -32,3 +32,17 @@ Le titulaire a fourni une capture montrant les droits d’édition indisponibles
 Déconnexion/reconnexion exécutées le 9 octobre dans l’interface avec le même propriétaire. Après déconnexion, état serveur déconnecté, jeton absent et trois événements conservés dans Google. Après reconnexion, cycle serveur terminé sans erreur, même calendrier, mêmes trois événements et aucune duplication dans la fenêtre contrôlée. Rémunération et notes restent désactivées. Aucune donnée métier ni permission de partage modifiée pendant ce contrôle.
 
 Le clic Annuler chez Google a eu lieu après les dix minutes de validité de l’intention. Le callback a rejeté ce retour, sans réactivation ; le statut déconnecté est réapparu au rafraîchissement périodique. Un second essai avant expiration a ensuite affiché le message explicite de refus ; état déconnecté et jeton absent confirmés. La reconnexion finale a terminé un nouveau cycle sur les mêmes trois événements. Le refus avant expiration est donc validé séparément. La PWA sur appareil réel reste à terminer. Les vérifications de configuration et limites d’accès sont détaillées dans [PUBLICATION_READINESS.md](PUBLICATION_READINESS.md). Captures publiques : interface réelle et données entièrement fictives. Les relevés précis et identifiants de fixtures restent dans le rapport privé.
+
+
+## Complément du 12 octobre 2026 — nom et invitation
+
+- Nouveau calendrier dédié : « Prénom Nom — Clementplane », issu du profil du compte, avec repli sur l’identité formateur puis « Clementplane » si aucune identité n’est renseignée.
+- Au prochain cycle du worker mis à jour, un calendrier existant encore nommé exactement « Clementplane » est renommé sur le même identifiant. Aucun événement ni partage n’est recréé. Les noms personnalisés dans Google sont conservés ; les modifications ultérieures du profil ne remplacent pas ces noms.
+- Invitation non bloquante dans l’espace formateur dès qu’une mission personnelle ou une proposition acceptée/confirmée existe. Les propositions sans réponse ne déclenchent pas l’invitation. Une acceptation déclenche la vérification sans quitter la page.
+- « Connecter Google Agenda » ouvre les réglages Google ; « Plus tard » masque l’invitation pour ce compte sur ce navigateur, y compris après rechargement. Le refus n’est pas synchronisé entre appareils. La connexion reste disponible dans Paramètres. Aucun démarrage OAuth automatique.
+- Invitation masquée lorsque le compte est déjà connecté ou que la fonctionnalité est désactivée pour ce compte. L’indisponibilité de la vérification ne bloque pas les missions.
+- 216 tests Vitest réussis, compilation réussie ; lint sans erreur, deux avertissements historiques conservés. 8 parcours Playwright réussis (ordinateur 1440 px, mobile 390 px, acceptation sans navigation, masquage persistant, compte connecté et callback PWA). Les vérifications navigateur utilisent une API simulée, pas une nouvelle autorisation Google réelle.
+
+### Retour Android du 9 octobre
+
+Captures fournies par le titulaire : reconnexion du même compte depuis le navigateur Android (Samsung Internet probable, selon son retour), retour à Clementplane puis dernière synchronisation réussie à 16:36:06 affichée ; rémunération et notes désactivées. Le titulaire confirme que la connexion reste présente après réouverture. Le parcours depuis une PWA réellement installée n’a pas été réalisé : cette réserve demeure. Ce retour n’ajoute pas de preuve serveur des identifiants d’événements pendant le cycle mobile.

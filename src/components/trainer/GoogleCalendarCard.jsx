@@ -37,7 +37,7 @@ export default function GoogleCalendarCard({userId}){
  });}
  const connected=status&&status.status!=='disconnected';
  return <section className="panel-card trainer-settings-card google-calendar-card" id="google-agenda" aria-labelledby="google-calendar-title">
-  <div><p className="page-eyebrow">MON AGENDA</p><h2 id="google-calendar-title">Google Agenda</h2><p>Retrouvez vos propositions, options et missions dans un calendrier dédié « Clementplane », même quand l’application est fermée.</p></div>
+  <div><p className="page-eyebrow">MON AGENDA</p><h2 id="google-calendar-title">Google Agenda</h2><p>Retrouvez vos propositions, options et missions dans un calendrier dédié « Prénom Nom — Clementplane », même quand l’application est fermée.</p></div>
   {status?.mode==='testing'&&<p className="google-calendar-notice">Accès de test : cette connexion n’est pas encore ouverte à tous. Google peut demander une nouvelle autorisation après 7 jours.</p>}
   {error&&<p role="alert" className="google-calendar-error">{error}</p>}
   {message&&<p role="status">{message}</p>}
@@ -70,3 +70,4 @@ export default function GoogleCalendarCard({userId}){
   {confirm&&<div className="google-calendar-confirm" role="dialog" aria-modal="false" aria-label="Déconnecter Google Agenda"><p>Arrêter la synchronisation ? Le calendrier et son historique resteront dans Google, sans nouvelles mises à jour. Les autorisations conservées dans Clementplane seront supprimées.</p><div className="google-calendar-actions"><button className="button button--soft" disabled={busy} onClick={()=>setConfirm(false)}>Conserver la connexion</button><button className="button" disabled={busy} onClick={()=>run(async()=>{setStatus(await calendarAction('disconnect'));setConfirm(false);sessionStorage.removeItem(INTENT);setMessage('Google est déconnecté. Le calendrier a été conservé.');})}>Confirmer la déconnexion</button></div></div>}
  </section>;
 }
+

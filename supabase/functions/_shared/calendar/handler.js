@@ -1,6 +1,7 @@
 import {randomToken,sha256,seal,unseal} from './crypto.js';
 import {buildAuthorization,validateGrant,validateReturn,publicStatus} from './oauth.js';
 import {googleJson} from './google.js';
+import {userCalendarName} from './naming.js';
 import {checked,connection,lock,unlock} from './repository.js';
 const SAFE_ERRORS=new Set(['SYNC_BUSY','INVALID_OAUTH_STATE','MISSING_CALENDAR_SCOPE','MISSING_REFRESH_TOKEN','WRONG_GOOGLE_ACCOUNT','GOOGLE_ACCOUNT_ALREADY_LINKED','CALENDAR_CREATION_UNCERTAIN','INVALID_SETTINGS']);
 export function createCalendarHandler({db,authenticate,env,fetch}) {
@@ -56,13 +57,15 @@ export function createCalendarHandler({db,authenticate,env,fetch}) {
     await checked(db.from('calendar_connections').update({google_sub:identity.sub,account_email:identity.email,token_ciphertext:await seal(JSON.stringify({refresh_token:grant.refresh_token}),env.CALENDAR_ENCRYPTION_KEY,user.id)}).eq('id',row.id).eq('lock_id',row.lock_id));
     if(row.calendar_pending&&!row.calendar_id)throw new Error('CALENDAR_CREATION_UNCERTAIN');
     let calendarId=row.calendar_id;
+    const name=await userCalendarName(db,user.id);
     if(!calendarId){
      await checked(db.from('calendar_connections').update({calendar_pending:true}).eq('id',row.id).eq('lock_id',row.lock_id));
-     const calendar=await googleJson(fetch,'https://www.googleapis.com/calendar/v3/calendars',{method:'POST',headers:{Authorization:`Bearer ${grant.access_token}`,'Content-Type':'application/json'},body:JSON.stringify({summary:'Clementplane',description:`Missions synchronisées depuis Clementplane. Identifiant de récupération : ${row.id}`,timeZone:'Europe/Paris'})});
+     const calendar=await googleJson(fetch,'https://www.googleapis.com/calendar/v3/calendars',{method:'POST',headers:{Authorization:`Bearer ${grant.access_token}`,'Content-Type':'application/json'},body:JSON.stringify({summary:name,description:`Missions synchronisées depuis Clementplane. Identifiant de récupération : ${row.id}`,timeZone:'Europe/Paris'})});
      if(!calendar.id)throw new Error('CALENDAR_CREATION_UNCERTAIN');
      calendarId=calendar.id;
      await checked(db.from('calendar_connections').update({calendar_id:calendarId,calendar_pending:false}).eq('id',row.id).eq('lock_id',row.lock_id));
     }
+    // Existing calendars are renamed by the worker after the connection is active.
     await unlock(db,row,{status:'active',error_code:null,attempts:0,dirty_version:Number(row.dirty_version)+1,cycle_id:null,due_at:new Date().toISOString()});held=null;
     return reply(publicStatus(await connection(db,user.id),mode));
    }
@@ -88,3 +91,4 @@ export function createCalendarHandler({db,authenticate,env,fetch}) {
   }
  };
 }
+

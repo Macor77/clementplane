@@ -2,6 +2,7 @@ import {unseal} from './crypto.js';
 import {GoogleCalendar,googleJson,retryDelay} from './google.js';
 import {projectEvents} from './projection.js';
 import {reconcile} from './sync.js';
+import {userCalendarName,renameLegacyCalendar} from './naming.js';
 import {checked,allMappings,eventStore,guard} from './repository.js';
 export async function runCalendarJob({db,env,fetch,row,deadline=Date.now()+45000}) {
  let status='active',error=null,delay=300+Math.floor(Math.random()*120);
@@ -18,6 +19,8 @@ export async function runCalendarJob({db,env,fetch,row,deadline=Date.now()+45000
   const desired=projectEvents(rows,{firstDay:row.first_day,trackedKeys:new Set(mappings.map(x=>x.key)),appUrl:env.APP_URL,owner:row.id,includeFee:row.include_fee,includeNotes:row.include_notes});
   const provider=new GoogleCalendar({fetch,token:grant.access_token,calendarId:row.calendar_id});
   await reconcile(provider,eventStore(db,row,deadline),desired);
+  await guard(db,row,deadline);
+  await renameLegacyCalendar({fetch,token:grant.access_token,calendarId:row.calendar_id,name:await userCalendarName(db,row.user_id)});
   await guard(db,row,deadline);
  }catch(e){
   if(['BUDGET_REACHED','LEASE_LOST','RETRY_TOMBSTONE','INCOMPLETE_MISSION_DATES','CALENDAR_DATABASE_ERROR'].includes(e.message)){error='continuing';delay=15;}
@@ -48,3 +51,4 @@ export function createWorkerHandler({db,env,fetch}){
   }catch{return Response.json({error:'WORKER_FAILED'},{status:500});}
  };
 }
+

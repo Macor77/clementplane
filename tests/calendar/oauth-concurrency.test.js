@@ -12,6 +12,7 @@ it('serializes OAuth completion with disconnection and cannot reactivate a compl
   eq(k,v){this.filters.push(x=>x[k]===v);return this;}neq(k,v){this.filters.push(x=>x[k]!==v);return this;}gt(k,v){this.filters.push(x=>x[k]>v);return this;}limit(){return this;}maybeSingle(){this.single=true;return this;}
   then(ok,fail){return this.exec().then(ok,fail);}
   async exec(){const matches=x=>this.filters.every(f=>f(x));
+   if(this.table==='profiles')return {data:{first_name:'Alex',last_name:'Démo'}};
    if(this.table==='trainers')return {data:[{id:'trainer-a'}]};
    if(this.table==='calendar_oauth_states'){const data=states.filter(matches);states=states.filter(x=>!matches(x));if(this.returning){notifyConsumed();await resume;}return {data};}
    if(this.table==='calendar_connections'){const data=matches(row)?[structuredClone(row)]:[];if(this.op==='update'&&data.length)Object.assign(row,this.values);return {data:this.single?(data[0]||null):data};}throw new Error(this.table);
@@ -22,8 +23,9 @@ it('serializes OAuth completion with disconnection and cannot reactivate a compl
  const fetch=async url=>Response.json(url.includes('/token')?{access_token:'access',refresh_token:'new',scope:'openid email https://www.googleapis.com/auth/calendar.app.created'}:url.includes('/userinfo')?{sub:'google-a',email:'demo@example.test',email_verified:true}:{});
  const handler=createCalendarHandler({db,authenticate:async()=>({id:user}),env,fetch});const request=body=>new Request('https://edge.test',{method:'POST',headers:{Origin:env.APP_URL},body:JSON.stringify(body)});
  const finishing=handler(request({action:'finish',code:'code',state:stateValue}));await consumed;
- const during=await handler(request({action:'disconnect'}));releaseFinish();await finishing;
+ const during=await handler(request({action:'disconnect'}));releaseFinish();expect((await finishing).status).toBe(200);
  expect(during.status).toBe(409);
  const after=await handler(request({action:'disconnect'}));expect(after.status).toBe(200);expect(row.status).toBe('disconnected');expect(row.token_ciphertext).toBeNull();
  const replay=await handler(request({action:'finish',code:'code',state:stateValue}));expect(replay.status).toBe(400);expect(row.status).toBe('disconnected');
 });
+

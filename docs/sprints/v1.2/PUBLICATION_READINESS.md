@@ -47,3 +47,10 @@ Le mobile simulé et le service worker testés en CI ne remplacent pas cet essai
 ## Décision avant production
 
 Restent le téléphone réel, les états Google enregistrés, les réglages de journaux et la validation du cadre de protection des données. Le droit d’édition Google est une réserve distincte : indisponible dans l’environnement autorisé, sans modification des règles d’organisation. Le titulaire doit accepter explicitement cette réserve ou autoriser un environnement adapté avant clôture. La fusion, les migrations ciblées, le déploiement, le tag et la release restent soumis à son accord final.
+
+
+## Mise à jour du 12 octobre — UX préparée
+
+Nom personnalisé et invitation Google ajoutés sur la branche V1.2. Aucun nouveau scope OAuth ni migration requis. Le renommage des calendriers génériques existants nécessite le déploiement du code Edge/worker mis à jour dans l’environnement concerné ; la préversion frontend seule ne suffit pas. Le renommage réel avec Google reste à contrôler après ce déploiement.
+
+Le titulaire a fourni une recette de reconnexion depuis le navigateur Android le 9 octobre et confirmé la persistance de la connexion. Il n’a pas effectué le parcours PWA installée : ne pas lever cette réserve. Les autres réserves de publication demeurent ; PR conservée en brouillon.

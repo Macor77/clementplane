@@ -86,3 +86,14 @@ Cette section actualise les états historiques ci-dessus. Le titulaire a autoris
 - PR #5 reste en brouillon et non fusionnée. Aucune activation publique, modification de flag Vercel, création de connexion Google de production, ni tag/release.
 
 Restent : Vault/scheduler, recette contrôlée de production, contrôle des journaux Vercel (accès administratif 403), décision sur PWA installée et droits d'édition non testés, texte légal d'ouverture et accord final de publication.
+
+
+## Scheduler de production — 14 octobre 2026
+
+Après instruction du titulaire de poursuivre :
+- calendar_worker_secret saisi dans Vault par le titulaire ; calendar_worker_url ajouté pour l'endpoint de production. Les deux noms vérifiés sans export de valeurs.
+- Extensions pg_cron/pg_net installées par migration google_calendar_scheduler_extensions. Aucun rôle client LOGIN ; Vault refusé à anon/authenticated ; aucun RPC public exécutable détecté exposant les tables réseau ou secrets.
+- Contrôle Data API sur ressource avec Accept-Profile: net : 406 / PGRST106, Invalid schema: net. La route racine OpenAPI refusait les clés publiques, donc le contrôle pertinent a utilisé une ressource REST sans lecture de données.
+- Tâche clementplane-google-calendar créée une fois, fréquence * * * * *, jobid 1. Première exécution planifiée succeeded à 06:09 UTC / 08:09 Paris.
+- Appel protégé de contrôle, secret lu uniquement côté Postgres vers le worker : HTTP 200, paused true. Cela valide l'authentification worker/Vault et le maintien du mode disabled, pas un cycle Google de production.
+- Aucune connexion de production créée, aucune activation publique ni fusion. Restent la préparation du frontend/test contrôlé et les réserves décrites plus haut, notamment les accès administratifs Vercel indisponibles.

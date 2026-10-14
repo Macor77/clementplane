@@ -69,3 +69,20 @@ Repli : désactiver le mode Google et le flag puis suspendre le scheduler si né
 - https://developers.google.com/workspace/calendar/api/auth
 - https://developers.google.com/identity/protocols/oauth2/production-readiness/brand-verification
 - https://vercel.com/docs/logs/runtime
+
+
+## Installation de production autorisée — 14 octobre 2026
+
+Cette section actualise les états historiques ci-dessus. Le titulaire a autorisé explicitement les quatre migrations et les deux fonctions, sans activation publique ni fusion.
+
+- Projet Google confirmé : `clementplane-production`, client Web dédié Clementplane - Production. Calendar API activée ; audience externe publiée ; branding validé et visible (captures des 13–14 octobre). Trois scopes enregistrés et classés non sensibles : openid, userinfo.email, calendar.app.created. Le Centre de validation indique qu'aucune validation des accès n'est requise.
+- Domaine canonique : https://app.clementplane.fr ; callback /google-calendar-callback.html. Confidentialité et CGU accessibles sans connexion, confirmé par le titulaire. Assistance et contact développeur : vincent.macor@alter-prevention.com. Aucun logo.
+- Sept paramètres Edge enregistrés par le titulaire en production. Empreintes distinctes des deux clés contrôlées sur capture ; aucune valeur secrète lue/exportée. GOOGLE_CALENDAR_MODE reste disabled selon la saisie confirmée ; son contenu n'a pas été relu.
+- CI Quality run 88 du commit a63a9fea457137417c5f0d3ece8ff0b942b7a426 réussie. Test SQL local calendrier relancé et réussi avant installation.
+- Migrations ciblées appliquées avec succès, sans db push global : google_calendar_sync (version distante 20261014054421), google_calendar_privacy_notice (20261014054428), google_calendar_service_read_access (20261014054435), calendar_identity_read_access (20261014054441). Correspondances locales respectives : 20261008054625, 20261008061224, 20261008072003, 20261012045140. Historique antérieur préservé.
+- google-calendar et google-calendar-worker déployées en version 1 ACTIVE. JWT activé pour le handler ; worker avec authentification dédiée X-Calendar-Worker-Secret avant accès DB.
+- Contrôles réels après installation : trois tables avec RLS et sans SELECT anon/authenticated ; six triggers calendrier ; calendar_claim inaccessible à anon, accessible au serveur ; zéro connexion. POST sans authentification renvoie 401 sur les deux fonctions ; GET worker renvoie 405.
+- Vault existe ; les noms calendar_worker_url et calendar_worker_secret sont absents. pg_cron/pg_net non installés. Aucun scheduler créé : sa préparation nécessite la saisie protégée du secret worker par le titulaire, puis les contrôles net et une autorisation d'installation.
+- PR #5 reste en brouillon et non fusionnée. Aucune activation publique, modification de flag Vercel, création de connexion Google de production, ni tag/release.
+
+Restent : Vault/scheduler, recette contrôlée de production, contrôle des journaux Vercel (accès administratif 403), décision sur PWA installée et droits d'édition non testés, texte légal d'ouverture et accord final de publication.

@@ -38,7 +38,7 @@ export default function GoogleCalendarCard({userId}){
  const connected=status&&status.status!=='disconnected';
  return <section className="panel-card trainer-settings-card google-calendar-card" id="google-agenda" aria-labelledby="google-calendar-title">
   <div><p className="page-eyebrow">MON AGENDA</p><h2 id="google-calendar-title">Google Agenda</h2><p>Retrouvez vos propositions, options et missions dans un calendrier dédié « Prénom Nom — Clementplane », même quand l’application est fermée.</p></div>
-  {status?.mode==='testing'&&<p className="google-calendar-notice">Accès de test : cette connexion n’est pas encore ouverte à tous. Google peut demander une nouvelle autorisation après 7 jours.</p>}
+  {status?.mode==='testing'&&<p className="google-calendar-notice">Accès de test : cette connexion est actuellement réservée aux comptes autorisés.</p>}
   {error&&<p role="alert" className="google-calendar-error">{error}</p>}
   {message&&<p role="status">{message}</p>}
   {!status?<p>Chargement… <button type="button" className="button button--soft" disabled={busy} onClick={()=>run(load)}>Actualiser</button></p>:<>

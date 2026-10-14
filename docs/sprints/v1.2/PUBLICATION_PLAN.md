@@ -97,3 +97,21 @@ Après instruction du titulaire de poursuivre :
 - Tâche clementplane-google-calendar créée une fois, fréquence * * * * *, jobid 1. Première exécution planifiée succeeded à 06:09 UTC / 08:09 Paris.
 - Appel protégé de contrôle, secret lu uniquement côté Postgres vers le worker : HTTP 200, paused true. Cela valide l'authentification worker/Vault et le maintien du mode disabled, pas un cycle Google de production.
 - Aucune connexion de production créée, aucune activation publique ni fusion. Restent la préparation du frontend/test contrôlé et les réserves décrites plus haut, notamment les accès administratifs Vercel indisponibles.
+
+## Vérifications Vercel et prochaine phase — 14 octobre, 08:57 Paris
+
+- Captures administrateur : forfait Hobby ; un seul membre d'équipe, Vincent Macor, Owner. Aucun Drain au niveau du projet ni de l'équipe.
+- Variable VITE_GOOGLE_CALENDAR_ENABLED créée pour Production ; valeur false saisie lors du formulaire, valeur masquée dans la liste. Aucun redéploiement demandé.
+- Témoin sans secret proposé sur /google-calendar-callback.html?cp_log_probe=clementplane-test. Vue Logs actualisée sur 08:27–08:57 : aucune requête affichée. Ce constat ne démontre ni l'absence de collecte amont, ni la suppression des query strings, ni leur durée de conservation. Politique amont encore non qualifiée ; ne pas considérer ce point validé pour l'ouverture publique.
+- CI Quality run 91 réussie sur 6fe53f2f4668dcbf7cd68f4af8d537fdcca95daf.
+
+### Publication contrôlée à autoriser
+
+1. Fusionner PR #5 et déployer le frontend sur le domaine canonique en conservant VITE_GOOGLE_CALENDAR_ENABLED=false et GOOGLE_CALENDAR_MODE=disabled. Vérifier les parcours existants et la route callback publiée.
+2. Avant activation, qualifier la politique des logs amont par documentation ou support officiel ; aucun vrai code OAuth ne doit être exporté pour ce contrôle.
+3. Identifier le compte formateur du titulaire en production. Configurer GOOGLE_CALENDAR_TEST_USER_IDS avec son UUID et GOOGLE_CALENDAR_MODE=testing ; le handler refuse les autres comptes. Le worker accepte testing et ne traite que les connexions actives ; vérifier qu'aucune autre connexion n'existe avant cette phase.
+4. Activer le flag frontend et redéployer uniquement après accord de test contrôlé. Le frontend peut montrer la fonction, mais le serveur demeure limité au compte autorisé. Ce n'est pas une ouverture publique.
+5. Le titulaire réalise OAuth ; contrôler calendrier personnalisé, premier cycle, mutation/retrait et reconnexion sans doublon. Tester PWA installée si disponible ; conserver la réserve Google sur droits d'édition.
+6. Ouvrir le mode public, adapter le texte légal et publier tag/release seulement après décision finale distincte.
+
+La préparation ne vaut pas accord de fusion/déploiement frontend ni activation : l'autorisation reçue portait sur l'installation backend désactivée.

@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { updateCurrentUserProfile } from '../../services/currentUserService';
 import { requestCurrentUserEmailChange } from '../../services/authService';
 import { getMyAccountDeletionStatus, deleteMyAccount } from '../../services/accountDeletionService';
+import GoogleCalendarCard from '../../components/trainer/GoogleCalendarCard';
 import FeatureNewsPreferenceCard from '../../components/FeatureNewsPreferenceCard';
 
 const ACTIVE_SPACE_KEY = 'timeforma_active_space';
@@ -266,6 +267,8 @@ export default function TrainerSettings() {
           </div>
         </form>
       </div>
+
+      <GoogleCalendarCard userId={user?.id} />
 
       <FeatureNewsPreferenceCard trainer />
 

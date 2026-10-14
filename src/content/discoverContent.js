@@ -1,4 +1,4 @@
-export const FORMPLANE_VERSION = 'V1.1';
+export const FORMPLANE_VERSION = 'V1.2 · préversion';
 
 export const discoverFeatures = [
   {
@@ -133,6 +133,7 @@ export const trainerTutorials = [
 ];
 
 export const faqItems = [
+  { question: 'Mes missions peuvent-elles apparaître dans Google Agenda ?', answer: 'La connexion Google Agenda est en préparation et sa recette est réservée aux comptes de test autorisés. Elle n’est pas encore ouverte à tous. Vous pouvez déjà créer vos propres missions dans Clementplane, même sans OF partenaire inscrit.', audiences: ['trainer'], category: 'Agenda' },
   { question: 'Puis-je utiliser Clementplane si mes clients ne sont pas inscrits ?', answer: 'Oui. Ajoutez une mission personnelle avec un intitulé et une ou plusieurs dates. Elle est confirmée sans validation d’un OF et rejoint votre agenda. Aucun client n’est invité ou averti automatiquement.', audiences: ['trainer'], category: 'Missions' },
   { question: 'Que voient mes OF de mes missions personnelles ?', answer: 'Seulement une indisponibilité neutre à la journée, même pour une intervention courte. Le titre, le client, le tarif, les notes et les horaires restent privés. Modifier ou annuler une mission conserve vos autres engagements et vos disponibilités manuelles.', audiences: ['trainer', 'organization'], category: 'Confidentialité' },
   { question: 'Ma liste de formateurs est-elle visible par les autres organismes ?', answer: 'Non. Le réseau que vous construisez ou importez dans Clementplane est propre à votre organisme. Les autres OF ne peuvent pas parcourir votre liste, vos notes ni vos informations internes comme s’il s’agissait d’une base de données commune.', audiences: ['organization'], category: 'Confidentialité' },

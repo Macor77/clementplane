@@ -69,6 +69,10 @@ export async function respondToMyMissionProposal({
     throw error;
   }
 
+  if (response === 'accepte' && typeof window !== 'undefined') {
+    window.dispatchEvent(new Event('cp-mission-accepted'));
+  }
+
   return data;
 }
 
@@ -280,3 +284,4 @@ export async function respondToMyMissionChange({
 
   return data;
 }
+

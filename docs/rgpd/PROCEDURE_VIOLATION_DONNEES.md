@@ -7,3 +7,8 @@
 5. En cas de risque élevé, informer aussi les personnes concernées sans délai indu, sauf exception légale applicable.
 6. Si Clementplane agit comme sous-traitant d’un OF pour les données touchées, informer l’OF sans délai et lui fournir les éléments nécessaires.
 7. Après incident : corriger la cause, vérifier l’efficacité, compléter le registre et les mesures préventives.
+
+
+## Application à Google Agenda — 15 octobre 2026
+
+Inclure les copies Google et accès OAuth dans le périmètre d’un incident. Contenir par suspension de la synchronisation et révocation des autorisations concernées selon l’incident ; préserver uniquement les métadonnées nécessaires. Ne pas exporter de secrets pour l’enquête. Informer le titulaire des copies qui restent dans Google et vérifier les partages concernés. Le cadre général ci-dessus est conservé.

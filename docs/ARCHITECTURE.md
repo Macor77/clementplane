@@ -664,3 +664,8 @@ Clementplane est une application web SaaS multi-organismes disposant d’un fron
 ## v0.21.1 — livrée le 6 octobre 2026
 
 Le service trainerAgendaService combine les propositions OF et trainer_personal_missions avec une origine explicite et une navigation dédiée. Les listes/planning/tableau de bord partagent cette lecture. Les RPC d’engagement servent aussi à la recherche OF et au partage des disponibilités. Les disponibilités déclarées ne sont jamais modifiées par le CRUD personnel. Pas de trigger e-mail ni de liaison automatique aux organisations.
+
+
+## V1.2 — État du 15 octobre 2026
+
+Handler OAuth authentifié, PKCE/state à usage unique, callback statique sans analytique, chiffrement serveur des jetons, worker à authentification dédiée et queue durable. Verrous et rapprochement périodique gèrent les reprises. Les notifications métier ne dépendent pas de Google. Aucun import des rendez-vous personnels. Voir le DESIGN et OPERATIONS du sprint pour les invariants.

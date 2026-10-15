@@ -223,3 +223,8 @@ Le Sprint 21 doit permettre au formateur de créer lui-même une mission dans so
 L’objectif est que Clementplane puisse devenir son planning professionnel de référence, même lorsqu’il travaille avec des organismes extérieurs à la plateforme.
 
 Le Sprint 22 est consacré à la synchronisation des missions Clementplane vers Google Agenda.
+
+
+## V1.2 — État du 15 octobre 2026
+
+Le Sprint 22 est livré : calendrier séparé Google, connexion volontaire, missions OF et personnelles, propositions/options, mises à jour et retraits. Outlook, iCloud, écriture dans l’agenda principal, synchronisation bidirectionnelle, BPF et paiement restent exclus.

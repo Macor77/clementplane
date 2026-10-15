@@ -370,3 +370,8 @@ Supabase/PostgreSQL reste l’unique source de vérité des données métier. La
 ## v0.21.1 — livrée le 6 octobre 2026
 
 Table trainer_personal_missions : id stable, owner_user_id (Auth, cascade), trainer_id, title, formation, client_name libre, location, dates JSON (1–100 journées uniques avec horaires par paire), private_notes, fee/fee_unit, status confirmed/cancelled, revision et horodatages serveur. RLS propriétaire ; colonne de propriété non insérable/modifiable côté client. Annulation terminale. RPC d’engagement existantes étendues sans changer leurs signatures ; détail formateur et agrégat neutre OF. Trois migrations appliquées en production ; correspondance des versions dans docs/sprints/v0.21.1/CLOSURE.md. Adresse structurée : site_name, address, postal_code et city.
+
+
+## V1.2 — État du 15 octobre 2026
+
+Tables calendar_connections, calendar_events, calendar_oauth_states : RLS activée, lecture client refusée. RPC calendrier réservées au rôle serveur. Quatre migrations applicatives ciblées déjà appliquées, plus installation du scheduler ; aucune migration à rejouer pour cette clôture. Les noms historiques locaux et distants diffèrent : correspondances dans PUBLICATION_PLAN.md. Contrôle du 15 octobre : RLS, privilèges RPC et tâche active vérifiés. Tombstones de correspondance conservés pour la réconciliation.

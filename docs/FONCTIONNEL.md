@@ -494,3 +494,8 @@ Clementplane couvre le cycle principal OF ↔ formateur, le partage des disponib
 ## v0.21.1 — livrée le 6 octobre 2026
 
 Le formateur peut Ajouter une mission depuis son accueil, Mes missions ou Mon planning. Client final, date, code postal et ville requis ; autres champs selon le formulaire. Mes OF copie seulement le nom du donneur d’ordre. Les conflits informent sans bloquer. Une date confirmée bloque la journée partagée. Modification possible avant annulation ; annulation conserve la trace, sans libérer un autre engagement. Aucun envoi automatique, aucune synchronisation externe, connexion requise.
+
+
+## V1.2 — État du 15 octobre 2026
+
+Connexion volontaire dans les paramètres formateur. Invitation non bloquante après première mission ; calendrier séparé nommé d’après le profil. Synchronisation Clementplane → Google uniquement, un événement privé par journée. Propositions/options libres, confirmations occupées ; rémunération/notes opt-in. Aucun invité automatique. Déconnexion conservant calendrier et historique, reconnexion au même compte. Partager le calendrier principal ne partage pas le calendrier dédié ; les droits avancés Google peuvent révéler les détails privés.

@@ -71,3 +71,10 @@ Voir STAGING.md : l'ancien environnement isolé de recette n'avait pas les privi
 ## Lecture de l’identité pour le nom du calendrier
 
 Ajouter aux migrations ciblées 20261012045140_calendar_identity_read_access.sql : SELECT des colonnes id/first_name/last_name de profiles et prenom/nom de trainers pour service_role. Aucun accès navigateur ni écriture ajouté. Appliquée et vérifiée en recette le 12 octobre après accord explicite. Comparer les privilèges existants avant installation en production.
+
+
+## Exploitation — 15 octobre 2026
+
+Activation publique réalisée le 14 octobre après accord (flag frontend activé, mode serveur public). Scheduler et dernier cycle de production vérifiés le 15 octobre. Fonctionnalité volontaire : les comptes ne sont pas connectés automatiquement. Contrôle opérateur recommandé : statuts en erreur, retard du dernier succès, quotas/temps Edge ; ne pas exporter de jetons ou de corps d’événements. Aucune hausse de quota ni dépense engagée. Repli : désactiver le mode et le flag, suspendre le scheduler si nécessaire ; un rollback frontend n’annule ni migrations ni copies Google.
+
+La consultation des logs Vercel du 14 octobre n’a pas qualifié la collecte amont des query strings. Le point reste ouvert dans CLOSURE.md ; aucune promesse d’absence de journalisation OAuth.

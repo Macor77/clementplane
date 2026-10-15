@@ -16,7 +16,9 @@ Elle centralise notamment :
 
 ## Version actuelle
 
-**V1.1 — Agenda autonome du formateur (livrée le 6 octobre 2026)**
+**V1.2 — Google Agenda (ouverte le 14 octobre 2026)**
+
+Connexion facultative au calendrier séparé « Prénom Nom — Clementplane ». Version technique 1.2.0 ; [état de clôture](docs/sprints/v1.2/CLOSURE.md).
 
 Clementplane peut désormais être installé sur Android et iPhone/iPad et lancé depuis l’écran d’accueil comme une application.
 
@@ -120,9 +122,9 @@ La roadmap principale existe également à la racine dans `ROADMAP.md`.
 
 ## Dernier sprint livré
 
-**V1.1 — Création autonome de missions par le formateur**
+**V1.2 — Synchronisation Google Agenda**
 
-Objectif : permettre au formateur d’ajouter à son agenda Clementplane une mission confiée par un organisme qui n’utilise pas encore la plateforme, afin que Clementplane devienne son planning professionnel de référence.
+Les propositions, options et missions sont recopiées dans un calendrier Google séparé après connexion volontaire. La création de missions personnelles de V1.1 reste disponible.
 
 ## Rectification de version — 6 octobre 2026
 

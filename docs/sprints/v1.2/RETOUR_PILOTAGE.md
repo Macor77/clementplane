@@ -1,25 +1,29 @@
-# Retour au pilotage — V1.2
+# Retour au pilotage — Google Agenda V1.2 — 15 octobre 2026
 
-La synchronisation Google est développée et fonctionne dans l'environnement de test autorisé. Connexion réelle, calendrier dédié, missions personnelles multidates et transitions serveur vérifiés. Le défaut de callback PWA est corrigé.
+**Clôturé avec réserves documentées le 15 octobre 2026, sur décision explicite de Vincent.** Le développement et l’ouverture du 14 octobre sont confirmés. La régularisation actualise version, aide, documentation et livraison ; le bilan exhaustif et les preuves sont dans [CLOSURE.md](CLOSURE.md), les références finales dans [DELIVERY.md](DELIVERY.md).
 
-## Décisions
+## Valeur livrée
 
-- Clementplane → calendrier dédié uniquement ; aucune lecture des rendez-vous personnels.
-- Événements privés ; propositions/options disponibles, missions confirmées occupées.
-- Rémunération et notes sur choix distincts, désactivés par défaut.
-- Aucun invité automatique ; partage Google contrôlé par le formateur.
-- Traitement serveur et essais sur données métier fictives.
+Le formateur choisit de connecter Google depuis ses paramètres, éventuellement après l’invitation non bloquante. Ses propositions, options et missions apparaissent dans « Prénom Nom — Clementplane ». Clementplane reste la source ; mises à jour et retraits se poursuivent application fermée. Confidentialité par défaut, notes/rémunération séparément facultatives, pas d’invités ni de lecture de l’agenda personnel. Déconnexion conservant les copies et reconnexion au même calendrier.
 
-## Livraison et limites
+## Preuves et décisions réutilisées
 
-Préversion et tests disponibles, PR et release en brouillon, aucun déploiement de production par cette recette. Aucun tag V1.2 public ni annonce générale. Les trois migrations calendrier sont vérifiées en recette ; correspondances historiques conservées en privé.
+PR #5/#8 fusionnées ; CI de main réussie ; recette réelle du titulaire : création, modification, retrait, reconnexion sans doublon. Scheduler et cycle de production revérifiés le 15 octobre, accès navigateur aux tables/RPC calendrier refusé. Les changements de clôture n’altèrent pas le moteur de synchronisation ni les fonctions déployées.
 
-CI applicative réussie. Contrôles réels : identifiants stables, suppressions selon les statuts, changements de journées, revalidation et mutation après fermeture de l'onglet de recette. Voir ACCEPTANCE.md pour la portée exacte.
+Réserves explicitement acceptées le 14 octobre : PWA installée sur téléphone non testée et droits avancés Google non testés. Aucun second compte formateur de production testé. Les contrats et journaux amont ne sont pas certifiés par les tests techniques.
 
-L’intégration Google Calendar a permis l’inspection détaillée des événements réels avec le compte propriétaire : propriétés privées, absence d’invités et rappels, disponibilités, retrait des champs optionnels, reprises et revalidation. Le 9 octobre, deux comptes Google distincts ont confirmé le masquage des détails privés en disponibilités seules et en lecture des détails. Propositions/options absentes et créneaux libres ; missions confirmées « occupé ». Statut initial de la fixture restauré et synchronisation contrôlée.
+## Suivi conservé après clôture
 
-La session Clementplane a été réauthentifiée. Déconnexion puis reconnexion du même propriétaire vérifiées : jeton serveur retiré, calendrier et événements conservés, reprise achevée sans doublon sur les mêmes identifiants. L’annulation effectuée après expiration et le refus dans le délai de validité ont été vérifiés séparément, sans réactivation. Le second affiche le message explicite attendu. La reconnexion finale est opérationnelle.
+- Publication du lot documentaire : accord reçu le 15 octobre à 13:30 après présentation du contenu et du refus automatique.
 
-Le droit d’édition reste non testé : options grisées chez le titulaire, restriction Workspace probable. Aucun réglage d’organisation ni partage modifié par l’agent. Restent la PWA sur appareil réel, l’audience Google, la protection des données et les journaux callback avant ouverture publique. Le code et les documents de confidentialité sont cohérents sur les copies et leur conservation ; cela ne certifie ni les contrats ni les paramètres des fournisseurs. Voir PUBLICATION_READINESS.md pour le protocole et les accès manquants.
+- Responsable du traitement : justificatifs/validation du cadre Google et transferts.
+- Administrateur hébergeur : preuve de collecte et rétention des paramètres du callback, ou mesure correctrice vérifiée.
+- Communication : décision de ne pas envoyer de mail de nouveautés. Aucun envoi effectué.
 
-La prochaine étape produit est d'achever cette qualification. Outlook, iCloud, BPF et suivi d'activité restent hors sprint. Aucune nouvelle dépense engagée ; mesurer les quotas avant montée en charge. Références exactes et archives dans le dossier privé de livraison et la PR. Ne pas déclarer le sprint entièrement terminé.
+## Prochaine priorité proposée
+
+Achever ces justificatifs de clôture puis observer adoption, erreurs, retards et quotas. Programmer le contrôle PWA réel et, dans un environnement autorisé adapté, des droits avancés. Le besoin d’avertissement informatif de conflit reste au backlog. Aucun sprint suivant démarré ; Outlook, iCloud, BPF, paiement et agenda principal restent hors périmètre.
+
+## Livraison technique achevée
+
+V1.2.0 publiée : https://github.com/Macor77/clementplane/releases/tag/v1.2.0 ; commit 8c0e3f3c7e96e89309734647ce39c0684df0c711. CI et déploiement réussis, archive complète jointe et téléchargée avec contrôle SHA-256. La publication du bilan complet est autorisée le 15 octobre à 13:30 ; l’ancien blocage est levé. Voir DELIVERY.

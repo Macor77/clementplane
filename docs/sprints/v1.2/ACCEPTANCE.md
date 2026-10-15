@@ -58,3 +58,10 @@ Les 11 parcours navigateur de la CI sont réussis localement : PWA, missions per
 ### Confirmation visuelle propriétaire — 12 octobre 07:09 (Paris)
 
 Capture fournie par le titulaire : le calendrier Google affiche dans son infobulle « Vincent Recette v0.21.1 — Clementplane ». Le renommage du calendrier de recette est donc confirmé visuellement. CI Quality run 87 entièrement réussie sur dd1d858a918b51930fdd019eb98b58962ba48266, dont tests applicatifs, SQL/RLS, audit, compilation et 11 parcours navigateur. Les réserves PWA installée, droits avancés, configuration Google de production et journaux demeurent.
+
+
+## Recette production du 14 octobre — preuves antérieures applicables
+
+Le titulaire a validé connexion, création d’une mission fictive, modification d’horaire, retrait et reconnexion au même compte sans second calendrier. Contrôles serveur : cycles réussis ; aucun événement actif après retrait ; tombstone conservée volontairement. Le 14 octobre à 09:56 (Paris), décision « Je valide ! » après présentation des limites PWA installée réelle et droits d’édition/gestion Google. Ouverture ensuite autorisée et exécutée ; capture de 10:19 montrant une synchronisation réussie et aucun bandeau de test. Aucun second compte formateur de production testé.
+
+Le 15 octobre : commit main 7235e26, CI de fusion et statut de déploiement réussis ; cycle de production réussi à 07:52:01 Paris. Fonctions calendrier actives (version distante 3), scheduler actif, trois tables RLS sans SELECT navigateur et quatre RPC sans EXECUTE navigateur. Le numéro de fonction observé aujourd’hui remplace la valeur historique 1 ; aucun redéploiement réalisé pour ce contrôle. Callback HTTP 200, no-store et no-referrer. Aucun nouveau test métier écrit en production.

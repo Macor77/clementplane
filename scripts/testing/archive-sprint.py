@@ -1,22 +1,46 @@
-"""Archive source déterministe d'un commit, sans archives historiques ni secrets locaux."""
+"""Archive reproductible des sources d'un commit, sans secrets ni caches."""
+import hashlib
+import json
 import pathlib
 import subprocess
 import sys
 import zipfile
 
 revision = sys.argv[1] if len(sys.argv) > 1 else 'HEAD'
-target = pathlib.Path(sys.argv[2] if len(sys.argv) > 2 else '../Clementplane_v1.1.0_Sprint_Closure.zip')
 commit = subprocess.check_output(['git', 'rev-parse', revision], text=True).strip()
+
+def blob(name):
+    return subprocess.check_output(['git', 'show', f'{commit}:{name}'])
+
+version = json.loads(blob('package.json'))['version']
+target = pathlib.Path(sys.argv[2] if len(sys.argv) > 2 else f'../Clementplane_v{version}_Sources.zip')
+if target.exists():
+    raise SystemExit('Refus de remplacer une archive existante.')
 paths = subprocess.check_output(['git', 'ls-tree', '-r', '--name-only', commit], text=True).splitlines()
-with zipfile.ZipFile(target, 'w', compression=zipfile.ZIP_DEFLATED) as archive:
-    for name in paths:
-        if name.lower().endswith('.zip') or pathlib.PurePosixPath(name).name.startswith('.env'):
-            continue
-        data = subprocess.check_output(['git', 'show', f'{commit}:{name}'])
-        info = zipfile.ZipInfo('clementplane/' + name, (2026, 10, 6, 0, 0, 0))
+excluded_dirs = {'node_modules', 'dist', '.git', '.vercel', 'test-results', 'playwright-report', '__pycache__', '.cache'}
+entries = {}
+for name in paths:
+    path = pathlib.PurePosixPath(name)
+    if excluded_dirs.intersection(path.parts) or path.suffix.lower() in {'.zip', '.tar', '.gz', '.7z', '.log', '.pem', '.key', '.p12', '.pfx'}:
+        continue
+    if path.name.startswith('.env') and path.name not in {'.env.example', '.env.sample', '.env.template'}:
+        continue
+    entries['clementplane/' + name] = blob(name)
+entries['SOURCE_COMMIT.txt'] = f'{commit}\nClementplane {version}\nArchive des sources ; état du sprint : docs/sprints/v1.2/CLOSURE.md\n'.encode()
+manifest = '\n'.join(f'{hashlib.sha256(data).hexdigest()}  {name}' for name, data in sorted(entries.items())) + '\n'
+entries['MANIFEST.sha256'] = manifest.encode()
+with zipfile.ZipFile(target, 'w') as archive:
+    for name, data in sorted(entries.items()):
+        info = zipfile.ZipInfo(name, (2026, 10, 15, 0, 0, 0))
         info.compress_type = zipfile.ZIP_DEFLATED
         archive.writestr(info, data)
-    archive.writestr('SOURCE_COMMIT.txt', commit + '\nClôture V1.1 (1.1.0), rectification de v0.21.1 : production livrée le 6 octobre 2026. Voir docs/sprints/v0.21.1/CLOSURE.md.\n')
 with zipfile.ZipFile(target) as archive:
     assert archive.testzip() is None
-print(str(target.resolve()))
+    assert archive.read('SOURCE_COMMIT.txt').decode().splitlines()[0] == commit
+    assert json.loads(archive.read('clementplane/package.json'))['version'] == version
+    for line in archive.read('MANIFEST.sha256').decode().splitlines():
+        digest, name = line.split('  ', 1)
+        assert hashlib.sha256(archive.read(name)).hexdigest() == digest
+checksum = hashlib.sha256(target.read_bytes()).hexdigest()
+target.with_suffix(target.suffix + '.sha256').write_text(f'{checksum}  {target.name}\n')
+print(f'{target.resolve()}\nSHA-256 {checksum}\n{len(entries)} fichiers ; intégrité vérifiée')

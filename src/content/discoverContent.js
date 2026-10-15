@@ -1,4 +1,4 @@
-export const FORMPLANE_VERSION = 'V1.2 · préversion';
+export const FORMPLANE_VERSION = 'V1.2';
 
 export const discoverFeatures = [
   {
@@ -95,7 +95,7 @@ export const organizationTutorials = [
 export const trainerTutorials = [
   { id: 'trainer-personal-mission', title: 'Ajouter mes propres interventions', summary: 'Utiliser mon agenda sans imposer Clementplane à mes clients.', route: '/formateur/missions/nouvelle', routeLabel: 'Ajouter une mission',
     steps: ['Depuis Mes missions, Mon planning ou l’accueil, choisissez Ajouter une mission.', 'Saisissez un intitulé et au moins une date. Les horaires, le client, le lieu, les notes et la rémunération HT sont facultatifs.', 'Vous pouvez reprendre un nom de Mes OF : cela ne partage pas la mission et n’envoie aucun message.', 'Enregistrez : la mission est confirmée et apparaît dans votre agenda. Une intervention courte bloque aussi toute la journée pour les OF.', 'Ouvrez la mission pour la modifier ou l’annuler. Une annulation conserve la trace et préserve vos autres engagements et disponibilités.'],
-    tip: 'Les conflits sont signalés sans bloquer. Les données restent privées ; connexion nécessaire, aucune synchronisation Google ou Outlook dans cette version.' },
+    tip: 'Les conflits sont signalés sans bloquer. Les données restent privées ; connexion nécessaire. Vous pouvez connecter Google Agenda depuis les paramètres ; Outlook reste hors périmètre.' },
   mobileInstallTutorial,
   {
     id: 'trainer-profile', title: 'Garder un profil fiable pour mes OF partenaires', summary: 'Maintenir une seule fiche de référence plutôt que transmettre les mêmes informations à chaque organisme.', route: '/formateur/profil', routeLabel: 'Ouvrir mon profil',
@@ -133,7 +133,9 @@ export const trainerTutorials = [
 ];
 
 export const faqItems = [
-  { question: 'Mes missions peuvent-elles apparaître dans Google Agenda ?', answer: 'La connexion Google Agenda est en préparation et sa recette est réservée aux comptes de test autorisés. Elle n’est pas encore ouverte à tous. Vous pouvez déjà créer vos propres missions dans Clementplane, même sans OF partenaire inscrit.', audiences: ['trainer'], category: 'Agenda' },
+  { question: 'Partager mon agenda principal partage-t-il aussi Clementplane ?', answer: 'Non. Le calendrier « Prénom Nom — Clementplane » a ses propres réglages de partage Google. Pour communiquer uniquement vos créneaux occupés, choisissez un partage en disponibilités seules. Les droits de modification ou de gestion peuvent donner accès aux détails des événements privés.', audiences: ['trainer'], category: 'Agenda' },
+  { question: 'Que se passe-t-il si je déconnecte Google ?', answer: 'La synchronisation s’arrête. Le calendrier et les événements déjà copiés restent dans Google mais ne sont plus actualisés. Reconnectez le même compte pour reprendre ; supprimez vous-même les copies dans Google si vous ne souhaitez plus les conserver.', audiences: ['trainer'], category: 'Agenda' },
+  { question: 'Mes missions peuvent-elles apparaître dans Google Agenda ?', answer: 'Oui. Dans les paramètres de votre espace formateur, ouvrez Google Agenda, puis Connecter Google. Choisissez votre compte et autorisez la connexion. Clementplane crée un calendrier séparé « Prénom Nom — Clementplane ». Attendez la dernière synchronisation réussie, puis ouvrez le calendrier. Les modifications se font dans Clementplane. La rémunération et les notes privées sont exclues par défaut. Sur mobile, terminez la connexion dans le même navigateur.', audiences: ['trainer'], category: 'Agenda' },
   { question: 'Puis-je utiliser Clementplane si mes clients ne sont pas inscrits ?', answer: 'Oui. Ajoutez une mission personnelle avec un intitulé et une ou plusieurs dates. Elle est confirmée sans validation d’un OF et rejoint votre agenda. Aucun client n’est invité ou averti automatiquement.', audiences: ['trainer'], category: 'Missions' },
   { question: 'Que voient mes OF de mes missions personnelles ?', answer: 'Seulement une indisponibilité neutre à la journée, même pour une intervention courte. Le titre, le client, le tarif, les notes et les horaires restent privés. Modifier ou annuler une mission conserve vos autres engagements et vos disponibilités manuelles.', audiences: ['trainer', 'organization'], category: 'Confidentialité' },
   { question: 'Ma liste de formateurs est-elle visible par les autres organismes ?', answer: 'Non. Le réseau que vous construisez ou importez dans Clementplane est propre à votre organisme. Les autres OF ne peuvent pas parcourir votre liste, vos notes ni vos informations internes comme s’il s’agissait d’une base de données commune.', audiences: ['organization'], category: 'Confidentialité' },
@@ -156,13 +158,12 @@ export const publicRoadmap = {
   available: {
     status: 'Disponible',
     title: 'Le cœur de Clementplane',
-    description: 'Missions personnelles privées dans l’agenda du formateur, réseau privé de formateurs, recherche, import, missions OF, propositions, disponibilités, planning, partage, Mes OF, invitations partenaires, expérience mobile optimisée et installation de Clementplane sur l’écran d’accueil.',
+    description: 'Synchronisation facultative des missions vers Google Agenda, missions personnelles privées dans l’agenda du formateur, réseau privé de formateurs, recherche, import, missions OF, propositions, disponibilités, planning, partage, Mes OF, invitations partenaires, expérience mobile optimisée et installation de Clementplane sur l’écran d’accueil.',
   },
   future: [
     'Enrichir la fiche formateur pour lui permettre de détailler davantage son profil : expériences, compétences, formations et autres informations professionnelles.',
     'Stocker les documents et données de référencement d’un formateur et permettre leur partage maîtrisé : CV, NDA, avis SIREN et autres justificatifs.',
     'Ajouter une messagerie interne pour permettre aux organismes de formation et aux formateurs d’échanger directement dans Clementplane autour d’une session de formation.',
-    'Synchroniser automatiquement les missions Clementplane d’un formateur vers son Google Agenda, avec les informations utiles et un lien direct vers la mission.',
     'Permettre aux apprenants d’évaluer un formateur après une mission afin de construire progressivement un système de réputation interne à Clementplane.',
     'Une expérience encore plus fluide pour rechercher, proposer et affecter des missions.',
     'Des améliorations régulières issues des retours des organismes et des formateurs.',

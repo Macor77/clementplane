@@ -7,7 +7,8 @@ permissions:
   contents: read
 jobs:
   release:
-    if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main' && contains(github.event.workflow_run.head_commit.message, 'pull request #9 ')
+    if: >-
+      github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main' && contains(github.event.workflow_run.head_commit.message, 'pull request #10 ')
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -42,3 +43,4 @@ jobs:
           cd /tmp/release-download
           sha256sum --check Clementplane_v1.2.0_Sources.zip.sha256
           python -m zipfile --test Clementplane_v1.2.0_Sources.zip
+

@@ -1,11 +1,12 @@
 import { supabase } from '../lib/supabaseClient';
+import { availabilityRpc } from './availabilityConnection';
 
 
 export async function getMyTrainerAvailability({
   startDay,
   endDay,
 }) {
-  const { data, error } = await supabase.rpc(
+  const { data, error } = await availabilityRpc(
     'get_my_trainer_availability',
     {
       p_start_day: startDay,
@@ -25,7 +26,7 @@ export async function setMyTrainerAvailability({
   day,
   status,
 }) {
-  const { data, error } = await supabase.rpc(
+  const { data, error } = await availabilityRpc(
     'set_my_trainer_availability',
     {
       p_day: day,
@@ -38,7 +39,8 @@ export async function setMyTrainerAvailability({
     throw error;
   }
 
-  return data?.[0] || null;
+  if (!data?.[0]) throw new Error('Enregistrement non confirmé par le serveur.');
+  return data[0];
 }
 
 
@@ -51,7 +53,7 @@ export async function getMyTrainerCommitments({
   startDay,
   endDay,
 }) {
-  const { data, error } = await supabase.rpc(
+  const { data, error } = await availabilityRpc(
     'get_my_trainer_commitments_with_mission',
     {
       p_start_day: startDay,
@@ -87,7 +89,7 @@ export async function getMyTrainerMission(
   if (personal) return {id:personal.id,relation_status:personal.status === 'confirmed' ? 'affecte' : 'annule',
     title:personal.title,formation:personal.formation,lieu:personal.location,dates:personal.dates,origin:'personal'};
 
-  const { data, error } = await supabase.rpc(
+  const { data, error } = await availabilityRpc(
     'get_my_trainer_mission',
     {
       p_mission_id:
@@ -114,7 +116,7 @@ export async function getMyAvailabilityNotes({
   startDay,
   endDay,
 }) {
-  const { data, error } = await supabase.rpc(
+  const { data, error } = await availabilityRpc(
     'get_my_availability_notes',
     {
       p_start_day: startDay,
@@ -134,7 +136,7 @@ export async function createMyAvailabilityNote({
   day,
   content,
 }) {
-  const { data, error } = await supabase.rpc(
+  const { data, error } = await availabilityRpc(
     'create_my_availability_note',
     {
       p_day: day,
@@ -154,7 +156,7 @@ export async function updateMyAvailabilityNote({
   noteId,
   content,
 }) {
-  const { data, error } = await supabase.rpc(
+  const { data, error } = await availabilityRpc(
     'update_my_availability_note',
     {
       p_note_id: noteId,
@@ -173,7 +175,7 @@ export async function updateMyAvailabilityNote({
 export async function deleteMyAvailabilityNote(
   noteId,
 ) {
-  const { data, error } = await supabase.rpc(
+  const { data, error } = await availabilityRpc(
     'delete_my_availability_note',
     {
       p_note_id: noteId,
@@ -197,7 +199,7 @@ export async function getMyAvailabilityHistory({
   startDay,
   endDay,
 }) {
-  const { data, error } = await supabase.rpc(
+  const { data, error } = await availabilityRpc(
     'get_my_availability_history',
     {
       p_start_day: startDay,

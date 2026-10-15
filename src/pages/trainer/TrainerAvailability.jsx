@@ -3,10 +3,13 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 
 import { Link } from 'react-router-dom';
+import { availabilityErrorMessage } from '../../services/availabilityConnection';
+import { supabase } from '../../lib/supabaseClient';
 import { getMonthDays } from '../../utils/trainerAvailabilityMobile';
 
 import {
@@ -207,6 +210,21 @@ function sameDay(
 
 
 export default function TrainerAvailability() {
+  const requestId = useRef(0);
+  const mutationPending = useRef(false);
+  const [loadFailed, setLoadFailed] = useState(false);
+  const [needsReconnect, setNeedsReconnect] = useState(false);
+  const [saveMessage, setSaveMessage] = useState('');
+  const [online, setOnline] = useState(() => navigator.onLine);
+  const reconnect = async () => {
+    try {
+      const { error } = await supabase.auth.signOut({ scope: 'local' });
+      if (error) throw error;
+      window.location.assign('/connexion');
+    } catch {
+      setError('Impossible de vous déconnecter. Vérifiez votre connexion puis réessayez.');
+    }
+  };
   const [
     refDate,
     setRefDate,
@@ -340,7 +358,9 @@ export default function TrainerAvailability() {
 
   const loadMonth =
     useCallback(async () => {
+      const id = ++requestId.current;
       setLoading(true);
+      setLoadFailed(false);
       setError('');
 
 
@@ -383,6 +403,8 @@ export default function TrainerAvailability() {
           ]);
 
 
+        if (id !== requestId.current) return;
+        setNeedsReconnect(false);
         const availabilityMap = {};
 
         let latestUpdate = null;
@@ -513,17 +535,30 @@ export default function TrainerAvailability() {
           loadError,
         );
 
-        setError(
-          'Impossible de charger vos disponibilités.',
-        );
+        if (id !== requestId.current) return;
+        setLoadFailed(true);
+        setNeedsReconnect(loadError?.code === 'SESSION_REQUIRED');
+        setError(availabilityErrorMessage(loadError));
       } finally {
-        setLoading(false);
+        if (id === requestId.current) setLoading(false);
       }
     }, [refDate]);
 
 
   useEffect(() => {
     loadMonth();
+    const recover = () => {
+      setOnline(true);
+      if (!mutationPending.current) loadMonth();
+    };
+    const offline = () => setOnline(false);
+    window.addEventListener('online', recover);
+    window.addEventListener('offline', offline);
+    return () => {
+      requestId.current += 1;
+      window.removeEventListener('online', recover);
+      window.removeEventListener('offline', offline);
+    };
   }, [loadMonth]);
 
 
@@ -560,7 +595,7 @@ export default function TrainerAvailability() {
       // Une option n'empêche jamais le formateur de modifier
       // sa disponibilité déclarée. Seule une mission confirmée
       // verrouille la journée.
-      if (hasConfirmedMission || savingDay) {
+      if (hasConfirmedMission || mutationPending.current || loading || loadFailed || !online) {
         return;
       }
 
@@ -578,23 +613,10 @@ export default function TrainerAvailability() {
       }
 
 
+      mutationPending.current = true;
       setSavingDay(iso);
+      setSaveMessage('Enregistrement en cours…');
       setError('');
-
-
-      setAvailability(
-        (current) => ({
-          ...current,
-
-          [iso]: {
-            ...current[iso],
-
-            status:
-              nextStatus,
-          },
-        }),
-      );
-
 
       try {
         const result =
@@ -606,6 +628,7 @@ export default function TrainerAvailability() {
 
 
         if (result) {
+          setSaveMessage(`Disponibilité du ${formatLongDate(iso)} enregistrée.`);
           setAvailability(
             (current) => ({
               ...current,
@@ -632,12 +655,12 @@ export default function TrainerAvailability() {
           saveError,
         );
 
-        await loadMonth();
-
-        setError(
-          'Impossible de modifier cette disponibilité.',
-        );
+        setSaveMessage('');
+        setNeedsReconnect(saveError?.code === 'SESSION_REQUIRED');
+        setLoadFailed(true);
+        setError(availabilityErrorMessage(saveError, true));
       } finally {
+        mutationPending.current = false;
         setSavingDay('');
       }
     };
@@ -931,12 +954,17 @@ export default function TrainerAvailability() {
 
 
       {error ? (
-        <div className="alert alert--error">
-          {error}
+        <div className="alert alert--error" role="alert">
+          {error}{' '}
+          {needsReconnect
+            ? <button type="button" onClick={reconnect}>Se reconnecter</button>
+            : <button type="button" disabled={loading || Boolean(savingDay) || !online} onClick={() => { setSaveMessage(''); loadMonth(); }}>Réessayer le chargement</button>}
         </div>
       ) : null}
 
 
+      {!online && <div role="alert">Connexion réseau interrompue. Les modifications sont suspendues jusqu’au retour du réseau.</div>}
+      {saveMessage && <div role="status" aria-live="polite">{saveMessage}</div>}
       <div className="trainer-availability-info">
 
         <span className="trainer-availability-help-dot trainer-availability-help-dot--dispo" />
@@ -1017,6 +1045,8 @@ export default function TrainerAvailability() {
           <div className="trainer-availability-loading">
             Chargement des disponibilités…
           </div>
+        ) : loadFailed ? (
+          <div role="status">Disponibilités non chargées. Les journées ne sont pas considérées comme « Non renseigné ».</div>
         ) : (
           <>
           <div className="trainer-availability-mobile-list">

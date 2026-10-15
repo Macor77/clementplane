@@ -134,3 +134,7 @@ Le warning Vite sur la taille du bundle reste un axe d’optimisation et n’a p
 ## V1.2 — État du 15 octobre 2026
 
 Recette réelle du 14 octobre et CI du commit 7235e265f79a8ab8d2989525277761b465fb6d20 réutilisées : https://github.com/Macor77/clementplane/actions/runs/38532131687. Les nouvelles modifications portent sur aide/version/documentation/archivage ; contrôles applicables consignés dans CLOSURE.md. Distinguer la PWA sous service worker simulée de la PWA sur téléphone installé, non testée et réserve acceptée.
+
+## V1.2.1 — Correctif disponibilités (en validation, 15 octobre 2026)
+
+Les statuts ne sont confirmés qu'après réponse du serveur. Les erreurs de réseau et de session sont distinguées, avec reprise manuelle et rechargement au retour du réseau. Aucune synchronisation hors connexion. Dossier : `docs/sprints/v1.2.1/PLAN.md`.

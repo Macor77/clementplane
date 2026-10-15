@@ -395,3 +395,7 @@ Les dossiers `test-results/` et `playwright-report/` sont des artefacts temporai
 ## V1.2 — État du 15 octobre 2026
 
 Google en attente : consulter la dernière synchronisation, puis Relancer ; les missions restent dans Clementplane. Autorisation retirée : reconnecter le même compte. Sur téléphone, conserver le même navigateur pendant OAuth. La déconnexion ne supprime pas les copies Google. Ne pas recréer un calendrier lors d’une création incertaine : demander un contrôle propriétaire au support. Ne jamais joindre de code OAuth, jeton ou capture de consentement aux tickets.
+
+## V1.2.1 — Correctif disponibilités (en validation, 15 octobre 2026)
+
+Les statuts ne sont confirmés qu'après réponse du serveur. Les erreurs de réseau et de session sont distinguées, avec reprise manuelle et rechargement au retour du réseau. Aucune synchronisation hors connexion. Dossier : `docs/sprints/v1.2.1/PLAN.md`.

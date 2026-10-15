@@ -129,3 +129,7 @@ Les propositions, options et missions sont recopiées dans un calendrier Google 
 ## Rectification de version — 6 octobre 2026
 
 À la demande de Vincent, la livraison porte le nom **V1.1**, version technique et tag `v1.1.0`. Le périmètre et les migrations de v0.21.1 restent identiques. Dossier de clôture historique : `docs/sprints/v0.21.1/CLOSURE.md`. Notes définitives : `docs/releases/v1.1.0.md`.
+
+## Correctif V1.2.1 — 15 octobre 2026
+
+Disponibilités : confirmation serveur, messages de session/réseau et reprise. Aucun changement SQL, RLS, API serveur ou traitement de données. Livraison et preuves : docs/sprints/v1.2.1/CLOSURE.md.

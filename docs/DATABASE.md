@@ -375,3 +375,7 @@ Table trainer_personal_missions : id stable, owner_user_id (Auth, cascade), trai
 ## V1.2 — État du 15 octobre 2026
 
 Tables calendar_connections, calendar_events, calendar_oauth_states : RLS activée, lecture client refusée. RPC calendrier réservées au rôle serveur. Quatre migrations applicatives ciblées déjà appliquées, plus installation du scheduler ; aucune migration à rejouer pour cette clôture. Les noms historiques locaux et distants diffèrent : correspondances dans PUBLICATION_PLAN.md. Contrôle du 15 octobre : RLS, privilèges RPC et tâche active vérifiés. Tombstones de correspondance conservés pour la réconciliation.
+
+## Correctif V1.2.1 — 15 octobre 2026
+
+Disponibilités : confirmation serveur, messages de session/réseau et reprise. Aucun changement SQL, RLS, API serveur ou traitement de données. Livraison et preuves : docs/sprints/v1.2.1/CLOSURE.md.

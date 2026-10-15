@@ -1021,6 +1021,6 @@ Les parcours de partage privé et public ont été testés fonctionnellement. Le
 
 Sprint 17 — Dashboard Admin, mini-CRM & statistiques d'utilisation.
 
-## V1.2.1 — Correctif disponibilités (en validation, 15 octobre 2026)
+## V1.2.1 — Correctif disponibilités (livré le 15 octobre 2026)
 
 Les statuts ne sont confirmés qu'après réponse du serveur. Les erreurs de réseau et de session sont distinguées, avec reprise manuelle et rechargement au retour du réseau. Aucune synchronisation hors connexion. Dossier : `docs/sprints/v1.2.1/PLAN.md`.

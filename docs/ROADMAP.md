@@ -823,6 +823,6 @@ Lorsqu’un formateur consulte une proposition de mission alors qu’il est déj
 
 À la demande de Vincent, la livraison porte le nom **V1.1**, version technique et tag `v1.1.0`. Le périmètre et les migrations de v0.21.1 restent identiques. Dossier de clôture historique : `docs/sprints/v0.21.1/CLOSURE.md`. Notes définitives : `docs/releases/v1.1.0.md`.
 
-## V1.2.1 — Correctif disponibilités (en validation, 15 octobre 2026)
+## V1.2.1 — Correctif disponibilités (livré le 15 octobre 2026)
 
 Les statuts ne sont confirmés qu'après réponse du serveur. Les erreurs de réseau et de session sont distinguées, avec reprise manuelle et rechargement au retour du réseau. Aucune synchronisation hors connexion. Dossier : `docs/sprints/v1.2.1/PLAN.md`.

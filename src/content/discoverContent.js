@@ -110,7 +110,7 @@ export const trainerTutorials = [
   {
     id: 'trainer-automatic', title: 'Comprendre les indisponibilités automatiques', summary: 'Une mission affectée bloque automatiquement le créneau pour les autres organismes.', route: '/formateur/missions', routeLabel: 'Voir mes missions',
     steps: ['Lorsqu’un organisme vous affecte officiellement à une mission, celle-ci apparaît dans votre suivi de missions.', 'La période concernée est automatiquement considérée comme indisponible dans votre planning.', 'Les autres organismes voient donc que vous n’êtes pas disponible, sans connaître le détail de la mission ni l’organisme qui vous l’a confiée.', 'Vous n’avez pas besoin de reporter manuellement cette indisponibilité une seconde fois.'],
-    tip: 'Vous partagez votre disponibilité utile au travail, pas un agenda public avec le détail de vos activités.',
+    tip: 'Attendez le message de confirmation après chaque modification. Si la connexion est interrompue, utilisez « Réessayer le chargement » pour vérifier le résultat. Si votre session a expiré, choisissez « Se reconnecter ». Vos disponibilités ne sont pas enregistrées hors connexion.',
   },
   {
     id: 'trainer-organizations', title: 'Gérer mes organismes partenaires', summary: 'Centraliser mes contacts OF, voir lesquels utilisent Clementplane et les inviter à rejoindre la plateforme.', route: '/formateur/mes-of', routeLabel: 'Ouvrir Mes OF',

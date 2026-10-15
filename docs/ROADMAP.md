@@ -1,3 +1,7 @@
+# État courant — 15 octobre 2026
+
+Google Agenda est livré et ouvert depuis le 14 octobre. La régularisation de version porte sur 1.2.0. Clôture avec réserves documentées autorisée par Vincent le 15 octobre à 13:30 ; suivis dans `docs/sprints/v1.2/CLOSURE.md`. Les sections datées V1.1 ci-dessous constituent l’historique.
+
 # Suivi V1.1 — 6 octobre 2026
 
 Version cible imposée : **V1.1** (version technique `1.1.0`) pour le sprint Agenda autonome du formateur. La dénomination v0.21.1 utilisée pendant la préparation est remplacée par V1.1. Livraison de production validée ; sprint clôturé avec documentation, tag et archive de release. Les versions futures seront décidées au pilotage à partir de cette nouvelle série.
@@ -6,8 +10,8 @@ La procédure « Méthode de clôture d’un sprint » ci-dessous reste obligato
 
 # ROADMAP — Clementplane
 
-> Mise à jour : V1.1 livrée — 6 octobre 2026
-> Version actuelle : `1.1.0`
+> Mise à jour : Google Agenda ouvert — 15 octobre 2026
+> Version actuelle : `1.2.0`
 
 ## Vision
 
@@ -46,7 +50,7 @@ Après le Sprint 20, la priorité est de renforcer Clementplane comme planning p
 | 19.6 | Remplacement global du logo Clementplane | ✅ TERMINÉ |
 | 20 | Clementplane installable sur mobile (PWA) | ✅ TERMINÉ |
 | 21 / v0.21.1 | Création de missions par le formateur dans son propre agenda | ✅ TERMINÉ |
-| 22 | Synchronisation des missions avec Google Agenda | 🔜 À FAIRE |
+| 22 / V1.2 | Synchronisation des missions avec Google Agenda | ✅ CLÔTURÉ AVEC RÉSERVES DOCUMENTÉES |
 | 23+ | Évolutions guidées par la bêta | 🧭 PRÉVISIONNEL |
 
 ---
@@ -738,7 +742,7 @@ Permettre au formateur d’ajouter lui-même dans son agenda Clementplane une mi
 
 ---
 
-# Sprint 22 — Synchronisation Google Agenda 🔜
+# Sprint 22 / V1.2 — Google Agenda livré
 
 ### Objectif
 Permettre au formateur de retrouver automatiquement ses missions Clementplane dans son Google Agenda.
@@ -807,7 +811,7 @@ Un sprint est terminé lorsque :
 ```text
 V1.1 — Missions personnelles livrées et sprint clôturé
 ↓
-Sprint 22 — Synchronisation Google Agenda
+V1.2 — Google Agenda clôturé ; suivi des réserves documentées
 ↓
 Sprint 23+ — Évolutions guidées par la bêta
 ```

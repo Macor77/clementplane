@@ -1,3 +1,5 @@
+> **État courant au 15 octobre 2026 :** les étapes ci-dessous sont historiques. PR #5 et #8 fusionnées, production ouverte le 14 octobre après autorisation. PWA installée réelle et droits avancés : réserves acceptées le 14 octobre. Voir [CLOSURE.md](CLOSURE.md) pour les contrôles actuels et les éléments restant à justifier.
+
 # V1.2 — Textes proposés pour l'ouverture Google Agenda
 
 Brouillon du 14 octobre 2026. Ces propositions ne sont pas publiées dans l'application et ne constituent pas une activation générale.

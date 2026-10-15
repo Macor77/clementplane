@@ -129,3 +129,8 @@ La recette finale du Sprint 20 a confirmé :
 - déploiement de production Vercel validé.
 
 Le warning Vite sur la taille du bundle reste un axe d’optimisation et n’a pas bloqué la clôture du Sprint 20.
+
+
+## V1.2 — État du 15 octobre 2026
+
+Recette réelle du 14 octobre et CI du commit 7235e265f79a8ab8d2989525277761b465fb6d20 réutilisées : https://github.com/Macor77/clementplane/actions/runs/38532131687. Les nouvelles modifications portent sur aide/version/documentation/archivage ; contrôles applicables consignés dans CLOSURE.md. Distinguer la PWA sous service worker simulée de la PWA sur téléphone installé, non testée et réserve acceptée.

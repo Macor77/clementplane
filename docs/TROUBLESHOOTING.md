@@ -390,3 +390,8 @@ npx playwright test tests/e2e/specs/05-pwa-shell.spec.js
 ```
 
 Les dossiers `test-results/` et `playwright-report/` sont des artefacts temporaires et ne doivent pas être intégrés à une archive de release.
+
+
+## V1.2 — État du 15 octobre 2026
+
+Google en attente : consulter la dernière synchronisation, puis Relancer ; les missions restent dans Clementplane. Autorisation retirée : reconnecter le même compte. Sur téléphone, conserver le même navigateur pendant OAuth. La déconnexion ne supprime pas les copies Google. Ne pas recréer un calendrier lors d’une création incertaine : demander un contrôle propriétaire au support. Ne jamais joindre de code OAuth, jeton ou capture de consentement aux tickets.

@@ -1,3 +1,5 @@
+> **État courant au 15 octobre 2026 :** les étapes ci-dessous sont historiques. PR #5 et #8 fusionnées, production ouverte le 14 octobre après autorisation. PWA installée réelle et droits avancés : réserves acceptées le 14 octobre. Voir [CLOSURE.md](CLOSURE.md) pour les contrôles actuels et les éléments restant à justifier.
+
 # Google Agenda — Implementation Plan
 
 > Exécution : superpowers:executing-plans, développement dans cette session et revue indépendante finale.

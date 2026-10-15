@@ -1,3 +1,5 @@
+> **État courant au 15 octobre 2026 :** les étapes ci-dessous sont historiques. PR #5 et #8 fusionnées, production ouverte le 14 octobre après autorisation. PWA installée réelle et droits avancés : réserves acceptées le 14 octobre. Voir [CLOSURE.md](CLOSURE.md) pour les contrôles actuels et les éléments restant à justifier.
+
 # V1.2 — Dossier de publication préparé
 
 Préparé le 12 octobre 2026. PR #5 conservée en brouillon. Ce dossier ne vaut pas autorisation de fusion, de modification de production ou de soumission Google.

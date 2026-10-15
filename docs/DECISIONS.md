@@ -262,3 +262,8 @@ Un sprint ne peut pas être clôturé avant la mise à jour de la documentation,
 ## v0.21.1 — livrée le 6 octobre 2026
 
 Modèle privé distinct retenu pour éviter d’étendre les permissions et triggers du modèle OF. Dates JSON validées serveur pour une mutation atomique ; UUID stable pour les retries ; revision optimiste. L’engagement ne prouve ni réalisation ni paiement. Dernière modification OF/formateur reste la règle de disponibilité déclarée hors engagements. Version cible v0.21.1. Clôture obligatoirement conforme à docs/ROADMAP.md ; production après accord.
+
+
+## V1.2 — État du 15 octobre 2026
+
+Calendrier séparé « Prénom Nom — Clementplane » confirmé par Vincent ; pas de choix agenda principal dans ce sprint. Ouverture générale autorisée le 14 octobre, après recette réelle et acceptation des réserves PWA installée/droits avancés. Mandat de clôture explicite le 15 octobre. Les anciens refus ou restrictions de recette ne constituent plus des blocages de déploiement. Les justificatifs de gouvernance manquants restent distincts des réserves de recette acceptées.

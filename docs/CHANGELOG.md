@@ -1,3 +1,21 @@
+# V1.2.0 — Google Agenda
+
+Fonction ouverte le 14 octobre 2026 ; régularisation de version et documentation le 15 octobre 2026.
+
+- Connexion facultative depuis les paramètres formateur et invitation non bloquante après une première mission.
+- Calendrier séparé « Prénom Nom — Clementplane ». Synchronisation à sens unique des propositions, options et missions OF/personnelles, même application fermée.
+- Horaires, mises à jour, annulations et revalidation pris en compte. Aucun invité automatique ; événements privés ; rémunération et notes exclues par défaut.
+- Reconnexion au même compte avec conservation du calendrier. Les rendez-vous personnels Google ne sont pas lus.
+- Aide, FAQ, évolutions envisagées, version affichée et documentation harmonisées avec l’ouverture.
+
+Les réserves de recette PWA installée réelle et droits Google avancés ont été explicitement acceptées le 14 octobre. Le dossier de clôture distingue ces réserves des justificatifs de gouvernance encore manquants. Une release applicative ne vaut pas certification juridique ni clôture administrative du sprint.
+
+Recette réelle du 14 octobre : connexion, création fictive, modification, retrait, reconnexion sans second calendrier. Vérification serveur renouvelée le 15 octobre. Aucun nouvel e-mail de nouveautés envoyé.
+
+Références : [bilan du sprint](../sprints/v1.2/CLOSURE.md), [retour au pilotage](../sprints/v1.2/RETOUR_PILOTAGE.md). Les notes historiques de préversion restent conservées.
+
+---
+
 # V1.1 / v1.1.0 — Rectification de numérotation — 6 octobre 2026
 
 - Nom de livraison corrigé à la demande de Vincent : **V1.1**, version technique et tag `v1.1.0`.

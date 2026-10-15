@@ -1,3 +1,5 @@
+> **État courant au 15 octobre 2026 :** les étapes ci-dessous sont historiques. PR #5 et #8 fusionnées, production ouverte le 14 octobre après autorisation. PWA installée réelle et droits avancés : réserves acceptées le 14 octobre. Voir [CLOSURE.md](CLOSURE.md) pour les contrôles actuels et les éléments restant à justifier.
+
 # V1.2 — Conditions restantes de publication
 
 Revue du 9 octobre 2026. Le parcours desktop connexion → refus → reconnexion est vérifié sur données métier fictives. Préversion uniquement ; aucun accord de production déduit de ces contrôles.

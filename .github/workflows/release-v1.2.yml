@@ -1,0 +1,44 @@
+name: Release V1.2 sources
+on:
+  workflow_run:
+    workflows: ['Quality']
+    types: [completed]
+permissions:
+  contents: read
+jobs:
+  release:
+    if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main' && contains(github.event.workflow_run.head_commit.message, 'pull request #9 ')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      checks: read
+    env:
+      RELEASE_SHA: ${{ github.event.workflow_run.head_sha }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify source and successful quality check
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$(node -p "require('./package.json').version")" = '1.2.0'
+          git merge-base --is-ancestor HEAD origin/main
+          gh api "repos/$GITHUB_REPOSITORY/commits/$RELEASE_SHA/check-runs" --jq '.check_runs[] | select(.name == "quality" and .conclusion == "success") | .id' > /tmp/quality-check
+          test -s /tmp/quality-check
+      - name: Archive exact source commit
+        run: python scripts/testing/archive-sprint.py HEAD Clementplane_v1.2.0_Sources.zip
+      - name: Publish release and verify attached archive
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh release create v1.2.0 Clementplane_v1.2.0_Sources.zip Clementplane_v1.2.0_Sources.zip.sha256 --target "$RELEASE_SHA" --title 'Clementplane V1.2 — Google Agenda' --notes-file docs/releases/v1.2.0.md
+          mkdir /tmp/release-download
+          gh release download v1.2.0 --dir /tmp/release-download --pattern 'Clementplane_v1.2.0_Sources.zip*'
+          cd /tmp/release-download
+          sha256sum --check Clementplane_v1.2.0_Sources.zip.sha256
+          python -m zipfile --test Clementplane_v1.2.0_Sources.zip

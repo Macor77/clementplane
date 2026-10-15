@@ -50,10 +50,11 @@ const pages = {
     ],
   },
   '/traceurs': {
-    title: 'Traceurs et stockage local', updated: '29 août 2026',
+    title: 'Traceurs et stockage local', updated: '15 octobre 2026',
     sections: [
       ['Principe', <p>Clementplane n’utilise actuellement pas de traceur publicitaire ni d’outil de mesure d’audience nécessitant un consentement préalable. Aucun bandeau de consentement n’est donc affiché à ce jour.</p>],
       ['Stockages nécessaires', <p>Le navigateur peut conserver des informations strictement nécessaires ou fonctionnelles, par exemple pour maintenir une session, mémoriser l’espace actif, gérer l’installation de l’application web ou conserver certaines préférences d’interface. Ces éléments servent au fonctionnement du service et ne sont pas utilisés pour établir un profil publicitaire.</p>],
+      ['Connexion Google Agenda', <p>Le retour de connexion Google utilise temporairement le stockage de session du navigateur pour vérifier la demande et reprendre le parcours dans le même navigateur. Une préférence locale peut mémoriser le report de l’invitation à connecter Google. Ces éléments servent à la connexion demandée et aux préférences d’interface.</p>],
       ['Évolution', <p>Si Clementplane ajoute ultérieurement des traceurs non strictement nécessaires, cette page sera mise à jour et, lorsque la réglementation l’exige, un mécanisme de consentement sera proposé avant leur dépôt.</p>],
     ],
   },

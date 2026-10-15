@@ -670,6 +670,6 @@ Le service trainerAgendaService combine les propositions OF et trainer_personal_
 
 Handler OAuth authentifié, PKCE/state à usage unique, callback statique sans analytique, chiffrement serveur des jetons, worker à authentification dédiée et queue durable. Verrous et rapprochement périodique gèrent les reprises. Les notifications métier ne dépendent pas de Google. Aucun import des rendez-vous personnels. Voir le DESIGN et OPERATIONS du sprint pour les invariants.
 
-## V1.2.1 — Correctif disponibilités (en validation, 15 octobre 2026)
+## V1.2.1 — Correctif disponibilités (livré le 15 octobre 2026)
 
 Les statuts ne sont confirmés qu'après réponse du serveur. Les erreurs de réseau et de session sont distinguées, avec reprise manuelle et rechargement au retour du réseau. Aucune synchronisation hors connexion. Dossier : `docs/sprints/v1.2.1/PLAN.md`.

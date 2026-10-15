@@ -267,3 +267,7 @@ Modèle privé distinct retenu pour éviter d’étendre les permissions et trig
 ## V1.2 — État du 15 octobre 2026
 
 Calendrier séparé « Prénom Nom — Clementplane » confirmé par Vincent ; pas de choix agenda principal dans ce sprint. Ouverture générale autorisée le 14 octobre, après recette réelle et acceptation des réserves PWA installée/droits avancés. Mandat de clôture explicite le 15 octobre. Les anciens refus ou restrictions de recette ne constituent plus des blocages de déploiement. Les justificatifs de gouvernance manquants restent distincts des réserves de recette acceptées.
+
+## Correctif V1.2.1 — 15 octobre 2026
+
+Disponibilités : confirmation serveur, messages de session/réseau et reprise. Aucun changement SQL, RLS, API serveur ou traitement de données. Livraison et preuves : docs/sprints/v1.2.1/CLOSURE.md.

@@ -1,7 +1,9 @@
 # Retour pilotage — V1.2.1
 
-Sprint correctif consacré à la fiabilité de Mes disponibilités, autorisé le 15 octobre 2026.
-Développé sur branche isolée ; validation navigateur réussie en CI (14 scénarios, API simulée) ; livraison encore à terminer. Aucun changement de base, aucune sollicitation des formateurs. Le renouvellement de session ne doit pas démonter une sauvegarde en cours.
-La roadmap fonctionnelle suivante n'est pas démarrée. Priorité immédiate : recette réseau/session, CI, puis livraison contrôlée et clôture selon la grille habituelle.
+Correctif de fiabilité des disponibilités déployé le 15 octobre 2026, PR #12, commit 5a360939b93351dd1618b856ece3c356c32f9b74. Autorisation de fusion, production et clôture donnée par Vincent ; aucun e-mail envoyé.
 
-Publication GitHub autorisée le 15 octobre. PR de validation : https://github.com/Macor77/clementplane/pull/12. CI : https://github.com/Macor77/clementplane/actions/runs/38731155953. La production reste inchangée.
+226 tests et 14 scénarios navigateur réussis. Confirmation des sauvegardes, renouvellement de session, reprise réseau et messages explicites. Pas de synchronisation hors connexion, de migration ou de changement de droits. Production vérifiée par statut Vercel/GitHub et lecture HTTP publique ; pas d'écriture réelle dans un compte formateur.
+
+Release/tag/archive en préparation dans le lot documentaire de clôture. Voir CLOSURE.md pour références et limites. Le cas initial Safari n'est pas déclaré reproduit ou confirmé résolu par l'utilisateur.
+
+Prochaine priorité proposée : exploiter les retours réels et poursuivre la roadmap formateur ; mise à niveau des outils de test à planifier séparément. Aucun sprint suivant démarré.

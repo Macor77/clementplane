@@ -499,3 +499,7 @@ Le formateur peut Ajouter une mission depuis son accueil, Mes missions ou Mon pl
 ## V1.2 — État du 15 octobre 2026
 
 Connexion volontaire dans les paramètres formateur. Invitation non bloquante après première mission ; calendrier séparé nommé d’après le profil. Synchronisation Clementplane → Google uniquement, un événement privé par journée. Propositions/options libres, confirmations occupées ; rémunération/notes opt-in. Aucun invité automatique. Déconnexion conservant calendrier et historique, reconnexion au même compte. Partager le calendrier principal ne partage pas le calendrier dédié ; les droits avancés Google peuvent révéler les détails privés.
+
+## V1.2.1 — Correctif disponibilités (en validation, 15 octobre 2026)
+
+Les statuts ne sont confirmés qu'après réponse du serveur. Les erreurs de réseau et de session sont distinguées, avec reprise manuelle et rechargement au retour du réseau. Aucune synchronisation hors connexion. Dossier : `docs/sprints/v1.2.1/PLAN.md`.

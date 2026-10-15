@@ -115,9 +115,15 @@ export function AuthProvider({ children }) {
 
     const { data: authListener } =
       supabase.auth.onAuthStateChange(
-        (_event, nextSession) => {
+        (event, nextSession) => {
+          // Token renewal must not unmount an in-flight availability save.
+          if (event === 'TOKEN_REFRESHED') {
+            setSession(nextSession);
+            return;
+          }
           setLoading(true);
-          loadUserContext(nextSession);
+          // Do not start authenticated requests inside the SDK auth lock.
+          setTimeout(() => { if (active) loadUserContext(nextSession); }, 0);
         },
       );
 

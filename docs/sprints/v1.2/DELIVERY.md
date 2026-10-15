@@ -1,3 +1,5 @@
+> **État courant :** clôture autorisée le 15 octobre à 13:30, aucun mail de nouveautés. Complément documentaire : [PR #11](https://github.com/Macor77/clementplane/pull/11). Les mentions de refus et d’attente ci-dessous sont historiques ; l’autorisation ciblée les lève. Le diff de cette PR est limité aux documents et prouve l’équivalence applicative avec le tag v1.2.0.
+
 # Livraison et blocage de publication — 15 octobre 2026
 
 ## Lot public autorisé et réalisé

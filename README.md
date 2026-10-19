@@ -133,3 +133,7 @@ Les propositions, options et missions sont recopiées dans un calendrier Google 
 ## Correctif V1.2.1 — 15 octobre 2026
 
 Disponibilités : confirmation serveur, messages de session/réseau et reprise. Aucun changement SQL, RLS, API serveur ou traitement de données. Livraison et preuves : docs/sprints/v1.2.1/CLOSURE.md.
+
+## Correctif V1.2.2 — 19 octobre 2026
+
+Conservation des formulaires au retour sur un onglet. Diagnostic, validation et livraison : docs/sprints/form-tab-return/CLOSURE.md. Aucun changement serveur ni stockage de brouillons.

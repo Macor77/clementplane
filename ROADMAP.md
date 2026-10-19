@@ -1,3 +1,7 @@
+## Correctif en préparation — 19 octobre 2026
+
+Conservation des formulaires au retour sur un onglet : développé et testé localement, livraison restante. Dossier : `docs/sprints/form-tab-return/` (depuis la racine). Ne change pas le statut de V1.2.1.
+
 # État courant — 15 octobre 2026
 
 Google Agenda est livré et ouvert depuis le 14 octobre. La régularisation de version porte sur 1.2.0. Clôture avec réserves documentées autorisée par Vincent le 15 octobre à 13:30 ; suivis dans `docs/sprints/v1.2/CLOSURE.md`. Les sections datées V1.1 ci-dessous constituent l’historique.

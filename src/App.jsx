@@ -312,7 +312,7 @@ function AccountRouter() {
     let active = true;
 
     async function determineDestination() {
-      if (loading || !user) {
+      if (loading || !user?.id) {
         return;
       }
 
@@ -501,7 +501,7 @@ function AccountRouter() {
       active = false;
     };
   }, [
-    user,
+    user?.id,
     memberships,
     trainerProfile,
     loading,

@@ -17,4 +17,4 @@ Réutiliser le contexte déjà chargé avec succès uniquement pour SIGNED_IN/TO
 
 Hors périmètre : restauration après fermeture, rechargement complet ou éviction mémoire de l'onglet par le navigateur ; ces cas nécessiteraient un stockage de brouillons. Aucun enregistrement automatique ajouté.
 
-Retour arrière : revert des modifications frontend, aucune migration à inverser. Version de publication à fixer lors de la livraison (candidate V1.2.2).
+Retour arrière : revert des modifications frontend, aucune migration à inverser. Version publiée : V1.2.2 (technique 1.2.2).

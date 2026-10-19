@@ -1,6 +1,6 @@
-## Correctif en préparation — 19 octobre 2026
+## Correctif V1.2.2 livré — 19 octobre 2026
 
-Conservation des formulaires au retour sur un onglet : développé et testé localement, livraison restante. Dossier : `docs/sprints/form-tab-return/` (depuis la racine). Ne change pas le statut de V1.2.1.
+Conservation des formulaires au retour sur un onglet : livré en production après validation des tests, espaces OF et formateur. Dossier : `docs/sprints/form-tab-return/` (depuis la racine). Ne change pas le statut de V1.2.1.
 
 # État courant — 15 octobre 2026
 

@@ -2,7 +2,7 @@
 
 - Correction de la réinitialisation des formulaires lors du retour sur l’onglet pour le même compte connecté, espaces OF et formateur.
 - Maintien du traitement des déconnexions et changements de compte. Aucun enregistrement automatique ajouté.
-- Tests de non-régression desktop/mobile ajoutés. Publication autorisée le 19 octobre 2026 ; contrôles de livraison en cours.
+- Tests de non-régression desktop/mobile ajoutés. Livraison de production le 19 octobre 2026 ; PR #14.
 
 # V1.2.0 — Google Agenda
 

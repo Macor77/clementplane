@@ -503,3 +503,7 @@ Connexion volontaire dans les paramètres formateur. Invitation non bloquante ap
 ## V1.2.1 — Correctif disponibilités (livré le 15 octobre 2026)
 
 Les statuts ne sont confirmés qu'après réponse du serveur. Les erreurs de réseau et de session sont distinguées, avec reprise manuelle et rechargement au retour du réseau. Aucune synchronisation hors connexion. Dossier : `docs/sprints/v1.2.1/PLAN.md`.
+
+## V1.2.2 — Conservation des formulaires (19 octobre 2026)
+
+Un événement SIGNED_IN ou TOKEN_REFRESHED du même compte dont le contexte est déjà chargé ne déclenche plus de chargement global. AccountRouter dépend de user.id pour éviter de démonter le formulaire OF à chaque nouvel objet de session. Déconnexion et changement de compte conservent leur traitement. Les brouillons ne sont pas persistés après rechargement complet/fermeture. Test de régression : tests/e2e/specs/10-form-tab-return.spec.js ; dossier de livraison : docs/sprints/form-tab-return/.

@@ -32,6 +32,7 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     let active = true;
+    let loadedUserId = null;
 
     async function loadUserContext(nextSession) {
       if (!active) return;
@@ -40,6 +41,7 @@ export function AuthProvider({ children }) {
       setError(null);
 
       if (!nextSession?.user) {
+        loadedUserId = null;
         setProfile(null);
         setMemberships([]);
         setCurrentOrganizationId(null);
@@ -55,6 +57,8 @@ export function AuthProvider({ children }) {
           );
 
         if (!active) return;
+
+        loadedUserId = nextSession.user.id;
 
         setProfile(
           context?.profile || null,
@@ -116,11 +120,19 @@ export function AuthProvider({ children }) {
     const { data: authListener } =
       supabase.auth.onAuthStateChange(
         (event, nextSession) => {
-          // Token renewal must not unmount an in-flight availability save.
-          if (event === 'TOKEN_REFRESHED') {
+          if (!active) return;
+          // Supabase also emits SIGNED_IN when an existing tab regains focus.
+          // Replacing the page with a loading screen would destroy unsaved forms.
+          // Only reuse a successfully loaded context for the same account.
+          if (
+            (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') &&
+            nextSession?.user?.id &&
+            nextSession.user.id === loadedUserId
+          ) {
             setSession(nextSession);
             return;
           }
+          loadedUserId = null;
           setLoading(true);
           // Do not start authenticated requests inside the SDK auth lock.
           setTimeout(() => { if (active) loadUserContext(nextSession); }, 0);

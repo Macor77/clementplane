@@ -1,3 +1,9 @@
+# V1.2.2 — Conservation des saisies (19 octobre 2026)
+
+- Correction de la réinitialisation des formulaires lors du retour sur l’onglet pour le même compte connecté, espaces OF et formateur.
+- Maintien du traitement des déconnexions et changements de compte. Aucun enregistrement automatique ajouté.
+- Tests de non-régression desktop/mobile ajoutés. Publication autorisée le 19 octobre 2026 ; contrôles de livraison en cours.
+
 # V1.2.0 — Google Agenda
 
 Fonction ouverte le 14 octobre 2026 ; régularisation de version et documentation le 15 octobre 2026.

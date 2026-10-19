@@ -52,7 +52,7 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Run PWA browser test
-        run: npx playwright test tests/e2e/specs/05-pwa-shell.spec.js tests/e2e/specs/06-personal-missions-ui.spec.js tests/e2e/specs/08-google-calendar-ui.spec.js tests/e2e/specs/09-availability-recovery.spec.js
+        run: npx playwright test tests/e2e/specs/05-pwa-shell.spec.js tests/e2e/specs/06-personal-missions-ui.spec.js tests/e2e/specs/08-google-calendar-ui.spec.js tests/e2e/specs/09-availability-recovery.spec.js tests/e2e/specs/10-form-tab-return.spec.js
 
       - name: Keep fictitious browser acceptance evidence
         if: always()

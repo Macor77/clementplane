@@ -1,4 +1,4 @@
-# V1.2.1 — Déployé, clôture documentaire et release en cours
+# V1.2.1 — Clôturé
 
 Autorisation explicite de Vincent du 15 octobre 2026 : fusion, production et clôture, sans e-mail. Ce bilan remplace les états préparatoires.
 
@@ -14,11 +14,11 @@ Autorisation explicite de Vincent du 15 octobre 2026 : fusion, production et cl�
 | Supabase réel | Lecture des droits sur les 5 RPC de lecture/écriture : authenticated oui, anon non | Vérifié, aucune migration |
 | Déploiement | Statut Vercel success sur 5a36093 : https://vercel.com/formaplane/clementplane/4fqjxPMZdLr6mTHz4y18KSEY8Fyx | Livré |
 | Contrôle public | https://app.clementplane.fr/ HTTP 200 ; bundle index-kHp_aTNz.js contenant les messages de reprise | Vérifié, sans connexion utilisateur |
-| Version | package/lock 1.2.1 ; complément du libellé V1.2.1 dans cette clôture | Contrôle public final restant |
+| Version | package/lock 1.2.1 ; complément du libellé V1.2.1 dans cette clôture | Vérifié le 15 octobre : bundle index-BZLuKGmv.js, V1.2.1 |
 | Documentation | README, architecture, base, décisions, fonctionnel, tests, dépannage, roadmap et changelogs actualisés | Réalisé |
 | Découvrir | Conseil déplacé vers le tutoriel des disponibilités ; capture nominale conservée, futures évolutions/landing inchangées | Réalisé |
 | Communication | Aucun e-mail, conformément à la décision de Vincent | Réalisé |
-| Tag / archive / release | Workflow Release V1.2.1 sources, déclenché après Quality réussi du merge release-v1.2.1 | Vérification finale restante |
+| Tag / archive / release | Workflow Release V1.2.1 sources, déclenché après Quality réussi du merge release-v1.2.1 | Vérifié le 19 octobre : release publiée, archive téléchargée et contrôlée |
 | Bilan pilotage | RETOUR_PILOTAGE.md | Actualisé |
 
 ## Revue technique d'impact légal
@@ -37,4 +37,17 @@ Trois alertes modérées préexistantes concernent Vitest/mocker/coverage-v8 ; a
 
 Surveiller les rejets 401 et erreurs de disponibilité via les journaux existants et retours support. En cas de résultat incertain, relire le calendrier avant une nouvelle saisie. Retour arrière : revenir au frontend antérieur ; aucune migration à annuler. Ne pas désactiver les droits d'accès pour résoudre une erreur de session.
 
-Les seuls compléments applicatifs de clôture sont le texte d'aide et le libellé de version, sans modification du moteur testé. La release vérifie l'archive complète depuis son commit exact, sans secrets/caches ; les sources incluent ce dossier. Le statut final sera consigné après téléchargement et contrôle du tag.
+Les seuls compléments applicatifs de clôture sont le texte d'aide et le libellé de version, sans modification du moteur testé. La release vérifie l'archive complète depuis son commit exact, sans secrets/caches ; les sources incluent ce dossier. Le téléchargement et le contrôle final ont été réalisés le 19 octobre 2026.
+
+## Clôture finale — 19 octobre 2026
+
+Verdict : **Clôturé** dans le périmètre de validation décrit ci-dessus.
+
+- Commit final applicatif et tag v1.2.1 : 49d7e9f525ccef50f3d666f8febb7e4a6c3c5039 ; PR #13 fusionnée.
+- Quality main 38751886544 : succès. Release 38752123283 : succès le 15 octobre, y compris téléchargement et vérification de la pièce jointe.
+- Déploiement final Vercel : https://vercel.com/formaplane/clementplane/2e375R9JDLV2F6nhuu1vueAYvYAD ; contrôle public du 15 octobre : index-BZLuKGmv.js, V1.2.1 et messages de reprise présents ; connexion, disponibilités et manifeste HTTP 200.
+- Release : https://github.com/Macor77/clementplane/releases/tag/v1.2.1
+- Archive téléchargée de nouveau le 19 octobre : Clementplane_v1.2.1_Sources.zip, 517 entrées, intégrité ZIP correcte, SOURCE_COMMIT.txt conforme au tag et version 1.2.1.
+- SHA256 conforme à la pièce jointe : 0f99d368b19150539d785188339de5e742aa7555aef5bc039dfdf970e6b78952.
+
+La présente finalisation modifie uniquement CLOSURE.md et RETOUR_PILOTAGE.md, depuis l'arbre du commit tagué : code applicatif strictement identique. Les preuves de recette restent donc applicables. Le tag et son archive restent inchangés et contiennent le bilan préparatoire daté ; le bilan définitif est celui de main. Aucun nouveau déploiement applicatif ni changement de données nécessaire. Aucun e-mail envoyé. La confirmation d'Alexis reste un suivi support, sans prétendre avoir reproduit son incident Safari.

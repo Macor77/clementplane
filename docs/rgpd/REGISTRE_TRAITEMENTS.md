@@ -20,3 +20,8 @@ RLS et contrôles d’autorisation, séparation des rôles, admin plateforme res
 
 ## V1.2 — Google Agenda, ouverture du 14 octobre 2026
 Transmission facultative des informations de mission accessibles au formateur vers son compte Google choisi ; identification Google sub/e-mail, token d'accès durable chiffré, identifiant calendrier et correspondances événements. Finalité : synchronisation demandée ; base contractuelle du service optionnel à valider dans la revue de publication, autorisation OAuth et choix distincts rémunération/notes. Accès ouvert après autorisation du titulaire. Jeton supprimé à la déconnexion ; correspondances conservées pour reconnexion jusqu'à suppression du compte. Google peut traiter hors EEE selon le compte/conditions applicables : valider la qualification juridique et le cadre exact avant ouverture publique. Aucun élargissement aux notes internes OF, aucun marketing ou entraînement de modèles sur les données Google.
+
+
+## V1.2.3 — 22 octobre 2026
+
+Les e-mails opérationnels incluent mission_response_outbox : identifiant relation, statut/date de réponse, commentaire temporaire, tentatives et erreur technique générique ; finalité fiabilité des notifications, mêmes bases et prestataires. États terminaux conservés 30 jours maximum lorsque le worker fonctionne.

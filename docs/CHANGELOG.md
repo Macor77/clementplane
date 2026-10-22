@@ -1,3 +1,7 @@
+# V1.2.3 — 22 octobre 2026
+
+Notifications de réponse aux missions : déclenchement serveur pour les deux parcours, reprises bornées et protection contre les doublons. Dossier de livraison : docs/sprints/v1.2.3/.
+
 # V1.2.2 — Conservation des saisies (19 octobre 2026)
 
 - Correction de la réinitialisation des formulaires lors du retour sur l’onglet pour le même compte connecté, espaces OF et formateur.

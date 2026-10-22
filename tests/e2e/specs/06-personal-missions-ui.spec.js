@@ -36,7 +36,10 @@ async function fakeTrainerApi(page) {
 for (const viewport of [{width:1440,height:1000},{width:390,height:844}]) {
   test(`personal mission lifecycle ${viewport.width}px (API simulated)`,async({page})=>{
     await page.setViewportSize(viewport);const api=await fakeTrainerApi(page);
-    const date=new Date();const day=`${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-20`;
+    // Keep the fixture's 20th/21st in the future even when CI runs after the 21st.
+    const date=new Date();
+    await page.clock.setFixedTime(new Date(date.getFullYear(),date.getMonth(),10,12));
+    const day=`${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-20`;
     await page.goto('/formateur/missions');
     await page.getByRole('link',{name:'Ajouter une mission',exact:true}).click();
     await page.getByLabel('Client final *').fill('Entreprise cliente fictive');

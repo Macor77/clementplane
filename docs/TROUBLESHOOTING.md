@@ -399,3 +399,8 @@ Google en attente : consulter la dernière synchronisation, puis Relancer ; les 
 ## V1.2.1 — Correctif disponibilités (livré le 15 octobre 2026)
 
 Les statuts ne sont confirmés qu'après réponse du serveur. Les erreurs de réseau et de session sont distinguées, avec reprise manuelle et rechargement au retour du réseau. Aucune synchronisation hors connexion. Dossier : `docs/sprints/v1.2.1/PLAN.md`.
+
+
+## V1.2.3 — 22 octobre 2026
+
+Pour une réponse sans mail, contrôler mission_response_outbox et email_logs, puis le scheduler clementplane-mission-responses. Ne pas demander au formateur de répondre à nouveau. Ne pas rejouer un état uncertain sans preuve de non-envoi. Procédure : docs/sprints/v1.2.3/OPERATIONS.md.

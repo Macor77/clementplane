@@ -379,3 +379,8 @@ Tables calendar_connections, calendar_events, calendar_oauth_states : RLS activ�
 ## Correctif V1.2.1 — 15 octobre 2026
 
 Disponibilités : confirmation serveur, messages de session/réseau et reprise. Aucun changement SQL, RLS, API serveur ou traitement de données. Livraison et preuves : docs/sprints/v1.2.1/CLOSURE.md.
+
+
+## V1.2.3 — 22 octobre 2026
+
+mission_response_outbox (RLS, service_role uniquement) : unicité relation/statut/repondu_le, snapshot du commentaire, état, tentatives et verrou. RPC invoker service-only claim_mission_response, start_mission_response_send, finish_mission_response. Trigger interne notification_private.enqueue_response. Cascade à la suppression de relation, purge des jobs terminaux après 30 jours. Pas de backfill.

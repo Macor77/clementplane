@@ -507,3 +507,8 @@ Les statuts ne sont confirmés qu'après réponse du serveur. Les erreurs de ré
 ## V1.2.2 — Conservation des formulaires (19 octobre 2026)
 
 Un événement SIGNED_IN ou TOKEN_REFRESHED du même compte dont le contexte est déjà chargé ne déclenche plus de chargement global. AccountRouter dépend de user.id pour éviter de démonter le formulaire OF à chaque nouvel objet de session. Déconnexion et changement de compte conservent leur traitement. Les brouillons ne sont pas persistés après rechargement complet/fermeture. Test de régression : tests/e2e/specs/10-form-tab-return.spec.js ; dossier de livraison : docs/sprints/form-tab-return/.
+
+
+## V1.2.3 — 22 octobre 2026
+
+Les acceptations/refus par lien public et espace formateur créent la notification OF dans la même transaction que la réponse. Envoi serveur chaque minute, reprises bornées pour erreurs récupérables. Une erreur d'envoi ne modifie pas la réponse. L'acceptation nécessite toujours l'affectation par l'OF.

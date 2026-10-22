@@ -271,3 +271,8 @@ Calendrier séparé « Prénom Nom — Clementplane » confirmé par Vincent ; p
 ## Correctif V1.2.1 — 15 octobre 2026
 
 Disponibilités : confirmation serveur, messages de session/réseau et reprise. Aucun changement SQL, RLS, API serveur ou traitement de données. Livraison et preuves : docs/sprints/v1.2.1/CLOSURE.md.
+
+
+## V1.2.3 — 22 octobre 2026
+
+La notification de réponse doit être enregistrée transactionnellement côté serveur pour les deux parcours. En cas de doute après soumission fournisseur, vérifier avant renvoi pour éviter les doublons. Pas de rattrapage historique ni changement de la règle accepter/affecter.

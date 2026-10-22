@@ -1,4 +1,4 @@
-export const FORMPLANE_VERSION = 'V1.2.2';
+export const FORMPLANE_VERSION = 'V1.2.3';
 
 export const discoverFeatures = [
   {

@@ -16,9 +16,9 @@ Elle centralise notamment :
 
 ## Version actuelle
 
-**V1.2 — Google Agenda (ouverte le 14 octobre 2026)**
+**V1.2.3 — Notifications de réponse aux missions (22 octobre 2026)**
 
-Connexion facultative au calendrier séparé « Prénom Nom — Clementplane ». Version technique 1.2.0 ; [état de clôture](docs/sprints/v1.2/CLOSURE.md).
+Connexion facultative au calendrier séparé « Prénom Nom — Clementplane ». Version technique 1.2.3 ; [état de livraison](docs/sprints/v1.2.3/CLOSURE.md).
 
 Clementplane peut désormais être installé sur Android et iPhone/iPad et lancé depuis l’écran d’accueil comme une application.
 

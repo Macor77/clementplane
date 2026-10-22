@@ -14,3 +14,8 @@ Canal : contact@clementplane.fr. Responsable opérationnel : direction Alter Pr�
 Inclure `trainer_personal_missions` dans les demandes d’accès, de portabilité, de rectification et d’effacement, en filtrant par `owner_user_id` vérifié. Ne jamais transmettre ces lignes à un OF. La suppression définitive du compte Auth entraîne leur suppression en cascade ; la simple annulation d’une mission conserve sa trace. Les droits restent traités par la procédure existante, aucun export utilisateur automatique ajouté dans ce sprint.
 
 V1.2 ouverte le 14 octobre 2026 : inclure calendar_connections/calendar_events dans l'inventaire utilisateur, en excluant tout secret OAuth de l'export. auth.users cascade efface les enregistrements locaux et arrête les traitements. Avant suppression de compte, proposer la déconnexion Google afin de révoquer l'autorisation. Si compte déjà supprimé, signaler le retrait possible depuis le compte Google. Aucun effacement automatique du calendrier/historique Google ; droits à exercer sur ces copies via le compte du titulaire. Les événements Google peuvent encore contenir des données sur des contacts tiers : inclure ces copies dans l'analyse d'une demande d'effacement.
+
+
+## V1.2.3 — 22 octobre 2026
+
+Inclure mission_response_outbox, reliée par relation_id à mission_formateurs, dans l'inventaire pertinent. Filtrer par la personne/organisation vérifiée. La suppression de relation efface la file en cascade ; pour une demande de limitation, suspendre les travaux concernés avant envoi. Ne pas exposer les verrous techniques ou données d'autres OF.

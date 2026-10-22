@@ -677,3 +677,8 @@ Les statuts ne sont confirmés qu'après réponse du serveur. Les erreurs de ré
 ## V1.2.2 — Conservation des formulaires (19 octobre 2026)
 
 Un événement SIGNED_IN ou TOKEN_REFRESHED du même compte dont le contexte est déjà chargé ne déclenche plus de chargement global. AccountRouter dépend de user.id pour éviter de démonter le formulaire OF à chaque nouvel objet de session. Déconnexion et changement de compte conservent leur traitement. Les brouillons ne sont pas persistés après rechargement complet/fermeture. Test de régression : tests/e2e/specs/10-form-tab-return.spec.js ; dossier de livraison : docs/sprints/form-tab-return/.
+
+
+## V1.2.3 — 22 octobre 2026
+
+Trigger mission_formateurs → mission_response_outbox → cron → notify-mission-response → Brevo/email_logs. Verrou SKIP LOCKED, jeton et fence sending ; résultats ambigus isolés et réconciliés via les webhooks. Endpoint historique public désormais sans effet d'envoi ; worker authentifié. Voir docs/sprints/v1.2.3/OPERATIONS.md.

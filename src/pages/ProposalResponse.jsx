@@ -3,7 +3,6 @@ import { Link, useParams } from 'react-router-dom';
 
 import {
   getPublicMissionProposal,
-  notifyOrganizationOfMissionResponse,
   respondToMissionProposal,
 } from '../services/proposalService';
 
@@ -64,7 +63,7 @@ export default function ProposalResponse() {
 
       // La réponse métier est prioritaire : si la notification e-mail à l'OF
       // échoue, on ne remet jamais en cause l'acceptation/refus du formateur.
-      await notifyOrganizationOfMissionResponse(token, response);
+      // The database queues the notification atomically with the reply.
 
       const refreshed = await getPublicMissionProposal(token);
       setProposal(refreshed);

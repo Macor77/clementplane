@@ -38,3 +38,7 @@ Action minimale : Vincent autorise explicitement la publication du correctif dan
 ## Autorisation reçue — 22 octobre 2026
 
 Vincent a explicitement autorisé la publication du correctif dans le dépôt public Macor77/clementplane et sa mise en production après validation des contrôles restants. Le blocage précédent est levé ; reprise de la livraison.
+
+## Correction du contrôle navigateur
+
+La première CI PR (39737144757) passe les 245 tests, SQL, audit et build, puis échoue sur 2 des 18 tests navigateur : les missions fictives des 20/21 du mois sont passées au 22 octobre et ne figurent plus dans la prochaine mission du tableau de bord. Horloge navigateur fixée au 10 du même mois dans cette recette ; les assertions métier sont conservées. Aucun changement applicatif associé. Nouvelle CI requise.

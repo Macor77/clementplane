@@ -1,6 +1,6 @@
 # État courant — V1.2.3, 22 octobre 2026
 
-Correctif des notifications de réponse : développement réalisé, validation/livraison en cours. État faisant foi : docs/sprints/v1.2.3/CLOSURE.md. Les sections datées précédentes restent historiques.
+Correctif des notifications de réponse livré et clôturé : version 1.2.3 en production, CI complète réussie, release et archive vérifiées. État faisant foi : docs/sprints/v1.2.3/CLOSURE.md. Les sections datées précédentes restent historiques.
 
 ## Correctif V1.2.2 livré — 19 octobre 2026
 

@@ -1,6 +1,6 @@
 # V1.2.3 — 22 octobre 2026
 
-Notifications de réponse aux missions : déclenchement serveur pour les deux parcours, reprises bornées et protection contre les doublons. Dossier de livraison : docs/sprints/v1.2.3/.
+Notifications de réponse aux missions : déclenchement serveur pour les deux parcours, reprises bornées et protection contre les doublons. Livré en production le 22 octobre 2026 (PR #15), release v1.2.3 et archive vérifiées. Dossier de livraison : docs/sprints/v1.2.3/.
 
 # V1.2.2 — Conservation des saisies (19 octobre 2026)
 

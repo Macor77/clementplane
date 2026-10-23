@@ -1,6 +1,6 @@
-# Préparation V1.2.4 — 23 octobre 2026
+# V1.2.4 livrée — 23 octobre 2026
 
-Confirmation manuelle des accords après modification : développée et testée localement ; publication en attente, non livrée. Dossier `docs/sprints/manual-revalidation/`. La production reste V1.2.3.
+Confirmation manuelle des accords après modification livrée en V1.2.4. PR #16 fusionnée, migration appliquée, CI et release/archive vérifiées. État de clôture : `docs/sprints/manual-revalidation/CLOSURE.md`. Les sections précédentes datées constituent l’historique.
 
 # État courant — V1.2.3, 22 octobre 2026
 

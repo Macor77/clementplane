@@ -147,3 +147,6 @@ Un événement SIGNED_IN ou TOKEN_REFRESHED du même compte dont le contexte est
 ## V1.2.3 — 22 octobre 2026
 
 tests/notifications : RPC réelles public/connecté dans PostgreSQL embarqué, accepter/refuser, rollback, unicité, droits, verrous, reprises, réconciliation ; transport Brevo simulé, modèles de mails et destinataire. Dry-run authentifié du worker déployé sans mail ni écriture métier. Ces contrôles ne prouvent pas la livraison d'un mail réel.
+
+## V1.2.4 — Confirmation manuelle de revalidation
+L’OF peut enregistrer un accord reçu hors Clementplane, même après envoi d’un e-mail. RPC `confirm_mission_change_for_organization` : vérification OF actif, réponse ciblée en attente, journal auteur/canal, conservation de l’affectation. Dossier et preuves : `docs/sprints/manual-revalidation/`. Tests : `node scripts/testing/manual-revalidation-sql.mjs`, scénario navigateur `11-manual-revalidation.spec.js`.

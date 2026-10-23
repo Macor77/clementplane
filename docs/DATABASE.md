@@ -384,3 +384,6 @@ Disponibilités : confirmation serveur, messages de session/réseau et reprise. 
 ## V1.2.3 — 22 octobre 2026
 
 mission_response_outbox (RLS, service_role uniquement) : unicité relation/statut/repondu_le, snapshot du commentaire, état, tentatives et verrou. RPC invoker service-only claim_mission_response, start_mission_response_send, finish_mission_response. Trigger interne notification_private.enqueue_response. Cascade à la suppression de relation, purge des jobs terminaux après 30 jours. Pas de backfill.
+
+## V1.2.4 — Confirmation manuelle de revalidation
+L’OF peut enregistrer un accord reçu hors Clementplane, même après envoi d’un e-mail. RPC `confirm_mission_change_for_organization` : vérification OF actif, réponse ciblée en attente, journal auteur/canal, conservation de l’affectation. Dossier et preuves : `docs/sprints/manual-revalidation/`. Tests : `node scripts/testing/manual-revalidation-sql.mjs`, scénario navigateur `11-manual-revalidation.spec.js`.

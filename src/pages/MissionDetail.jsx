@@ -26,6 +26,7 @@ import {
 
 import { getMissionRecommendations } from '../services/missionMatchingService';
 import { prepareMissionProposal } from '../services/proposalService';
+import ManualMissionRevalidation from '../components/ManualMissionRevalidation';
 import EmailCopyToSenderOption from '../components/EmailCopyToSenderOption';
 import {
   sendMissionAssignmentConfirmation,
@@ -1619,6 +1620,7 @@ export default function MissionDetail() {
             setCancelMissionOpen(true);
           }}
           pendingMissionChange={pendingMissionChange}
+          onChangeConfirmed={loadMission}
         />
 
         <main style={styles.mainColumn}>
@@ -1750,6 +1752,7 @@ function MissionInformation({
   missionId,
   onDelete,
   onCancel,
+  onChangeConfirmed,
   pendingMissionChange,
 }) {
   const missionDates = [
@@ -1983,9 +1986,12 @@ function MissionInformation({
           </div>
           <div style={styles.pendingChangeResponses}>
             {(pendingMissionChange.trainer_responses || []).map((item) => (
-              <span key={item.mission_formateur_id}>
-                {item.trainer_name || 'Formateur'} : {formatChangeResponseStatus(item.response_status)}
-              </span>
+              <div key={item.mission_formateur_id} style={{display:'grid',gap:8,width:'100%'}}>
+                <span>{item.trainer_name || 'Formateur'} : {formatChangeResponseStatus(item.response_status)}</span>
+                {item.response_status === 'pending' && mission.statut !== 'annulee' ? (
+                  <ManualMissionRevalidation requestId={pendingMissionChange.request_id} trainer={item} onConfirmed={onChangeConfirmed} />
+                ) : null}
+              </div>
             ))}
           </div>
         </div>
@@ -2181,7 +2187,7 @@ function getMissionSituation({
         : 'Acceptation à revalider',
       background: '#fff7ed',
       color: '#c2410c',
-      noticeTitle: 'Action requise : attendre la revalidation',
+      noticeTitle: 'Revalidation ou accord reçu à confirmer',
       notice: previousAffected
         ? `${previousAffected.trainer_name || 'Le formateur'} était affecté avant la modification. Son affectation doit maintenant être reconfirmée sur les nouvelles conditions.`
         : `${trainerName} doit accepter les nouvelles conditions avant de pouvoir être affecté.`,
@@ -2942,7 +2948,7 @@ function getHistoryActionLabel(
     change_requested:
       'Modification des conditions proposée',
     change_accepted:
-      'Modification acceptée par le formateur',
+      item.actor_type === 'organization' ? 'Accord du formateur confirmé par l’OF' : 'Modification acceptée par le formateur',
     change_refused:
       'Modification refusée par le formateur',
     change_applied:
@@ -3019,14 +3025,14 @@ function getHistoryDetail(
   }
 
   const channelLabels = {
-    email: 'E-mail Clementplane',
+    email: item.action === 'change_accepted' ? 'E-mail' : 'E-mail Clementplane',
     sms: 'SMS',
     whatsapp: 'WhatsApp',
     phone: 'Appel',
     other: 'Autre',
   };
 
-  if (item.action === 'proposal_contact' && item.details?.channel) {
+  if (['proposal_contact', 'change_accepted'].includes(item.action) && item.details?.channel) {
     details.push(
       `Canal : ${channelLabels[item.details.channel] || item.details.channel}`,
     );

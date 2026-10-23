@@ -512,3 +512,6 @@ Un événement SIGNED_IN ou TOKEN_REFRESHED du même compte dont le contexte est
 ## V1.2.3 — 22 octobre 2026
 
 Les acceptations/refus par lien public et espace formateur créent la notification OF dans la même transaction que la réponse. Envoi serveur chaque minute, reprises bornées pour erreurs récupérables. Une erreur d'envoi ne modifie pas la réponse. L'acceptation nécessite toujours l'affectation par l'OF.
+
+## V1.2.4 — Confirmation manuelle de revalidation
+L’OF peut enregistrer un accord reçu hors Clementplane, même après envoi d’un e-mail. RPC `confirm_mission_change_for_organization` : vérification OF actif, réponse ciblée en attente, journal auteur/canal, conservation de l’affectation. Dossier et preuves : `docs/sprints/manual-revalidation/`. Tests : `node scripts/testing/manual-revalidation-sql.mjs`, scénario navigateur `11-manual-revalidation.spec.js`.

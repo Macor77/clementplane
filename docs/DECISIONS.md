@@ -276,3 +276,6 @@ Disponibilités : confirmation serveur, messages de session/réseau et reprise. 
 ## V1.2.3 — 22 octobre 2026
 
 La notification de réponse doit être enregistrée transactionnellement côté serveur pour les deux parcours. En cas de doute après soumission fournisseur, vérifier avant renvoi pour éviter les doublons. Pas de rattrapage historique ni changement de la règle accepter/affecter.
+
+## V1.2.4 — Confirmation manuelle de revalidation
+L’OF peut enregistrer un accord reçu hors Clementplane, même après envoi d’un e-mail. RPC `confirm_mission_change_for_organization` : vérification OF actif, réponse ciblée en attente, journal auteur/canal, conservation de l’affectation. Dossier et preuves : `docs/sprints/manual-revalidation/`. Tests : `node scripts/testing/manual-revalidation-sql.mjs`, scénario navigateur `11-manual-revalidation.spec.js`.

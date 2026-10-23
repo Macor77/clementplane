@@ -1596,3 +1596,24 @@ function cleanArray(value) {
     .map((item) => item.trim())
     .filter(Boolean);
 }
+
+/** Enregistre l'accord reçu hors application, avec l'identité réelle de l'OF. */
+export async function confirmMissionChangeForOrganization({ requestId, trainerId, channel, note = '' }) {
+  const { data, error } = await supabase.rpc('confirm_mission_change_for_organization', {
+    p_request_id: requestId, p_trainer_id: trainerId, p_channel: channel, p_note: note.trim(),
+  });
+  if (error) {
+    const messages = {
+      AUTH_REQUIRED: 'Votre session a expiré. Reconnectez-vous.',
+      FORBIDDEN: 'Vous n’avez pas accès à cette mission.',
+      CHANGE_NOT_FOUND: 'Cette demande est introuvable. Rechargez la fiche mission.',
+      CHANGE_ALREADY_RESPONDED: 'Cette demande a déjà été traitée. Rechargez la fiche mission.',
+      MISSION_NO_LONGER_AVAILABLE: 'La mission ou l’engagement du formateur a changé. Rechargez la fiche mission.',
+      INVALID_CHANNEL: 'Sélectionnez le moyen par lequel vous avez reçu l’accord.',
+      CONTACT_NOTE_REQUIRED: 'Précisez le moyen de contact utilisé.',
+      CONTACT_NOTE_TOO_LONG: 'Le commentaire est limité à 2 000 caractères.',
+    };
+    throw new Error(messages[error.message] || 'Impossible de confirmer l’accord. Vérifiez votre connexion puis réessayez.');
+  }
+  return data;
+}

@@ -67,12 +67,12 @@ export default function MissionChangeResponse() {
         <div style={styles.brand}>Clementplane</div>
         <p style={styles.eyebrow}>MODIFICATION DE MISSION</p>
         <h1 style={styles.title}>
-          {affected ? 'Votre validation est requise' : 'De nouvelles conditions sont à valider'}
+          {!pending ? 'Demande déjà traitée' : affected ? 'Votre validation est requise' : 'De nouvelles conditions sont à valider'}
         </h1>
         <p style={styles.lead}>
           <strong>{change.organization_name}</strong> a modifié certaines conditions de la mission
           {' '}<strong>{change.mission_title || 'Mission de formation'}</strong>.
-          Consultez uniquement les éléments qui ont changé puis indiquez si vous maintenez votre accord.
+          {pending ? 'Consultez les éléments qui ont changé puis indiquez si vous maintenez votre accord.' : 'Aucune nouvelle réponse n’est nécessaire.'}
         </p>
 
         <MissionChangeDiff change={change} />

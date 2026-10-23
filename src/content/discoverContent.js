@@ -1,4 +1,4 @@
-export const FORMPLANE_VERSION = 'V1.2.3';
+export const FORMPLANE_VERSION = 'V1.2.4';
 
 export const discoverFeatures = [
   {
@@ -133,6 +133,7 @@ export const trainerTutorials = [
 ];
 
 export const faqItems = [
+  { question: 'Puis-je confirmer moi-même un accord après modification d’une mission ?', answer: 'Oui. Dans la fiche mission, cliquez sur « Confirmer l’accord du formateur » pour la réponse en attente. Indiquez comment vous avez reçu son accord et confirmez qu’il porte sur les nouvelles conditions. Cela fonctionne même si un e-mail a déjà été envoyé. L’affectation est conservée et l’historique précise que l’OF a enregistré cet accord. Prévenir le formateur ne suffit pas : son accord doit avoir été obtenu.', audiences: ['organization'], category: 'Missions' },
   { question: 'Partager mon agenda principal partage-t-il aussi Clementplane ?', answer: 'Non. Le calendrier « Prénom Nom — Clementplane » a ses propres réglages de partage Google. Pour communiquer uniquement vos créneaux occupés, choisissez un partage en disponibilités seules. Les droits de modification ou de gestion peuvent donner accès aux détails des événements privés.', audiences: ['trainer'], category: 'Agenda' },
   { question: 'Que se passe-t-il si je déconnecte Google ?', answer: 'La synchronisation s’arrête. Le calendrier et les événements déjà copiés restent dans Google mais ne sont plus actualisés. Reconnectez le même compte pour reprendre ; supprimez vous-même les copies dans Google si vous ne souhaitez plus les conserver.', audiences: ['trainer'], category: 'Agenda' },
   { question: 'Mes missions peuvent-elles apparaître dans Google Agenda ?', answer: 'Oui. Dans les paramètres de votre espace formateur, ouvrez Google Agenda, puis Connecter Google. Choisissez votre compte et autorisez la connexion. Clementplane crée un calendrier séparé « Prénom Nom — Clementplane ». Attendez la dernière synchronisation réussie, puis ouvrez le calendrier. Les modifications se font dans Clementplane. La rémunération et les notes privées sont exclues par défaut. Sur mobile, terminez la connexion dans le même navigateur.', audiences: ['trainer'], category: 'Agenda' },

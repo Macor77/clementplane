@@ -1,3 +1,7 @@
+# V1.2.4 — 23 octobre 2026
+
+Confirmation par l’OF d’un accord reçu hors application après modification de mission, quel que soit le canal initial. Historique explicite et protection contre une seconde réponse.
+
 # V1.2.3 — 22 octobre 2026
 
 Notifications de réponse aux missions : déclenchement serveur pour les deux parcours, reprises bornées et protection contre les doublons. Livré en production le 22 octobre 2026 (PR #15), release v1.2.3 et archive vérifiées. Dossier de livraison : docs/sprints/v1.2.3/.

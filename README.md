@@ -137,3 +137,6 @@ Disponibilités : confirmation serveur, messages de session/réseau et reprise. 
 ## Correctif V1.2.2 — 19 octobre 2026
 
 Conservation des formulaires au retour sur un onglet. Diagnostic, validation et livraison : docs/sprints/form-tab-return/CLOSURE.md. Aucun changement serveur ni stockage de brouillons.
+
+## V1.2.4 — Confirmation manuelle de revalidation
+L’OF peut enregistrer un accord reçu hors Clementplane, même après envoi d’un e-mail. RPC `confirm_mission_change_for_organization` : vérification OF actif, réponse ciblée en attente, journal auteur/canal, conservation de l’affectation. Dossier et preuves : `docs/sprints/manual-revalidation/`. Tests : `node scripts/testing/manual-revalidation-sql.mjs`, scénario navigateur `11-manual-revalidation.spec.js`.

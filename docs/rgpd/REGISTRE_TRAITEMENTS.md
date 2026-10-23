@@ -25,3 +25,6 @@ Transmission facultative des informations de mission accessibles au formateur ve
 ## V1.2.3 — 22 octobre 2026
 
 Les e-mails opérationnels incluent mission_response_outbox : identifiant relation, statut/date de réponse, commentaire temporaire, tentatives et erreur technique générique ; finalité fiabilité des notifications, mêmes bases et prestataires. États terminaux conservés 30 jours maximum lorsque le worker fonctionne.
+
+## V1.2.4 — Accord reçu hors application
+Le suivi des missions peut contenir la confirmation d’un accord par l’OF : utilisateur auteur, horodatage, canal déclaré et commentaire facultatif. Même finalité/destinataires/conservation que l’historique métier ; aucun contenu de SMS ou pièce justificative collecté automatiquement.

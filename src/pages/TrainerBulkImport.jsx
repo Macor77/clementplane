@@ -20,7 +20,7 @@ import {
 } from '../services/emailService';
 
 const MODEL_URL =
-  '/templates/Clementplane_Modele_Import_Formateurs_v1_1.xlsx';
+  '/templates/Formaplane_Modele_Import_Formateurs_v1_1.xlsx';
 
 function normalizeCatalogKey(value) {
   return String(value || '')

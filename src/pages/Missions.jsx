@@ -7,7 +7,6 @@ import {
 
 import {
   Link,
-  useNavigate,
 } from 'react-router-dom';
 
 import {
@@ -50,7 +49,6 @@ const PERIOD_FILTERS = [
 ];
 
 export default function Missions() {
-  const navigate = useNavigate();
 
   const [missions, setMissions] =
     useState([]);
@@ -494,11 +492,6 @@ export default function Missions() {
                         mission={
                           mission
                         }
-                        onOpen={() =>
-                          navigate(
-                            `/missions/${mission.id}`,
-                          )
-                        }
                         onDelete={
                           handleDelete
                         }
@@ -517,7 +510,6 @@ export default function Missions() {
 
 function MissionRow({
   mission,
-  onOpen,
 }) {
   const state =
     getMissionBusinessState(
@@ -536,10 +528,10 @@ function MissionRow({
     );
 
   return (
-    <article
+    <Link
+      to={`/missions/${mission.id}`}
       className="of-mission-row"
-      onClick={onOpen}
-      style={styles.row}
+      style={{ ...styles.row, color: 'inherit', textDecoration: 'none' }}
     >
       <div style={styles.dateColumn}>
         <strong>
@@ -656,20 +648,11 @@ function MissionRow({
           styles.rowActions
         }
       >
-        <button
-          type="button"
-          onClick={(event) => {
-            event.stopPropagation();
-            onOpen();
-          }}
-          style={styles.openButton}
-        >
-          Ouvrir
-        </button>
+        <span style={styles.openButton}>Ouvrir</span>
 
 
       </div>
-    </article>
+    </Link>
   );
 }
 

@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import {
   useCallback,
   useEffect,
@@ -1673,23 +1674,19 @@ export default function FormateurView() {
         }}
       >
 
-        <button
-          onClick={() =>
-            navigate(
-              `/formateur/edit/${trainer.id}`,
-            )
-          }
+        <Link
+          className="button"
+          to={`/formateur/edit/${trainer.id}`}
         >
           Modifier
-        </button>
+        </Link>
 
-        <button
-          onClick={() =>
-            navigate('/listing')
-          }
+        <Link
+          className="button"
+          to="/listing"
         >
           Retour
-        </button>
+        </Link>
 
       </div>
 

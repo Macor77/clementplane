@@ -1,3 +1,4 @@
+import PlanningMissionLink from '../../components/planning/PlanningMissionLink';
 import { countUniqueMissions, missionHref } from '../../utils/personalMissions';
 import {
   useEffect,
@@ -713,8 +714,7 @@ export default function TrainerPlanning() {
 
 
                     return (
-                      <button
-                        type="button"
+                      <div
                         key={iso}
                         className={
                           classes
@@ -724,9 +724,9 @@ export default function TrainerPlanning() {
                         }}
                       >
 
-                        <span className="trainer-planning-day__number">
+                        <button type="button" className="trainer-planning-day__number" aria-label={`Voir les missions du ${formatLongDate(iso)}`} disabled={!dayItems.length}>
                           {date.getDate()}
-                        </span>
+                        </button>
 
 
                         <div className="trainer-planning-day__items">
@@ -738,7 +738,9 @@ export default function TrainerPlanning() {
                             )
                             .map(
                               (item) => (
-                                <div
+                                <PlanningMissionLink
+                                  to={missionHref(item)}
+                                  onPreview={() => setSelectedDay(iso)}
                                   key={
                                     item.id
                                   }
@@ -771,7 +773,7 @@ export default function TrainerPlanning() {
                                     </span>
                                   ) : null}
 
-                                </div>
+                                </PlanningMissionLink>
                               ),
                             )}
 
@@ -793,7 +795,7 @@ export default function TrainerPlanning() {
 
                         </div>
 
-                      </button>
+                      </div>
                     );
                   },
                 )}

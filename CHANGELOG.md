@@ -1,3 +1,11 @@
+
+## 27 octobre 2026 — Ouverture des pages dans un nouvel onglet (préparée, non publiée)
+
+- Navigation native sur les missions OF, les fiches formateurs, recherche, édition et accès de liste : clic droit, Ctrl/Cmd-clic et molette.
+- Plannings OF et formateur : fenêtre journée au clic simple, lien direct de la mission pour les autres gestes.
+- Compte double rôle : une adresse OF explicite ne dépend plus de l’espace mémorisé dans le nouvel onglet ; onboarding OF seul conservé.
+- Recette et état : `docs/sprints/new-tab-navigation/VALIDATION.md`. Pas de migration serveur.
+
 # V1.2.4 — 23 octobre 2026
 
 Confirmation par l’OF d’un accord reçu hors application après modification de mission, quel que soit le canal initial. Historique explicite et protection contre une seconde réponse.

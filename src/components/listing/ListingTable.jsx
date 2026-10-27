@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import SortHeader from './SortHeader';
 import PlanningHeader from './planning/PlanningHeader';
 import PlanningLegend from './planning/PlanningLegend';
@@ -17,7 +18,6 @@ export default function ListingTable(
     sort,
     toggleSort,
     renderList,
-    navigate,
     handleDelete,
     handleInvite,
     inviteBusyId,
@@ -200,18 +200,13 @@ export default function ListingTable(
                     <td>
                       <div className="trainer-cell">
 
-                        <button
-                          type="button"
+                        <Link
                           className="trainer-cell__name"
-                          onClick={() =>
-                            navigate(
-                              `/formateur/view/${formateur.id}`,
-                            )
-                          }
+                          to={`/formateur/view/${formateur.id}`}
                         >
                           {fullName ||
                             '—'}
-                        </button>
+                        </Link>
 
 
                         {competences ? (
@@ -256,28 +251,18 @@ export default function ListingTable(
 
                         <div className="trainer-cell__actions">
 
-                          <button
-                            type="button"
-                            onClick={() =>
-                              navigate(
-                                `/formateur/view/${formateur.id}`,
-                              )
-                            }
+                          <Link
+                            to={`/formateur/view/${formateur.id}`}
                           >
                             Voir
-                          </button>
+                          </Link>
 
 
-                          <button
-                            type="button"
-                            onClick={() =>
-                              navigate(
-                                `/formateur/edit/${formateur.id}`,
-                              )
-                            }
+                          <Link
+                            to={`/formateur/edit/${formateur.id}`}
                           >
                             Modifier
-                          </button>
+                          </Link>
 
 
                           {!formateur.claimed && formateur.email ? (

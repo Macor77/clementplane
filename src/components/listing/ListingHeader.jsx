@@ -1,8 +1,5 @@
-export default function ListingHeader({
-  onAdd,
-  onSearch,
-  onImport,
-}) {
+import { Link } from 'react-router-dom';
+export default function ListingHeader() {
   return (
     <div className="listing-page__header">
       <div>
@@ -17,29 +14,26 @@ export default function ListingHeader({
           alignItems: 'center',
         }}
       >
-        <button
-          type="button"
+        <Link
           className="button button--compact"
-          onClick={onSearch}
+          to="/formateurs/recherche"
         >
           Rechercher un formateur
-        </button>
+        </Link>
 
-        <button
-          type="button"
+        <Link
           className="button button--compact"
-          onClick={onImport}
+          to="/formateurs/import"
         >
           Importer des formateurs
-        </button>
+        </Link>
 
-        <button
-          type="button"
+        <Link
           className="button button--primary button--compact"
-          onClick={onAdd}
+          to="/formateur/new"
         >
           + Ajouter un formateur
-        </button>
+        </Link>
       </div>
     </div>
   );

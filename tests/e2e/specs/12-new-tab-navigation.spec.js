@@ -6,7 +6,7 @@ async function setup(context, { dual = false, activeSpace = 'organization', orga
   const user = { id: '20000000-0000-0000-0000-000000000001', email: 'demo@example.invalid', aud: 'authenticated', role: 'authenticated' };
   const token = [Buffer.from('{"alg":"HS256"}').toString('base64url'), Buffer.from(JSON.stringify({ sub: user.id, exp: Math.floor(Date.now()/1000)+36000, role: 'authenticated' })).toString('base64url'), 'fake'].join('.');
   await context.addInitScript(({ user, token, activeSpace }) => {
-    localStorage.setItem('sb-example-auth-token', JSON.stringify({ access_token: token, refresh_token: 'fake', expires_at: Math.floor(Date.now()/1000)+36000, expires_in: 36000, token_type: 'bearer', user }));
+    if (!localStorage.getItem('sb-example-auth-token')) localStorage.setItem('sb-example-auth-token', JSON.stringify({ access_token: token, refresh_token: 'fake', expires_at: Math.floor(Date.now()/1000)+36000, expires_in: 36000, token_type: 'bearer', user }));
     if (activeSpace) sessionStorage.setItem('timeforma_active_space', activeSpace);
     localStorage.setItem('clementplane_pwa_install_dismissed_at', String(Date.now()));
   }, { user, token, activeSpace });
@@ -43,12 +43,15 @@ test('mission links support right-click, Ctrl-click, middle-click and ordinary n
   await page.keyboard.press('Escape');
   for (const options of [{ modifiers: ['Control'] }, { button: 'middle' }]) {
     const opened = context.waitForEvent('page');
+    await page.bringToFront();
     await link.click(options);
     const tab = await opened;
+    await tab.bringToFront();
     await expect(tab).toHaveURL(new RegExp(`/missions/${missionId}$`));
     await expect(tab.getByText('Formation fictive onglets', { exact: true }).first()).toBeVisible();
     await expect(page).toHaveURL(/\/missions$/);
     await tab.close();
+    await page.bringToFront();
   }
   await link.click();
   await expect(page).toHaveURL(new RegExp(`/missions/${missionId}$`));
@@ -73,9 +76,11 @@ test('planning card retains day summary on ordinary click and opens mission with
   const opened = context.waitForEvent('page');
   await card.click({ modifiers: ['Control'] });
   const tab = await opened;
+    await tab.bringToFront();
   await expect(tab).toHaveURL(new RegExp(`/missions/${missionId}$`));
   await expect(page.getByRole('dialog')).toHaveCount(0);
   await tab.close();
+    await page.bringToFront();
   await card.click();
   await expect(page.getByRole('dialog')).toBeVisible();
   await expect(page.getByRole('link', { name: 'Voir la mission' })).toHaveAttribute('href', `/missions/${missionId}`);
@@ -93,10 +98,12 @@ for (const width of [1440, 390]) {
     const opened = context.waitForEvent('page');
     await link.click({ button: 'middle' });
     const tab = await opened;
+    await tab.bringToFront();
     await expect(tab).toHaveURL(new RegExp(`/formateur/view/${trainerId}$`));
     await expect(tab.getByRole('heading', { name: /Camille Démo/ })).toBeVisible();
     await expect(page).toHaveURL(/\/listing$/);
     await tab.close();
+    await page.bringToFront();
     await page.screenshot({ path: `test-results/new-tab-listing-${width}.png`, fullPage: true });
     await link.focus();
     await page.keyboard.press('Enter');
@@ -112,9 +119,11 @@ for (const width of [1440, 390]) {
     const opened = context.waitForEvent('page');
     await link.click({ button: 'middle' });
     const tab = await opened;
+    await tab.bringToFront();
     await expect(tab.getByRole('heading', { name: 'Mission personnelle onglets', exact: true })).toBeVisible();
     await expect(page.getByRole('dialog')).toHaveCount(0);
     await tab.close();
+    await page.bringToFront();
     await link.click();
     await expect(page.getByRole('dialog')).toBeVisible();
     await page.screenshot({ path: `test-results/new-tab-planning-${width}.png`, fullPage: true });

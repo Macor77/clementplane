@@ -32,3 +32,6 @@ Aucun e-mail de nouveautés demandé ou envoyé. Version applicative, tag, relea
 
 ## État de livraison
 Développement et recette locale terminés sur `feature/open-pages-new-tab`. Livraison préparée via PR vers main. Non intégré, non publié, sprint non clôturé. Retour arrière après éventuelle livraison : revert du commit frontend ; aucun rollback de base nécessaire.
+
+### Écart du premier contrôle GitHub
+Le run 40525193585 a validé tests, SQL, audit et build mais échoué dans la recette des onglets. Les traces montrent des onglets de destination créés sans requête API avant l’expiration de l’attente ; une fermeture suivie immédiatement d’un nouveau geste échouait aussi. Le scénario active maintenant explicitement l’onglet consulté et revient à la source après fermeture, comme un utilisateur. L’authentification fictive n’est plus réécrite à chaque nouvelle page dans le stockage partagé. Aucun changement applicatif lié à cet écart.

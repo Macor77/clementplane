@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import ListingTable from '../components/listing/ListingTable';
 import ListingFilters from '../components/listing/ListingFilters';
@@ -23,8 +22,6 @@ import TrainerInvitationModal from '../components/TrainerInvitationModal';
 
 
 export default function Listing() {
-  const navigate =
-    useNavigate();
 
   const {
     currentOrganization,
@@ -363,23 +360,7 @@ export default function Listing() {
   return (
     <div className="listing-page">
 
-      <ListingHeader
-        onAdd={() =>
-          navigate(
-            '/formateur/new',
-          )
-        }
-        onSearch={() =>
-          navigate(
-            '/formateurs/recherche',
-          )
-        }
-        onImport={() =>
-          navigate(
-            '/formateurs/import',
-          )
-        }
-      />
+      <ListingHeader />
 
 
       {formateurs.some((formateur) => !formateur.claimed) ? (
@@ -513,9 +494,6 @@ export default function Listing() {
         }
         renderList={
           renderList
-        }
-        navigate={
-          navigate
         }
         handleDelete={
           handleDelete

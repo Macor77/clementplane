@@ -4,7 +4,7 @@ import {
 } from 'react';
 
 import {
-  useNavigate,
+  Link,
   useSearchParams,
 } from 'react-router-dom';
 
@@ -19,8 +19,6 @@ import {
 
 
 export default function TrainerSearch() {
-  const navigate =
-    useNavigate();
 
   const [
     searchParams,
@@ -338,17 +336,12 @@ export default function TrainerSearch() {
           </p>
         </div>
 
-        <button
-          type="button"
+        <Link
           className="button button--compact"
-          onClick={() =>
-            navigate(
-              '/listing',
-            )
-          }
+          to="/listing"
         >
           Retour
-        </button>
+        </Link>
       </div>
 
 
@@ -547,15 +540,12 @@ export default function TrainerSearch() {
                   </div>
 
                   <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
-                    <button
-                      type="button"
+                    <Link
                       className="button button--soft button--compact"
-                      onClick={() =>
-                        navigate(`/formateur/view/${trainer.id}?space=organization`)
-                      }
+                      to={`/formateur/view/${trainer.id}?space=organization`}
                     >
                       Voir la fiche
-                    </button>
+                    </Link>
 
                     {trainer.already_in_network ? (
                       <span

@@ -1,5 +1,6 @@
+import PlanningMissionLink from '../components/planning/PlanningMissionLink';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import PlanningFilterMenu from '../components/planning/PlanningFilterMenu';
 import PlanningDayModal from '../components/planning/PlanningDayModal';
@@ -11,7 +12,6 @@ const WEEK_DAYS = ['LUN', 'MAR', 'MER', 'JEU', 'VEN', 'SAM', 'DIM'];
 const MAX_VISIBLE_MISSIONS = 1;
 
 export default function Planning() {
-  const navigate = useNavigate();
   const [currentMonth, setCurrentMonth] = useState(startOfMonth(new Date()));
   const [missions, setMissions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -224,9 +224,9 @@ export default function Planning() {
                     <p><span>Formateur</span><strong>{trainer ? `${trainer.prenom || ''} ${trainer.nom || ''}`.trim() : 'À affecter'}</strong></p>
                     {(mission.ville || mission.lieu) ? <p><span>Lieu</span><strong>{mission.ville || mission.lieu}</strong></p> : null}
                   </div>
-                  <button type="button" className="button button--primary planning-day-summary__action" onClick={() => navigate(`/missions/${mission.id}`)}>
+                  <Link className="button button--primary planning-day-summary__action" to={`/missions/${mission.id}`}>
                     Voir la mission
-                  </button>
+                  </Link>
                 </article>
               );
             })}
@@ -244,10 +244,10 @@ function MissionCard({ occurrence, compact = false, onClick }) {
   const pendingRevalidation = getPendingRevalidationTrainer(mission);
 
   return (
-    <button
-      type="button"
+    <PlanningMissionLink
+      to={`/missions/${mission.id}`}
       className={`mission-calendar-card mission-calendar-card--${visualState.tone}${compact ? ' mission-calendar-card--compact' : ''}`}
-      onClick={onClick}
+      onPreview={onClick}
       title={`${mission.client || 'Client non renseigné'} — ${mission.formation || mission.intitule || 'Formation non renseignée'}`}
     >
       <div className="mission-calendar-card__topline">
@@ -278,7 +278,7 @@ function MissionCard({ occurrence, compact = false, onClick }) {
           {mission.ville || mission.lieu}
         </span>
       )}
-    </button>
+    </PlanningMissionLink>
   );
 }
 

@@ -1,3 +1,6 @@
+## 27 octobre 2026 — Navigation multi-onglets en préparation
+Développement des liens natifs et recette sur branche `feature/open-pages-new-tab`. Non intégré et non publié. Dossier : `docs/sprints/new-tab-navigation/`.
+
 # V1.2.4 livrée — 23 octobre 2026
 
 Confirmation manuelle des accords après modification livrée en V1.2.4. PR #16 fusionnée, migration appliquée, CI et release/archive vérifiées. État de clôture : `docs/sprints/manual-revalidation/CLOSURE.md`. Les sections précédentes datées constituent l’historique.

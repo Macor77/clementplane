@@ -1,3 +1,4 @@
+import { isOrganizationPath } from './utils/navigation';
 import { useEffect, useState } from 'react';
 import {
   NavLink,
@@ -306,7 +307,8 @@ function AccountRouter() {
   const requestedOrganizationSpace =
     new URLSearchParams(
       location.search,
-    ).get('space') === 'organization';
+    ).get('space') === 'organization' ||
+    (hasTrainer && isOrganizationPath(location.pathname));
 
   useEffect(() => {
     let active = true;
@@ -317,6 +319,8 @@ function AccountRouter() {
       }
 
       /*
+       * Un chemin OF explicite fonctionne aussi dans un nouvel onglet,
+       * sans dépendre du choix mémorisé dans sessionStorage.
        * Lien profond explicitement destiné à l'espace OF.
        *
        * Exemple : lien reçu par e-mail après la réponse

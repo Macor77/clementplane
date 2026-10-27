@@ -515,3 +515,7 @@ Les acceptations/refus par lien public et espace formateur créent la notificati
 
 ## V1.2.4 — Confirmation manuelle de revalidation
 L’OF peut enregistrer un accord reçu hors Clementplane, même après envoi d’un e-mail. RPC `confirm_mission_change_for_organization` : vérification OF actif, réponse ciblée en attente, journal auteur/canal, conservation de l’affectation. Dossier et preuves : `docs/sprints/manual-revalidation/`. Tests : `node scripts/testing/manual-revalidation-sql.mjs`, scénario navigateur `11-manual-revalidation.spec.js`.
+
+
+## Navigation multi-onglets — préparée le 27 octobre 2026
+Dans le navigateur, les accès aux fiches missions et formateurs, ainsi que les liens de navigation des listes, permettent clic droit → nouvel onglet, Ctrl/Cmd-clic et molette. Le clic simple conserve la navigation habituelle. Sur une miniature de mission du planning, le clic simple ouvre le récapitulatif de journée ; les gestes navigateur ciblent la fiche de cette mission. Les actions métier (inviter, retirer, enregistrer) restent des boutons. Un compte double rôle conserve la destination OF explicite dans un onglet neuf. Les droits d’accès continuent de s’appliquer.

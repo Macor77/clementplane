@@ -1420,7 +1420,7 @@ textarea {
   margin-top: 2px;
 }
 
-.trainer-cell__actions button {
+.trainer-cell__actions :is(button, a) {
   padding: 0;
   border: 0;
   background: transparent;
@@ -1430,7 +1430,7 @@ textarea {
   cursor: pointer;
 }
 
-.trainer-cell__actions button.danger {
+.trainer-cell__actions :is(button, a).danger {
   color: #b42318;
 }
 
@@ -3875,7 +3875,7 @@ textarea {
 .trainer-dashboard-card__label,
 .dashboard-card a,
 .trainer-dashboard-card a,
-.trainer-cell__actions button,
+.trainer-cell__actions :is(button, a),
 .calendar-day__more,
 .trainer-note-item__actions button {
   color: var(--clementplane-blue);
@@ -5565,7 +5565,7 @@ textarea {
     display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 6px; margin-top: 8px;
   }
-  .trainer-cell__actions button {
+  .trainer-cell__actions :is(button, a) {
     min-height: 38px; padding: 7px 8px; border: 1px solid #dbe4ee;
     border-radius: 8px; background: #f8fafc; font-size: 10px;
   }
@@ -5804,7 +5804,7 @@ textarea {
     margin-top: 6px !important;
   }
 
-  .trainer-cell__actions button {
+  .trainer-cell__actions :is(button, a) {
     min-height: 34px !important;
     padding: 5px 3px !important;
     font-size: 9px !important;
@@ -5837,4 +5837,18 @@ textarea {
   .trainer-cell__actions {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   }
+}
+
+/* Navigation links retain the existing card/button appearance and native browser actions. */
+.trainer-cell__name, .trainer-cell__actions a, .mission-calendar-card, .trainer-planning-mini { text-decoration: none; }
+.trainer-cell__actions a { display: inline-flex; align-items: center; justify-content: center; }
+a.of-mission-row:focus-visible, a.mission-calendar-card:focus-visible,
+a.trainer-planning-mini:focus-visible, a.trainer-cell__name:focus-visible {
+  outline: 3px solid #2563eb; outline-offset: 3px;
+}
+button.trainer-planning-day__number { background: transparent; border: 0; padding: 0; cursor: pointer; }
+button.trainer-planning-day__number:disabled { cursor: default; }
+
+@media (max-width: 767px) {
+  .trainer-planning-day { padding-top: 36px !important; }
 }

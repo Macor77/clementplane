@@ -1,3 +1,5 @@
+> **Mise à jour du 27 octobre 2026 : navigation multi-onglets publiée en production.** PR #18 fusionnée, déploiement Vercel READY sur clementplane.fr. Preuves et périmètre : `docs/sprints/new-tab-navigation/DEPLOYMENT.md`. Les mentions « préparée, non publiée » ci-dessous décrivent l’étape antérieure.
+
 ## 27 octobre 2026 — Navigation multi-onglets en préparation
 Développement des liens natifs et recette sur branche `feature/open-pages-new-tab`. Non intégré et non publié. Dossier : `docs/sprints/new-tab-navigation/`.
 

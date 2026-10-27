@@ -1,3 +1,5 @@
+> **Production autorisée et publiée le 27 octobre 2026.** Voir `DEPLOYMENT.md` pour les preuves postérieures à cette recette.
+
 # Validation — navigation multi-onglets
 
 27 octobre 2026. Base main : `9e2ba74cbfcae5af9679b4bdfc09acddf464e1ff`.

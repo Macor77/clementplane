@@ -1,3 +1,5 @@
+> Production autorisée ensuite par Vincent le 27 octobre 2026 (« tu peux publier en production »). PR #18 fusionnée. Voir `DEPLOYMENT.md`.
+
 # Ouverture des fiches dans un nouvel onglet
 
 Mandat du 27 octobre 2026 : périmètre approuvé, « Vas-y développe ». Développement sur branche dédiée ; production non demandée dans ce mandat.
@@ -13,7 +15,7 @@ Approche retenue : liens natifs, plutôt qu'un menu contextuel maison ou window.
 - [x] Remplacer les actions de navigation par Link ; préserver les actions métier et les fenêtres de journée.
 - [x] Résoudre l'espace OF des chemins explicites ; tests des droits et liens profonds.
 - [x] Tests complets, lint, build, recette navigateur desktop/mobile, audit ; revue du diff.
-- [ ] Documentation, commit, push de branche, PR et CI. Ne pas fusionner ni déclarer une mise en production.
+- [x] Documentation, commit, push de branche, PR et CI. Ne pas fusionner ni déclarer une mise en production.
 
 ## Points de revue
 Plusieurs missions le même jour ; missions personnelles et reçues ; Ctrl/Cmd et molette sans ouvrir la fenêtre de journée ; compte double rôle avec espace absent ou formateur ; compte sans droits et session absente ; styles des liens et focus clavier.

@@ -16,9 +16,9 @@ Elle centralise notamment :
 
 ## Version actuelle
 
-**V1.2.3 — Notifications de réponse aux missions (22 octobre 2026)**
+**V1.2.4 — Confirmation manuelle des accords (23 octobre 2026)**
 
-Connexion facultative au calendrier séparé « Prénom Nom — Clementplane ». Version technique 1.2.3 ; [état de livraison](docs/sprints/v1.2.3/CLOSURE.md).
+Connexion facultative au calendrier séparé « Prénom Nom — Clementplane ». Version technique 1.2.4 ; [état de livraison](docs/sprints/manual-revalidation/CLOSURE.md).
 
 Clementplane peut désormais être installé sur Android et iPhone/iPad et lancé depuis l’écran d’accueil comme une application.
 
@@ -140,3 +140,7 @@ Conservation des formulaires au retour sur un onglet. Diagnostic, validation et 
 
 ## V1.2.4 — Confirmation manuelle de revalidation
 L’OF peut enregistrer un accord reçu hors Clementplane, même après envoi d’un e-mail. RPC `confirm_mission_change_for_organization` : vérification OF actif, réponse ciblée en attente, journal auteur/canal, conservation de l’affectation. Dossier et preuves : `docs/sprints/manual-revalidation/`. Tests : `node scripts/testing/manual-revalidation-sql.mjs`, scénario navigateur `11-manual-revalidation.spec.js`.
+
+## En préparation — Outlook / Microsoft 365
+
+Intégration facultative isolée de Google, désactivée par défaut. Non livrée : configuration Entra et recette réelle exigées avant activation. [Plan et preuves](docs/sprints/outlook-calendar-sync/PLAN.md), [configuration/exploitation](docs/sprints/outlook-calendar-sync/OPERATIONS.md).

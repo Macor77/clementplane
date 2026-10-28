@@ -12,3 +12,8 @@
 ## Application à Google Agenda — 15 octobre 2026
 
 Inclure les copies Google et accès OAuth dans le périmètre d’un incident. Contenir par suspension de la synchronisation et révocation des autorisations concernées selon l’incident ; préserver uniquement les métadonnées nécessaires. Ne pas exporter de secrets pour l’enquête. Informer le titulaire des copies qui restent dans Google et vérifier les partages concernés. Le cadre général ci-dessus est conservé.
+
+
+## Outlook / Microsoft 365 — préparation du 28 octobre 2026
+
+Microsoft (préparé) : contenir par mode disabled et suspension du seul cron Microsoft, retirer les autorisations avec le titulaire, examiner copies et partages. Ne pas extraire les tokens ni les files pg_net dans les preuves d’incident.

@@ -13,3 +13,8 @@ Pour les données traitées par Clementplane pour le compte d’un OF, prévoir 
 
 ### V1.2 : connexion au Google Agenda du formateur
 Mise en service publique autorisée le 14 octobre 2026. Ne pas assimiler le compte Google personnel/Workspace choisi par le formateur au contrat Google Workspace de Clementplane : qualification, conditions Google API/User Data Policy, localisation et garanties de transfert à valider pour ce flux. La revue de publication doit conserver les preuves correspondantes. Le prestataire d'authentification/calendrier reçoit les données volontairement exportées ; le formateur contrôle le partage côté Google.
+
+
+## Outlook / Microsoft 365 — préparation du 28 octobre 2026
+
+Connexion optionnelle au compte Microsoft choisi par le formateur ; ne pas confondre ce destinataire avec un contrat Microsoft détenu par Clementplane. Conditions personnelles/professionnelles, qualification, transferts et justificatifs à examiner avant activation ; aucune validation contractuelle inventée.

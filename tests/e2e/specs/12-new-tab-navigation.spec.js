@@ -3,9 +3,16 @@ import { test, expect } from '@playwright/test';
 const missionId = '40000000-0000-0000-0000-000000000001';
 const trainerId = '10000000-0000-0000-0000-000000000001';
 async function setup(context, { dual = false, activeSpace = 'organization', organization = true } = {}) {
+  // External font CSS can block deferred SPA startup in popup tabs.
+  // This navigation contract must not depend on Google's font CDN.
+  await context.route('https://fonts.googleapis.com/**', route => route.fulfill({contentType:'text/css',body:''}));
+  await context.route('https://fonts.gstatic.com/**', route => route.abort());
   const user = { id: '20000000-0000-0000-0000-000000000001', email: 'demo@example.invalid', aud: 'authenticated', role: 'authenticated' };
   const token = [Buffer.from('{"alg":"HS256"}').toString('base64url'), Buffer.from(JSON.stringify({ sub: user.id, exp: Math.floor(Date.now()/1000)+36000, role: 'authenticated' })).toString('base64url'), 'fake'].join('.');
   await context.addInitScript(({ user, token, activeSpace }) => {
+    // Popup initialization also runs in an opaque about:blank document.
+    // Seed only the real local app document, where Web Storage is accessible.
+    if (location.origin !== 'http://127.0.0.1:4173') return;
     if (!localStorage.getItem('sb-example-auth-token')) localStorage.setItem('sb-example-auth-token', JSON.stringify({ access_token: token, refresh_token: 'fake', expires_at: Math.floor(Date.now()/1000)+36000, expires_in: 36000, token_type: 'bearer', user }));
     if (activeSpace) sessionStorage.setItem('timeforma_active_space', activeSpace);
     localStorage.setItem('clementplane_pwa_install_dismissed_at', String(Date.now()));
@@ -76,11 +83,11 @@ test('planning card retains day summary on ordinary click and opens mission with
   const opened = context.waitForEvent('page');
   await card.click({ modifiers: ['Control'] });
   const tab = await opened;
-    await tab.bringToFront();
+  await tab.bringToFront();
   await expect(tab).toHaveURL(new RegExp(`/missions/${missionId}$`));
   await expect(page.getByRole('dialog')).toHaveCount(0);
   await tab.close();
-    await page.bringToFront();
+  await page.bringToFront();
   await card.click();
   await expect(page.getByRole('dialog')).toBeVisible();
   await expect(page.getByRole('link', { name: 'Voir la mission' })).toHaveAttribute('href', `/missions/${missionId}`);

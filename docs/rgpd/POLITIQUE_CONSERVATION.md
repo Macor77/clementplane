@@ -26,3 +26,8 @@ V1.2 ouverte le 14 octobre 2026 : états OAuth 10 minutes, nettoyés par le work
 ## V1.2.3 — 22 octobre 2026
 
 File technique mission_response_outbox : réponses en attente jusqu'au traitement ; états terminaux sent/failed/uncertain supprimés après 30 jours par le worker. Commentaire supprimé de la file dès sent ; suppression de relation en cascade. Journaux email_logs soumis à la durée existante. Une interruption de planification retarde la purge et appelle une vérification opérateur.
+
+
+## Outlook / Microsoft 365 — préparation du 28 octobre 2026
+
+Microsoft (non activé) : state valable 10 minutes, supprimé à consommation/nouvelle tentative/déconnexion et nettoyé par le worker actif. Jeton effacé à la déconnexion ; identité/calendrier/mappings conservés pour reprise jusqu’à suppression du compte. Les copies Outlook restent chez le titulaire. Aucun secret dans export/journal/archive.

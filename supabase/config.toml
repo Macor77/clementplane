@@ -459,3 +459,11 @@ verify_jwt = true
 # Custom server-to-server secret verified inside the handler before any database call.
 [functions.google-calendar-worker]
 verify_jwt = false
+
+# Authorization is additionally verified by getUser in the handler.
+[functions.microsoft-calendar]
+verify_jwt = true
+
+# Dedicated constant-time worker secret; never expose it in the browser.
+[functions.microsoft-calendar-worker]
+verify_jwt = false

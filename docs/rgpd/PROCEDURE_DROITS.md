@@ -19,3 +19,8 @@ V1.2 ouverte le 14 octobre 2026 : inclure calendar_connections/calendar_events d
 ## V1.2.3 — 22 octobre 2026
 
 Inclure mission_response_outbox, reliée par relation_id à mission_formateurs, dans l'inventaire pertinent. Filtrer par la personne/organisation vérifiée. La suppression de relation efface la file en cascade ; pour une demande de limitation, suspendre les travaux concernés avant envoi. Ne pas exposer les verrous techniques ou données d'autres OF.
+
+
+## Outlook / Microsoft 365 — préparation du 28 octobre 2026
+
+Microsoft (préparé) : inclure les métadonnées de connexion dans l’inventaire, exclure tokens et vérificateurs OAuth. Suppression auth.users en cascade sur les tables Microsoft. Expliquer le retrait de l’autorisation et l’effacement des copies dans Outlook ; aucun effacement distant automatique.

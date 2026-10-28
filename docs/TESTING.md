@@ -150,3 +150,8 @@ tests/notifications : RPC réelles public/connecté dans PostgreSQL embarqué, a
 
 ## V1.2.4 — Confirmation manuelle de revalidation
 L’OF peut enregistrer un accord reçu hors Clementplane, même après envoi d’un e-mail. RPC `confirm_mission_change_for_organization` : vérification OF actif, réponse ciblée en attente, journal auteur/canal, conservation de l’affectation. Dossier et preuves : `docs/sprints/manual-revalidation/`. Tests : `node scripts/testing/manual-revalidation-sql.mjs`, scénario navigateur `11-manual-revalidation.spec.js`.
+
+
+## Outlook / Microsoft 365 — préparation du 28 octobre 2026
+
+Tests Microsoft dans tests/contracts/microsoft-*.test.js et tests/calendar/microsoft-*.test.js ; intégration PGlite avec Graph simulé ; `node scripts/testing/microsoft-calendar-sql.mjs` ; Playwright 13-microsoft-calendar-ui.spec.js (1440/390, callbacks PWA et connexion simulée). Tous les tests Google restent requis. Recette Microsoft réelle distincte : docs/sprints/outlook-calendar-sync/ACCEPTANCE.md.

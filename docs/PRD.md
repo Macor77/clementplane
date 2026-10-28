@@ -228,3 +228,8 @@ Le Sprint 22 est consacré à la synchronisation des missions Clementplane vers 
 ## V1.2 — État du 15 octobre 2026
 
 Le Sprint 22 est livré : calendrier séparé Google, connexion volontaire, missions OF et personnelles, propositions/options, mises à jour et retraits. Outlook, iCloud, écriture dans l’agenda principal, synchronisation bidirectionnelle, BPF et paiement restent exclus.
+
+
+## Outlook / Microsoft 365 — préparation du 28 octobre 2026
+
+En préparation : choix facultatif Outlook personnel/Microsoft 365 professionnel, coexistence Google, calendrier distinct, mêmes règles métier V1.2. Pas de lecture des rendez-vous personnels, pas de bidirectionnel, pas d’invités. Pas de promesse de disponibilité avant recette Entra réelle. Dossier outlook-calendar-sync fait foi.

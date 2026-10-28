@@ -279,3 +279,8 @@ La notification de réponse doit être enregistrée transactionnellement côté 
 
 ## V1.2.4 — Confirmation manuelle de revalidation
 L’OF peut enregistrer un accord reçu hors Clementplane, même après envoi d’un e-mail. RPC `confirm_mission_change_for_organization` : vérification OF actif, réponse ciblée en attente, journal auteur/canal, conservation de l’affectation. Dossier et preuves : `docs/sprints/manual-revalidation/`. Tests : `node scripts/testing/manual-revalidation-sql.mjs`, scénario navigateur `11-manual-revalidation.spec.js`.
+
+
+## Outlook / Microsoft 365 — préparation du 28 octobre 2026
+
+Décision technique de reprise : isoler le stockage et les workers Microsoft pour préserver Google ; mutualiser uniquement projection, identité Clementplane et chiffrement. Réponses de création ambiguës : récupération par propriété puis arrêt sans duplication si absence non établie. Autorisation générale de Vincent le 28 octobre pour développement/livraison, avec gate explicite de recette Microsoft avant ouverture ; aucune réserve auto-acceptée.

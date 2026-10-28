@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { updateCurrentUserProfile } from '../../services/currentUserService';
 import { requestCurrentUserEmailChange } from '../../services/authService';
 import { getMyAccountDeletionStatus, deleteMyAccount } from '../../services/accountDeletionService';
+import MicrosoftCalendarCard from '../../components/trainer/MicrosoftCalendarCard';
 import GoogleCalendarCard from '../../components/trainer/GoogleCalendarCard';
 import FeatureNewsPreferenceCard from '../../components/FeatureNewsPreferenceCard';
 
@@ -269,6 +270,7 @@ export default function TrainerSettings() {
       </div>
 
       <GoogleCalendarCard userId={user?.id} />
+      <MicrosoftCalendarCard userId={user?.id} />
 
       <FeatureNewsPreferenceCard trainer />
 

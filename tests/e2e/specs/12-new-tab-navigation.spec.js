@@ -1,9 +1,5 @@
 import { test, expect } from '@playwright/test';
 
-// These contracts mock API requests across tabs. Keep service-worker routing
-// out of this fixture; the dedicated PWA and OAuth callback specs test it.
-test.use({ serviceWorkers: 'block' });
-
 const missionId = '40000000-0000-0000-0000-000000000001';
 const trainerId = '10000000-0000-0000-0000-000000000001';
 async function setup(context, { dual = false, activeSpace = 'organization', organization = true } = {}) {

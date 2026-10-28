@@ -1,6 +1,16 @@
 {
   "routes": [
     {
+      "src": "/microsoft-calendar-callback.html",
+      "headers": {
+        "Cache-Control": "no-store",
+        "Referrer-Policy": "no-referrer",
+        "X-Robots-Tag": "noindex",
+        "Content-Security-Policy": "default-src 'none'; script-src 'self'; base-uri 'none'; frame-ancestors 'none'"
+      },
+      "continue": true
+    },
+    {
       "src": "/google-calendar-callback.html",
       "headers": {
         "Cache-Control": "no-store",

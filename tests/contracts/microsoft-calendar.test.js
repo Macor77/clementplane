@@ -45,3 +45,18 @@ describe('Microsoft Graph transport', () => {
     expect(JSON.parse(options.body).transactionId).toBe('transaction-1');
   });
 });
+
+it('requests explicit ownership properties instead of an unsupported bare expansion', async () => {
+  const fetch = vi.fn().mockResolvedValue({ok:true,status:200,json:async()=>({id:'e'})});
+  await new MicrosoftCalendar({fetch,token:'t',calendarId:'c'}).get('e');
+  const url = new URL(fetch.mock.calls[0][0]);
+  expect(url.searchParams.get('$expand')).toContain('$filter=id eq');
+  expect(url.searchParams.get('$expand')).toContain('clementplaneOwner');
+  expect(url.searchParams.get('$expand')).toContain('clementplaneKey');
+});
+it('classifies temporary OAuth failures and invalid grants without exposing provider details', async () => {
+  const {microsoftTokenRequest} = await import('../../supabase/functions/_shared/calendar/microsoft-oauth.js');
+  const args={clientId:'c',clientSecret:'secret',refreshToken:'r'};
+  await expect(microsoftTokenRequest(async()=>new Response(JSON.stringify({error:'invalid_grant',error_description:'sensitive'}),{status:400}),args)).rejects.toMatchObject({reason:'invalid_grant'});
+  await expect(microsoftTokenRequest(async()=>new Response('',{status:503}),args)).rejects.toMatchObject({retryable:true});
+});

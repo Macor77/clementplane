@@ -27,9 +27,12 @@ export async function microsoftAuthorizationUrl({ clientId, redirectUri, state, 
 }
 
 export class MicrosoftOAuthError extends Error {
-  constructor(status) {
+  constructor(status, reason = null, retryAfter = 0) {
     super('MICROSOFT_OAUTH_FAILED');
     this.status = status;
+    this.reason = reason;
+    this.retryable = status === 429 || status >= 500;
+    this.retryAfter = retryAfter;
   }
 }
 
@@ -55,7 +58,11 @@ export async function microsoftTokenRequest(fetcher, { clientId, clientSecret, r
       signal: AbortSignal.timeout(10000),
     });
   } catch { throw new MicrosoftOAuthError(503); }
-  if (!response.ok) throw new MicrosoftOAuthError(response.status);
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}));
+    const reason = ['invalid_grant', 'interaction_required', 'consent_required'].includes(data.error) ? data.error : null;
+    throw new MicrosoftOAuthError(response.status, reason, Math.min(86400, Math.max(0, Number(response.headers?.get('Retry-After')) || 0)));
+  }
   const grant = await response.json();
   if (!grant.access_token || (!refreshToken && !grant.refresh_token)) {
     throw new Error('INVALID_MICROSOFT_GRANT');
@@ -67,4 +74,21 @@ export function validateMicrosoftState(row, userId, now = Date.now()) {
   if (!row || row.user_id !== userId || !Number.isFinite(Date.parse(row.expires_at)) || Date.parse(row.expires_at) <= now) {
     throw new Error('INVALID_OAUTH_STATE');
   }
+}
+
+// Identity comes from the authenticated OIDC endpoint, never from an unverified ID token.
+export async function microsoftIdentity(fetcher, token) {
+  let response;
+  try {
+    response = await fetcher('https://graph.microsoft.com/oidc/userinfo', {
+      headers: {Authorization: `Bearer ${token}`}, signal: AbortSignal.timeout(10000),
+    });
+  } catch { throw new MicrosoftOAuthError(503); }
+  if (!response.ok) throw new MicrosoftOAuthError(response.status);
+  const identity = await response.json();
+  if (typeof identity.sub !== 'string' || !identity.sub) throw new Error('INVALID_MICROSOFT_IDENTITY');
+  return {sub:identity.sub, email:typeof identity.email === 'string' ? identity.email : null};
+}
+export function validateMicrosoftGrant(grant) {
+  if (!grant.scope?.split(' ').some(scope => scope.toLowerCase().replace('https://graph.microsoft.com/', '') === 'calendars.readwrite')) throw new Error('MISSING_CALENDAR_SCOPE');
 }

@@ -12,6 +12,9 @@ const messages = {
   MICROSOFT_RECONNECT_REQUIRED: 'Reconnectez votre compte Microsoft pour reprendre la synchronisation.',
   MICROSOFT_ACCOUNT_ALREADY_LINKED: 'Ce compte Microsoft est déjà associé à un autre compte Clementplane.',
   WRONG_MICROSOFT_ACCOUNT: 'Reconnectez le même compte Microsoft que précédemment.',
+  CALENDAR_CREATION_UNCERTAIN: 'La création du calendrier doit être vérifiée avant une nouvelle tentative. Contactez le support.',
+  MISSING_CALENDAR_SCOPE: 'Microsoft n’a pas accordé l’accès au calendrier. Recommencez la connexion.',
+  ALREADY_CONNECTED: 'Ce compte est déjà connecté.',
   SYNC_BUSY: 'Une synchronisation est déjà en cours. Réessayez dans quelques instants.',
 };
 

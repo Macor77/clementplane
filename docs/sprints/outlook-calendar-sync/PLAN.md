@@ -1,6 +1,6 @@
 # Sprint — Synchronisation Outlook / Microsoft 365 (en cours)
 
-## État au 27 octobre 2026
+## État initial au 27 octobre 2026
 Branche isolée `feature/outlook-calendar-sync`. Aucun changement en production. Base vérifiée : V1.2 Google Agenda livrée, dossier `docs/sprints/v1.2/CLOSURE.md`, PR #5 et #8. Version actuelle du package : 1.2.4 ; version du prochain lot à fixer lors de la clôture.
 
 ## Objectif
@@ -38,3 +38,14 @@ Permettre à un formateur de connecter volontairement son calendrier Microsoft (
 - La production Google continue de fonctionner, vérifiée par tests de non-régression.
 
 **Statut : cadrage technique initial uniquement. Aucun développement fonctionnel ni test de synchronisation Microsoft n'est encore validé.**
+
+
+## Reprise du 28 octobre 2026
+
+Mandat : développement autonome, tests, préparation de production et clôture conditionnée à une recette réelle Microsoft. Branche/PR existantes conservées, aucune activation publique ni annonce.
+
+Choix technique : trois tables Microsoft et trois RPC de verrouillage propres au fournisseur, triggers privés supplémentaires ; projection métier, chiffrement et snapshot de lecture Google réutilisés sans modification. Adapter uniquement les tables Google existantes aurait imposé une migration plus risquée de la production ; les réécrire aurait fait diverger les règles métier. Le petit dépôt de données Microsoft reprend les mêmes sémantiques de verrou ; chaque évolution commune devra être testée sur les deux fournisseurs.
+
+Réalisé : OAuth serveur/state à usage unique/PKCE, identité UserInfo vérifiée côté Microsoft, jetons AES-GCM et rotation, création/récupération du calendrier marqué, réconciliation Graph avec identifiants persistants, reprise des erreurs, workers isolés, écran formateur, callback sécurisé/PWA, migration de confidentialité et script cron préparés. Tests unitaires, SQL, intégration PostgreSQL et navigateur ajoutés. Revue indépendante : colonnes SQL alignées, callback clôturé par verrou expiré, propriété du calendrier vérifiée avant mutation, POST ambigu jamais répété aveuglément.
+
+Ordre restant : contrôles CI du dernier commit, configuration Entra et secrets, déploiement de recette isolée, recette des deux comptes Microsoft, vérifications de confidentialité/déploiement, ouverture, version/tag/archive/release et clôture. Voir OPERATIONS.md, ACCEPTANCE.md, LEGAL_REVIEW.md et CLOSURE.md pour les preuves et blocages. Version technique inchangée à 1.2.4 pendant la préparation ; cible de livraison 1.3.0, à appliquer au moment de la livraison validée.

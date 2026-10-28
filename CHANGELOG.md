@@ -1,3 +1,10 @@
+## Non publié — Outlook / Microsoft 365 (préparation du 28 octobre 2026)
+
+- Connexion facultative depuis les paramètres formateur, indépendante de Google.
+- Calendrier distinct, missions/propositions/options privées, synchronisation serveur et reconnexion sans duplication.
+- OAuth PKCE serveur, jetons chiffrés, règles RLS, gestion des erreurs Graph, migration de notice et tests de non-régression.
+- **Pas encore disponible publiquement** : Entra, recette réelle personnelle/professionnelle et vérifications de déploiement attendues. Version de production inchangée.
+
 > **Mise à jour du 27 octobre 2026 : navigation multi-onglets publiée en production.** PR #18 fusionnée, déploiement Vercel READY sur clementplane.fr. Preuves et périmètre : `docs/sprints/new-tab-navigation/DEPLOYMENT.md`. Les mentions « préparée, non publiée » ci-dessous décrivent l’étape antérieure.
 
 

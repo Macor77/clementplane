@@ -1,3 +1,5 @@
+const microsoftCalendarVisible = import.meta.env?.VITE_MICROSOFT_CALENDAR_ENABLED === 'true';
+
 export const FORMPLANE_VERSION = 'V1.2.4';
 
 export const discoverFeatures = [
@@ -93,9 +95,10 @@ export const organizationTutorials = [
 ];
 
 export const trainerTutorials = [
+  ...(microsoftCalendarVisible ? [{id:'trainer-microsoft-calendar',title:'Retrouver mes missions dans Outlook',summary:'Connecter mon compte Outlook personnel ou Microsoft 365 depuis les paramètres.',route:'/formateur/parametres#microsoft-agenda',routeLabel:'Configurer Outlook',steps:['Dans les paramètres formateur, ouvrez Outlook / Microsoft 365 puis Connecter Microsoft.', 'Choisissez votre compte et autorisez Clementplane ; votre organisation peut demander un accord administrateur.', 'Retrouvez le calendrier distinct « Prénom Nom — Clementplane ». Attendez la dernière synchronisation réussie avant de vérifier vos missions.', 'Gardez les notes privées et la rémunération exclues, ou activez ces informations volontairement.', 'Modifiez les missions dans Clementplane. La synchronisation continue quand le navigateur est fermé.', 'Pour arrêter, choisissez Déconnecter Microsoft. Les copies restent dans Outlook ; reconnectez le même compte pour reprendre.'],tip:'Google et Microsoft peuvent être connectés simultanément. Aucun invité n’est ajouté. Les rendez-vous personnels ne sont pas lus ; les règles de partage avancées Microsoft peuvent permettre l’accès aux événements privés.'}] : []),
   { id: 'trainer-personal-mission', title: 'Ajouter mes propres interventions', summary: 'Utiliser mon agenda sans imposer Clementplane à mes clients.', route: '/formateur/missions/nouvelle', routeLabel: 'Ajouter une mission',
     steps: ['Depuis Mes missions, Mon planning ou l’accueil, choisissez Ajouter une mission.', 'Saisissez un intitulé et au moins une date. Les horaires, le client, le lieu, les notes et la rémunération HT sont facultatifs.', 'Vous pouvez reprendre un nom de Mes OF : cela ne partage pas la mission et n’envoie aucun message.', 'Enregistrez : la mission est confirmée et apparaît dans votre agenda. Une intervention courte bloque aussi toute la journée pour les OF.', 'Ouvrez la mission pour la modifier ou l’annuler. Une annulation conserve la trace et préserve vos autres engagements et disponibilités.'],
-    tip: 'Les conflits sont signalés sans bloquer. Les données restent privées ; connexion nécessaire. Vous pouvez connecter Google Agenda depuis les paramètres ; Outlook reste hors périmètre.' },
+    tip: 'Les conflits sont signalés sans bloquer. Les données restent privées ; connexion nécessaire. Vous pouvez connecter Google Agenda depuis les paramètres ; la connexion Outlook dépend de sa disponibilité dans vos paramètres.' },
   mobileInstallTutorial,
   {
     id: 'trainer-profile', title: 'Garder un profil fiable pour mes OF partenaires', summary: 'Maintenir une seule fiche de référence plutôt que transmettre les mêmes informations à chaque organisme.', route: '/formateur/profil', routeLabel: 'Ouvrir mon profil',
@@ -133,6 +136,7 @@ export const trainerTutorials = [
 ];
 
 export const faqItems = [
+  ...(microsoftCalendarVisible ? [{question:'Puis-je utiliser Outlook et Google Agenda en même temps ?',answer:'Oui, les deux connexions sont indépendantes dans vos paramètres formateur. Outlook personnel et Microsoft 365 professionnel sont proposés sous réserve des politiques Microsoft. Chaque fournisseur reçoit un calendrier distinct ; déconnecter Microsoft n’arrête pas Google. Les copies restent dans le calendrier déconnecté sans nouvelles mises à jour.',audiences:['trainer'],category:'Agenda'}] : []),
   { question: 'Comment ouvrir plusieurs fiches dans des onglets différents ?', answer: 'Dans votre navigateur, faites un clic droit sur un lien de mission ou de formateur puis choisissez « Ouvrir dans un nouvel onglet ». Vous pouvez aussi utiliser Ctrl + clic (Cmd + clic sur Mac) ou la molette. Dans le planning, le clic simple sur une mission conserve le récapitulatif de la journée ; le clic droit permet d’ouvrir directement sa fiche. Chaque onglet conserve les droits de votre compte.', audiences: ['organization', 'trainer'], category: 'Navigation' },
   { question: 'Puis-je confirmer moi-même un accord après modification d’une mission ?', answer: 'Oui. Dans la fiche mission, cliquez sur « Confirmer l’accord du formateur » pour la réponse en attente. Indiquez comment vous avez reçu son accord et confirmez qu’il porte sur les nouvelles conditions. Cela fonctionne même si un e-mail a déjà été envoyé. L’affectation est conservée et l’historique précise que l’OF a enregistré cet accord. Prévenir le formateur ne suffit pas : son accord doit avoir été obtenu.', audiences: ['organization'], category: 'Missions' },
   { question: 'Partager mon agenda principal partage-t-il aussi Clementplane ?', answer: 'Non. Le calendrier « Prénom Nom — Clementplane » a ses propres réglages de partage Google. Pour communiquer uniquement vos créneaux occupés, choisissez un partage en disponibilités seules. Les droits de modification ou de gestion peuvent donner accès aux détails des événements privés.', audiences: ['trainer'], category: 'Agenda' },
@@ -160,7 +164,7 @@ export const publicRoadmap = {
   available: {
     status: 'Disponible',
     title: 'Le cœur de Clementplane',
-    description: 'Synchronisation facultative des missions vers Google Agenda, missions personnelles privées dans l’agenda du formateur, réseau privé de formateurs, recherche, import, missions OF, propositions, disponibilités, planning, partage, Mes OF, invitations partenaires, expérience mobile optimisée et installation de Clementplane sur l’écran d’accueil.',
+    description: (microsoftCalendarVisible ? 'Connexion facultative Outlook / Microsoft 365 selon disponibilité du compte. ' : '') + 'Synchronisation facultative des missions vers Google Agenda, missions personnelles privées dans l’agenda du formateur, réseau privé de formateurs, recherche, import, missions OF, propositions, disponibilités, planning, partage, Mes OF, invitations partenaires, expérience mobile optimisée et installation de Clementplane sur l’écran d’accueil.',
   },
   future: [
     'Enrichir la fiche formateur pour lui permettre de détailler davantage son profil : expériences, compétences, formations et autres informations professionnelles.',

@@ -404,3 +404,8 @@ Les statuts ne sont confirmés qu'après réponse du serveur. Les erreurs de ré
 ## V1.2.3 — 22 octobre 2026
 
 Pour une réponse sans mail, contrôler mission_response_outbox et email_logs, puis le scheduler clementplane-mission-responses. Ne pas demander au formateur de répondre à nouveau. Ne pas rejouer un état uncertain sans preuve de non-envoi. Procédure : docs/sprints/v1.2.3/OPERATIONS.md.
+
+
+## Outlook / Microsoft 365 — préparation du 28 octobre 2026
+
+Pour Microsoft, voir docs/sprints/outlook-calendar-sync/OPERATIONS.md : révocation, consentement tenant, throttling, création ambiguë, invités ajoutés, calendrier supprimé et retour arrière. Ne jamais supprimer les mappings ou réinitialiser calendar_pending pour contourner une ambiguïté ; ne jamais coller de jeton dans un ticket.

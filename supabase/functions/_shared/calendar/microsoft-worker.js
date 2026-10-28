@@ -31,8 +31,6 @@ export async function runMicrosoftCalendarJob({db,env,fetch,row,deadline=Date.no
   const provider=new MicrosoftCalendar({fetch,token:grant.access_token,calendarId:row.calendar_id});
   await reconcile(provider,eventStore(db,row,deadline),desired);
   await guard(db,row,deadline);
-
-  await guard(db,row,deadline);
   const name=await userCalendarName(db,row.user_id);
   if(calendar.name!==name){await guard(db,row,deadline);await graphJson(fetch,grant.access_token,calendarPath,{method:'PATCH',body:{name},etag:calendar['@odata.etag']});}
  }catch(e){

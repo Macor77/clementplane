@@ -44,7 +44,7 @@ export default function MicrosoftCalendarCard({userId}){
   {!status?<p>Chargement… <button type="button" className="button button--soft" disabled={busy} onClick={()=>run(load)}>Actualiser</button></p>:<>
    {status.mode==='disabled'&&!connected?<p>La synchronisation Microsoft n’est pas encore disponible pour votre compte.</p>:<>
     {status.account_email&&<p><strong>Compte Microsoft :</strong> {status.account_email}</p>}
-    {status.calendar_url&&<p><a href={status.calendar_url} target="_blank" rel="noreferrer">Ouvrir le calendrier Clementplane</a></p>}
+    {connected&&<p>Ouvrir votre agenda : <a href="https://outlook.live.com/calendar/" target="_blank" rel="noreferrer">Outlook personnel</a> · <a href="https://outlook.office.com/calendar/" target="_blank" rel="noreferrer">Microsoft 365 professionnel</a></p>}
     {status.last_success_at&&<p>Dernière synchronisation réussie : {new Date(status.last_success_at).toLocaleString('fr-FR')}</p>}
     {status.pending&&<p role="status">Synchronisation en attente. Vos missions restent enregistrées dans Clementplane.</p>}
     {errorMessages[status.error_code]&&<p role="status" className="google-calendar-notice">{errorMessages[status.error_code]}</p>}

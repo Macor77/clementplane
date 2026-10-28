@@ -28,3 +28,8 @@ Les e-mails opérationnels incluent mission_response_outbox : identifiant relati
 
 ## V1.2.4 — Accord reçu hors application
 Le suivi des missions peut contenir la confirmation d’un accord par l’OF : utilisateur auteur, horodatage, canal déclaré et commentaire facultatif. Même finalité/destinataires/conservation que l’historique métier ; aucun contenu de SMS ou pièce justificative collecté automatiquement.
+
+
+## Outlook / Microsoft 365 — préparation du 28 octobre 2026
+
+Flux facultatif Microsoft préparé, non activé : données de mission autorisées vers le compte du formateur, identité OIDC, jeton chiffré et correspondances techniques. Pas de collecte des rendez-vous personnels. Notes/rémunération sur choix séparé. Qualification contractuelle et conditions Microsoft à vérifier avant ouverture (LEGAL_REVIEW du sprint).

@@ -387,3 +387,8 @@ mission_response_outbox (RLS, service_role uniquement) : unicité relation/statu
 
 ## V1.2.4 — Confirmation manuelle de revalidation
 L’OF peut enregistrer un accord reçu hors Clementplane, même après envoi d’un e-mail. RPC `confirm_mission_change_for_organization` : vérification OF actif, réponse ciblée en attente, journal auteur/canal, conservation de l’affectation. Dossier et preuves : `docs/sprints/manual-revalidation/`. Tests : `node scripts/testing/manual-revalidation-sql.mjs`, scénario navigateur `11-manual-revalidation.spec.js`.
+
+
+## Outlook / Microsoft 365 — préparation du 28 octobre 2026
+
+Migrations préparées `20261028065329_microsoft_calendar_sync.sql` et `20261028071102_microsoft_calendar_privacy_notice.sql`, non appliquées à distance. Trois tables microsoft_calendar_connections/oauth_states/events, RLS sans politiques navigateur, privilèges service_role uniquement ; RPC claim/lock/finish service-only, triggers privés additifs. Les tables Google restent inchangées. PGlite vérifie privilèges, RLS, cycles et handler/worker réels sur ce schéma.

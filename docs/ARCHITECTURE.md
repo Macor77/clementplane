@@ -685,3 +685,8 @@ Trigger mission_formateurs → mission_response_outbox → cron → notify-missi
 
 ## V1.2.4 — Confirmation manuelle de revalidation
 L’OF peut enregistrer un accord reçu hors Clementplane, même après envoi d’un e-mail. RPC `confirm_mission_change_for_organization` : vérification OF actif, réponse ciblée en attente, journal auteur/canal, conservation de l’affectation. Dossier et preuves : `docs/sprints/manual-revalidation/`. Tests : `node scripts/testing/manual-revalidation-sql.mjs`, scénario navigateur `11-manual-revalidation.spec.js`.
+
+
+## Outlook / Microsoft 365 — préparation du 28 octobre 2026
+
+Tables, fonctions et worker `microsoft-calendar` séparés ; projection.js, crypto.js, naming.js et RPC calendar_source_snapshot partagés, sans modification du moteur Google. Microsoft Graph exige des IDs serveur : récupération par marqueurs de propriété et transactionId ; arrêt conservateur sur POST ambigu. OAuth code+PKCE via callback isolé et identité UserInfo serveur. Voir OPERATIONS pour le flux et ses verrous.

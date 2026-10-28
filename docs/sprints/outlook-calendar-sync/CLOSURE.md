@@ -1,3 +1,5 @@
+> **État actualisé :** Entra configuré et backend déployé en recette isolée. Connexion personnelle, créations/modifications/retraits et reconnexion réels réussis. Voir [REAL_ACCEPTANCE.md](REAL_ACCEPTANCE.md). Les anciennes étapes ci-dessous restent historiques. Recette professionnelle et clôture non terminées ; aucune activation publique.
+
 # Outlook / Microsoft 365 — bilan au 28 octobre 2026
 
 **Verdict : non clôturé — configuration et recette Microsoft réelles, livraison puis clôture restantes.** Aucun tag/release public, aucune fusion et aucune activation Microsoft en production. Aucune réserve acceptée implicitement. Aucun mail envoyé.

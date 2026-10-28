@@ -57,5 +57,25 @@ assert.deepEqual((await db.query("select calendar_source_snapshot('20000000-0000
 await db.exec('reset role');
 assert.equal((await db.query("select count(*)::int n from pg_class where relname in ('microsoft_calendar_connections','microsoft_calendar_oauth_states','microsoft_calendar_events') and relrowsecurity")).rows[0].n,3);
 await db.exec(`delete from auth.users where id='${uid}'`);assert.equal((await db.query('select count(*)::int n from microsoft_calendar_connections')).rows[0].n,0);
+// Vault is a test-only stand-in. Never use real worker keys in tests.
+await db.exec(`create schema vault;create table vault.decrypted_secrets(name text,decrypted_secret text);`);
+await db.exec(fs.readFileSync('supabase/migrations/20261028160000_microsoft_calendar_worker_vault_auth.sql','utf8'));
+const workerKey='a'.repeat(64);
+await db.query('insert into vault.decrypted_secrets values ($1,$2)',['microsoft_calendar_worker_secret',workerKey]);
+for(const role of ['anon','authenticated']){
+ await db.exec(`set role ${role}`);
+ await assert.rejects(()=>db.query('select public.microsoft_calendar_authorize_worker($1)',[workerKey]));
+ await db.exec('reset role');
+}
+await db.exec('set role service_role');
+await assert.rejects(()=>db.query('select * from vault.decrypted_secrets'));
+for(const [key,expected] of [[workerKey,true],['b'.repeat(64),false],['short',false],[null,false]]){
+ assert.equal((await db.query('select public.microsoft_calendar_authorize_worker($1) as ok',[key])).rows[0].ok,expected);
+}
+await db.exec('reset role');
+await db.query('insert into vault.decrypted_secrets values ($1,$2)',['microsoft_calendar_worker_secret',workerKey]);
+assert.equal((await db.query('select public.microsoft_calendar_authorize_worker($1) as ok',[workerKey])).rows[0].ok,false,'Duplicate Vault keys fail closed');
+await db.exec('delete from vault.decrypted_secrets');
+assert.equal((await db.query('select public.microsoft_calendar_authorize_worker($1) as ok',[workerKey])).rows[0].ok,false,'Missing Vault key fails closed');
 await db.close();console.log('PASS Microsoft calendar SQL: grants/RLS, service-only RPCs, exclusive claim/control, stale finish, dirty trigger, source isolation, account erasure.');
 

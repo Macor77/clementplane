@@ -1,3 +1,5 @@
+> **Mise à jour :** les sections initiales ci-dessous sont historiques. Le backend Microsoft est maintenant déployé uniquement en recette isolée, en mode testing. Les preuves réelles et réserves courantes sont dans [REAL_ACCEPTANCE.md](REAL_ACCEPTANCE.md). Aucune livraison publique.
+
 # Preuves de préparation — Outlook / Microsoft 365
 
 28 octobre 2026. Aucune livraison publique. Contrôles de préparation terminés ; recette Microsoft réelle toujours requise.

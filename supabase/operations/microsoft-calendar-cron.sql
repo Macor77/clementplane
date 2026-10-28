@@ -1,6 +1,8 @@
 -- MANUAL gate: run only on the designated STAGING project first.
 -- Provision Vault secrets microsoft_calendar_worker_url (full HTTPS Edge endpoint),
--- microsoft_calendar_worker_secret (same value as Edge secret MICROSOFT_CALENDAR_WORKER_SECRET).
+-- microsoft_calendar_worker_secret (64 hex characters, generated server-side in Vault).
+-- Apply microsoft_calendar_worker_vault_auth first; no Edge key copy is needed.
+-- An explicitly configured Edge MICROSOFT_CALENDAR_WORKER_SECRET must match Vault.
 -- Do not paste values in commits, chat, CLI history or SQL logs.
 -- REQUIRED before scheduling: verify Data API rejects Accept-Profile: net
 -- with PGRST106; inspect LOGIN roles and any RPC exposing the net tables.

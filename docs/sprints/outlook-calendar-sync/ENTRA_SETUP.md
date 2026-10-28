@@ -1,3 +1,5 @@
+> **État actualisé :** Entra configuré et backend déployé en recette isolée. Connexion personnelle, créations/modifications/retraits et reconnexion réels réussis. Voir [REAL_ACCEPTANCE.md](REAL_ACCEPTANCE.md). Les anciennes étapes ci-dessous restent historiques. Recette professionnelle et clôture non terminées ; aucune activation publique.
+
 # Configuration Microsoft Entra — constat du 28 octobre 2026
 
 Cette fiche consigne les opérations effectivement réalisées. Le sprint reste non clôturé et Microsoft n'est pas activé publiquement.
@@ -53,3 +55,16 @@ Ces contrôles ne constituent pas la recette Microsoft personnelle/professionnel
 - Prévisualisation Vercel `dpl_4xHkSKtzAQzdChdRjWvBb3sFm7Jy` READY pour ce même code ; accès navigateur vérifié après connexion Vercel normale via GitHub. Protection conservée ; aucun lien de partage créé.
 - Écran de connexion Clementplane de recette atteint. Connexion au compte formateur non effectuée : demande sécurisée déclinée. Aucun essai OAuth Microsoft réel, aucun calendrier créé, aucune mission modifiée.
 - Mode serveur Microsoft toujours `disabled`. Prochaine étape : utiliser le compte formateur fictif autorisé, limiter l'allowlist à son UUID, préparer le worker/cron, puis obtenir le consentement Microsoft et dérouler la recette.
+
+## Recette personnelle démarrée — 28 octobre 2026
+
+- Nouveau compte fictif « Vincent Recette Outlook » créé et confirmé dans documentation-demo ; adresse de recette dédiée, données privées non publiées dans ce document. Profil fictif situé à Paris.
+- Mode Microsoft `testing`, allowlist limitée à ce nouveau compte ; aucune ouverture publique.
+- Consentement Outlook personnel accordé explicitement par le titulaire. Première tentative rejetée après expiration des dix minutes ; nouvelle demande réussie sans assouplir la durée ni la validation du state.
+- Connexion réelle `active`, calendrier dédié créé, marqueur de création incertaine désactivé, présence du jeton chiffré vérifiée sans lecture de sa valeur. Notes et rémunération désactivées.
+- Authentification du worker via Vault ajoutée : la clé dédiée est générée côté base et vérifiée par une RPC réservée au service_role renvoyant uniquement un booléen. Clé jamais affichée. Ancienne configuration explicite Edge toujours supportée.
+- Worker de recette déployé en version 9. Cron Microsoft installé (une minute), aucune modification du cron Google. Net refusé dans la Data API (HTTP 406 / PGRST106) ; rôles navigateur et service_role NOLOGIN ; pas de RPC publique exportant les files réseau.
+- Premier cycle automatique réel réussi à 10:37:03 UTC (11:37:03 Paris), sans mission. Une fixture personnelle à deux dates a ensuite été insérée dans la seule base de recette. La saisie des champs date via le navigateur de contrôle a échoué ; ce parcours UI n'est pas déclaré validé.
+- Vérification locale du changement Vault : 56 fichiers / 318 tests Vitest réussis, test SQL Microsoft et droits Vault réussi, ESLint 0 erreur / 2 avertissements préexistants, build réussi. La CI du changement Vault reste à vérifier après push.
+
+Restent notamment les cycles création/modification/retrait avec événements, la reconnexion sans doublon, la recette professionnelle et la revue finale avant publication.

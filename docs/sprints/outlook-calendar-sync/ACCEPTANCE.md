@@ -1,6 +1,8 @@
 # Recette Microsoft — statut au 28 octobre 2026
 
-Les tests automatisés utilisent exclusivement des missions et réponses Microsoft fictives. **Recette réelle non exécutée** : Entra, secrets et comptes de test restent à configurer. Ne pas déduire la compatibilité réelle d'un compte des seuls mocks.
+Les tests automatisés utilisent des données fictives. **Recette Outlook personnelle démarrée le 28 octobre 2026**, dans la branche Supabase documentation-demo uniquement, avec un compte formateur fictif et le consentement du titulaire Outlook. La recette Microsoft 365 professionnelle reste non exécutée. Ne pas déduire sa compatibilité réelle des mocks ni du compte personnel.
+
+Preuves personnelles : calendrier dédié créé ; deux événements privés et occupés synchronisés automatiquement à 10:40 UTC. Modification réelle à 10:48 UTC : horaire corrigé sur le même identifiant Graph, ancienne date retirée et nouvelle date créée sans doublon. Corps inspecté dans Outlook : lien vers la mission, aucun invité, note privée sentinelle absente. Voir REAL_ACCEPTANCE.md pour la trace actualisée.
 
 Pour chacun des deux types de compte (Outlook personnel ; Microsoft 365 professionnel Exchange Online), relever commit/configuration/horodatage/résultat sans secrets :
 

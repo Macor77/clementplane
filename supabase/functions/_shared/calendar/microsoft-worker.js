@@ -49,7 +49,17 @@ export function secureEqual(a,b){
 export function createMicrosoftWorkerHandler({db,env,fetch}){
  return async request=>{
   if(request.method!=='POST')return new Response(null,{status:405});
-  if(!secureEqual(request.headers.get('X-Calendar-Worker-Secret'),env.MICROSOFT_CALENDAR_WORKER_SECRET))return new Response(null,{status:401});
+  const supplied=request.headers.get('X-Calendar-Worker-Secret');
+  if(env.MICROSOFT_CALENDAR_WORKER_SECRET){
+   if(!secureEqual(supplied,env.MICROSOFT_CALENDAR_WORKER_SECRET))return new Response(null,{status:401});
+  }else{
+   // Verify in Vault without exporting its secret to Edge configuration or clients.
+   if(typeof supplied!=='string'||! /^[0-9a-f]{64}$/.test(supplied))return new Response(null,{status:401});
+   try{
+    const allowed=await checked(db.rpc('microsoft_calendar_authorize_worker',{p_secret:supplied}));
+    if(allowed!==true)return new Response(null,{status:401});
+   }catch{return new Response(null,{status:503});}
+  }
   if(!env.MICROSOFT_CLIENT_ID||!env.MICROSOFT_CLIENT_SECRET||!env.CALENDAR_ENCRYPTION_KEY||!['testing','public'].includes(env.MICROSOFT_CALENDAR_MODE))return Response.json({paused:true});
   const deadline=Date.now()+45000;let count=0;
   try{

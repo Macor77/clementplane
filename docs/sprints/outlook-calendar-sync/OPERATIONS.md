@@ -24,9 +24,9 @@
 | Supabase Edge | `CALENDAR_ENCRYPTION_KEY` | Clé AES-GCM 256 bits déjà utilisée par l'infrastructure calendrier ; ne pas remplacer la clé Google existante |
 | Supabase Edge | `MICROSOFT_CALENDAR_MODE` | `disabled`, puis `testing`, puis `public` seulement après recette |
 | Supabase Edge | `MICROSOFT_CALENDAR_TEST_USER_IDS` | UUID Clementplane des comptes de test, séparés par virgules ; contrôle du handler ET du claim worker |
-| Supabase Edge | `MICROSOFT_CALENDAR_WORKER_SECRET` | Secret indépendant du worker Google |
+| Supabase Edge | `MICROSOFT_CALENDAR_WORKER_SECRET` | Facultatif : ancienne configuration Edge explicite, prioritaire si définie. Sinon vérification dans Vault par RPC réservée au service_role ; aucune copie du secret dans Edge requise |
 | Supabase Vault | `microsoft_calendar_worker_url` | URL complète de `microsoft-calendar-worker` |
-| Supabase Vault | `microsoft_calendar_worker_secret` | Même secret que `MICROSOFT_CALENDAR_WORKER_SECRET` |
+| Supabase Vault | `microsoft_calendar_worker_secret` | Clé dédiée de 32 octets aléatoires encodés en 64 caractères hexadécimaux ; générée côté base, jamais affichée. Si une clé Edge explicite existe, les deux valeurs doivent correspondre |
 | Vercel frontend | `VITE_MICROSOFT_CALENDAR_ENABLED` | absent/false par défaut ; true uniquement dans l'environnement de recette autorisé puis en public après validation |
 
 Le frontend n'embarque aucun secret Microsoft. Le mode serveur est le verrou d'accès réel. Garder le flag frontend vrai lors d'une pause serveur permet aux utilisateurs déjà connectés de se déconnecter.
@@ -68,3 +68,17 @@ Passer `MICROSOFT_CALENDAR_MODE=disabled`, suspendre uniquement `clementplane-mi
 - [Événement Graph](https://learn.microsoft.com/en-us/graph/api/resources/event?view=graph-rest-1.0) : transactionId, privé, libre/occupé.
 - [Propriétés étendues](https://learn.microsoft.com/en-us/graph/api/singlevaluelegacyextendedproperty-get?view=graph-rest-1.0) : filtres explicites de lecture et recherche des calendriers/événements.
 - [Authentification Edge Supabase](https://supabase.com/docs/guides/functions/auth-legacy-jwt) : validation serveur, rôle privilégié séparé.
+
+## Authentification du déclencheur via Vault
+
+Appliquer `20261028160000_microsoft_calendar_worker_vault_auth.sql` avant de déployer le worker utilisant Vault. La RPC `microsoft_calendar_authorize_worker(text)` renvoie uniquement un booléen ; son exécution est refusée à PUBLIC, anon et authenticated. Aucun droit de lecture Vault n'est ajouté. Le worker refuse immédiatement les en-têtes absents ou malformés, puis fait vérifier les clés de 64 caractères hexadécimaux par le rôle serveur ; erreur Vault = HTTP 503 sans fuite. Une clé Edge explicite garde la priorité, sans repli après échec.
+
+Provisionnement initial côté base uniquement, sans exporter la valeur :
+
+```sql
+select vault.create_secret(encode(extensions.gen_random_bytes(32),'hex'),
+ 'microsoft_calendar_worker_secret','Dedicated Microsoft scheduler authentication')
+where not exists(select 1 from vault.secrets where name='microsoft_calendar_worker_secret');
+```
+
+Le cron lit la clé dans Vault et l'envoie au worker ; le worker demande sa vérification à Vault. Les précautions sur les files pg_net restent obligatoires. La rotation se fait dans Vault et prend effet au prochain appel, sans cache dans Edge. Ne pas afficher ni exporter la clé. Ne jamais utiliser une clé Google comme substitut.

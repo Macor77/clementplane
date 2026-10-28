@@ -17,3 +17,25 @@ describe('worker orchestration',()=>{
  it('stops retrying revoked authorization until reconnect',async()=>{const f=await fixture({googleStatus:400,googleBody:{error:'invalid_grant'}});await runMicrosoftCalendarJob(f);expect(f.finish).toHaveBeenCalledWith(expect.objectContaining({p_status:'reconnect',p_error:'authorization_revoked'}));});
  it('cannot run the worker without its dedicated secret',async()=>{const db=new Proxy({},{get(){throw new Error('UNAUTHORIZED_DB_ACCESS');}});const h=createMicrosoftWorkerHandler({db,env:{MICROSOFT_CALENDAR_WORKER_SECRET:'private-test-secret',MICROSOFT_CALENDAR_MODE:'public'},fetch:vi.fn()});expect((await h(new Request('https://edge.test',{method:'POST'}))).status).toBe(401);});
 });
+
+describe('Vault worker authentication',()=>{
+ const key='a'.repeat(64);
+ const request=(value=key)=>new Request('https://edge.test',{method:'POST',headers:{'X-Calendar-Worker-Secret':value}});
+ it('rejects missing or malformed credentials without querying Vault',async()=>{
+  const db={rpc:vi.fn()};const h=createMicrosoftWorkerHandler({db,env:{},fetch:vi.fn()});
+  expect((await h(request(''))).status).toBe(401);expect((await h(request('short'))).status).toBe(401);expect(db.rpc).not.toHaveBeenCalled();
+ });
+ it('accepts only a true Vault verification result and returns no secret',async()=>{
+  const db={rpc:vi.fn().mockResolvedValue({data:true,error:null})};const h=createMicrosoftWorkerHandler({db,env:{},fetch:vi.fn()});
+  expect(await (await h(request())).json()).toEqual({paused:true});expect(db.rpc).toHaveBeenCalledExactlyOnceWith('microsoft_calendar_authorize_worker',{p_secret:key});
+ });
+ it.each([false,null,'true'])('rejects an invalid Vault result: %j',async data=>{
+  const db={rpc:vi.fn().mockResolvedValue({data,error:null})};const h=createMicrosoftWorkerHandler({db,env:{},fetch:vi.fn()});expect((await h(request())).status).toBe(401);
+ });
+ it('fails closed on Vault errors without leaking the error',async()=>{
+  const db={rpc:vi.fn().mockRejectedValue(new Error('private diagnostic'))};const h=createMicrosoftWorkerHandler({db,env:{},fetch:vi.fn()});const response=await h(request());expect(response.status).toBe(503);expect(await response.text()).not.toContain('private');
+ });
+ it('does not fall back to Vault when an explicit Edge key is configured',async()=>{
+  const db={rpc:vi.fn()};const h=createMicrosoftWorkerHandler({db,env:{MICROSOFT_CALENDAR_WORKER_SECRET:'explicit-key'},fetch:vi.fn()});expect((await h(request())).status).toBe(401);expect(db.rpc).not.toHaveBeenCalled();
+ });
+});

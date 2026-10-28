@@ -1,3 +1,5 @@
+> **État courant — 28 octobre 2026 : pilote restreint activé en production, PR #19 fusionnée.** Recette personnelle réelle réussie ; report du test Microsoft 365 professionnel explicitement accepté par Vincent pour ce pilote. Aucune ouverture générale ni clôture. [Preuves et actions restantes](PILOT.md). Les états antérieurs ci-dessous sont historiques.
+
 > **Décision pilote du 28 octobre 2026 :** Vincent autorise le report du test Microsoft 365 professionnel après déploiement, dans un pilote limité à son compte et à une cliente désignée. Cette réserve ne vaut pas ouverture publique ni clôture. La cliente doit consentir elle-même à Microsoft. Les UUID sont configurés dans les secrets d'environnement, jamais dans les fichiers publics.
 
 # Outlook / Microsoft 365 — exploitation et mise en service
@@ -8,7 +10,7 @@
 
 1. Créer ou reprendre l'application Clementplane dans Microsoft Entra. Comptes pris en charge : comptes de tous les annuaires d'organisation ET comptes Microsoft personnels (`AzureADandPersonalMicrosoftAccount`). Conserver le même client ID lors des renouvellements de secret : le `sub` OIDC est propre à l'application.
 2. Plateforme **Web**, flux Authorization Code côté serveur avec PKCE S256 ; ne pas configurer cette intégration comme SPA ni activer implicit grant.
-3. URI exacte de production : `https://clementplane.fr/microsoft-calendar-callback.html`. Pour une recette avant fusion, enregistrer une URI du même chemin sur un domaine de preview stable ; `APP_URL` doit correspondre exactement à cette origine. Pas de wildcard ni URI transmise par le navigateur.
+3. URI exacte de production : `https://www.clementplane.fr/microsoft-calendar-callback.html`. Pour une recette avant fusion, enregistrer une URI du même chemin sur un domaine de preview stable ; `APP_URL` doit correspondre exactement à cette origine. Pas de wildcard ni URI transmise par le navigateur.
 4. Permissions déléguées : `openid profile email offline_access Calendars.ReadWrite`. Aucune permission Application, `User.Read` ou `Calendars.ReadWrite.Shared` nécessaire. Les politiques du tenant peuvent imposer un consentement administrateur ou interdire l'application. Ne pas contourner ces politiques.
 5. Renseigner nom, domaine éditeur, contact et liens CGU/confidentialité Clementplane ; réaliser les vérifications Microsoft exigées dans le tenant.
 6. Créer le secret client dans Entra et le saisir directement dans le gestionnaire de secrets Supabase. Ne jamais le coller dans GitHub, un journal, une commande enregistrée ou la conversation. Suivre son expiration et renouveler avant échéance.

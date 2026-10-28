@@ -1,3 +1,5 @@
+> **État courant — 28 octobre 2026 : pilote restreint activé en production, PR #19 fusionnée.** Recette personnelle réelle réussie ; report du test Microsoft 365 professionnel explicitement accepté par Vincent pour ce pilote. Aucune ouverture générale ni clôture. [Preuves et actions restantes](PILOT.md). Les états antérieurs ci-dessous sont historiques.
+
 # Revue technique des impacts de confidentialité — 28 octobre 2026
 
 État : préparée avant activation. Ce document constate les traitements et les changements documentaires ; il ne certifie pas des contrats Microsoft ou paramètres d'organisation non consultés.

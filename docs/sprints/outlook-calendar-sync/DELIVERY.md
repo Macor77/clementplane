@@ -1,3 +1,5 @@
+> **État courant — 28 octobre 2026 : pilote restreint activé en production, PR #19 fusionnée.** Recette personnelle réelle réussie ; report du test Microsoft 365 professionnel explicitement accepté par Vincent pour ce pilote. Aucune ouverture générale ni clôture. [Preuves et actions restantes](PILOT.md). Les états antérieurs ci-dessous sont historiques.
+
 > **Mise à jour :** les sections initiales ci-dessous sont historiques. Le backend Microsoft est maintenant déployé uniquement en recette isolée, en mode testing. Les preuves réelles et réserves courantes sont dans [REAL_ACCEPTANCE.md](REAL_ACCEPTANCE.md). Aucune livraison publique.
 
 # Preuves de préparation — Outlook / Microsoft 365

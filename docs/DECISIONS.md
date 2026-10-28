@@ -284,3 +284,7 @@ L’OF peut enregistrer un accord reçu hors Clementplane, même après envoi d�
 ## Outlook / Microsoft 365 — préparation du 28 octobre 2026
 
 Décision technique de reprise : isoler le stockage et les workers Microsoft pour préserver Google ; mutualiser uniquement projection, identité Clementplane et chiffrement. Réponses de création ambiguës : récupération par propriété puis arrêt sans duplication si absence non établie. Autorisation générale de Vincent le 28 octobre pour développement/livraison, avec gate explicite de recette Microsoft avant ouverture ; aucune réserve auto-acceptée.
+
+## Outlook — pilote restreint autorisé le 28 octobre 2026
+
+Vincent accepte explicitement de reporter le test Microsoft 365 professionnel après mise en production avec une cliente désignée. Pilote limité par liste serveur en mode testing, carte invisible aux autres comptes et promotion publique masquée. PR #19 fusionnée ; configuration et preuve dans `sprints/outlook-calendar-sync/PILOT.md`. Ce mandat ne vaut ni validation professionnelle ni ouverture générale ni clôture. Origine de production canonique avec www, alignée avec la redirection Vercel préexistante. Version stable 1.2.4 conservée jusqu'à livraison finale 1.3.0. Aucun message envoyé.

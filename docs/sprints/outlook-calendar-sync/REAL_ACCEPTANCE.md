@@ -1,3 +1,5 @@
+> **État courant — 28 octobre 2026 : pilote restreint activé en production, PR #19 fusionnée.** Recette personnelle réelle réussie ; report du test Microsoft 365 professionnel explicitement accepté par Vincent pour ce pilote. Aucune ouverture générale ni clôture. [Preuves et actions restantes](PILOT.md). Les états antérieurs ci-dessous sont historiques.
+
 # Recette réelle Outlook personnel — 28 octobre 2026
 
 **État : recette personnelle partielle réussie, Microsoft 365 professionnel non testé, aucune activation publique.** Les réserves de la matrice ACCEPTANCE restent ouvertes hors des lignes documentées ici.

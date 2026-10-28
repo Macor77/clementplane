@@ -1,3 +1,5 @@
+> **État courant — 28 octobre 2026 : pilote restreint activé en production, PR #19 fusionnée.** Recette personnelle réelle réussie ; report du test Microsoft 365 professionnel explicitement accepté par Vincent pour ce pilote. Aucune ouverture générale ni clôture. [Preuves et actions restantes](PILOT.md). Les états antérieurs ci-dessous sont historiques.
+
 # Retour au pilotage — 28 octobre 2026
 
 **Non clôturé.** L'intégration Microsoft est développée et testée avec API simulée ; CI finale verte (311 tests Vitest, 36 navigateur) ; configuration Entra, recette personnelle/professionnelle et livraison restent requises. Le sprint Google reste opérationnel ; aucune modification des fonctions ou tables Google en production.

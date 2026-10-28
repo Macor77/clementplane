@@ -1,4 +1,4 @@
-> **28 octobre 2026 — Outlook / Microsoft 365 : en recette préparatoire, non livré.** PR #19, développement sur `feature/outlook-calendar-sync`. Entra configuré, première connexion Outlook personnelle et synchronisation réelle validées en recette isolée ; recette professionnelle et clôture encore requises. Ne pas marquer terminé. [Dossier de sprint](docs/sprints/outlook-calendar-sync/PLAN.md).
+> **28 octobre 2026 — Outlook / Microsoft 365 : pilote restreint activé en production.** PR #19 fusionnée, recette personnelle réussie ; recette professionnelle reportée avec accord explicite de Vincent. Aucune ouverture générale, sprint non clôturé. [Preuves et suivi](docs/sprints/outlook-calendar-sync/PILOT.md).
 
 > **Mise à jour du 27 octobre 2026 : navigation multi-onglets publiée en production.** PR #18 fusionnée, déploiement Vercel READY sur clementplane.fr. Preuves et périmètre : `docs/sprints/new-tab-navigation/DEPLOYMENT.md`. Les mentions « préparée, non publiée » ci-dessous décrivent l’étape antérieure.
 

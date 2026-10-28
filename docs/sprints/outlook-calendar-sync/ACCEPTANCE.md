@@ -1,3 +1,5 @@
+> **État courant — 28 octobre 2026 : pilote restreint activé en production, PR #19 fusionnée.** Recette personnelle réelle réussie ; report du test Microsoft 365 professionnel explicitement accepté par Vincent pour ce pilote. Aucune ouverture générale ni clôture. [Preuves et actions restantes](PILOT.md). Les états antérieurs ci-dessous sont historiques.
+
 # Recette Microsoft — statut au 28 octobre 2026
 
 Les tests automatisés utilisent des données fictives. **Recette Outlook personnelle démarrée le 28 octobre 2026**, dans la branche Supabase documentation-demo uniquement, avec un compte formateur fictif et le consentement du titulaire Outlook. La recette Microsoft 365 professionnelle reste non exécutée. Ne pas déduire sa compatibilité réelle des mocks ni du compte personnel.

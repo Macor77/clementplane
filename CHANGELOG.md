@@ -1,10 +1,10 @@
-## Non publié — Outlook / Microsoft 365 (préparation du 28 octobre 2026)
+## 28 octobre 2026 — Outlook / Microsoft 365 (pilote restreint)
 
 - Connexion facultative depuis les paramètres formateur, indépendante de Google.
 - Calendrier distinct, missions/propositions/options privées, synchronisation serveur et reconnexion sans duplication.
 - OAuth PKCE serveur, jetons chiffrés, règles RLS, gestion des erreurs Graph, migration de notice et tests de non-régression.
 - Authentification du worker par clé générée dans Vault, vérification booléenne réservée au serveur ; aucun secret à copier dans le navigateur.
-- **Pas encore disponible publiquement** : connexion personnelle, création et modification réellement testées dans la recette isolée ; recette professionnelle et contrôles finaux encore attendus. Version de production inchangée.
+- **Pilote activé en production sur liste de comptes, aucune ouverture générale** : PR #19 fusionnée, migrations/fonctions/cron vérifiés. Recette personnelle réelle réussie ; recette professionnelle reportée avec accord de Vincent. Version stable 1.2.4 conservée, clôture et version 1.3.0 différées. Preuves : [PILOT.md](docs/sprints/outlook-calendar-sync/PILOT.md).
 
 > **Mise à jour du 27 octobre 2026 : navigation multi-onglets publiée en production.** PR #18 fusionnée, déploiement Vercel READY sur clementplane.fr. Preuves et périmètre : `docs/sprints/new-tab-navigation/DEPLOYMENT.md`. Les mentions « préparée, non publiée » ci-dessous décrivent l’étape antérieure.
 

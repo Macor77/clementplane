@@ -36,6 +36,9 @@ export default function MicrosoftCalendarCard({userId}){
   const next=await calendarAction('settings',{include_fee:status.include_fee,include_notes:status.include_notes,[field]:value});setStatus(next);setMessage('Choix enregistré. Les événements seront actualisés, y compris pour retirer les informations désactivées.');
  });}
  const connected=status&&status.status!=='disconnected';
+ // Keep the restricted pilot hidden until the server confirms eligibility.
+ // Existing connections retain their disconnect control during a pause.
+ if ((!status&&!error)||(status?.mode==='disabled'&&!connected))return null;
  return <section className="panel-card trainer-settings-card google-calendar-card" id="microsoft-agenda" aria-labelledby="microsoft-calendar-title">
   <div><p className="page-eyebrow">MON AGENDA</p><h2 id="microsoft-calendar-title">Outlook / Microsoft 365</h2><p>Retrouvez vos propositions, options et missions dans un calendrier dédié « Prénom Nom — Clementplane », même quand l’application est fermée.</p></div>
   {status?.mode==='testing'&&<p className="google-calendar-notice">Accès de test : cette connexion est actuellement réservée aux comptes autorisés.</p>}

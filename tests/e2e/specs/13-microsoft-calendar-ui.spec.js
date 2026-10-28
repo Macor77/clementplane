@@ -1,8 +1,8 @@
 import {test,expect} from '@playwright/test';
-async function setup(page,{disconnected=false,missions=[],proposals=[]}={}){
+async function setup(page,{disconnected=false,mode='testing',missions=[],proposals=[]}={}){
  const user={id:'20000000-0000-0000-0000-000000000001',email:'alex@example.invalid',aud:'authenticated',role:'authenticated'};
  const token=[Buffer.from('{"alg":"HS256","typ":"JWT"}').toString('base64url'),Buffer.from(JSON.stringify({sub:user.id,exp:Math.floor(Date.now()/1000)+36000,role:'authenticated'})).toString('base64url'),'test'].join('.');
- let state={mode:'testing',status:'active',account_email:'alex.demo@example.invalid',calendar_name:'Clementplane',calendar_url:'https://calendar.microsoft.com/',include_fee:false,include_notes:false,last_success_at:'2026-10-08T08:00:00Z',pending:false};if(disconnected)state.status='disconnected';const actions=[];
+ let state={mode,status:'active',account_email:'alex.demo@example.invalid',calendar_name:'Clementplane',calendar_url:'https://calendar.microsoft.com/',include_fee:false,include_notes:false,last_success_at:'2026-10-08T08:00:00Z',pending:false};if(disconnected)state.status='disconnected';const actions=[];
  await page.addInitScript(({user,token})=>{localStorage.setItem('sb-example-auth-token',JSON.stringify({access_token:token,refresh_token:'fake',expires_at:Math.floor(Date.now()/1000)+36000,expires_in:36000,token_type:'bearer',user}));sessionStorage.setItem('timeforma_active_space','trainer');localStorage.setItem('clementplane_pwa_install_dismissed_at',String(Date.now()));},{user,token});
  await page.route('https://example.supabase.co/**',async route=>{
   const req=route.request(),path=new URL(req.url()).pathname;let data=[];
@@ -58,4 +58,22 @@ for(const width of [1440,390])test(`Microsoft connection callback ${width}px (AP
  await expect(card.getByRole('button',{name:'Déconnecter Microsoft',exact:true})).toBeVisible();
  expect(actions.filter(a=>a.action==='finish')).toEqual([{action:'finish',state:'test-state',code:'fictional'}]);
  expect(await page.evaluate(()=>sessionStorage.getItem('cp_microsoft_oauth_intent'))).toBeNull();
+});
+
+
+test('restricted pilot is hidden from ineligible trainers',async({page})=>{
+ const actions=await setup(page,{disconnected:true,mode:'disabled'});
+ await page.goto('/formateur/parametres');
+ await expect.poll(()=>actions.some(a=>a.action==='status')).toBe(true);
+ await expect(page.locator('#microsoft-agenda')).toHaveCount(0);
+ expect(actions.every(a=>a.action==='status')).toBe(true);
+});
+test('paused connection still allows disconnecting',async({page})=>{
+ const actions=await setup(page,{mode:'disabled'});
+ await page.goto('/formateur/parametres');
+ const card=page.locator('#microsoft-agenda');
+ await card.getByRole('button',{name:'Déconnecter Microsoft',exact:true}).click();
+ await card.getByRole('button',{name:'Confirmer la déconnexion'}).click();
+ await expect.poll(()=>actions.some(a=>a.action==='disconnect')).toBe(true);
+ await expect(card).toHaveCount(0);
 });

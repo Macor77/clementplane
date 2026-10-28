@@ -1,4 +1,4 @@
-const microsoftCalendarVisible = import.meta.env?.VITE_MICROSOFT_CALENDAR_ENABLED === 'true';
+const microsoftCalendarVisible = import.meta.env?.VITE_MICROSOFT_CALENDAR_ENABLED === 'true' && import.meta.env?.VITE_MICROSOFT_CALENDAR_PILOT !== 'true';
 
 export const FORMPLANE_VERSION = 'V1.2.4';
 

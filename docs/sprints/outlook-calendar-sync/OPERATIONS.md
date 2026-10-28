@@ -1,3 +1,5 @@
+> **Décision pilote du 28 octobre 2026 :** Vincent autorise le report du test Microsoft 365 professionnel après déploiement, dans un pilote limité à son compte et à une cliente désignée. Cette réserve ne vaut pas ouverture publique ni clôture. La cliente doit consentir elle-même à Microsoft. Les UUID sont configurés dans les secrets d'environnement, jamais dans les fichiers publics.
+
 # Outlook / Microsoft 365 — exploitation et mise en service
 
 État au 28 octobre 2026 : code préparé sur PR #19, **aucune activation publique autorisée sans recette réelle**. Les étapes ci-dessous ne sont pas des opérations déjà exécutées.
@@ -82,3 +84,11 @@ where not exists(select 1 from vault.secrets where name='microsoft_calendar_work
 ```
 
 Le cron lit la clé dans Vault et l'envoie au worker ; le worker demande sa vérification à Vault. Les précautions sur les files pg_net restent obligatoires. La rotation se fait dans Vault et prend effet au prochain appel, sans cache dans Edge. Ne pas afficher ni exporter la clé. Ne jamais utiliser une clé Google comme substitut.
+
+
+## Pilote sur production (préparation)
+
+- Mode serveur `testing`, allowlist exacte des comptes approuvés ; aucun mode `public`.
+- `VITE_MICROSOFT_CALENDAR_ENABLED=true`, `VITE_MICROSOFT_CALENDAR_PILOT=true` : notice légale active, promotion générale dans Découvrir masquée. Carte masquée tant que l'éligibilité serveur n'est pas confirmée et pour les comptes non autorisés ; une connexion existante garde son contrôle de déconnexion pendant une pause.
+- Compte cliente retrouvé en production, confirmé, avec profil formateur. Le compte personnel de Vincent existe mais n'a pas de profil formateur : ne pas lui créer un rôle automatiquement. Il conserve la recette personnelle isolée déjà validée.
+- Les modifications ci-dessus sont une préparation. La mise en service effective exige le déploiement backend/cron, la configuration serveur/preview et la vérification CI avant fusion. Aucun e-mail envoyé à la cliente.

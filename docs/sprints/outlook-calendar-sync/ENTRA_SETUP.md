@@ -9,7 +9,7 @@ Cette fiche consigne les opérations effectivement réalisées. Le sprint reste 
 - Object ID : `d044d21a-5542-4ff8-84aa-7500e1086a72`.
 - Tenant ID : `45f83475-fdfa-4ec9-87d0-0e74388b71be`.
 - Comptes : `AzureADandPersonalMicrosoftAccount`.
-- Une seule URI Web : `https://clementplane.fr/microsoft-calendar-callback.html`.
+- Deux URI Web vérifiées : `https://clementplane.fr/microsoft-calendar-callback.html` et `https://clementplane-git-feature-outlook-calendar-sync-formaplane.vercel.app/microsoft-calendar-callback.html`. La seconde a été enregistrée après accord explicite du titulaire.
 - Permissions configurées, toutes déléguées : `Calendars.ReadWrite email offline_access openid profile`. Le `User.Read` ajouté par défaut a été retiré de la configuration.
 - Aucun consentement administrateur global accordé ; aucune permission Application.
 - Flux implicites access token / ID token non cochés ; clients publics désactivés.
@@ -20,7 +20,7 @@ L'utilisateur a explicitement autorisé l'acceptation des conditions Microsoft a
 
 ## Points restant à valider
 
-- Secret client : créé par le titulaire ; présence du nom `MICROSOFT_CLIENT_SECRET` vérifiée dans les secrets Edge de production. Valeur non consultée. Encore absent de la branche de recette ; dépôt direct nécessaire, jamais dans le chat.
+- Secret client : créé par le titulaire ; présence du nom `MICROSOFT_CLIENT_SECRET` vérifiée dans les secrets Edge de production. Valeur non consultée. Présence également vérifiée dans la branche de recette après dépôt direct par le titulaire ; valeur jamais lue ni exportée.
 - Domaine éditeur actuellement `vincentmacoralterprevention.onmicrosoft.com` ; éditeur non vérifié. Le portail affiche un avertissement sur le consentement des applications multilocataires non vérifiées. Vérifier les exigences Microsoft et la politique du tenant de recette ; ne pas contourner ces restrictions.
 - Comptes de recette personnel et professionnel avec boîte Exchange ; consentement et cycle Graph réels toujours non effectués.
 - Environnement de recette existant repris : migrations et fonctions Microsoft déployées (voir ci-dessous). Cron Microsoft non installé ; aucun cycle Graph réel exécuté.
@@ -42,7 +42,14 @@ Les résultats de tests restent ceux de [DELIVERY.md](DELIVERY.md) ; aucune nouv
 - Paramètres Edge de recette enregistrés : `MICROSOFT_CLIENT_ID`, `MICROSOFT_APP_URL`, `MICROSOFT_REDIRECT_URI` et `MICROSOFT_CALENDAR_MODE=disabled`. Clé de chiffrement Google existante conservée.
 - Ajout de `MICROSOFT_APP_URL`, facultatif, dans les deux points d'entrée pour isoler l'origine Microsoft sans changer l'origine Google.
 - Vercel : variables `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` et `VITE_MICROSOFT_CALENDAR_ENABLED=true` limitées à la preview de `feature/outlook-calendar-sync`. URL et clé publique pointent vers la branche Supabase de recette. Aucun changement des variables production.
-- Alias existant de la branche : `https://clementplane-git-feature-outlook-calendar-sync-formaplane.vercel.app`. L'URI de callback correspondante reste à enregistrer dans Entra avant recette OAuth.
+- Alias existant de la branche : `https://clementplane-git-feature-outlook-calendar-sync-formaplane.vercel.app`. L'URI de callback correspondante est maintenant enregistrée dans Entra et vérifiée dans la liste des URI Web.
 - Vérification locale après changement d'origine : 12 fichiers / 82 tests calendrier et contrats réussis ; ESLint 0 erreur, 2 avertissements préexistants ; build production réussi (avertissement de taille du bundle préexistant).
 
-Ces contrôles ne constituent pas la recette Microsoft personnelle/professionnelle. Le secret de recette, les paramètres OAuth, l'allowlist, le cron et les parcours réels restent à finaliser avant toute activation publique.
+Ces contrôles ne constituent pas la recette Microsoft personnelle/professionnelle. Le secret de recette et les paramètres OAuth sont déposés. L'allowlist, le secret dédié du worker, le cron et les parcours réels restent à finaliser avant toute activation publique.
+
+## Dernier point de reprise
+
+- CI Quality run 138 entièrement réussie sur le code `3f978fbec5fc8ec0c27a048b828205265e92117b` : https://github.com/Macor77/clementplane/actions/runs/40661615660.
+- Prévisualisation Vercel `dpl_4xHkSKtzAQzdChdRjWvBb3sFm7Jy` READY pour ce même code ; accès navigateur vérifié après connexion Vercel normale via GitHub. Protection conservée ; aucun lien de partage créé.
+- Écran de connexion Clementplane de recette atteint. Connexion au compte formateur non effectuée : demande sécurisée déclinée. Aucun essai OAuth Microsoft réel, aucun calendrier créé, aucune mission modifiée.
+- Mode serveur Microsoft toujours `disabled`. Prochaine étape : utiliser le compte formateur fictif autorisé, limiter l'allowlist à son UUID, préparer le worker/cron, puis obtenir le consentement Microsoft et dérouler la recette.

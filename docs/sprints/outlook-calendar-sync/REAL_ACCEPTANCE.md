@@ -33,7 +33,22 @@ Les heures ci-dessous proviennent de la base distante, en UTC (Paris : UTC+1 à 
 
 ## Vérifications et réserves
 
-- Après changement Vault : Vitest 56 fichiers / 318 tests réussis, test SQL Microsoft et vérifications de droits Vault réussis, ESLint zéro erreur/deux avertissements préexistants, build Vite/PWA réussi. Résultat CI du nouveau commit à consigner séparément.
+- Après changement Vault : Vitest 56 fichiers / 318 tests réussis, test SQL Microsoft et vérifications de droits Vault réussis, ESLint zéro erreur/deux avertissements préexistants, build Vite/PWA réussi. CI Quality 40675890864 réussie sur le code 2dbe8b7 ; détail dans DELIVERY.md, dont un test de navigation préexistant réussi seulement au retry.
 - Les tests automatiques couvrent propositions/options, revalidation, isolation, erreurs Graph, limites, concurrence et Google ; ils ne constituent pas une recette réelle de ces scénarios.
-- Reste : Microsoft 365 professionnel avec boîte Exchange Online et politique permettant le consentement ; double fournisseur réel ; parcours OF/revalidation réels ; PWA installée et validation UI native des dates. Aucun compte professionnel utilisable n'est actuellement établi.
+- Reste : Microsoft 365 professionnel avec boîte Exchange Online et politique permettant le consentement ; double fournisseur réel ; validation des actions OF/revalidation via leurs interfaces (états SQL testés ci-dessous) ; PWA installée et validation UI native des dates. Aucun compte professionnel utilisable n'est actuellement établi.
 - Pas de fusion, tag, release, archive de version livrée ni activation publique avant levée des conditions de recette. Aucun e-mail d'annonce.
+
+
+## Complément métier réel — fixture OF isolée
+
+Un organisme et une mission entièrement fictifs ont été créés uniquement dans documentation-demo, sans appel aux fonctions d'envoi. Les états métier ont été préparés par SQL ; le transport Graph, la projection serveur et les événements Outlook sont réels. Ceci ne valide pas l'interface OF ni les e-mails métier.
+
+- 5 novembre 09:00–12:00 : proposition visible « Proposition à répondre », **Free / Privé** (cycle 10:57 UTC).
+- Acceptation en option : titre « Option en attente de confirmation », **Free / Privé** (cycle 10:58 UTC).
+- Affectation et confirmation : « Mission confirmée », **Busy / Privé**.
+- Demande de revalidation en attente : ancien 5 novembre 09:00–12:00 conservé, titre « Modification à revalider », toujours occupé.
+- Acceptation et application : remplacement par le 6 novembre 10:00–13:00, sans l'avertissement de revalidation, toujours privé/occupé.
+- Désaffectation : zéro événement restant dans Outlook ; base à 11:01:21 UTC : versions 35/35, aucune erreur, zéro mapping actif.
+- Le bouton UI « Relancer la synchronisation » a mis le travail en attente ; le cron l'a traité. Pour les dernières transitions de revalidation/désaffectation, le même worker a aussi été appelé directement via pg_net, clé restant dans Vault. La preuve du cron sans application ouverte reste l'annulation personnelle précédente.
+
+Les deux fixtures sont conservées en base de recette pour audit ; la mission personnelle est annulée et la relation OF est annulée. Aucun événement de test actif ne subsiste.

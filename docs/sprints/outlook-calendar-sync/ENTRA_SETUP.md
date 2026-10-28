@@ -67,4 +67,4 @@ Ces contrôles ne constituent pas la recette Microsoft personnelle/professionnel
 - Premier cycle automatique réel réussi à 10:37:03 UTC (11:37:03 Paris), sans mission. Une fixture personnelle à deux dates a ensuite été insérée dans la seule base de recette. La saisie des champs date via le navigateur de contrôle a échoué ; ce parcours UI n'est pas déclaré validé.
 - Vérification locale du changement Vault : 56 fichiers / 318 tests Vitest réussis, test SQL Microsoft et droits Vault réussi, ESLint 0 erreur / 2 avertissements préexistants, build réussi. La CI du changement Vault reste à vérifier après push.
 
-Restent notamment les cycles création/modification/retrait avec événements, la reconnexion sans doublon, la recette professionnelle et la revue finale avant publication.
+Les cycles création/modification/retrait, reconnexion, proposition/option/affectation et revalidation par états SQL ont depuis été observés dans Outlook : voir REAL_ACCEPTANCE.md. Restent la recette professionnelle et les réserves de cette matrice avant publication.

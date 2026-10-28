@@ -34,3 +34,10 @@ Pas de commit de production, tag, release ou archive de version livrée. La vers
 Commit applicatif **2dbe8b7a116af1e64ebbe78bcf4b41af27a5b922**. CI Quality [40675890864](https://github.com/Macor77/clementplane/actions/runs/40675890864) réussie (merge de PR testé `455f71685516cd48966d5b4eb60721fe9e7f1d8f`) : 318 tests Vitest, SQL dont droits Vault, lint, audit et build. Tests navigateur : **35 réussis au premier passage, 1 réussi au retry** ; test de navigation formateur 1440px intermittent, attente du titre Camille Démo dépassée au premier passage. Ne pas annoncer 36 succès sans réserve. Les parcours Microsoft et Google passent au premier passage. [Artefact](https://github.com/Macor77/clementplane/actions/runs/40675890864/artifacts/12810276997), rétention 7 jours.
 
 Preview Vercel **dpl_2PVNyoCxVHcNsiAS6md4GLjbveHj READY**, commit 2dbe8b7, cible non-production. Worker et cron Microsoft déployés seulement dans documentation-demo. Preuves réelles : [REAL_ACCEPTANCE.md](REAL_ACCEPTANCE.md). Déconnexion/reconnexion personnelle, création, modification et annulation réellement vérifiées ; aucun déploiement public ni clôture.
+
+
+### Régression CI détectée sur le complément documentaire
+
+Le run 40676900686 (f2568a6, mêmes fichiers applicatifs) a échoué : 34 tests navigateur réussis, un retry réussi et un échec persistant sur la navigation mobile par clic milieu. Les 318 tests Vitest, SQL, lint, audit et build passent. Trace 12810144291 inspectée : initialisation Web Storage sur un document about:blank opaque (SecurityError) et installation/précache du service worker pendant les tests d'onglets à API mockée.
+
+Correction limitée à la fixture de navigation : initialisation de session seulement sur l'origine locale de l'application ; service workers bloqués uniquement dans cette spec de contrats réseau simulés. Les tests PWA et callbacks OAuth gardent leurs service workers et toutes les assertions de navigation sont conservées. Résultat de cette correction à vérifier en CI ; aucun changement applicatif ni de permissions utilisateur.

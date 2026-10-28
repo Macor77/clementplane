@@ -1,6 +1,6 @@
 # Preuves de préparation — Outlook / Microsoft 365
 
-28 octobre 2026. Aucune livraison publique. Ce document sera complété par la CI finale avant fin de session.
+28 octobre 2026. Aucune livraison publique. Contrôles de préparation terminés ; recette Microsoft réelle toujours requise.
 
 - PR #19, branche feature/outlook-calendar-sync.
 - Premier commit intégré : 7309a85c5cefafda1ebc93dcc3e8da03952d1d6a.
@@ -10,7 +10,19 @@
 - Premier lancement local sans variables Vite : deux fichiers de tests ne pouvaient pas initialiser Supabase ; relance avec les variables CI réussie. Chromium local non disponible et téléchargement tronqué ; les preuves navigateur proviennent de GitHub Actions, pas d'une exécution locale réussie.
 - Audit npm : 0 high/critical ; 4 moderate et 5 low, outils de développement (Vitest mocker, deepmerge/Workbox, fast-uri, serialize-javascript). Aucun `audit fix --force` appliqué.
 - Supabase distant inspecté en lecture seule : projet clementplane hctvkynrgmnxjynbncdi ; fonctions Google v3 ACTIVE, cron clementplane-google-calendar actif toutes les minutes. Aucune migration/fonction/cron Microsoft installés. Historiques Google sous versions distantes du 14 octobre : pas de db push global.
-- Vercel : projet prj_gNJbyUiPEIkj5ZPdJozxKbrmD3QE et équipe team_PbxydmCzCPS1tJewtRgkab7Y retrouvés ; liste des déploiements refusée 403 pour scope formaplane. Aucun déploiement prétendu vérifié.
+- Vercel : projet prj_gNJbyUiPEIkj5ZPdJozxKbrmD3QE et équipe team_PbxydmCzCPS1tJewtRgkab7Y retrouvés ; liste des déploiements refusée 403 pour scope formaplane. Le statut GitHub Vercel sur fc5bbf24 est success et pointe vers https://vercel.com/formaplane/clementplane/GCu8oLJmZbRwZUknH6tDBJDWnWkM ; ce signal de preview automatique ne prouve pas sa configuration ni les parcours. Aucun déploiement inspecté directement.
 - Revue indépendante : défaut de noms de colonnes, absence de fencing après expiration OAuth, ordre du contrôle de propriété du calendrier détectés et corrigés ; ajout d'une intégration réelle PostgreSQL pour ne pas se limiter aux mocks de base. POST ambigus traités sans recréation aveugle.
 
 Pas de commit de production, tag, release ou archive de version livrée. La version 1.2.4 est conservée jusqu'à recette ; cible 1.3.0 documentée. Actions restantes et conditions d'ouverture : OPERATIONS.md, ACCEPTANCE.md et CLOSURE.md.
+
+
+## Contrôle final du code — 28 octobre 2026
+
+- Commit applicatif de préparation : **fc5bbf24cfcc94ba5e975e2b77068ee12d547857**.
+- **CI Quality réussie**, run [40649659774](https://github.com/Macor77/clementplane/actions/runs/40649659774), job 122686513728 : 56 fichiers / **311 tests Vitest**, **36/36 tests navigateur**, cinq scripts SQL, ESLint, audit seuil high et build Vite/PWA réussis. Aucun test ignoré pour masquer l'échec précédent.
+- [Captures fictives finales](https://github.com/Macor77/clementplane/actions/runs/40649659774/artifacts/12799401542), artefact browser-acceptance, rétention 7 jours. Les preuves de synthèse et leurs références restent dans ce document au-delà de la rétention.
+- Le test mobile préexistant passe après isolation du CDN de polices dans sa fixture ; le code applicatif de navigation est inchangé.
+- Relecture indépendante de fc5bbf24 : aucun défaut important restant signalé ; 29 tests Microsoft relancés avec succès par le relecteur. Cette revue n'est pas une approbation GitHub humaine ni une recette Graph réelle.
+- Complément final uniquement documentaire : consigne ces preuves, ne change aucun fichier applicatif. Son commit n'est pas une version de production. L'équivalence applicative se vérifie par le diff avec fc5bbf24.
+
+**Statut final de session : développé et contrôlé en simulation, enregistré sur la PR #19 ; backend Microsoft non déployé, non activé publiquement, non clôturé.** Aucune modification distante Supabase, aucune fusion, aucun tag/release et aucun e-mail.

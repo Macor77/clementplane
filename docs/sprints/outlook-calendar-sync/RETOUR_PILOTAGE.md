@@ -1,6 +1,6 @@
 # Retour au pilotage — 28 octobre 2026
 
-**Non clôturé.** L'intégration Microsoft est développée et testée avec API simulée ; configuration Entra, recette personnelle/professionnelle et livraison restent requises. Le sprint Google reste opérationnel ; aucune modification des fonctions ou tables Google en production.
+**Non clôturé.** L'intégration Microsoft est développée et testée avec API simulée ; CI finale verte (311 tests Vitest, 36 navigateur) ; configuration Entra, recette personnelle/professionnelle et livraison restent requises. Le sprint Google reste opérationnel ; aucune modification des fonctions ou tables Google en production.
 
 ## Intervention minimale du titulaire
 

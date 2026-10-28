@@ -9,16 +9,18 @@
 - Première intégration `7309a85c5cefafda1ebc93dcc3e8da03952d1d6a` ; compléments et SHA final suivis dans DELIVERY.md.
 - [Première CI 40647831181](https://github.com/Macor77/clementplane/actions/runs/40647831181) : tests/SQL/audit/build réussis ; 35/36 tests navigateur réussis. Un test existant de navigation mobile a échoué sur un popup vide ; trace analysée, chargement CSS externe des polices isolé dans le test. Résultat final et preuve du correctif dans DELIVERY.md.
 
+**Contrôle final du code : CI [40649659774](https://github.com/Macor77/clementplane/actions/runs/40649659774) réussie sur `fc5bbf24` : 311 tests Vitest, 36 tests navigateur, SQL, lint, audit et build.** Voir DELIVERY.md. La réussite de cette CI ne lève pas le gate Microsoft réel.
+
 ## Matrice obligatoire
 
 | Contrôle | État, preuve et environnement | Reste |
 |---|---|---|
 | Périmètre | Implémentation sur la branche : connexion facultative, deux fournisseurs, calendrier dédié, règles métier partagées, retraits/reconnexions ; tests simulés | Recette réelle de tous les parcours ACCEPTANCE |
 | Développement | Code serveur, UI, deux migrations, scheduler préparé ; revue indépendante et correctifs intégrés | Corriger toute divergence observée chez Microsoft avant activation |
-| Recette | 311 tests Vitest au dernier contrôle local, SQL et intégration PostgreSQL avec Graph simulé ; CI Microsoft 5 parcours 1440/390 réussis | Comptes personnel/professionnel, consentement, permissions et PWA installée réelle |
+| Recette | 311 tests Vitest et 36 tests navigateur en CI finale, SQL et intégration PostgreSQL avec Graph simulé ; Microsoft 5 parcours 1440/390 réussis | Comptes personnel/professionnel, consentement, permissions et PWA installée réelle |
 | Supabase | Lecture du projet production `hctvkynrgmnxjynbncdi`, Google functions v3 actives et cron minute actif ; aucune fonction/migration Microsoft distante. Tests PGlite RLS/grants/RPC/cascade et flux handler/worker | Appliquer les deux migrations ciblées, déployer les deux fonctions et vérifier l'état réel lors de recette ; aucun db push global |
-| Qualité/CI | Lint sans erreur, 2 warnings préexistants (usePlanningAvailability, TrainerSearch). Build réussi, avertissement chunk volumineux préexistant. Audit : 0 high/critical, 4 moderate et 5 low sur outils de développement | Dernière CI et limites exactes dans DELIVERY ; migration majeure des outils de test hors périmètre |
-| Production | Aucun déploiement/activation Microsoft effectué. Vercel connaît le projet mais refuse le scope équipe formaplane (403) | Autoriser l'équipe puis vérifier commit/configuration/callback/headers et disponibilité réelle |
+| Qualité/CI | Lint sans erreur, 2 warnings préexistants (usePlanningAvailability, TrainerSearch). Build réussi, avertissement chunk volumineux préexistant. Audit : 0 high/critical, 4 moderate et 5 low sur outils de développement | CI finale réussie (DELIVERY) ; migration majeure des outils de test hors périmètre |
+| Production | Backend Microsoft non déployé et aucune activation publique. GitHub signale la preview Vercel fc5bbf24 réussie ; inspection directe refusée pour scope équipe formaplane (403) | Autoriser l'équipe puis vérifier commit/configuration/callback/headers et disponibilité réelle |
 | Documentation | Plan, architecture, base, PRD, tests, dépannage, registre et exploitation actualisés | Consigner les preuves réelles de livraison |
 | Impact légal/RGPD | Revue technique LEGAL_REVIEW ; notice Microsoft et stockage session conditionnels, compatibilité inscriptions testée ; procédures internes mises à jour | Conditions Microsoft applicables, gouvernance et logs amont à qualifier avant ouverture |
 | Roadmap/backlog | Racine/docs synchronisées : en préparation, non livré ; aucune fonctionnalité annoncée comme publiquement ouverte | Marquer livré après activation vérifiée |

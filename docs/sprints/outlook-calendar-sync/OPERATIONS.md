@@ -17,6 +17,7 @@
 | Emplacement | Nom | Valeur attendue / action |
 |---|---|---|
 | Supabase Edge | `APP_URL` | Origine exacte du frontend de recette ou production ; secret commun existant, ne pas le changer sur la production Google pour tester une preview |
+| Supabase Edge | `MICROSOFT_APP_URL` | Origine HTTPS canonique dédiée à Microsoft, facultative ; remplace `APP_URL` uniquement pour les deux fonctions Microsoft. Permet une preview isolée sans modifier les callbacks/liens Google. `MICROSOFT_REDIRECT_URI` doit correspondre à cette origine + `/microsoft-calendar-callback.html` |
 | Supabase Edge | `MICROSOFT_CLIENT_ID` | Identifiant public de l'application Entra |
 | Supabase Edge | `MICROSOFT_CLIENT_SECRET` | Secret Entra, gestionnaire sécurisé uniquement |
 | Supabase Edge | `MICROSOFT_REDIRECT_URI` | `APP_URL` + `/microsoft-calendar-callback.html` |

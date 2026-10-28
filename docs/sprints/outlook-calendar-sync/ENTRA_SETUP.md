@@ -20,10 +20,10 @@ L'utilisateur a explicitement autorisé l'acceptation des conditions Microsoft a
 
 ## Points restant à valider
 
-- Secret client : création par le titulaire et dépôt direct dans le gestionnaire Supabase, jamais dans le chat.
+- Secret client : créé par le titulaire ; présence du nom `MICROSOFT_CLIENT_SECRET` vérifiée dans les secrets Edge de production. Valeur non consultée. Encore absent de la branche de recette ; dépôt direct nécessaire, jamais dans le chat.
 - Domaine éditeur actuellement `vincentmacoralterprevention.onmicrosoft.com` ; éditeur non vérifié. Le portail affiche un avertissement sur le consentement des applications multilocataires non vérifiées. Vérifier les exigences Microsoft et la politique du tenant de recette ; ne pas contourner ces restrictions.
 - Comptes de recette personnel et professionnel avec boîte Exchange ; consentement et cycle Graph réels toujours non effectués.
-- Environnement de recette, migrations, fonctions et cron Microsoft : pas de nouveau déploiement réalisé lors de la configuration Entra.
+- Environnement de recette existant repris : migrations et fonctions Microsoft déployées (voir ci-dessous). Cron Microsoft non installé ; aucun cycle Graph réel exécuté.
 - L'accès au portail Azure ne constitue pas une preuve de licence Exchange Online.
 
 ## Vercel
@@ -32,3 +32,17 @@ L'accès détaillé de l'équipe fonctionne désormais via le connecteur. Déplo
 Cela ne prouve ni l'activation du flag Microsoft ni la recette OAuth.
 
 Les résultats de tests restent ceux de [DELIVERY.md](DELIVERY.md) ; aucune nouvelle recette réelle n'est revendiquée.
+
+## Préparation de recette isolée — 28 octobre 2026
+
+- Branche Supabase existante `documentation-demo`, projet `jqhbrkyeawtsuzrzrnvm` ; aucune création de projet ni modification des fonctions Google.
+- Migrations appliquées : `20261028085029_microsoft_calendar_sync`, `20261028085042_microsoft_calendar_privacy_notice` (versions distantes attribuées par le connecteur ; ne pas rejouer les fichiers locaux sous leurs timestamps différents).
+- Contrôle SQL : RLS activée sur les trois tables Microsoft ; aucune lecture anon/authenticated ; RPC claim/finish/lock réservées au service_role ; six triggers Microsoft ; zéro connexion Microsoft.
+- Fonctions Microsoft v1 actives : `microsoft-calendar` avec vérification JWT, worker avec authentification serveur dédiée. Appels POST anonymes réels : HTTP 401 pour chacune. Le mode absent reste désactivé ; aucun cron Microsoft installé.
+- Paramètres Edge de recette enregistrés : `MICROSOFT_CLIENT_ID`, `MICROSOFT_APP_URL`, `MICROSOFT_REDIRECT_URI` et `MICROSOFT_CALENDAR_MODE=disabled`. Clé de chiffrement Google existante conservée.
+- Ajout de `MICROSOFT_APP_URL`, facultatif, dans les deux points d'entrée pour isoler l'origine Microsoft sans changer l'origine Google.
+- Vercel : variables `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` et `VITE_MICROSOFT_CALENDAR_ENABLED=true` limitées à la preview de `feature/outlook-calendar-sync`. URL et clé publique pointent vers la branche Supabase de recette. Aucun changement des variables production.
+- Alias existant de la branche : `https://clementplane-git-feature-outlook-calendar-sync-formaplane.vercel.app`. L'URI de callback correspondante reste à enregistrer dans Entra avant recette OAuth.
+- Vérification locale après changement d'origine : 12 fichiers / 82 tests calendrier et contrats réussis ; ESLint 0 erreur, 2 avertissements préexistants ; build production réussi (avertissement de taille du bundle préexistant).
+
+Ces contrôles ne constituent pas la recette Microsoft personnelle/professionnelle. Le secret de recette, les paramètres OAuth, l'allowlist, le cron et les parcours réels restent à finaliser avant toute activation publique.

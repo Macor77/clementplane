@@ -1,4 +1,5 @@
 export const INSTALL_HINT_COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000;
+export const OFFICIAL_APP_URL = 'https://app.clementplane.fr';
 
 export function isIosDevice(navigatorLike = navigator) {
   const ua = navigatorLike?.userAgent || '';

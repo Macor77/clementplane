@@ -26,9 +26,11 @@ for name in paths:
     if path.name.startswith('.env') and path.name not in {'.env.example', '.env.sample', '.env.template'}:
         continue
     entries['clementplane/' + name] = blob(name)
-closure_path = f'docs/sprints/v{version}/CLOSURE.md'
-if closure_path not in paths:
+closure_path = sys.argv[3] if len(sys.argv) > 3 else f'docs/sprints/v{version}/CLOSURE.md'
+if len(sys.argv) <= 3 and closure_path not in paths:
     closure_path = f"docs/sprints/v{'.'.join(version.split('.')[:2])}/CLOSURE.md"
+if closure_path not in paths:
+    raise SystemExit(f'Dossier de clôture absent du commit : {closure_path}')
 entries['SOURCE_COMMIT.txt'] = f'{commit}\nClementplane {version}\nArchive des sources ; état du sprint : {closure_path}\n'.encode()
 manifest = '\n'.join(f'{hashlib.sha256(data).hexdigest()}  {name}' for name, data in sorted(entries.items())) + '\n'
 entries['MANIFEST.sha256'] = manifest.encode()

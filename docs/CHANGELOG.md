@@ -1,3 +1,7 @@
+## [1.3.1] — 12 novembre 2026
+
+Correction du parcours d’installation mobile : accès préalable à https://app.clementplane.fr depuis toute autre origine. Liens de connexion et désabonnement des e-mails de nouveautés imposés côté serveur, y compris pour les anciens clients. Aide Android/iOS et FAQ complétées. Aucun changement de données ni migration ; anciennes installations à remplacer une fois si elles restent liées à un déploiement figé. Communication préparée, non envoyée. Preuves et état : `docs/sprints/pwa-official-installation/CLOSURE.md` (depuis la racine).
+
 > **Mise à jour du 27 octobre 2026 : navigation multi-onglets publiée en production.** PR #18 fusionnée, déploiement Vercel READY sur clementplane.fr. Preuves et périmètre : `docs/sprints/new-tab-navigation/DEPLOYMENT.md`. Les mentions « préparée, non publiée » ci-dessous décrivent l’étape antérieure.
 
 

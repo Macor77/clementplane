@@ -1,3 +1,7 @@
+## [1.3.1] — 12 novembre 2026
+
+Correction du parcours d’installation mobile : accès préalable à https://app.clementplane.fr depuis toute autre origine. Liens de connexion et désabonnement des e-mails de nouveautés imposés côté serveur, y compris pour les anciens clients. Aide Android/iOS et FAQ complétées. Aucun changement de données ni migration ; anciennes installations à remplacer une fois si elles restent liées à un déploiement figé. Communication préparée, non envoyée. Preuves et état : `docs/sprints/pwa-official-installation/CLOSURE.md` (depuis la racine).
+
 ## [1.3.0] — 12 novembre 2026
 
 Bilans formateur progressifs, sessions/groupes multidates, réalisations explicites et statistiques Réalisé / À venir. Frais/kilomètres/difficultés privés, consultation OF des seuls champs partagés, bilans conservés après réaffectation. Tarif convenu préservé ; ni e-mails, ni notifications, ni changement du planning/calendriers. Trois migrations additives et notice de confidentialité 2026-11-12 appliquées. PR #21 publiée après accord ; recette 349 tests unitaires et 43 parcours navigateur, droits contrôlés en production. Dossier : `docs/sprints/v1.3/`. Cette V1.3 concerne l’activité formateur ; le pilote Outlook décrit historiquement ci-dessous reste restreint.

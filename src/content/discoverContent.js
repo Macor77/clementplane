@@ -1,6 +1,6 @@
 const microsoftCalendarVisible = import.meta.env?.VITE_MICROSOFT_CALENDAR_ENABLED === 'true' && import.meta.env?.VITE_MICROSOFT_CALENDAR_PILOT !== 'true';
 
-export const FORMPLANE_VERSION = 'V1.3.0';
+export const FORMPLANE_VERSION = 'V1.3.1';
 
 export const discoverFeatures = [
   { title: 'Suivre les formations réalisées et à venir', kicker: 'Un bilan par mission, plusieurs groupes possibles', description: 'Le formateur confirme ses réalisations, complète les durées et effectifs et consulte ses premières statistiques. Ses dépenses, kilomètres et difficultés restent privés ; l’OF commanditaire consulte uniquement le bilan partagé.', audiences: ['trainer', 'organization'] },
@@ -59,12 +59,13 @@ const mobileInstallTutorial = {
   title: 'Installer Clementplane sur mon téléphone',
   summary: 'Installer Clementplane manuellement si la proposition automatique d’installation ne s’affiche pas.',
   steps: [
+    'Ouvrez d’abord https://app.clementplane.fr dans votre navigateur. Vérifiez cette adresse avant d’installer Clementplane pour recevoir les prochaines mises à jour.',
     'Sur Android avec Chrome : ouvrez Clementplane dans Chrome, appuyez sur le menu ⋮ en haut à droite, puis choisissez « Installer l’application » ou « Ajouter à l’écran d’accueil ». Confirmez ensuite l’installation.',
     'Sur iPhone ou iPad : ouvrez Clementplane dans Safari, appuyez sur le bouton Partager, choisissez « Sur l’écran d’accueil », puis appuyez sur « Ajouter ».',
     'Une fois installé, Clementplane apparaît sur votre écran d’accueil comme une application classique.',
     'Pour vos prochaines utilisations, ouvrez simplement Clementplane depuis cette icône plutôt que depuis votre navigateur.',
   ],
-  tip: 'Si Clementplane vous propose directement le bouton « Installer Clementplane », utilisez simplement ce bouton : ces étapes servent surtout lorsque la proposition automatique n’apparaît pas.',
+  tip: 'Si vous voyez « Ouvrir la version officielle », suivez ce lien avant d’installer. Si votre ancienne icône n’affiche pas les nouveautés, ouvrez https://app.clementplane.fr, reconnectez-vous avec votre compte habituel, puis remplacez l’ancienne installation. Vos missions enregistrées sur votre compte sont conservées.',
 };
 
 export const organizationTutorials = [
@@ -162,7 +163,8 @@ export const faqItems = [
   { question: 'Pourquoi ne puis-je pas renvoyer mes disponibilités immédiatement au même contact ?', answer: 'Clementplane applique un délai de 20 jours complets après un partage vers un même contact OF pour éviter les sollicitations répétées. Vos disponibilités peuvent néanmoins être mises à jour à tout moment et restent consultables dans Clementplane.', audiences: ['trainer'], category: 'Disponibilités' },
   { question: 'Puis-je avoir à la fois un espace OF et un espace Formateur ?', answer: 'Oui. Lorsqu’un même compte possède les deux rôles, Clementplane propose un choix d’espace et permet ensuite de passer de l’un à l’autre.', audiences: ['organization', 'trainer'], category: 'Compte' },
   { question: "Comment Clementplane s'assure-t-il que la plateforme reste fiable ?", answer: "Clementplane dispose de contrôles automatisés qui vérifient régulièrement ses principales fonctionnalités, certaines règles de sécurité et ses dépendances techniques. Ces contrôles sont également exécutés lors des mises à jour de la plateforme afin de détecter d'éventuelles régressions avant leur mise en ligne.", audiences: ['organization', 'trainer'], category: 'Fiabilité' },
-  { question: 'Puis-je installer Clementplane sur mon téléphone ?', answer: 'Oui. Lorsque l’installation est disponible, Clementplane vous propose directement un bouton « Installer Clementplane ». Sur Android compatible, ce bouton ouvre la fenêtre native d’installation. Sur iPhone/iPad, il affiche la marche à suivre : Partager, puis « Sur l’écran d’accueil » et « Ajouter ». Si vous fermez l’invitation sans installer, elle peut être reproposée après 7 jours. Une connexion Internet reste nécessaire pour consulter et modifier les données métier.', audiences: ['organization', 'trainer'], category: 'Mobile' },
+  { question: 'Puis-je installer Clementplane sur mon téléphone ?', answer: 'Oui, depuis https://app.clementplane.fr. Sur une autre adresse, le bouton « Ouvrir la version officielle » vous conduit d’abord à cette adresse. Sur Android compatible, « Installer Clementplane » ouvre la fenêtre d’installation. Sur iPhone/iPad, l’aide indique : Safari, Partager, « Sur l’écran d’accueil », puis « Ajouter ». Si vous fermez l’invitation sans installer, elle peut être reproposée après 7 jours. Une connexion Internet reste nécessaire pour consulter et modifier les données métier.', audiences: ['organization', 'trainer'], category: 'Mobile' },
+  { question: 'Pourquoi les nouveautés n’apparaissent-elles pas dans mon application installée ?', answer: 'Une ancienne installation peut être liée à une adresse de déploiement qui ne reçoit plus les nouvelles versions. Ouvrez https://app.clementplane.fr dans Chrome sur Android ou Safari sur iPhone, connectez-vous avec votre compte habituel et vérifiez les nouveautés. Si elles y apparaissent, remplacez l’ancienne installation par celle de cette adresse officielle. Vos missions enregistrées sur votre compte sont conservées. Une fois l’installation faite depuis l’adresse officielle, vous n’avez pas à la réinstaller à chaque évolution.', audiences: ['organization', 'trainer'], category: 'Mobile' },
   { question: 'Comment contacter Clementplane si je rencontre un problème ?', answer: 'Utilisez la rubrique « Contacter Clementplane » de cette page. Elle prépare un e-mail vers contact@clementplane.fr avec le contexte technique utile.', audiences: ['organization', 'trainer'], category: 'Support' },
 ];
 

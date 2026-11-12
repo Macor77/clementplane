@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRegisterSW } from 'virtual:pwa-register/react';
 import {
   INSTALL_HINT_COOLDOWN_MS,
+  OFFICIAL_APP_URL,
   getAccessMode,
   isIosDevice,
   isMobileDevice,
@@ -41,6 +42,7 @@ export default function PwaManager() {
   const trackedUsersRef = useRef(new Set());
   const ios = isIosDevice(navigator);
   const mobile = isMobileDevice(navigator);
+  const officialOrigin = window.location.origin === OFFICIAL_APP_URL;
 
   const {
     needRefresh: [needRefresh],
@@ -52,7 +54,8 @@ export default function PwaManager() {
     const handleOffline = () => setOnline(false);
     const handleInstallPrompt = (event) => {
       event.preventDefault();
-      setDeferredPrompt(event);
+      // Never offer installation of an immutable preview/deployment origin.
+      setDeferredPrompt(officialOrigin ? event : null);
       setAppInstalled(false);
       try {
         window.localStorage.removeItem(INSTALLED_KEY);
@@ -81,7 +84,7 @@ export default function PwaManager() {
       window.removeEventListener('beforeinstallprompt', handleInstallPrompt);
       window.removeEventListener('appinstalled', handleInstalled);
     };
-  }, []);
+  }, [officialOrigin]);
 
 
   useEffect(() => {
@@ -117,6 +120,7 @@ export default function PwaManager() {
   };
 
   const install = async () => {
+    if (!officialOrigin) return;
     // iOS n'utilise pas le prompt d'installation web standard de façon fiable.
     // On affiche toujours notre procédure pour éviter toute ambiguïté avec l'App Store.
     if (ios) {
@@ -152,7 +156,9 @@ export default function PwaManager() {
           <div className="pwa-notice__text">
             <strong>Clementplane sur votre téléphone</strong>
             <span>
-              {installHelpOpen
+              {!officialOrigin
+                ? 'Pour recevoir les mises à jour, installez Clementplane depuis son adresse officielle : app.clementplane.fr.'
+                : installHelpOpen
                 ? (ios
                   ? 'Clementplane n’est pas disponible sur l’App Store. Sur iPhone/iPad : ouvrez Clementplane dans Safari, touchez Partager, puis « Sur l’écran d’accueil » et « Ajouter ».'
                   : 'Dans Chrome, ouvrez le menu ⋮ puis choisissez « Installer et créer un raccourci ».'
@@ -161,7 +167,11 @@ export default function PwaManager() {
             </span>
           </div>
           <div className="pwa-notice__actions">
-            {!installHelpOpen && (
+            {!officialOrigin ? (
+              <a className="pwa-notice__primary" href={OFFICIAL_APP_URL} referrerPolicy="no-referrer">
+                Ouvrir la version officielle
+              </a>
+            ) : !installHelpOpen && (
               <button type="button" className="pwa-notice__primary" onClick={install}>
                 {ios ? 'Voir comment installer' : 'Installer Clementplane'}
               </button>

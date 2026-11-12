@@ -48,7 +48,8 @@
   gap: 6px;
 }
 
-.pwa-notice button {
+.pwa-notice button,
+.pwa-notice a.pwa-notice__primary {
   min-height: 44px;
   border: 0;
   border-radius: 10px;
@@ -57,10 +58,14 @@
 }
 
 .pwa-notice__primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 0 14px;
   background: #0b132b;
   color: #ffffff;
   font-weight: 700;
+  text-decoration: none;
 }
 
 .pwa-notice__close {
@@ -71,7 +76,8 @@
   font-size: 1.35rem;
 }
 
-.pwa-notice button:focus-visible {
+.pwa-notice button:focus-visible,
+.pwa-notice a:focus-visible {
   outline: 3px solid rgba(11, 19, 43, 0.28);
   outline-offset: 2px;
 }

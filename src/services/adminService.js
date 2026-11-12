@@ -73,7 +73,7 @@ export async function getAdminDashboardStats() {
 
 export async function previewFeatureNews(audiences) {
   const { data, error } = await supabase.functions.invoke('send-feature-announcement', {
-    body: { action: 'preview', audiences, appBaseUrl: window.location.origin },
+    body: { action: 'preview', audiences },
   });
   if (error) throw error;
   if (!data?.ok) throw new Error(data?.error || 'Impossible de calculer les destinataires');
@@ -88,7 +88,6 @@ export async function sendFeatureAnnouncement({ subject, message, audiences, tes
       subject,
       message,
       audiences,
-      appBaseUrl: window.location.origin,
     } });
   if (error) throw error;
   if (!data?.ok) throw new Error(data?.error || 'Envoi impossible');

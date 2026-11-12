@@ -1,3 +1,5 @@
+import RetainedActivityReport from '../../pages/trainer/RetainedActivityReport';
+import TrainerActivity from '../../pages/trainer/TrainerActivity';
 import PersonalMissionForm from '../../pages/trainer/PersonalMissionForm';
 import GoogleCalendarInvitation from './GoogleCalendarInvitation';
 import PersonalMissionDetail from '../../pages/trainer/PersonalMissionDetail';
@@ -22,6 +24,7 @@ import MobileNavigation from '../layout/MobileNavigation';
 const ACTIVE_SPACE_KEY = 'timeforma_active_space';
 
 const navigationItems = [
+  { to: '/formateur/statistiques', label: 'Mes statistiques', icon: '▥' },
   {
     to: '/formateur/espace',
     label: 'Accueil',
@@ -239,6 +242,8 @@ export default function TrainerApp() {
       <main className="app-main">
         <GoogleCalendarInvitation />
         <Routes>
+          <Route path="/formateur/bilans/:id" element={<RetainedActivityReport />} />
+          <Route path="/formateur/statistiques" element={<TrainerActivity />} />
           <Route path="/formateur/missions/nouvelle" element={<PersonalMissionForm />} />
           <Route path="/formateur/missions/personnelles/:id" element={<PersonalMissionDetail />} />
           <Route path="/formateur/missions/personnelles/:id/modifier" element={<PersonalMissionForm />} />

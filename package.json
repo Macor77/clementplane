@@ -1,7 +1,7 @@
 {
   "name": "appli-formateurs-v2",
   "private": true,
-  "version": "1.2.4",
+  "version": "1.3.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -17,7 +17,8 @@
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:report": "playwright show-report",
     "e2e:seed": "node scripts/e2e/reset-and-seed.mjs",
-    "test:personal-sql": "node scripts/testing/personal-missions-sql.mjs && node scripts/testing/legal-versions-sql.mjs"
+    "test:personal-sql": "node scripts/testing/personal-missions-sql.mjs && node scripts/testing/legal-versions-sql.mjs",
+    "test:activity-sql": "node scripts/testing/trainer-activity-sql.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.75.0",

@@ -81,6 +81,7 @@ export default function TrainerMissions() {
       <div><p className="page-eyebrow">MISSIONS</p><h1>Mes missions</h1>
         <p>Vos interventions personnelles et les missions reçues de vos organismes, au même endroit.</p></div><Link className="button button--primary" to="/formateur/missions/nouvelle">Ajouter une mission</Link>
     </div>
+    <p><Link to="/formateur/statistiques">Voir mes statistiques et les bilans à compléter</Link></p>
     {error ? <div className="alert alert--error">{error}</div> : null}
     {loading ? <div style={styles.empty}>Chargement de vos missions…</div> : null}
     {!loading && !error && missions.length === 0 ? <div style={styles.empty}><strong>Aucune mission pour le moment.</strong><span>Ajoutez votre première intervention, même si votre client n’utilise pas Clementplane.</span></div> : null}

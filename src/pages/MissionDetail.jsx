@@ -1,3 +1,4 @@
+import { OrganizationActivityReports } from '../components/trainer/ActivityReport';
 import {
   useCallback,
   useEffect,
@@ -2025,6 +2026,7 @@ function MissionInformation({
           Supprimer la mission
         </button>
       </div>
+    <OrganizationActivityReports missionId={missionId} />
     </section>
   );
 }

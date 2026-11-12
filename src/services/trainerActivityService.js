@@ -1,7 +1,7 @@
 import { personalMissionToAgenda } from '../utils/personalMissions';
 import { supabase } from '../lib/supabaseClient';
 import { validateActivity } from '../utils/trainerActivity';
-const reportFields = 'id,trainer_id,mission_id,personal_mission_id,agreed_fee,declared_fee,tax_basis,observations,sessions,revision,updated_at';
+const reportFields = 'id,trainer_id,trainer_name,mission_id,personal_mission_id,agreed_fee,declared_fee,tax_basis,observations,sessions,revision,updated_at';
 async function allRows(query) {
   const rows = [];
   for (let from = 0; ; from += 500) {

@@ -11,13 +11,22 @@ insert into public.mission_formateurs(mission_id,formateur_id,statut) values ('a
 set local role authenticated;
 select set_config('request.jwt.claim.sub','aaa13000-0000-4000-8000-000000000001',true);
 insert into public.trainer_personal_missions(id,title,formation,dates,postal_code,city,fee,fee_unit) values ('aaa13000-0000-4000-8000-000000000051','Client fictif','SST fictif','[{"date":"2026-11-01"}]','75001','Paris',700,'mission');
-do $$declare r jsonb; personal jsonb; payload jsonb:='{"declared_fee":650,"tax_basis":"HT","observations":"PARTAGE FICTIF","expenses":0,"expense_details":"DEPENSE PRIVEE FICTIVE","kilometers":42.5,"difficulties":"SECRET FICTIF","sessions":[{"id":"aaa13000-0000-4000-8000-000000000061","formation":"SST fictif","group_label":"Matin","learner_count":10,"expected_learners":null,"days":[{"date":"2026-11-01","status":"done","actual_hours":7,"planned_hours":null},{"date":"2026-11-02","status":"pending","actual_hours":null,"planned_hours":7}]}]}';begin
+do $$declare r jsonb; personal jsonb; k text; v jsonb; payload jsonb:='{"declared_fee":650,"tax_basis":"HT","observations":"PARTAGE FICTIF","expenses":0,"expense_details":"DEPENSE PRIVEE FICTIVE","kilometers":42.5,"difficulties":"SECRET FICTIF","sessions":[{"id":"aaa13000-0000-4000-8000-000000000061","formation":"SST fictif","group_label":"Matin","learner_count":10,"expected_learners":null,"days":[{"date":"2026-11-01","status":"done","actual_hours":7,"planned_hours":null},{"date":"2026-11-02","status":"pending","actual_hours":null,"planned_hours":7}]}]}';begin
 r:=public.save_trainer_activity_report('organization','aaa13000-0000-4000-8000-000000000031',null,'aaa13000-0000-4000-8000-000000000071',payload);
 if (r->'report'->'agreed_fee'->>'amount')::numeric<>700 or (r->'private'->>'kilometers')::numeric<>42.5 then raise exception 'INVALID_SAVED_REPORT'; end if;
 if (r->'report')::text like '%SECRET%' or (r->'report')::text like '%DEPENSE%' then raise exception 'PRIVATE_LEAK'; end if;
 if public.save_trainer_activity_report('organization','aaa13000-0000-4000-8000-000000000031',null,'aaa13000-0000-4000-8000-000000000071',payload) is distinct from r then raise exception 'RETRY_NOT_IDEMPOTENT'; end if;
 personal:=public.save_trainer_activity_report('personal','aaa13000-0000-4000-8000-000000000051',null,'aaa13000-0000-4000-8000-000000000072',payload);
 if personal->'report'->'agreed_fee'->>'tax_basis'<>'HT' then raise exception 'INVALID_PERSONAL_FEE'; end if;
+if r->'report'->>'trainer_name'<>'Alex Fictif' then raise exception 'INVALID_AUTHOR'; end if;
+foreach k in array array['declared_fee','expenses','kilometers'] loop
+  for v in select value from jsonb_array_elements('[-0.001,1.234,"1.20"]'::jsonb) loop
+    begin
+      perform public.save_trainer_activity_report('organization','aaa13000-0000-4000-8000-000000000031',1,'aaa13000-0000-4000-8000-000000000074',jsonb_set(payload,array[k],v));
+      raise exception 'INVALID_AMOUNT_ACCEPTED';
+    exception when others then if sqlerrm<>'INVALID_AMOUNT' then raise; end if; end;
+  end loop;
+end loop;
 end $$;
 select set_config('request.jwt.claim.sub','aaa13000-0000-4000-8000-000000000003',true);
 do $$begin

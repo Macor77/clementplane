@@ -7,7 +7,7 @@ await db.exec(`create role authenticated; create role anon; create role service_
 create table auth.users(id uuid primary key);
 create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;
 grant usage on schema public,auth to authenticated,anon; grant execute on function auth.uid() to authenticated,anon;
-create table public.trainers(id uuid primary key,user_id uuid);
+create table public.trainers(id uuid primary key,user_id uuid,prenom text,nom text);
 create table public.organizations(id uuid primary key);
 create table public.organization_members(organization_id uuid,user_id uuid);
 create function public.current_trainer_profile_id() returns uuid language sql stable security definer as $$select id from public.trainers where user_id=auth.uid() limit 1$$;
@@ -16,13 +16,14 @@ create table public.missions(id uuid primary key,organization_id uuid,cout_forma
 create table public.mission_formateurs(id uuid primary key,mission_id uuid,formateur_id uuid,statut text);
 create table public.trainer_personal_missions(id uuid primary key,owner_user_id uuid,trainer_id uuid,fee numeric,fee_unit text);
 insert into auth.users values ${[1,2,3,4].map(n=>`('${uuid(n)}')`).join(',')};
-insert into trainers values ('${uuid(11)}','${uuid(1)}'),('${uuid(12)}','${uuid(2)}');
+insert into trainers values ('${uuid(11)}','${uuid(1)}','Alex','Fictif'),('${uuid(12)}','${uuid(2)}','Sam','Fictif');
 insert into organizations values ('${uuid(21)}'),('${uuid(22)}');
 insert into organization_members values ('${uuid(21)}','${uuid(3)}'),('${uuid(22)}','${uuid(4)}');
 insert into missions values ('${uuid(31)}','${uuid(21)}',400),('${uuid(32)}','${uuid(22)}',500);
 insert into mission_formateurs values ('${uuid(41)}','${uuid(31)}','${uuid(11)}','affecte'),('${uuid(42)}','${uuid(32)}','${uuid(11)}','accepte');
 insert into trainer_personal_missions values ('${uuid(51)}','${uuid(1)}','${uuid(11)}',700,'mission');`);
 await db.exec(fs.readFileSync('supabase/migrations/20261112071707_trainer_activity_reports.sql','utf8'));
+await db.exec(fs.readFileSync('supabase/migrations/20261112074645_activity_validation_and_author.sql','utf8'));
 const login = async n => db.exec(`reset role; set role authenticated; select set_config('request.jwt.claim.sub','${uuid(n)}',false);`);
 const sessions = [{id:uuid(61),formation:'SST fictive',group_label:'Matin',learner_count:10,expected_learners:null,days:[{date:'2026-01-02',status:'done',actual_hours:7,planned_hours:7},{date:'2026-01-03',status:'pending',actual_hours:null,planned_hours:7}]}];
 const input = {declared_fee:450,tax_basis:'HT',observations:'PARTAGE',sessions,expenses:0,expense_details:'DEPENSE PRIVEE',kilometers:123.45,difficulties:'DIFFICULTE PRIVEE'};
@@ -30,6 +31,7 @@ const save = async (origin,id,revision,data,mutation=uuid(71)) => (await db.quer
 await login(1);
 let result=await save('organization',uuid(31),null,input);
 const reportId=result.report.id;
+assert.equal(result.report.trainer_name,'Alex Fictif');
 assert.equal(result.report.agreed_fee.amount,400); assert.equal(result.private.expenses,0); assert.equal(result.private.kilometers,123.45);
 assert.equal(result.report.sessions[0].learner_count,10);
 assert(!JSON.stringify(result.report).includes('PRIVEE'),'Private values must not enter shared envelope');
@@ -39,7 +41,8 @@ await assert.rejects(()=>save('organization',uuid(32),null,input),/REPORT_ACCESS
 await assert.rejects(()=>save('personal',uuid(51),null,{...input,unexpected_private:'LEAK'}),/INVALID_REPORT_FIELDS/);
 await assert.rejects(()=>save('personal',uuid(51),null,{...input,sessions:[{...sessions[0],private_notes:'LEAK'}]}),/INVALID_SESSION_FIELDS/);
 for(const [field,value] of [['expenses',-1],['kilometers',-1],['declared_fee',-1],['tax_basis',null]]) await assert.rejects(()=>save('personal',uuid(51),null,{...input,[field]:value}));
-for(const count of [-1,0.5,100001]) await assert.rejects(()=>save('personal',uuid(51),null,{...input,sessions:[{...sessions[0],learner_count:count}]}),/INVALID_LEARNER_COUNT/);
+for(const field of ['declared_fee','expenses','kilometers']) for(const value of [-0.001,1.234,'1.20','NaN','Infinity',100000000]) await assert.rejects(()=>save('personal',uuid(51),null,{...input,[field]:value}),/INVALID_AMOUNT/);
+for(const count of [-1,0.5,100001,'10']) await assert.rejects(()=>save('personal',uuid(51),null,{...input,sessions:[{...sessions[0],learner_count:count}]}),/INVALID_LEARNER_COUNT/);
 for(const day of [{date:'2026-02-30',status:'done'}, {date:'2099-12-31',status:'done'}, {date:'2026-01-02',status:'done',actual_hours:-1}, {date:'2026-01-02',status:'pending',actual_hours:7}]) await assert.rejects(()=>save('personal',uuid(51),null,{...input,sessions:[{...sessions[0],days:[day]}]}));
 await assert.rejects(()=>save('personal',uuid(51),null,{...input,sessions:[{...sessions[0],days:[sessions[0].days[0],sessions[0].days[0]]}]}),/INVALID_DAY/);
 await assert.rejects(()=>db.exec(`update public.trainer_activity_reports set observations='hack'`),/permission denied/);

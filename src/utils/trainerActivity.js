@@ -75,7 +75,7 @@ export function calculateActivity(missions, reports, start, end, today = parisTo
   const inPeriod = d => d >= start && d <= end;
   const byMission = new Map(reports.map(r => [reportKey(r), r]));
   const result = { realized: { missions: 0, sessions: 0, completed: 0, partial: 0, ongoing: 0, days: 0, hours: 0, missingHours: 0, learners: 0, missingLearners: 0, learnersOutside: 0 },
-    future: { missions: 0, sessions: 0, days: 0, hours: 0, missingHours: 0, learners: 0, missingLearners: 0, learnersOutside: 0, fees: { HT: 0, TTC: 0 }, missingFees: 0, feesOutside: 0 }, pending: [], options: 0 };
+    future: { missions: 0, sessions: 0, days: 0, hours: 0, missingHours: 0, learners: 0, missingLearners: 0, learnersOutside: 0, fees: { HT: 0, TTC: 0 }, missingFees: 0, feesOutside: 0 }, pending: [], retained: [], options: 0 };
   const seen = new Set();
   const missionKeys = new Set(missions.map(activityKey));
   const retained = reports.filter(r => !missionKeys.has(reportKey(r))).map(r => ({ origin: r.personal_mission_id ? 'personal' : 'organization', mission_id: r.personal_mission_id || r.mission_id, mission_title: r.sessions[0]?.formation || 'Bilan conservé', status: 'historical', dates: [], report_id: r.id }));
@@ -123,6 +123,7 @@ export function calculateActivity(missions, reports, start, end, today = parisTo
       else a.feesOutside++;
     }
     if (missing) result.pending.push(m);
+    if (m.report_id && sessions.some(s => s.days.some(d => inPeriod(d.date)))) result.retained.push(m);
   }
   for (const a of [result.realized, result.future]) a.hours = Math.round(a.hours * 100) / 100;
   return result;

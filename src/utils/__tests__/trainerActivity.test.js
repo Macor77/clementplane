@@ -26,3 +26,5 @@ describe('Progressive report validation',()=>{
   it('rejects actual hours without done and done in the future',()=>{const s=draft();s.sessions[0].days=[day('2026-11-20')];expect(()=>validateActivity(s,today)).toThrow(/future/);s.sessions[0].days=[day('2026-11-01','pending',2)];expect(()=>validateActivity(s,today)).toThrow(/Confirmez/);});
 });
 it('keeps historical realized reports after an assignment disappears',()=>{const a=calculateActivity([], [{...report([session([day('2026-11-01','done',3)],null)]),id:'retained'}],'2026-01-01','2026-12-31',today);expect(a.realized.hours).toBe(3);expect(a.pending[0].report_id).toBe('retained');expect(a.future.missions).toBe(0);});
+
+it('keeps completed retained reports accessible independently of pending and scopes by period',()=>{const r={...report([session([day('2026-11-01','done',3)],8)]),id:'complete'};const a=calculateActivity([], [r],'2026-01-01','2026-12-31',today);expect(a.pending).toHaveLength(0);expect(a.retained[0].report_id).toBe('complete');expect(calculateActivity([],[r],'2025-01-01','2025-12-31',today).retained).toHaveLength(0);});

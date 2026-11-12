@@ -26,3 +26,6 @@
 .activity-pending{padding:18px;background:#fff8e9;border:1px solid #d9c590;border-radius:12px;margin:20px 0}.activity-pending li{margin:12px 0}
 .activity-report :focus-visible,.activity-page :focus-visible{outline:3px solid #167abb;outline-offset:3px}
 @media(max-width:640px){.activity-report{padding:14px}.activity-report fieldset{padding:10px}.activity-grid,.activity-metrics{grid-template-columns:1fr}.activity-report legend{font-size:15px}.activity-save{position:static}.activity-session{padding:12px}}
+
+.activity-report button.button--primary{background:#245ce8;border-color:#245ce8;color:white}
+.activity-retained{padding:18px;border:1px solid #d6e1eb;border-radius:12px;background:white;margin:20px 0}.activity-retained li{margin:12px 0}

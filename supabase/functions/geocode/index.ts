@@ -19,6 +19,47 @@ const jsonResponse = (
     },
   });
 
+// Secours indépendant de l'IGN, limité aux communes identifiées sans ambiguïté.
+// Une adresse complète n'est jamais remplacée silencieusement par une ville.
+const normalizeCity = (value: string) => value.normalize('NFD')
+  .replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z]/g, '');
+
+async function geocodeCommune(query: string) {
+  const postcode = query.match(/\b\d{5}\b/)?.[0] ?? '';
+  const city = query.replace(postcode, '').replace(/,/g, ' ').trim();
+  if ((!postcode && !city) || /[^\p{L}\s'’.-]/u.test(city)) return null;
+
+  const url = new URL('https://geo.api.gouv.fr/communes');
+  url.searchParams.set('fields', 'nom,code,codesPostaux,centre,departement');
+  if (postcode) url.searchParams.set('codePostal', postcode);
+  else url.searchParams.set('nom', city);
+  const response = await fetch(url.toString(), {
+    signal: AbortSignal.timeout(10000),
+    headers: { Accept: 'application/json' },
+  });
+  if (!response.ok) return null;
+  const communes = await response.json();
+  if (!Array.isArray(communes)) return null;
+  const matches = communes.filter((commune) =>
+    typeof commune.nom === 'string' &&
+    (!city || normalizeCity(commune.nom) === normalizeCity(city)) &&
+    (!postcode || commune.codesPostaux?.includes(postcode))
+  );
+  if (matches.length !== 1) return null;
+  const commune = matches[0];
+  const [longitude, latitude] = commune.centre?.coordinates ?? [];
+  if (commune.centre?.type !== 'Point' || !Number.isFinite(latitude) ||
+      !Number.isFinite(longitude) || Math.abs(latitude) > 90 || Math.abs(longitude) > 180) return null;
+
+  return {
+    latitude, longitude,
+    displayName: `${commune.nom}${postcode ? ` (${postcode})` : ''} — centre de la commune`,
+    city: commune.nom,
+    postcode,
+    department: commune.departement?.nom ?? '',
+  };
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", {
@@ -122,20 +163,24 @@ Deno.serve(async (req) => {
     url.searchParams.set("index", "address");
     url.searchParams.set("limit", "1");
 
-    const response = await fetch(url.toString(), {
-      signal: AbortSignal.timeout(10000),
-      headers: {
-        "Accept": "application/json",
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(
-        `Erreur IGN : ${response.status}`
-      );
+    let payload;
+    try {
+      const response = await fetch(url.toString(), {
+        signal: AbortSignal.timeout(10000),
+        headers: { Accept: "application/json" },
+      });
+      if (!response.ok) throw new Error(`Erreur IGN : ${response.status}`);
+      payload = await response.json();
+    } catch (providerError) {
+      // Ne transmettre au secours que ville/code postal, sans identité ni jeton.
+      try {
+        const fallback = await geocodeCommune(addressQuery);
+        if (fallback) return jsonResponse(fallback);
+      } catch {
+        // Conserver l'erreur initiale si les deux fournisseurs sont indisponibles.
+      }
+      throw providerError;
     }
-
-    const payload = await response.json();
     const results = payload?.features;
 
     if (

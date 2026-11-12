@@ -71,6 +71,8 @@ test.describe('installation origin on mobile', () => {
       await officialLink.click();
       expect((await navigation).headers().referer).toBeUndefined();
       await expect(page).toHaveURL(/^https:\/\/app\.clementplane\.fr\//);
+      await expect(page.getByRole('button', { name: ios ? 'Voir comment installer' : 'Installer Clementplane', exact: true })).toBeVisible();
+      await page.waitForLoadState('load');
     });
   }
 

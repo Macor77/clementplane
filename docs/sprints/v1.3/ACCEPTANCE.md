@@ -1,6 +1,6 @@
 # Recette — V1.3 / 12 novembre 2026
 
-État : corrections de revue intégrées et contre-revue sans blocage ; CI navigateur finale à vérifier avant accord de production. Les comptes, missions et captures de recette sont fictifs.
+État : corrections de revue intégrées, contre-revue sans blocage, CI validée et production autorisée et réalisée le 12 novembre 2026. Les comptes, missions et captures de recette sont fictifs.
 
 | Exigence | Implémentation / preuve |
 |---|---|
@@ -44,3 +44,11 @@
 L’archive candidate a été générée et contrôlée (624 fichiers), mais son dépôt comme artifact a échoué car upload-artifact refuse les chemins relatifs `../`. Le chemin de dépôt est corrigé dans le commit documentaire suivant. **Le statut de la dernière CI sur PR #21 est la référence avant production**, incluant vérification de l’archive déposée ; le run ci-dessus n’est pas présenté comme entièrement vert.
 
 Contre-revue des corrections : aucun blocage restant. Prévisualisation Vercel du code `c8adb463` : `dpl_EXogMUuXL2MY5rkRxMdq17duXmAK`, READY, target preview ; aucune mutation lancée sur cette prévisualisation dont la base n’a pas été reconfigurée. Production inchangée.
+
+## Validation finale et production
+
+- [Quality de la PR, 43179007679](https://github.com/Macor77/clementplane/actions/runs/43179007679) : entièrement réussi sur 1691daa, archive déposée puis téléchargée et vérifiée (624 fichiers, manifestes et SHA-256).
+- [Quality après fusion, 43184262847](https://github.com/Macor77/clementplane/actions/runs/43184262847) : entièrement réussi sur cb0c1ccd.
+- Autorisation de Vincent : « Je t’autorise », en réponse à la demande couvrant les trois migrations production, publication et clôture/tag/release.
+- Vérifications production : PRODUCTION.md. Pas d’essai connecté d’écriture sur les missions réelles ; le contrôle de production est non destructif et complète la recette SQL hébergée et les parcours navigateur simulés.
+- La clôture documentaire déclenche une nouvelle Quality sur son commit exact ; la release v1.3.0 ne peut être créée qu’après son succès et vérifie le téléchargement de son archive.

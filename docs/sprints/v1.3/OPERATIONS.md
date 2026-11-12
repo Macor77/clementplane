@@ -1,13 +1,13 @@
 # Livraison et retour arrière — V1.3
 
-État au 12 novembre 2026 : préparation ; **production non autorisée**. PR brouillon https://github.com/Macor77/clementplane/pull/21.
+État au 12 novembre 2026 : **production autorisée explicitement par Vincent, migrations et publication effectuées**. PR #21 fusionnée. Chronologie et contrôles : PRODUCTION.md.
 
 ## Cibles vérifiées
 - Source initiale main : 6bd565404d3c9f7a9b7ffa07eae85b5cbcd6d940, V1.2.4. Vercel production READY dpl_5ZMnNYVkHjufnW8RMNjgyFbVgey5.
-- Production Supabase : hctvkynrgmnxjynbncdi (lecture seulement dans ce sprint).
+- Production Supabase : hctvkynrgmnxjynbncdi (trois migrations ciblées autorisées et appliquées).
 - Recette Supabase : documentation-demo, jqhbrkyeawtsuzrzrnvm, branche non-default confirmée par list_branches ; environnement de recette préexistant (voir dossier Outlook). Son état global MIGRATIONS_FAILED est historique : aucun reset effectué. Seules les trois nouvelles migrations sont appliquées pour recette.
 
-## Séquence après accord explicite
+## Procédure de livraison (accord obtenu ; étapes réalisées selon PRODUCTION.md)
 1. Vérifier le HEAD de main/PR et Quality, absence de nouveau conflit. Les variables Google/Outlook et leur pilote restent inchangées.
 2. Relire l’historique Supabase de production et vérifier que les trois migrations n’ont pas déjà été appliquées sous un autre identifiant. Ne jamais lancer de db push global : les migrations historiques ont des identifiants divergents.
 3. Appliquer une seule fois `20261112071707_trainer_activity_reports.sql` , `20261112073103_activity_privacy_notice.sql` puis `20261112074645_activity_validation_and_author.sql`. La première crée deux tables/RLS, un schéma privé et RPC. La seconde ajoute une version de notice à la compatibilité d’inscription. La troisième ajoute l’auteur conservé et contrôle les nombres avant arrondi. Aucune transformation de mission existante.
@@ -36,3 +36,13 @@ Les identifiants diffèrent car l’outil applique un horodatage serveur. Ne pas
 - trainer_activity_reports : `6b7288827b06005a8ada78dfa9ad921689ed810f0eef98cfe8f6ba4386f962fc`
 - activity_privacy_notice : `dd5a65326425fdf4caf1430026b5175ae3df2e07850387ea97f7bd37433499bc`
 - activity_validation_and_author : `ad40980106d9cbb7aedf6b5b7666795327be282b32e48595a941010122e8feba`
+
+## Migrations effectivement appliquées en production
+
+| Nom | Version production |
+|---|---|
+| trainer_activity_reports | 20261112083422 |
+| activity_privacy_notice | 20261112083443 |
+| activity_validation_and_author | 20261112083451 |
+
+Les empreintes des fichiers SQL sont celles indiquées ci-dessus ; les quatre corps de fonctions sont identiques à la recette. Les schémas/permissions ont été contrôlés après application, sans modification des missions existantes.

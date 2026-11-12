@@ -1,8 +1,8 @@
+## [1.3.0] — 12 novembre 2026
+
+Bilans formateur progressifs, sessions/groupes multidates, réalisations explicites et statistiques Réalisé / À venir. Frais/kilomètres/difficultés privés, consultation OF des seuls champs partagés, bilans conservés après réaffectation. Tarif convenu préservé ; ni e-mails, ni notifications, ni changement du planning/calendriers. Trois migrations additives et notice de confidentialité 2026-11-12 appliquées. PR #21 publiée après accord ; recette 349 tests unitaires et 43 parcours navigateur, droits contrôlés en production. Dossier : `docs/sprints/v1.3/`. Cette V1.3 concerne l’activité formateur ; le pilote Outlook décrit historiquement ci-dessous reste restreint.
+
 ## 28 octobre 2026 — Outlook / Microsoft 365 (pilote restreint)
-
-## [1.3.0] — En préparation, 12 novembre 2026
-
-Bilans formateur progressifs, sessions/groupes multidates, réalisations explicites et statistiques Réalisé / À venir. Frais/kilomètres/difficultés privés, consultation OF des seuls champs partagés. Tarif convenu préservé ; ni e-mails, ni notifications, ni changement du planning/calendriers. Deux migrations additives et notice de confidentialité 2026-11-12. Production et clôture en attente d’accord.
 
 - Connexion facultative depuis les paramètres formateur, indépendante de Google.
 - Calendrier distinct, missions/propositions/options privées, synchronisation serveur et reconnexion sans duplication.

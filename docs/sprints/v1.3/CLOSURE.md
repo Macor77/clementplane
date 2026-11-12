@@ -1,31 +1,30 @@
-# V1.3.0 — suivi des réalisations et premières statistiques
+# Bilan de clôture — V1.3.0
 
-**Statut : livraison préparée, non clôturée ; production soumise à accord explicite.** PR brouillon [#21](https://github.com/Macor77/clementplane/pull/21), branche `feature/v1.3-trainer-activity`. Production initiale V1.2.4 / `6bd5654` conservée pendant le développement.
+**Livré en production le 12 novembre 2026, après autorisation explicite de Vincent.** PR [#21](https://github.com/Macor77/clementplane/pull/21) fusionnée ; déploiement applicatif `cb0c1ccd`, Vercel `dpl_Y21sa77eUwDXQPRQFbQh2FV4gzVu` READY. Détail des contrôles : PRODUCTION.md.
 
-## Résultat préparé
+## Résultat livré
 Bilans progressifs par mission/session/journée, réalisation explicite et heures réelles, effectifs agrégés, partage OF en lecture seule, données privées séparées. Statistiques réalisées et futures, périodes et données manquantes, accès aux bilans historiques. Contrat, planning, disponibilité, notifications et agendas inchangés par la saisie d’un bilan.
 
-Trois migrations additives testées sur documentation-demo : tables/RLS/RPC ; compatibilité nouvelle notice ; validation avant arrondi et attribution serveur des auteurs. Aucun traitement de production ni communication.
-
 ## Définition de terminé
-| Volet | État |
+| Volet | Résultat / preuve |
 |---|---|
-| Audit / conception / développement | Réalisés ; DESIGN et matrice ACCEPTANCE |
-| Tests locaux / SQL hébergé | Réussis ; preuve détaillée dans ACCEPTANCE |
-| Recette navigateur et CI exacte | 349 tests unitaires + 43 navigateur réussis sur c8adb463 ; statut CI final exigé sur la PR (archive incluse) |
-| Revue indépendante | Corrections relues et validées ; aucun blocage restant identifié |
-| Documentation projet / roadmap / aide | Actualisées avec état préparé, sans prétendre à une mise en ligne |
-| Juridique / RGPD | Revue d’impact et documents mis à jour ; LEGAL_REVIEW |
-| Landing / Découvrir / FAQ / tutoriels | Contenus intégrés préparés ; anciens PDF de tutoriels inchangés car parcours historiques inchangés ; nouveau guide dans USER_GUIDE |
-| Version | 1.3.0 préparée ; aucun tag de publication |
-| Archive | Génération reproductible et manifestes SHA-256 ; artifact candidat CI, archive définitive sur commit de release après autorisation |
-| Release / production / contrôle connecté | En attente d’accord explicite, puis contrôles de livraison |
-| Communication | Texte proposé, aucun envoi ; autorisation distincte requise |
+| Audit / conception / développement | Réalisés ; DESIGN, PR #21 et matrice ACCEPTANCE |
+| Tests | 349 tests unitaires, 43 navigateur, SQL/RLS PGlite et PostgreSQL hébergé de recette ; Quality de PR et de main vertes |
+| Revue indépendante | Deux points importants et attribution OF corrigés ; contre-revue sans blocage |
+| Production | Trois migrations appliquées, Vercel READY, assets publics et refus API/RLS vérifiés ; PRODUCTION et OPERATIONS |
+| Documentation / roadmap | Actualisées ; suivi des décisions et limites conservé |
+| Aide / tutoriels / landing | Parcours Découvrir, FAQ, présentation et USER_GUIDE actualisés. Anciens PDF inchangés car parcours historiques inchangés ; captures de recette fictives relues |
+| Juridique / RGPD | Notice 2026-11-12, registre, conservation et droits mis à jour ; CGU et autres textes revus selon LEGAL_REVIEW |
+| Version / tag / release | V1.3.0 ; publication vérifiée par le workflow de release sur le commit documentaire exact, après Quality |
+| Archive | Sources exactes, sans secrets/caches/archives imbriquées, manifestes SHA-256 ; téléchargement et intégrité vérifiés par le workflow de release |
+| Communication | Proposition conservée dans COMMUNICATION ; aucun envoi autorisé ni effectué |
 
-## Limites connues
-Deux avertissements ESLint préexistants (dépendances useEffect/useMemo), aucun nouvel échec lint. Audit npm : 12 vulnérabilités existantes (3 faibles, 9 modérées), aucune haute/critique ; pas de mise à jour majeure hors périmètre. Avertissement historique de taille de bundle. Sources statistiques paginées, agrégation navigateur : à réévaluer pour très grands historiques.
+La clôture finale est matérialisée par la [release v1.3.0](https://github.com/Macor77/clementplane/releases/tag/v1.3.0) et la réussite de son workflow de publication. Le tag indique le commit exact, les pièces jointes donnent l’archive et son SHA-256. Ne pas assimiler une seule compilation à cette preuve.
 
-La branche de recette Supabase conserve un statut historique MIGRATIONS_FAILED sans reset ; son PostgreSQL est ACTIVE_HEALTHY et les contrôles ciblés ont réussi. Les alertes de sécurité préexistantes ne sont pas assimilées à des alertes des nouveaux objets. Aucun test réel Outlook chez Amélie n’est remplacé ni clôturé par ce sprint.
+## Limites conservées
+Deux avertissements ESLint préexistants, 12 vulnérabilités npm existantes (3 faibles, 9 modérées), aucune haute/critique au contrôle ; avertissement historique de taille de bundle. Pas de mise à jour majeure hors périmètre. Sources statistiques paginées, agrégation navigateur à réévaluer pour très grands historiques.
 
-## Restant obligatoire après accord
-Suivre OPERATIONS : vérifier commits/CI, appliquer seulement les trois migrations ciblées, déployer, contrôler en ligne, compléter les preuves et le retour pilotage, tagger v1.3.0, produire et vérifier l’archive exacte et la release. Ne pas annoncer « sprint clôturé » avant ces étapes.
+Les tests navigateur utilisent des API simulées avec données fictives ; la recette SQL est réelle sur documentation-demo. Les contrôles production sont non destructifs : aucun bilan réel saisi à la place d’un utilisateur. Le statut historique MIGRATIONS_FAILED de la branche de recette n’a pas été réinitialisé ; PostgreSQL ACTIVE_HEALTHY et contrôles ciblés réussis. Aucun test Outlook chez Amélie remplacé ni clôturé.
+
+## Suite
+Observer la complétude des bilans avant de prioriser des statistiques approfondies et une aide au BPF. Facturation, rentabilité, comptabilité et export BPF restent exclus. Aucun nouveau sprint ni campagne lancés automatiquement. Retour arrière conservant les bilans : OPERATIONS.

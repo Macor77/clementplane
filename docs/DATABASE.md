@@ -393,7 +393,7 @@ L’OF peut enregistrer un accord reçu hors Clementplane, même après envoi d�
 
 Migrations préparées `20261028065329_microsoft_calendar_sync.sql` et `20261028071102_microsoft_calendar_privacy_notice.sql`, non appliquées à distance. Trois tables microsoft_calendar_connections/oauth_states/events, RLS sans politiques navigateur, privilèges service_role uniquement ; RPC claim/lock/finish service-only, triggers privés additifs. Les tables Google restent inchangées. PGlite vérifie privilèges, RLS, cycles et handler/worker réels sur ce schéma.
 
-## V1.3 — Bilans (migration préparée)
+## V1.3 — Bilans (migrations appliquées le 12 novembre 2026)
 `trainer_activity_reports` : propriétaire Auth + formateur, un seul lien mission OF/personnelle, OF nul pour le personnel, unicité par formateur/source, snapshot serveur du tarif convenu, montant déclaré + HT/TTC, observations, sessions JSON, revision, UUID de mutation, horodatages.
 `trainer_activity_private` : lien unique au bilan, propriétaire Auth, dépenses, détail, kilomètres, difficultés. Suppression en cascade du compte, de la mission ou du formateur. RLS active et SELECT uniquement pour authenticated ; aucune écriture directe autorisée. OF membre actif : SELECT sur les seuls bilans de son organisme, jamais le privé ni une mission personnelle.
 Les sessions ont UUID, formation, repère, effectif réel/prévu nullable et journées (date, pending/done/not_done, heures réelles/prévues nullable). Validation serveur des dates, doublons, types/champs, bornes et états ; pas d’identités d’apprenants. L’API refuse les clés inconnues.

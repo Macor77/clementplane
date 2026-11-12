@@ -1,8 +1,8 @@
 > **28 octobre 2026 — Outlook / Microsoft 365 : pilote restreint activé en production.** PR #19 fusionnée, recette personnelle réussie ; recette professionnelle reportée avec accord explicite de Vincent. Aucune ouverture générale, sprint non clôturé. [Preuves et suivi](sprints/outlook-calendar-sync/PILOT.md).
 
-## État du 12 novembre 2026 — V1.3 en préparation
+## État du 12 novembre 2026 — V1.3 publiée
 
-Suivi des réalisations et premières statistiques formateur développé dans la [PR #21](https://github.com/Macor77/clementplane/pull/21), encore en brouillon. Bilans progressifs, sessions par groupe, privé/partagé, réalisé/à venir et données manquantes. La production reste V1.2.4 avec les correctifs ultérieurs ; ce sprint n’est pas livré publiquement. Dossier : `docs/sprints/v1.3/` (ou `sprints/v1.3/` depuis docs). Outlook pilote reste hors périmètre et ne bloque pas ce travail. Suite envisagée : statistiques détaillées et aide au BPF, sans démarrage automatique.
+Suivi des réalisations et premières statistiques formateur publié après accord de Vincent : [PR #21](https://github.com/Macor77/clementplane/pull/21) fusionnée, trois migrations appliquées, Vercel production vérifié. Bilans par groupe/journée, privé/partagé, réalisé/à venir et données manquantes. Dossier de clôture : `docs/sprints/v1.3/` (ou `sprints/v1.3/` depuis docs), [release v1.3.0](https://github.com/Macor77/clementplane/releases/tag/v1.3.0). Outlook conserve son pilote restreint : cette version ne valide ni n’élargit ce pilote. Suite proposée : observer la complétude des bilans, puis prioriser statistiques détaillées et aide au BPF ; aucun nouveau sprint lancé automatiquement.
 
 
 > **Mise à jour du 27 octobre 2026 : navigation multi-onglets publiée en production.** PR #18 fusionnée, déploiement Vercel READY sur clementplane.fr. Preuves et périmètre : `docs/sprints/new-tab-navigation/DEPLOYMENT.md`. Les mentions « préparée, non publiée » ci-dessous décrivent l’étape antérieure.

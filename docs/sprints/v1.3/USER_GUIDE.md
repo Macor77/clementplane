@@ -1,6 +1,6 @@
 # Compléter ses bilans et consulter son activité
 
-Guide préparé pour V1.3.0. Les fonctions ne sont disponibles qu’après publication.
+Guide V1.3.0, publiée le 12 novembre 2026.
 
 1. Depuis **Mes missions**, ouvrir une mission puis **Bilan de la mission**.
 2. Une session représente un groupe. Ajouter une session pour chaque autre groupe, même le même jour. Pour un groupe sur plusieurs jours, ajouter ses journées à la même session.

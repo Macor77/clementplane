@@ -690,3 +690,8 @@ L’OF peut enregistrer un accord reçu hors Clementplane, même après envoi d�
 ## Outlook / Microsoft 365 — préparation du 28 octobre 2026
 
 Tables, fonctions et worker `microsoft-calendar` séparés ; projection.js, crypto.js, naming.js et RPC calendar_source_snapshot partagés, sans modification du moteur Google. Microsoft Graph exige des IDs serveur : récupération par marqueurs de propriété et transactionId ; arrêt conservateur sur POST ambigu. OAuth code+PKCE via callback isolé et identité UserInfo serveur. Voir OPERATIONS pour le flux et ses verrous.
+
+## V1.3 — Activité formateur
+`ActivityReport.jsx` intègre le bilan aux deux fiches formateur et une lecture OF. `TrainerActivity.jsx` utilise des sources paginées, sans chargement des champs privés. Calcul pur `utils/trainerActivity.js`, dates Europe/Paris ; aucune dépendance ajoutée. `trainerActivityService.js` attend la confirmation serveur et transmet une liste fermée de champs. Révision optimiste et UUID de mutation rendent une nouvelle tentative idempotente. Les saisies restent en mémoire lors d’une erreur ou d’un rafraîchissement d’authentification. `RetainedActivityReport` conserve l’accès à un bilan propriétaire après disparition de l’affectation.
+
+Mutation atomique dans `activity_private.save_report`, SECURITY DEFINER avec search_path vide et contrôle auth/titulaire/affectation. Wrapper public SECURITY INVOKER ; schéma privé non exposé. Tables séparées et RLS : données privées exclues des réponses OF, y compris une jointure directe. Aucun trigger métier, événement analytique, log de contenu, e-mail ou appel calendrier ajouté.

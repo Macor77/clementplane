@@ -15,7 +15,7 @@ async function fixture(page, origin='personal', organization=false) {
     else if(path.endsWith('/auth/v1/user')) data=user;
     else if(path.endsWith('/profiles'))data={id:user.id,role:organization?'organization':'trainer',first_name:'Alex',last_name:'Démo'};
     else if(path.endsWith('/trainers'))data=organization?null:{id:trainer,prenom:'Alex',nom:'Démo',statut:'actif'};
-    else if(path.endsWith('/organization_members'))data=organization?[{organization_id:'of-demo',role:'owner',status:'active',organizations:{id:'of-demo',name:'OF Démo',status:'active'}}]:[];
+    else if(path.endsWith('/organization_members'))data=organization?[{organization_id:'of-demo',role:'owner',status:'active',organization:{id:'of-demo',name:'OF Démo',status:'active'}}]:[];
     else if(path.endsWith('/trainer_personal_missions'))data=origin==='personal'?(url.searchParams.has('id')?personal:[personal]):[];
     else if(path.endsWith('/get_my_mission_proposals')) data=origin==='organization'?[proposal]:[];
     else if(path.endsWith('/missions'))data=ofMission;
@@ -35,7 +35,7 @@ for(const width of [1440,390]) test(`trainer activity ${width}px — progressive
   await page.setViewportSize({width,height:1000});await page.clock.setFixedTime(new Date('2026-11-12T10:00:00Z'));const api=await fixture(page);
   await page.goto(`/formateur/missions/personnelles/${id}`);
   await expect(page.getByRole('heading',{name:'Bilan de la mission'})).toBeVisible();
-  const first=page.getByLabel('Réalisation — session 1, journée 1',{exact:true});await first.selectOption('done');
+  const first=page.getByRole('combobox',{name:'Réalisation — session 1, journée 1',exact:true});await first.selectOption('done');
   await page.getByLabel('Durée réellement animée (h) — session 1, journée 1',{exact:true}).fill('7');
   await page.getByLabel('Apprenants effectivement formés — session 1',{exact:true}).fill('10');
   await page.getByLabel('Kilométrage total réel de la mission (km)').fill('42.5');
@@ -50,7 +50,7 @@ for(const width of [1440,390]) test(`trainer activity ${width}px — progressive
   expect(api.saved().private.expenses).toBe(0);expect(api.saved().report.sessions[0].days[1].status).toBe('pending');expect(api.saved().report.agreed_fee.amount).toBe(700);
   await page.reload();await expect(page.getByLabel('Kilométrage total réel de la mission (km)')).toHaveValue('42.5');
   await page.getByRole('button',{name:'Ajouter une session (autre groupe)',exact:true}).click();
-  await page.getByLabel('Date — session 2, journée 1',{exact:true}).fill('2026-11-01');await page.getByLabel('Réalisation — session 2, journée 1',{exact:true}).selectOption('done');await page.getByLabel('Durée réellement animée (h) — session 2, journée 1',{exact:true}).fill('2');await page.getByLabel('Apprenants effectivement formés — session 2',{exact:true}).fill('8');
+  await page.getByLabel('Date — session 2, journée 1',{exact:true}).fill('2026-11-01');await page.getByRole('combobox',{name:'Réalisation — session 2, journée 1',exact:true}).selectOption('done');await page.getByLabel('Durée réellement animée (h) — session 2, journée 1',{exact:true}).fill('2');await page.getByLabel('Apprenants effectivement formés — session 2',{exact:true}).fill('8');
   await page.getByRole('button',{name:'Enregistrer le bilan',exact:true}).click();await expect(page.getByText('Bilan enregistré.',{exact:true})).toBeVisible();
   expect(api.saved().private.kilometers).toBe(42.5);expect(api.saved().report.sessions).toHaveLength(2);
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);

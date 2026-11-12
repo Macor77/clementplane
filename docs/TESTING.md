@@ -155,3 +155,7 @@ L’OF peut enregistrer un accord reçu hors Clementplane, même après envoi d�
 ## Outlook / Microsoft 365 — préparation du 28 octobre 2026
 
 Tests Microsoft dans tests/contracts/microsoft-*.test.js et tests/calendar/microsoft-*.test.js ; intégration PGlite avec Graph simulé ; `node scripts/testing/microsoft-calendar-sql.mjs` ; Playwright 13-microsoft-calendar-ui.spec.js (1440/390, callbacks PWA et connexion simulée). Tous les tests Google restent requis. Recette Microsoft réelle distincte : docs/sprints/outlook-calendar-sync/ACCEPTANCE.md.
+
+## V1.3 — activité
+`npm run test:activity-sql` exécute la migration dans PostgreSQL embarqué PGlite avec rôles, droits, validations, reprise et conflits. `src/utils/__tests__/trainerActivity.test.js` couvre groupes/multidates, deux années, partiels/en cours, zéro/vide, options, montants et bilans conservés. `trainerActivityService.test.js` contrôle confirmation, erreur, liste fermée et pagination.
+`tests/e2e/specs/14-trainer-activity.spec.js` : vrai navigateur Chromium, API simulée, 1440/390 px, perte réseau, correction/km, statistiques, OF lecture seule et aucun appel privé/envoi. `scripts/testing/trainer-activity-staging.sql` cible exclusivement documentation-demo et annule toutes les fixtures par ROLLBACK. Ce contrôle SQL hébergé ne constitue pas une recette HTTP Auth/PostgREST. Les scénarios calendrier existants restent obligatoires. Pas de test destructif en production ni de message à un partenaire.

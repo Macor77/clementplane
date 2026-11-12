@@ -31,3 +31,6 @@ File technique mission_response_outbox : réponses en attente jusqu'au traitemen
 ## Outlook / Microsoft 365 — préparation du 28 octobre 2026
 
 Microsoft (non activé) : state valable 10 minutes, supprimé à consommation/nouvelle tentative/déconnexion et nettoyé par le worker actif. Jeton effacé à la déconnexion ; identité/calendrier/mappings conservés pour reprise jusqu’à suppression du compte. Les copies Outlook restent chez le titulaire. Aucun secret dans export/journal/archive.
+
+## V1.3 — Bilans, 12 novembre 2026
+Bilans partagés et privés conservés pendant la vie du compte pour son historique professionnel. Suppression en cascade du compte Auth, de la mission source ou de la fiche formateur. Désaffectation et annulation ne valent pas effacement. Aucun archivage comptable ni obligation BPF promise. Pas de copie dans Google/Microsoft/Brevo. Les champs libres doivent rester minimaux et sans identités d’apprenants.

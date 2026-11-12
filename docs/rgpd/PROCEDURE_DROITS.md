@@ -24,3 +24,6 @@ Inclure mission_response_outbox, reliée par relation_id à mission_formateurs, 
 ## Outlook / Microsoft 365 — préparation du 28 octobre 2026
 
 Microsoft (préparé) : inclure les métadonnées de connexion dans l’inventaire, exclure tokens et vérificateurs OAuth. Suppression auth.users en cascade sur les tables Microsoft. Expliquer le retrait de l’autorisation et l’effacement des copies dans Outlook ; aucun effacement distant automatique.
+
+## V1.3 — Bilans, 12 novembre 2026
+Inclure `trainer_activity_reports` et `trainer_activity_private` dans l’inventaire, filtrés par `owner_user_id` vérifié. Pour l’OF, n’inclure que les colonnes de la table partagée sur ses `organization_id` ; jamais le privé ni une mission personnelle. Rectification dans le bilan formateur ; demandes d’effacement traitées selon le mandat et tracées. La suppression du compte Auth cascade sur les deux tables. Le retrait d’affectation conserve les réalisations déclarées. Aucun export BPF ajouté.

@@ -33,3 +33,7 @@ Le suivi des missions peut contenir la confirmation d’un accord par l’OF : u
 ## Outlook / Microsoft 365 — préparation du 28 octobre 2026
 
 Flux facultatif Microsoft préparé, non activé : données de mission autorisées vers le compte du formateur, identité OIDC, jeton chiffré et correspondances techniques. Pas de collecte des rendez-vous personnels. Notes/rémunération sur choix séparé. Qualification contractuelle et conditions Microsoft à vérifier avant ouverture (LEGAL_REVIEW du sprint).
+
+## 12 novembre 2026 — secours du géocodage
+
+Localisation du lieu saisi (adresse/ville/code postal) pour calculer les distances à vol d’oiseau : IGN en fournisseur principal ; API publique geo.api.gouv.fr en secours limité aux communes. Seuls le nom de ville et/ou le code postal sont transmis au secours depuis le serveur, sans identité, identifiant métier, jeton ni contenu de mission. Aucune nouvelle conservation applicative. Même finalité de recherche géographique ; les conditions de journalisation propres aux fournisseurs ne sont pas certifiées par cette intervention.

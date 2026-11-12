@@ -18,3 +18,7 @@ Mise en service publique autorisée le 14 octobre 2026. Ne pas assimiler le comp
 ## Outlook / Microsoft 365 — préparation du 28 octobre 2026
 
 Connexion optionnelle au compte Microsoft choisi par le formateur ; ne pas confondre ce destinataire avec un contrat Microsoft détenu par Clementplane. Conditions personnelles/professionnelles, qualification, transferts et justificatifs à examiner avant activation ; aucune validation contractuelle inventée.
+
+## 12 novembre 2026 — services publics de géocodage
+
+IGN (`data.geopf.fr/geocodage/search`) : localisation des lieux saisis. API Découpage administratif (`geo.api.gouv.fr/communes`) : secours en cas d’indisponibilité, ville/code postal uniquement. Appels serveur sans identité ni jeton utilisateur transmis. Documentation du secours : https://geo.api.gouv.fr/decoupage-administratif/communes. Cet inventaire décrit les flux techniques ; il ne constitue pas une attestation de DPA, de lieu d’hébergement ou de durée de journalisation du fournisseur.

@@ -6,17 +6,8 @@ const cors = {
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
-const DEFAULT_APP_URL = 'https://app.clementplane.fr';
-
-function safeAppUrl(value: unknown) {
-  try {
-    const parsed = new URL(String(value || DEFAULT_APP_URL));
-    if (parsed.protocol !== 'https:' && parsed.hostname !== 'localhost') return DEFAULT_APP_URL;
-    return parsed.origin;
-  } catch {
-    return DEFAULT_APP_URL;
-  }
-}
+// A cached admin client may still send appBaseUrl. Never use it in delivered links.
+const APP_URL = 'https://app.clementplane.fr';
 const SENDER_EMAIL = 'contact@clementplane.fr';
 
 const esc = (s: string) =>
@@ -52,7 +43,6 @@ Deno.serve(async (req) => {
     const subject = String(body.subject || '').trim();
     const message = String(body.message || '').trim();
     const audiences = Array.isArray(body.audiences) ? body.audiences : [];
-    const appUrl = safeAppUrl(body.appBaseUrl);
 
     const serviceClient = createClient(url, service);
 
@@ -130,7 +120,7 @@ Deno.serve(async (req) => {
 
     for (const recipient of recipients) {
       const unsubscribeUrl =
-        `${appUrl}/desabonnement-nouveautes?token=${encodeURIComponent(recipient.unsubscribe_token)}`;
+        `${APP_URL}/desabonnement-nouveautes?token=${encodeURIComponent(recipient.unsubscribe_token)}`;
 
       const paragraphs = message
         .split(/\n+/)
@@ -146,7 +136,7 @@ Deno.serve(async (req) => {
 
           <p style="margin-top:28px">
             <a
-              href="${appUrl}"
+              href="${APP_URL}"
               style="display:inline-block;border:1px solid #bfd0eb;color:#315b96;text-decoration:none;padding:9px 13px;border-radius:7px;font-weight:600;font-size:13px;background:#ffffff"
             >
               Se connecter à mon espace

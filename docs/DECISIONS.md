@@ -291,3 +291,7 @@ Vincent accepte explicitement de reporter le test Microsoft 365 professionnel ap
 
 ## V1.3 — 12 novembre 2026 : réalisation déclarative et cloisonnement
 Décisions produit validées par Vincent dans le mandat joint : seul le formateur écrit ; partage automatique après sauvegarde pour les missions OF, privé intégral pour les personnelles ; aucune notification. Une session = un groupe multidate, jamais une simple journée. Dates passées ≠ réalisations. Les dépenses restent hors des données partagées au niveau physique/API. Distance Haversine non utilisable comme kilométrage réel. Choix technique : snapshot du tarif source, montant déclaré séparé, deux tables, RPC atomique, révision/idempotence. Périodes et cas limites documentés dans `sprints/v1.3/DESIGN.md`. Version cible 1.3.0, aucune autorisation de production déduite des anciens sprints.
+
+## Décision — Origine officielle des installations et e-mails, 12 novembre 2026
+
+Les nouvelles installations proposées par Clementplane et les liens automatiques des e-mails de nouveautés ciblent `https://app.clementplane.fr`. Le serveur ignore `appBaseUrl`, même envoyé par un ancien client. Les déploiements individuels restent accessibles pour recette, sans proposer leur installation via le bouton intégré. Les anciennes installations figées nécessitent un accompagnement ponctuel ; aucune promesse de migration automatique entre domaines. Pas de nouveau traceur d’origine, ni d’envoi de communication implicite.

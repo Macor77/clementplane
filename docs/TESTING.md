@@ -159,3 +159,9 @@ Tests Microsoft dans tests/contracts/microsoft-*.test.js et tests/calendar/micro
 ## V1.3 — activité
 `npm run test:activity-sql` exécute la migration dans PostgreSQL embarqué PGlite avec rôles, droits, validations, reprise et conflits. `src/utils/__tests__/trainerActivity.test.js` couvre groupes/multidates, deux années, partiels/en cours, zéro/vide, options, montants et bilans conservés. `trainerActivityService.test.js` contrôle confirmation, erreur, liste fermée et pagination.
 `tests/e2e/specs/14-trainer-activity.spec.js` : vrai navigateur Chromium, API simulée, 1440/390 px, perte réseau, correction/km, statistiques, OF lecture seule et aucun appel privé/envoi. `scripts/testing/trainer-activity-staging.sql` cible exclusivement documentation-demo et annule toutes les fixtures par ROLLBACK. Ce contrôle SQL hébergé ne constitue pas une recette HTTP Auth/PostgREST. Les scénarios calendrier existants restent obligatoires. Pas de test destructif en production ni de message à un partenaire.
+
+## Recette origine PWA et e-mails — V1.3.1
+
+`tests/contracts/featureAnnouncementHandler.test.js` exécute le véritable gestionnaire Edge avec Supabase/Brevo simulés : clients anciens, origines temporaires/externes/localhost, envoi/test, jeton de désabonnement, aperçu sans écriture et contrôle administrateur. Six cas reproduisaient le défaut avant correction.
+
+`tests/e2e/specs/05-pwa-shell.spec.js` couvre Android/iOS sur origine officielle/temporaire, absence de paramètres et referrer transférés, largeur mobile et création de mission en mode standalone. Les origines HTTPS sont interceptées et servies depuis le bundle local ; aucune donnée réelle ni envoi. Le test utilise les variables Supabase fictives du workflow Quality.

@@ -1,3 +1,7 @@
+## Correctif V1.3.1 — installation mobile, 12 novembre 2026
+
+Parcours d’installation et liens de nouveautés rattachés à l’adresse officielle. [État et preuves](sprints/pwa-official-installation/CLOSURE.md). Pas de nouveau lot fonctionnel ; accompagnement des anciennes installations préparé, envoi non effectué. Le pilote Outlook reste restreint.
+
 > **28 octobre 2026 — Outlook / Microsoft 365 : pilote restreint activé en production.** PR #19 fusionnée, recette personnelle réussie ; recette professionnelle reportée avec accord explicite de Vincent. Aucune ouverture générale, sprint non clôturé. [Preuves et suivi](sprints/outlook-calendar-sync/PILOT.md).
 
 ## État du 12 novembre 2026 — V1.3 publiée

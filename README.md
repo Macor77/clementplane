@@ -21,9 +21,9 @@ Elle centralise notamment :
 
 ## Version actuelle
 
-**V1.2.4 — Confirmation manuelle des accords (23 octobre 2026)**
+**V1.3.1 — Installation depuis l’adresse officielle (12 novembre 2026)**
 
-Connexion facultative au calendrier séparé « Prénom Nom — Clementplane ». Version technique 1.2.4 ; [état de livraison](docs/sprints/manual-revalidation/CLOSURE.md).
+Bilans et statistiques V1.3, avec correction des liens d’installation et des e-mails. [État de livraison V1.3.1](docs/sprints/pwa-official-installation/CLOSURE.md).
 
 Clementplane peut désormais être installé sur Android et iPhone/iPad et lancé depuis l’écran d’accueil comme une application.
 
@@ -96,6 +96,8 @@ La configuration PWA repose notamment sur :
 - `src/components/pwa/PwaManager.jsx`
 - `src/pwa/pwaEnvironment.js`
 - `public/icons/`
+
+Installer depuis **https://app.clementplane.fr**. Sur une autre origine, le bouton intégré conduit à cette adresse avant installation. Une ancienne PWA liée à un déploiement individuel peut nécessiter un remplacement ponctuel : voir l’aide « Découvrir Clementplane » et le [message préparé](docs/sprints/pwa-official-installation/COMMUNICATION.md).
 
 Le service worker conserve le shell et les ressources statiques utiles au démarrage.
 

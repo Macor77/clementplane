@@ -233,3 +233,6 @@ Le Sprint 22 est livré : calendrier séparé Google, connexion volontaire, miss
 ## Outlook / Microsoft 365 — préparation du 28 octobre 2026
 
 En préparation : choix facultatif Outlook personnel/Microsoft 365 professionnel, coexistence Google, calendrier distinct, mêmes règles métier V1.2. Pas de lecture des rendez-vous personnels, pas de bidirectionnel, pas d’invités. Pas de promesse de disponibilité avant recette Entra réelle. Dossier outlook-calendar-sync fait foi.
+
+## V1.3 — Bilans et premières statistiques (préparation du 12 novembre 2026)
+Le formateur suit son activité sans imposer un compte à ses donneurs d’ordre. Missions personnelles et confiées : bilan progressif, une session par groupe, journées réalisées explicitement, durées pédagogiques réelles et effectifs agrégés. Les statistiques séparent réalisé et futur confirmé. Définition et règles : `sprints/v1.3/DESIGN.md`. Aucun BPF, facture, rentabilité, identité d’apprenant ni modification d’agenda. Mise en production non encore autorisée.

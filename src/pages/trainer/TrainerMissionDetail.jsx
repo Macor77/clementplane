@@ -1,3 +1,4 @@
+import ActivityReport from '../../components/trainer/ActivityReport';
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
@@ -614,6 +615,7 @@ export default function TrainerMissionDetail() {
       ) : null}
     </section>
 
+    <ActivityReport key={id} mission={mission} origin="organization" />
     <section style={{...styles.card,...styles.futureCard}}><h2 style={styles.cardTitle}>Échanges avec l’organisme</h2><p style={styles.muted}>Cet espace accueillera prochainement les échanges liés directement à cette mission.</p></section>
 
     {withdrawOpen ? (

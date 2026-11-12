@@ -116,6 +116,8 @@ const navigationItems = [
 function isTrainerPersonalPath(pathname) {
   return (
     pathname === '/formateur/espace' ||
+    pathname === '/formateur/statistiques' ||
+    pathname.startsWith('/formateur/bilans/') ||
     pathname === '/formateur/propositions' ||
     pathname === '/formateur/missions' ||
     pathname.startsWith('/formateur/missions/') ||

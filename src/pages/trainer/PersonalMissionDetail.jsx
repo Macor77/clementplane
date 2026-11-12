@@ -1,3 +1,4 @@
+import ActivityReport from '../../components/trainer/ActivityReport';
 import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { cancelPersonalMission, getPersonalMission } from '../../services/personalMissionService';
@@ -21,6 +22,7 @@ export default function PersonalMissionDetail(){
  <p>Créée le {new Date(mission.created_at).toLocaleString('fr-FR')} · Mise à jour le {new Date(mission.updated_at).toLocaleString('fr-FR')}</p>
  {mission.cancelled_at&&<p role="status">Annulée le {new Date(mission.cancelled_at).toLocaleString('fr-FR')}. Les autres engagements et disponibilités déclarées restent conservés.</p>}
  </section>
+ <ActivityReport key={id} mission={mission} origin="personal" />
  {mission.status==='confirmed'&&<div className="personal-mission-actions"><Link className="button button--primary" to={`/formateur/missions/personnelles/${id}/modifier`}>Modifier</Link><button className="button button--soft" onClick={()=>setConfirm(true)}>Annuler la mission</button></div>}
  {confirm&&<section className="personal-mission-warning" aria-label="Confirmation d’annulation"><h2>Confirmer l’annulation ?</h2><p>La mission restera dans votre historique et ne bloquera plus ses journées. L’annulation ne peut pas être annulée.</p><div className="personal-mission-actions"><button className="button button--primary" disabled={saving} onClick={cancel}>{saving?'Annulation…':'Confirmer l’annulation'}</button><button className="button button--soft" disabled={saving} onClick={()=>setConfirm(false)}>Conserver la mission</button></div></section>}
  {suggestedOrganization&&<div className="personal-mission-modal" role="presentation"><section className="personal-mission-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="personal-mission-add-of-title"><h2 id="personal-mission-add-of-title">Ajouter ce donneur d’ordre à Mes OF ?</h2><p>Souhaitez-vous ajouter <strong>{suggestedOrganization}</strong> à votre liste Mes OF ?</p><div className="personal-mission-actions"><button className="button button--primary" onClick={()=>navigate(`/formateur/mes-of?ajouter=1&nom=${encodeURIComponent(suggestedOrganization)}`)}>Oui, l’ajouter</button><button className="button button--soft" onClick={()=>{setSuggestedOrganization('');navigate(location.pathname,{replace:true,state:{saved:true}});}}>Non, merci</button></div></section></div>}

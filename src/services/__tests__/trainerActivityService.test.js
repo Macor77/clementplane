@@ -1,0 +1,13 @@
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+const mocks=vi.hoisted(()=>({rpc:vi.fn(),from:vi.fn()}));
+vi.mock('../../lib/supabaseClient',()=>({supabase:mocks}));
+import { getMyActivityReports, saveActivityReport } from '../trainerActivityService';
+const input=()=>({declared_fee:null,tax_basis:null,sessions:[{id:'group',formation:'SST',group_label:'',learner_count:null,expected_learners:null,days:[{date:'2026-01-01',status:'pending',actual_hours:null,planned_hours:null}]}]});
+beforeEach(()=>vi.clearAllMocks());
+describe('activity service server confirmation and privacy',()=>{
+ it('never returns a false success when confirmation is missing',async()=>{mocks.rpc.mockResolvedValue({data:null,error:null});await expect(saveActivityReport('personal','id',null,'mutation',input())).rejects.toThrow(/Confirmation serveur absente/);});
+ it('keeps revision and stable retry id; sends only validated editable fields',async()=>{mocks.rpc.mockResolvedValue({data:{report:{revision:2}},error:null});await saveActivityReport('organization','id',1,'retry-id',{...input(),owner_user_id:'forged',agreed_fee:123});expect(mocks.rpc).toHaveBeenCalledWith('save_trainer_activity_report',expect.objectContaining({p_revision:1,p_mutation_id:'retry-id',p_origin:'organization'}));expect(mocks.rpc.mock.calls[0][1].p_data).not.toHaveProperty('owner_user_id');expect(mocks.rpc.mock.calls[0][1].p_data).not.toHaveProperty('agreed_fee');});
+ it('explains conflicts and network failures without claiming a save',async()=>{mocks.rpc.mockResolvedValue({error:{message:'REPORT_CONFLICT'}});await expect(saveActivityReport('personal','id',1,'m',input())).rejects.toThrow(/autre fenêtre/);mocks.rpc.mockResolvedValue({error:{message:'network'}});await expect(saveActivityReport('personal','id',1,'m',input())).rejects.toThrow(/saisies sont conservées/);});
+ it('validates before accessing the API',async()=>{await expect(saveActivityReport('personal','id',1,'m',{...input(),expenses:-1})).rejects.toThrow(/Frais/);expect(mocks.rpc).not.toHaveBeenCalled();});
+ it('paginates reports and filters by trainer; never reads the private table for statistics',async()=>{const range=vi.fn().mockResolvedValueOnce({data:Array.from({length:500},(_,i)=>({id:i}))}).mockResolvedValueOnce({data:[{id:500}]});const query={select:vi.fn().mockReturnThis(),eq:vi.fn().mockReturnThis(),order:vi.fn().mockReturnThis(),range};mocks.from.mockReturnValue(query);expect(await getMyActivityReports('trainer')).toHaveLength(501);expect(query.eq).toHaveBeenCalledWith('trainer_id','trainer');expect(mocks.from.mock.calls.every(c=>c[0]==='trainer_activity_reports')).toBe(true);expect(range.mock.calls).toEqual([[0,499],[500,999]]);});
+});

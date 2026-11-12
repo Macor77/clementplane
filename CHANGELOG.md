@@ -1,5 +1,9 @@
 ## 28 octobre 2026 — Outlook / Microsoft 365 (pilote restreint)
 
+## [1.3.0] — En préparation, 12 novembre 2026
+
+Bilans formateur progressifs, sessions/groupes multidates, réalisations explicites et statistiques Réalisé / À venir. Frais/kilomètres/difficultés privés, consultation OF des seuls champs partagés. Tarif convenu préservé ; ni e-mails, ni notifications, ni changement du planning/calendriers. Deux migrations additives et notice de confidentialité 2026-11-12. Production et clôture en attente d’accord.
+
 - Connexion facultative depuis les paramètres formateur, indépendante de Google.
 - Calendrier distinct, missions/propositions/options privées, synchronisation serveur et reconnexion sans duplication.
 - OAuth PKCE serveur, jetons chiffrés, règles RLS, gestion des erreurs Graph, migration de notice et tests de non-régression.

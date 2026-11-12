@@ -1,6 +1,10 @@
-# Message préparé — non envoyé
+# Communication envoyée — 12 novembre 2026
 
-L’audit agrégé du 12 novembre 2026 dénombre 8 comptes ayant utilisé la PWA, dont 7 actifs dans les 30 derniers jours. Ce compteur ne prouve pas que ces comptes utilisent une mauvaise origine : le domaine d’installation n’est pas journalisé. Aucun destinataire réel n’est inscrit dans le dépôt. Avant un éventuel envoi, contrôler les destinataires, écarter les comptes de démonstration et respecter leurs préférences. L’autorisation porte ici sur les corrections techniques et la préparation du message, pas sur son envoi.
+Après autorisation explicite de Vincent, le message ci-dessous a été envoyé individuellement aux 7 autres formateurs parmi les 8 comptes ayant utilisé la PWA. Le compte de Vincent, déjà dépanné, a été exclu. Vérification des comptes et adresses confirmées : aucun doublon, aucun compte de démonstration et aucun refus enregistré des e-mails de nouveautés dans ce groupe.
+
+Envoi depuis l’adresse professionnelle de Vincent via Gmail, sans destinataires visibles entre eux. Les 7 messages ont été confirmés avec le statut SENT ; ce statut confirme l’envoi, pas la réception ni la lecture. Les noms, adresses et identifiants des messages ne sont pas publiés dans ce dépôt.
+
+Ce suivi remplace le statut « préparé, non envoyé » des documents de livraison rédigés avant cette autorisation. Le domaine d’installation n’est pas journalisé : il s’agit des utilisateurs connus de la PWA, sans présumer que les 7 installations étaient toutes obsolètes.
 
 **Objet : Clementplane sur votre téléphone : vérifiez l’accès aux nouveautés**
 

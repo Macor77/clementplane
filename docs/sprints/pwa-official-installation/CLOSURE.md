@@ -8,13 +8,20 @@ Correctifs : parcours d’installation dirigé vers l’adresse officielle ; ori
 
 ## Vérification et livraison
 
-En cours sur branche isolée `fix/pwa-official-installation`. Le test du gestionnaire Edge a reproduit 6 échecs avant correction (adresse temporaire, externe et localhost, modes envoi et test). Les 10 cas passent après correction, sans aucun appel réel à Brevo ni écriture Supabase. Les parcours navigateur utilisent le bundle local et une API fictive, sous les origines simulées de production et de prévisualisation.
+Correctif autorisé par Vincent (« peux-tu appliquer ces corrections »), livré le 12 novembre 2026. [PR #22](https://github.com/Macor77/clementplane/pull/22) fusionnée après contrôle du commit `c106debe64d1e3b3321202ee0678b7ad82c0b15f` ; commit applicatif de production `edef06c8828090abf7844e5e62c16a0d277b7277`.
 
-À compléter après CI : résultats finaux, revue, PR, commit, fonction Edge, déploiement Vercel et release.
+- **Tests du défaut :** 6 échecs reproduits avant correction dans le véritable gestionnaire Edge (adresse temporaire, externe et localhost, modes envoi et test). Les 10 cas passent après correction, sans appel réel à Brevo ni écriture Supabase.
+- **Qualité :** [exécution complète réussie](https://github.com/Macor77/clementplane/actions/runs/43197324711), 359 tests automatisés et 48 parcours navigateur. SQL/RLS missions, notices, agendas Google/Microsoft, revalidation et bilans réussis. Lint : aucune erreur, 2 avertissements préexistants. Build réussi ; audit sans vulnérabilité haute/critique, 12 alertes basses/modérées préexistantes conservées hors périmètre.
+- **Recette mobile :** origines HTTPS officielle/temporaire servies depuis le bundle local, API fictive, Android et iOS simulés dans Chromium, mode standalone et création de mission. Captures fictives inspectées à 390 px : bouton lisible, aucun débordement. Il ne s’agit pas d’une nouvelle installation native testée sur un iPhone physique. Deux tests initiaux terminaient avant le chargement des ressources après navigation ; attente de l’interface d’arrivée ajoutée, recette finale entièrement verte.
+- **Revue indépendante :** aucun défaut critique ou important ; chemin du dossier de clôture dans l’archive corrigé, observation de toutes les écritures simulées renforcée dans le test d’aperçu.
+- **Serveur :** `send-feature-announcement` version 27 ACTIVE sur le projet `hctvkynrgmnxjynbncdi`, `verify_jwt=true`. Source relue après déploiement et identique au fichier revu ; empreinte de déploiement `c933f26736e5d52629ff646bd93d94b681f26a10128a870533260d93c90a3d14`. Requête anonyme refusée (401). Aucun envoi de recette.
+- **Interface :** déploiement Vercel `dpl_9NuKf5yADCbgZiK1FhhN1zbTReNS`, production READY, commit `edef06c`, alias `app.clementplane.fr` vérifié.
+- **Contrôle HTTP public :** page, manifeste, service worker et bundle répondent 200 sur l’adresse officielle. Bundle `/assets/index-QTJgi9Z6.js`, SHA-256 `e7f45b4b884d633b68176a7d9dfa6da8c05f73fbcdfecf39e3fcdf29e3bc1af8` : version V1.3.1, nouvelle action d’installation et routes création/statistiques présentes, `appBaseUrl` absent du frontend livré.
+- **Sources :** archive candidate générée et vérifiée localement ; le workflow `Release V1.3.1 sources` publie le tag, la [release v1.3.1](https://github.com/Macor77/clementplane/releases/tag/v1.3.1), le ZIP exact et son SHA-256 après réussite de Quality sur le commit de clôture. Il retélécharge et contrôle l’archive publiée. `SOURCE_COMMIT.txt` pointe explicitement vers le présent dossier.
 
 ## Exploitation et limites
 
-- Déployer seulement `send-feature-announcement`, en conservant `verify_jwt: true`, puis l’interface ; aucune migration SQL.
+- Seule `send-feature-announcement` a été déployée côté Supabase, puis l’interface ; aucune migration SQL.
 - Pas de redirection globale des prévisualisations, ni transfert de paramètres ou session entre domaines.
 - Le bouton intégré ne propose l’installation locale que sur `app.clementplane.fr`. Le menu natif du navigateur reste indépendant.
 - Les anciennes PWA attachées à une autre origine ne reçoivent pas rétroactivement le correctif. Message de remplacement ponctuel préparé dans `COMMUNICATION.md`, non envoyé.
@@ -27,4 +34,4 @@ README, roadmaps, changelogs, décisions, architecture, fonctionnel, tests et ai
 
 ## Retour au pilotage
 
-Correction de fiabilité V1.3.1, sans lancement d’un nouveau lot fonctionnel. Le pilote Outlook reste restreint. Suivi restant : décision d’envoi du message, puis vérification des retours des utilisateurs ; ne pas assimiler publication technique et migration effective de toutes les anciennes installations.
+Correction de fiabilité V1.3.1 livrée, sans lancement d’un nouveau lot fonctionnel. Roadmap et aide produit actualisées. Le pilote Outlook reste restreint. Suivi restant : décision d’envoi du message, puis vérification des retours des utilisateurs ; ne pas assimiler publication technique et migration effective de toutes les anciennes installations.

@@ -1,5 +1,9 @@
 # Clementplane
 
+## V1.3.1 publiée — installation mobile, 12 novembre 2026
+
+Parcours d’installation et liens automatiques des e-mails de nouveautés rattachés à **https://app.clementplane.fr**. PR #22 publiée, fonction Edge et Vercel vérifiés ; 359 tests et 48 parcours navigateur réussis. [Clôture et limites](docs/sprints/pwa-official-installation/CLOSURE.md). Un message pour remplacer les anciennes installations est préparé, non envoyé.
+
 ## État du 12 novembre 2026 — V1.3 publiée
 
 Suivi des réalisations et premières statistiques formateur publié après accord de Vincent : [PR #21](https://github.com/Macor77/clementplane/pull/21) fusionnée, trois migrations appliquées, Vercel production vérifié. Bilans par groupe/journée, privé/partagé, réalisé/à venir et données manquantes. Dossier de clôture : `docs/sprints/v1.3/` (ou `sprints/v1.3/` depuis docs), [release v1.3.0](https://github.com/Macor77/clementplane/releases/tag/v1.3.0). Outlook conserve son pilote restreint : cette version ne valide ni n’élargit ce pilote. Suite proposée : observer la complétude des bilans, puis prioriser statistiques détaillées et aide au BPF ; aucun nouveau sprint lancé automatiquement.

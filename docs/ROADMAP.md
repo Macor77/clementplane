@@ -1,4 +1,4 @@
-## Correctif V1.3.1 — installation mobile, 12 novembre 2026
+## Correctif V1.3.1 publié — installation mobile, 12 novembre 2026
 
 Parcours d’installation et liens de nouveautés rattachés à l’adresse officielle. [État et preuves](sprints/pwa-official-installation/CLOSURE.md). Pas de nouveau lot fonctionnel ; accompagnement des anciennes installations préparé, envoi non effectué. Le pilote Outlook reste restreint.
 

@@ -26,4 +26,5 @@ Objectif : les invitations d’installation de l’application et les liens auto
 ## Suivi
 
 - Diagnostic et périmètre confirmés ; branche isolée `fix/pwa-official-installation` depuis `7d3a7dd`.
+- Implémentation, revue indépendante, contrôles complets et publication réalisés (PR #22). Deux ajustements de recette/release après revue : chemin explicite du dossier de clôture dans l’archive et observation de toutes les écritures simulées ; attente de fin de navigation dans les tests mobiles. Aucun écart de périmètre produit.
 - Recette, production et preuves finales : `docs/sprints/pwa-official-installation/CLOSURE.md`.

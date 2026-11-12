@@ -11,9 +11,9 @@ Trois migrations additives testées sur documentation-demo : tables/RLS/RPC ; co
 | Volet | État |
 |---|---|
 | Audit / conception / développement | Réalisés ; DESIGN et matrice ACCEPTANCE |
-| Tests locaux / SQL hébergé | Exécutés ; preuve détaillée dans ACCEPTANCE |
-| Recette navigateur et CI exacte | À vérifier sur le dernier commit de la PR avant production |
-| Revue indépendante | Corrections intégrées ; vérification complémentaire demandée |
+| Tests locaux / SQL hébergé | Réussis ; preuve détaillée dans ACCEPTANCE |
+| Recette navigateur et CI exacte | 349 tests unitaires + 43 navigateur réussis sur c8adb463 ; statut CI final exigé sur la PR (archive incluse) |
+| Revue indépendante | Corrections relues et validées ; aucun blocage restant identifié |
 | Documentation projet / roadmap / aide | Actualisées avec état préparé, sans prétendre à une mise en ligne |
 | Juridique / RGPD | Revue d’impact et documents mis à jour ; LEGAL_REVIEW |
 | Landing / Découvrir / FAQ / tutoriels | Contenus intégrés préparés ; anciens PDF de tutoriels inchangés car parcours historiques inchangés ; nouveau guide dans USER_GUIDE |

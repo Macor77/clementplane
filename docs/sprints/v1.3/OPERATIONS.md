@@ -30,3 +30,9 @@ Surveiller erreurs de chargement/sauvegarde et conflits de révision ; pas de co
 | 20261112074645_activity_validation_and_author.sql | activity_validation_and_author | 20261112074902 |
 
 Les identifiants diffèrent car l’outil applique un horodatage serveur. Ne pas rejouer ces mêmes contenus sur cette base ; rechercher noms et contenu avant toute migration.
+
+### Empreintes des trois fichiers SQL relus
+
+- trainer_activity_reports : `6b7288827b06005a8ada78dfa9ad921689ed810f0eef98cfe8f6ba4386f962fc`
+- activity_privacy_notice : `dd5a65326425fdf4caf1430026b5175ae3df2e07850387ea97f7bd37433499bc`
+- activity_validation_and_author : `ad40980106d9cbb7aedf6b5b7666795327be282b32e48595a941010122e8feba`

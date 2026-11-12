@@ -1,6 +1,6 @@
 # Recette — V1.3 / 12 novembre 2026
 
-État : corrections de revue intégrées ; CI navigateur finale à vérifier avant accord de production. Les comptes, missions et captures de recette sont fictifs.
+État : corrections de revue intégrées et contre-revue sans blocage ; CI navigateur finale à vérifier avant accord de production. Les comptes, missions et captures de recette sont fictifs.
 
 | Exigence | Implémentation / preuve |
 |---|---|
@@ -28,7 +28,7 @@
 
 ## Preuves et limites
 
-- `npm test` : suite complète exécutée avec les variables Supabase fictives de CI. Sans ces variables, deux suites historiques refusent de démarrer ; aucune connexion réelle nécessaire.
+- `npm test` : **349 tests / 58 fichiers réussis**, suite complète exécutée avec les variables Supabase fictives de CI. Sans ces variables, deux suites historiques refusent de démarrer ; aucune connexion réelle nécessaire.
 - `npm run test:activity-sql` : PostgreSQL embarqué PGlite, rôles/RLS et RPC réels. Tests supplémentaires des valeurs brutes et de l’auteur.
 - `scripts/testing/trainer-activity-staging.sql` : exécuté avec succès sur PostgreSQL hébergé **documentation-demo** après les trois migrations. Créations fictives, contrôles multi-rôles et ROLLBACK final. Aucune donnée de recette persistante.
 - Recette notice : inscription transactionnelle fictive acceptant la nouvelle version, puis rollback. Anciennes notices conservées.
@@ -36,3 +36,11 @@
 - Les tests navigateur utilisent l’API simulée pour éviter tout envoi et donnée réelle. Ils complètent la recette SQL hébergée ; ils ne constituent pas une recette connectée de production.
 - Les premiers runs CI ont échoué sur des sélecteurs/fixtures puis la garde de routage ; seules les preuves vertes du dernier commit valent validation finale. Runs historiques : 43175738623, 43177025986.
 - Les alertes ESLint et npm existantes sont relevées dans CLOSURE ; aucune conformité globale de l’ensemble historique n’est revendiquée.
+
+## Recette du code c8adb463
+
+[Quality 43178452742](https://github.com/Macor77/clementplane/actions/runs/43178452742) : **349 tests unitaires, 43 tests navigateur et toutes les suites SQL réussis**, lint sans erreur, audit sans haute/critique, build réussi. Les cinq scénarios d’activité couvrent bureau, mobile, mission OF, lecture OF sans privé et bilan historique complet. Captures relues : formulaire 390/1440 px, statistiques 390/1440 px et consultation OF ; aucun débordement, aucune identité réelle.
+
+L’archive candidate a été générée et contrôlée (624 fichiers), mais son dépôt comme artifact a échoué car upload-artifact refuse les chemins relatifs `../`. Le chemin de dépôt est corrigé dans le commit documentaire suivant. **Le statut de la dernière CI sur PR #21 est la référence avant production**, incluant vérification de l’archive déposée ; le run ci-dessus n’est pas présenté comme entièrement vert.
+
+Contre-revue des corrections : aucun blocage restant. Prévisualisation Vercel du code `c8adb463` : `dpl_EXogMUuXL2MY5rkRxMdq17duXmAK`, READY, target preview ; aucune mutation lancée sur cette prévisualisation dont la base n’a pas été reconfigurée. Production inchangée.

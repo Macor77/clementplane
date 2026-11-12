@@ -22,4 +22,4 @@ Heures : date effective de chaque journée. Sessions/missions : distinctes dans 
 4. Tests navigateur desktop/mobile API simulée, échec réseau, zéro/vide, sauvegarde sans notifications ; tests existants et CI.
 5. Documentation produit, technique, aide, RGPD, exploitation, release préparée, PR brouillon. Demande d'accord de production seulement après préparation.
 
-L'unique branche Supabase de démonstration est MIGRATIONS_FAILED (lecture du 12/11). Aucun reset ni migration distante automatique. Les tests SQL locaux ne prouvent pas un déploiement Supabase. Historique distant divergent des noms sources pour les migrations anciennes : appliquer uniquement la nouvelle migration, jamais db push global.
+Lors de l’audit initial, l’unique branche de démonstration portait le statut historique MIGRATIONS_FAILED ; PostgreSQL restait ACTIVE_HEALTHY. Les trois migrations ciblées ont ensuite été appliquées sur documentation-demo et testées avec rollback des données fictives. Aucun reset ni traitement de production. Historique distant divergent : suivre la correspondance dans OPERATIONS, jamais de db push global.

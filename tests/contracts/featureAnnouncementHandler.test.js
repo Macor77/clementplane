@@ -22,8 +22,10 @@ function setup({ admin = true } = {}) {
   };
   const serviceClient = { from: (table) => {
     const query = {
-      insert: (row) => { records.push({ table, row }); return query; },
-      upsert: () => query, update: () => query, select: () => query, eq: () => query,
+      insert: (row) => { records.push({ table, operation: 'insert', row }); return query; },
+      upsert: (row) => { records.push({ table, operation: 'upsert', row }); return query; },
+      update: (row) => { records.push({ table, operation: 'update', row }); return query; },
+      select: () => query, eq: () => query,
       single: async () => ({ data: { id: 'announcement-demo', unsubscribe_token: recipient.unsubscribe_token } }),
     };
     return query;

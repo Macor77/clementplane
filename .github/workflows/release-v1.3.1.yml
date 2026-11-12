@@ -31,7 +31,7 @@ jobs:
           gh api "repos/$GITHUB_REPOSITORY/commits/$RELEASE_SHA/check-runs" --jq '.check_runs[] | select(.name == "quality" and .conclusion == "success") | .id' > /tmp/quality-check
           test -s /tmp/quality-check
       - name: Archive exact source commit
-        run: python scripts/testing/archive-sprint.py HEAD Clementplane_v1.3.1_Sources.zip
+        run: python scripts/testing/archive-sprint.py HEAD Clementplane_v1.3.1_Sources.zip docs/sprints/pwa-official-installation/CLOSURE.md
       - name: Publish release and verify attached archive
         env:
           GH_TOKEN: ${{ github.token }}

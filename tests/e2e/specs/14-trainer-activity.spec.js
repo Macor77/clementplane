@@ -25,43 +25,46 @@ async function fixture(page, origin='personal', organization=false) {
     else if(path.endsWith('/save_trainer_activity_report')){
       if(fail){fail=false;return route.fulfill({status:503,contentType:'application/json',body:JSON.stringify({message:'network failure'})});}
       const x=req.postDataJSON();const {expenses,expense_details,kilometers,difficulties,...shared}=x.p_data;
-      saved={report:{...shared,id:'report',trainer_id:trainer,trainer_name:'Alex Démo',mission_id:origin==='organization'?id:null,personal_mission_id:origin==='personal'?id:null,agreed_fee:{amount:700,unit:origin==='personal'?'mission':null,tax_basis:origin==='personal'?'HT':null},revision:(saved?.report.revision||0)+1,updated_at:'2026-11-12T09:00:00Z'},private:{expenses,expense_details,kilometers,difficulties}};data=saved;
+      saved={report:{...shared,report_mode:x.p_data.summary?'simple':'detailed',sessions:x.p_data.sessions||saved?.report.sessions||[],formation_title:'SST fictive',reference_dates:personal.dates.map(d=>d.date),activity_date:'2026-11-01',id:'report',trainer_id:trainer,trainer_name:'Alex Démo',mission_id:origin==='organization'?id:null,personal_mission_id:origin==='personal'?id:null,agreed_fee:{amount:700,unit:origin==='personal'?'mission':null,tax_basis:origin==='personal'?'HT':null},revision:(saved?.report.revision||0)+1,updated_at:'2026-11-12T09:00:00Z'},private:{expenses,expense_details,kilometers,difficulties}};data=saved;
     }
     await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(data)});
   });
   return {fail:()=>{fail=true;},saved:()=>saved,sends:()=>sends,privateReads:()=>privateReads,seed:data=>{saved=data;},retain:()=>{retained=true;}};
 }
-for(const width of [1440,390]) test(`trainer activity ${width}px — progressive save, errors, groups, statistics (API simulated)`,async({page})=>{
-  await page.setViewportSize({width,height:1000});await page.clock.setFixedTime(new Date('2026-11-12T10:00:00Z'));const api=await fixture(page);
+for(const width of [1440,390]) test(`trainer activity ${width}px — simple totals, errors, reload, statistics (API simulated)`,async({page})=>{
+  await page.setViewportSize({width,height:1000});await page.clock.setFixedTime(new Date('2026-11-14T10:00:00Z'));const api=await fixture(page);
   await page.goto(`/formateur/missions/personnelles/${id}`);
-  await expect(page.getByRole('heading',{name:'Bilan de la mission'})).toBeVisible();
-  const first=page.getByRole('combobox',{name:'Réalisation — session 1, journée 1',exact:true});await first.selectOption('done');
-  await page.getByLabel('Durée réellement animée (h) — session 1, journée 1',{exact:true}).fill('7');
-  await page.getByLabel('Apprenants effectivement formés — session 1',{exact:true}).fill('10');
+  const panel=page.locator('#bilan');
+  await expect(panel.getByRole('heading',{name:'Bilan de la mission'})).toBeVisible();
+  await expect(panel).toContainText('Formation : SST fictive');
+  await expect(panel.getByRole('textbox',{name:/Formation/})).toHaveCount(0);
+  await expect(panel.getByRole('button',{name:/Ajouter|Retirer/})).toHaveCount(0);
+  await expect(panel.getByText(/Effectif prévu|Durée pédagogique prévue/)).toHaveCount(0);
+  await page.getByRole('combobox',{name:'Formation réalisée',exact:true}).selectOption('done');
+  await page.getByLabel('Durée réellement animée (jours)',{exact:true}).fill('0.5');
+  await page.getByLabel('Durée réellement animée (heures)',{exact:true}).fill('3');
+  await page.getByLabel('Apprenants effectivement formés',{exact:true}).fill('10');
   await page.getByLabel('Kilométrage total réel de la mission (km)').fill('42.5');
   await page.getByLabel('Total des frais engagés (€)').fill('0');
   await page.getByLabel('Difficultés rencontrées').fill('Note privée fictive');
   api.fail();await page.getByRole('button',{name:'Enregistrer le bilan',exact:true}).click();
   await expect(page.getByRole('alert')).toContainText('Vos saisies sont conservées');
-  await expect(page.getByLabel('Kilométrage total réel de la mission (km)')).toHaveValue('42.5');
+  await expect(page.getByLabel('Durée réellement animée (jours)',{exact:true})).toHaveValue('0.5');
   await page.evaluate(()=>{window.dispatchEvent(new Event('blur'));window.dispatchEvent(new Event('focus'));document.dispatchEvent(new Event('visibilitychange'));});
   await expect(page.getByLabel('Difficultés rencontrées')).toHaveValue('Note privée fictive');
   await page.getByRole('button',{name:'Enregistrer le bilan',exact:true}).click();await expect(page.getByText('Bilan enregistré.',{exact:true})).toBeVisible();
-  expect(api.saved().private.expenses).toBe(0);expect(api.saved().report.sessions[0].days[1].status).toBe('pending');expect(api.saved().report.agreed_fee.amount).toBe(700);
+  expect(api.saved().private.expenses).toBe(0);expect(api.saved().report.summary).toEqual({status:'done',actual_days:0.5,actual_hours:3,learner_count:10});expect(api.saved().report.agreed_fee.amount).toBe(700);
   await page.reload();await expect(page.getByLabel('Kilométrage total réel de la mission (km)')).toHaveValue('42.5');
-  await page.getByRole('button',{name:'Ajouter une session (autre groupe)',exact:true}).click();
-  await page.getByLabel('Date — session 2, journée 1',{exact:true}).fill('2026-11-01');await page.getByRole('combobox',{name:'Réalisation — session 2, journée 1',exact:true}).selectOption('done');await page.getByLabel('Durée réellement animée (h) — session 2, journée 1',{exact:true}).fill('2');await page.getByLabel('Apprenants effectivement formés — session 2',{exact:true}).fill('8');
-  await page.getByRole('button',{name:'Enregistrer le bilan',exact:true}).click();await expect(page.getByText('Bilan enregistré.',{exact:true})).toBeVisible();
-  expect(api.saved().private.kilometers).toBe(42.5);expect(api.saved().report.sessions).toHaveLength(2);
+  await expect(page.getByLabel('Durée réellement animée (jours)',{exact:true})).toHaveValue('0.5');
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
   await page.screenshot({path:`test-results/activity-form-${width}.png`,fullPage:true});
   await page.goto('/formateur/statistiques');
   const metric=title=>page.locator('.activity-metrics article').filter({has:page.locator('span',{hasText:title})}).locator('strong');
-  await expect(metric('Heures réellement animées')).toHaveText('9');await expect(metric('Participations renseignées')).toHaveText('18');
-  await expect(page.getByRole('heading',{name:'À compléter · 1 mission(s)'})).toBeVisible();
+  await expect(metric('Heures réellement animées')).toHaveText('3');await expect(metric('Apprenants effectivement formés')).toHaveText('10');await expect(metric('Jours réellement animés')).toHaveText('0.5');await expect(metric('Sessions')).toHaveText('1');
+  await expect(page.getByRole('heading',{name:'À compléter · 0 mission(s)'})).toBeVisible();
   await page.screenshot({path:`test-results/activity-statistics-${width}.png`,fullPage:true});
   await page.getByRole('button',{name:'Activité à venir',exact:true}).click();await expect(metric('Missions')).toHaveText('0');
-  expect(api.sends()).toBe(0);
+  await expect(page.locator('.activity-metrics')).not.toContainText(/Heures|Apprenants|Participations/);expect(api.sends()).toBe(0);
 });
 test('assigned mission exposes shared fields only in OF UI (API simulated)',async({page})=>{
   await page.clock.setFixedTime(new Date('2026-11-12T10:00:00Z'));const api=await fixture(page,'organization');
@@ -70,19 +73,30 @@ test('assigned mission exposes shared fields only in OF UI (API simulated)',asyn
   await page.getByRole('button',{name:'Enregistrer le bilan'}).click();await expect(page.getByText('Bilan enregistré.',{exact:true})).toBeVisible();expect(api.saved().report).not.toHaveProperty('difficulties');expect(api.sends()).toBe(0);
 });
 test('organization sees read-only report and never requests private endpoint (API simulated)',async({page})=>{
-  const api=await fixture(page,'organization',true);api.seed({report:{id:'r',trainer_name:'Alex Démo',mission_id:id,agreed_fee:{amount:700},declared_fee:650,tax_basis:'HT',observations:'Observation partagée fictive',sessions:[{id:'s',formation:'SST fictive',group_label:'Matin',learner_count:10,expected_learners:null,days:[{date:'2026-11-01',status:'done',actual_hours:7,planned_hours:null}]}],updated_at:'2026-11-12T09:00:00Z'},private:{difficulties:'Secret formateur fictif'}});
+  const api=await fixture(page,'organization',true);api.seed({report:{id:'r',trainer_name:'Alex Démo',mission_id:id,agreed_fee:{amount:700},declared_fee:650,tax_basis:'HT',observations:'Observation partagée fictive',report_mode:'simple',formation_title:'SST fictive',summary:{status:'done',learner_count:10,actual_days:0.5,actual_hours:3},sessions:[{id:'s',formation:'SST fictive',group_label:'Matin',learner_count:10,expected_learners:null,days:[{date:'2026-11-01',status:'done',actual_hours:7,planned_hours:null}]}],updated_at:'2026-11-12T09:00:00Z'},private:{difficulties:'Secret formateur fictif'}});
   await page.goto(`/missions/${id}`);await expect(page.getByRole('heading',{name:'Bilans des formateurs',exact:true})).toBeVisible();
-  const panel=page.getByRole('region',{name:'Bilans des formateurs'});await expect(panel.getByRole('heading',{name:'Bilan de Alex Démo'})).toBeVisible();await expect(panel).toContainText('Observation partagée fictive');await expect(panel).not.toContainText('Secret formateur fictif');await expect(panel.locator('input,textarea,button')).toHaveCount(0);expect(api.privateReads()).toBe(0);expect(api.sends()).toBe(0);
+  const panel=page.getByRole('region',{name:'Bilans des formateurs'});await expect(panel.getByRole('heading',{name:'Bilan de Alex Démo'})).toBeVisible();await expect(panel).toContainText('Observation partagée fictive');await expect(panel).not.toContainText('Secret formateur fictif');await expect(panel).toContainText('0.5 jours · 3 heures');await expect(panel).not.toContainText(/Effectif prévu|Durée prévue/);await expect(panel.locator('input,textarea,button')).toHaveCount(0);expect(api.privateReads()).toBe(0);expect(api.sends()).toBe(0);
   await page.screenshot({path:'test-results/activity-of-readonly.png',fullPage:true});
 });
 
 test('completed retained report opens and remains editable after assignment disappears (API simulated)',async({page})=>{
   await page.clock.setFixedTime(new Date('2026-11-12T10:00:00Z'));const api=await fixture(page,'organization');
-  api.seed({report:{id:'report',trainer_name:'Alex Démo',mission_id:id,revision:1,agreed_fee:{amount:700},declared_fee:null,tax_basis:null,observations:'Bilan historique fictif',sessions:[{id:'00000000-0000-4000-8000-000000000061',formation:'SST fictive conservée',group_label:'',learner_count:10,expected_learners:null,days:[{date:'2026-11-01',status:'done',actual_hours:7,planned_hours:null}]}],updated_at:'2026-11-12T09:00:00Z'},private:{expenses:null,kilometers:null,expense_details:'',difficulties:''}});api.retain();
+  api.seed({report:{id:'report',trainer_name:'Alex Démo',mission_id:id,revision:1,agreed_fee:{amount:700},declared_fee:null,tax_basis:null,observations:'Bilan historique fictif',report_mode:'detailed',formation_title:'SST fictive conservée',reference_dates:['2026-11-01'],activity_date:'2026-11-01',sessions:[{id:'00000000-0000-4000-8000-000000000061',formation:'SST fictive conservée',group_label:'',learner_count:10,expected_learners:null,days:[{date:'2026-11-01',status:'done',actual_hours:7,planned_hours:null}]}],updated_at:'2026-11-12T09:00:00Z'},private:{expenses:null,kilometers:null,expense_details:'',difficulties:''}});api.retain();
   await page.goto('/formateur/statistiques');await expect(page.getByRole('heading',{name:'À compléter · 0 mission(s)'})).toBeVisible();
   await expect(page.getByRole('heading',{name:'Bilans conservés · 1'})).toBeVisible();
   await page.getByRole('link',{name:'SST fictive conservée',exact:true}).click();
   await expect(page.getByRole('heading',{name:'Bilan conservé',exact:true})).toBeVisible();
-  await page.getByLabel('Observations partagées avec l’OF').fill('Correction historique fictive');await page.getByRole('button',{name:'Enregistrer le bilan'}).click();await expect(page.getByText('Bilan enregistré.',{exact:true})).toBeVisible();
+  await expect(page.getByLabel('Durée réellement animée (heures)',{exact:true})).toHaveValue('7');await expect(page.getByLabel('Durée réellement animée (jours)',{exact:true})).toHaveValue('');await page.getByLabel('Durée réellement animée (jours)',{exact:true}).fill('1');await page.getByLabel('Observations partagées avec l’OF').fill('Correction historique fictive');await page.getByRole('button',{name:'Enregistrer le bilan'}).click();await expect(page.getByText('Bilan enregistré.',{exact:true})).toBeVisible();
   expect(api.saved().report.observations).toBe('Correction historique fictive');expect(api.sends()).toBe(0);
+});
+
+test('historical multiple groups keep their actuals and cannot add groups (API simulated)',async({page})=>{
+  await page.clock.setFixedTime(new Date('2026-11-14T10:00:00Z'));const api=await fixture(page);
+  const sessions=[1,2].map(n=>({id:`group-${n}`,formation:'SST fictive',group_label:`Groupe ${n}`,learner_count:8,expected_learners:10,days:[{date:'2026-11-01',status:'done',actual_hours:3,planned_hours:4}]}));
+  api.seed({report:{id:'report',revision:1,report_mode:'detailed',formation_title:'SST fictive',reference_dates:['2026-11-01'],personal_mission_id:id,agreed_fee:{amount:700,unit:'mission',tax_basis:'HT'},declared_fee:700,tax_basis:'HT',observations:'',sessions},private:{expenses:null,kilometers:null,expense_details:'',difficulties:''}});
+  await page.goto(`/formateur/missions/personnelles/${id}`);const panel=page.locator('#bilan');
+  await expect(panel).toContainText('Ce bilan historique comporte plusieurs groupes');await expect(panel.getByRole('button',{name:/Ajouter|Retirer/})).toHaveCount(0);await expect(panel.getByRole('textbox',{name:/Formation|groupe/})).toHaveCount(0);await expect(panel).not.toContainText(/Effectif prévu|Durée pédagogique prévue/);
+  await page.getByLabel('Apprenants effectivement formés — groupe 2',{exact:true}).fill('9');
+  await page.getByRole('button',{name:'Enregistrer le bilan',exact:true}).click();await expect(page.getByText('Bilan enregistré.',{exact:true})).toBeVisible();expect(api.saved().report.sessions).toHaveLength(2);expect(api.saved().report.sessions[1].learner_count).toBe(9);expect(api.saved().report.sessions[0]).toEqual(sessions[0]);
+  await page.screenshot({path:'test-results/activity-legacy-groups.png',fullPage:true});
 });

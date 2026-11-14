@@ -1,3 +1,7 @@
+## [1.3.2] — en préparation, 14 novembre 2026
+
+Bilan simplifié à un groupe, intitulé non modifiable, totaux réels (apprenants, jours et heures). Champs prévisionnels et ajout de groupes retirés. Migration additive préservant les anciens détails, protection contre les écrasements par une ancienne PWA, statistiques et aide actualisées. Non publié en production.
+
 ## [1.3.1] — 12 novembre 2026
 
 Correction du parcours d’installation mobile : accès préalable à https://app.clementplane.fr depuis toute autre origine. Liens de connexion et désabonnement des e-mails de nouveautés imposés côté serveur, y compris pour les anciens clients. Aide Android/iOS et FAQ complétées. Aucun changement de données ni migration ; anciennes installations à remplacer une fois si elles restent liées à un déploiement figé. Communication préparée, non envoyée. Preuves et état : `docs/sprints/pwa-official-installation/CLOSURE.md` (depuis la racine).

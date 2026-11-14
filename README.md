@@ -1,3 +1,7 @@
+## V1.3.2 en préparation — simplification du bilan, 14 novembre 2026
+
+Une mission = une session = un groupe. Intitulé verrouillé, seuls les apprenants formés et les durées réelles en jours/heures sont saisis. Anciens bilans conservés ; effectifs et heures prévus retirés. Développement autorisé, publication et migration production encore en attente. Dossier : `docs/sprints/v1.3.2/`.
+
 # Clementplane
 
 ## V1.3.1 publiée — installation mobile, 12 novembre 2026

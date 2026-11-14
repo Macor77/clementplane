@@ -165,3 +165,6 @@ Tests Microsoft dans tests/contracts/microsoft-*.test.js et tests/calendar/micro
 `tests/contracts/featureAnnouncementHandler.test.js` exécute le véritable gestionnaire Edge avec Supabase/Brevo simulés : clients anciens, origines temporaires/externes/localhost, envoi/test, jeton de désabonnement, aperçu sans écriture et contrôle administrateur. Six cas reproduisaient le défaut avant correction.
 
 `tests/e2e/specs/05-pwa-shell.spec.js` couvre Android/iOS sur origine officielle/temporaire, absence de paramètres et referrer transférés, largeur mobile et création de mission en mode standalone. Les origines HTTPS sont interceptées et servies depuis le bundle local ; aucune donnée réelle ni envoi. Le test utilise les variables Supabase fictives du workflow Quality.
+
+## V1.3.2 — Recette du bilan simplifié
+367 unitaires et 49 parcours navigateur réussis. test:activity-sql couvre aussi simple-activity-sql.mjs : conversion historique, demi-journée, reprogrammation, ancrage, ancien client et titres/dates serveur. simple-activity-staging.sql cible exclusivement documentation-demo et annule les fixtures. Scénario 14 : 1440/390 px, sauvegarde/reprise/rechargement, un groupe, titre verrouillé, jours/heures, statistiques, OF privé/partagé et anciens groupes. Preuves et portée : sprints/v1.3.2/ACCEPTANCE.md et PRODUCTION.md.

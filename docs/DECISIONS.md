@@ -295,3 +295,6 @@ Décisions produit validées par Vincent dans le mandat joint : seul le formateu
 ## Décision — Origine officielle des installations et e-mails, 12 novembre 2026
 
 Les nouvelles installations proposées par Clementplane et les liens automatiques des e-mails de nouveautés ciblent `https://app.clementplane.fr`. Le serveur ignore `appBaseUrl`, même envoyé par un ancien client. Les déploiements individuels restent accessibles pour recette, sans proposer leur installation via le bouton intégré. Les anciennes installations figées nécessitent un accompagnement ponctuel ; aucune promesse de migration automatique entre domaines. Pas de nouveau traceur d’origine, ni d’envoi de communication implicite.
+
+## V1.3.2 — Simplification validée le 14 novembre 2026
+Vincent remplace le choix de plusieurs groupes par mission : désormais une mission = une session = un groupe. Intitulé non modifiable dans le bilan, retrait effectifs/heures prévus, totaux jours/heures réels sans conversion automatique. Les anciens groupes ne sont ni fusionnés ni supprimés. Production/migration autorisées après recette. Aucun envoi de communication.

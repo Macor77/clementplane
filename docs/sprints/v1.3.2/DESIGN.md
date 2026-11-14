@@ -1,6 +1,6 @@
 # V1.3.2 — simplifier le bilan formateur
 
-Mandat du 14 novembre 2026 : Vincent valide la proposition « une mission = une session = un groupe », intitulé non modifiable, retrait des effectifs/heures prévus, total réel en jours et heures sans conversion automatique. Base main a339c4a, V1.3.1 (correctifs PWA conservés). Préparation autorisée ; aucune nouvelle autorisation explicite de production ni de communication.
+Mandat du 14 novembre 2026 : Vincent valide la proposition « une mission = une session = un groupe », intitulé non modifiable, retrait des effectifs/heures prévus, total réel en jours et heures sans conversion automatique. Base main a339c4a, V1.3.1 (correctifs PWA conservés). Préparation initialement seule autorisée. Le 14 novembre, après recette, Vincent autorise explicitement la production et sa migration ; aucune communication par e-mail.
 
 ## Décisions d’implémentation
 - Nouveau bilan simple : réalisation à renseigner/réalisée/partiellement réalisée/non réalisée, apprenants effectivement formés, jours et heures réels indépendants (0,5 jour possible), tarif/observations et données privées inchangés.

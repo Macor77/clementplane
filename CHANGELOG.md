@@ -1,6 +1,6 @@
-## [1.3.2] — en préparation, 14 novembre 2026
+## [1.3.2] — 14 novembre 2026
 
-Bilan simplifié à un groupe, intitulé non modifiable, totaux réels (apprenants, jours et heures). Champs prévisionnels et ajout de groupes retirés. Migration additive préservant les anciens détails, protection contre les écrasements par une ancienne PWA, statistiques et aide actualisées. Non publié en production.
+Bilan simplifié à un groupe, intitulé non modifiable, totaux réels (apprenants, jours et heures). Champs prévisionnels et ajout de groupes retirés. Migration additive préservant les anciens détails, protection contre les écrasements par une ancienne PWA, statistiques et aide actualisées. Publié après accord : PR #23, migration 20261114200754, Vercel READY. 367 unitaires et 49 parcours navigateur réussis.
 
 ## [1.3.1] — 12 novembre 2026
 

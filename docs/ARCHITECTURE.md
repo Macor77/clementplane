@@ -699,3 +699,6 @@ Mutation atomique dans `activity_private.save_report`, SECURITY DEFINER avec sea
 ## Installation et origine des liens — V1.3.1
 
 `PwaManager` ne capture le prompt d’installation que sur `https://app.clementplane.fr`. Ailleurs, une ancre sans paramètres ni referrer conduit à cette origine ; les prévisualisations ne sont pas redirigées globalement. `send-feature-announcement` ignore toute origine fournie par le client et construit les liens automatiques à partir de son origine officielle constante. Le service worker et son cycle de mise à jour restent inchangés. Une PWA déjà liée à une ancienne origine ne peut pas être migrée par ce frontend.
+
+## V1.3.2 — Bilan simplifié, 14 novembre 2026
+Le formulaire utilise des totaux summary (état, apprenants, jours, heures). Les dates et l’intitulé sont contrôlés par le serveur, actualisés avant réalisation si la source reste accessible. Les anciens sessions restent archivés lors d’une conversion ; ne jamais additionner sessions et summary. Plusieurs anciens groupes gardent leur édition historique sans modification de structure. Statistiques : une date d’affectation pour les totaux simples, ancien calcul par journée conservé pour les bilans détaillés. RPC atomique et séparation des données inchangées.

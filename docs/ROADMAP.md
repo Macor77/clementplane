@@ -1,6 +1,6 @@
-## V1.3.2 en préparation — simplification du bilan, 14 novembre 2026
+## V1.3.2 publiée — simplification du bilan, 14 novembre 2026
 
-Une mission = une session = un groupe. Intitulé verrouillé, seuls les apprenants formés et les durées réelles en jours/heures sont saisis. Anciens bilans conservés ; effectifs et heures prévus retirés. Développement autorisé, publication et migration production encore en attente. Dossier : `sprints/v1.3.2/`.
+Une mission = une session = un groupe. Intitulé verrouillé, seuls les apprenants formés et les durées réelles en jours/heures sont saisis. Anciens bilans conservés ; effectifs et heures prévus retirés. PR #23 fusionnée, migration appliquée et Vercel production vérifié. 367 tests unitaires et 49 parcours navigateur réussis. Dossier : `sprints/v1.3.2/`.
 
 ## Correctif V1.3.1 publié — installation mobile, 12 novembre 2026
 

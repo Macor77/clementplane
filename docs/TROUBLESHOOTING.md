@@ -409,3 +409,6 @@ Pour une réponse sans mail, contrôler mission_response_outbox et email_logs, p
 ## Outlook / Microsoft 365 — préparation du 28 octobre 2026
 
 Pour Microsoft, voir docs/sprints/outlook-calendar-sync/OPERATIONS.md : révocation, consentement tenant, throttling, création ambiguë, invités ajoutés, calendrier supprimé et retour arrière. Ne jamais supprimer les mappings ou réinitialiser calendar_pending pour contourner une ambiguïté ; ne jamais coller de jeton dans un ticket.
+
+## Bilan simplifié V1.3.2
+REPORT_APP_UPDATE_REQUIRED : conserver/copier les saisies puis actualiser Clementplane. Une ancienne version ne peut ni créer un bilan détaillé ni remplacer les totaux simples. Un ancien bilan à plusieurs groupes reste corrigeable, sans ajout/suppression ; ne pas fusionner les effectifs. Un champ jours vide n’est pas déduit des dates ou des heures. Les totaux simples appartiennent à la première date de référence (première réalisation historique à la conversion). Aucun rollback frontend seul : voir sprints/v1.3.2/OPERATIONS.md.

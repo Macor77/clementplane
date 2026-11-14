@@ -20,16 +20,46 @@ export function newActivitySession(mission, withDates = true) {
 }
 export function initialActivity(mission, origin) {
   const fee = origin === 'personal' && mission.fee_unit === 'mission' ? mission.fee : null;
-  return { declared_fee: fee ?? null, tax_basis: fee == null ? null : 'HT', observations: '', expenses: null, expense_details: '', kilometers: null, difficulties: '', sessions: [newActivitySession(mission)] };
+  return { declared_fee: fee ?? null, tax_basis: fee == null ? null : 'HT', observations: '', expenses: null, expense_details: '', kilometers: null, difficulties: '', summary: { status: 'pending', learner_count: null, actual_days: null, actual_hours: null }, reference_dates: (mission.dates || []).map(d => d.date).sort() };
+}
+// Single historical group can be corrected with totals; never infer full days from dates.
+export function activityDraft(report, privateData = {}, mission = {}) {
+  const draft = { ...report, ...privateData };
+  if (report.report_mode === 'simple') {
+    if (['pending', 'not_done'].includes(report.summary.status) && !mission.retained && (mission.origin === 'personal' || mission.status === 'affecte') && mission.dates?.length) draft.reference_dates = mission.dates.map(d => d.date).sort();
+    return draft;
+  }
+  if (report.summary || report.sessions?.length !== 1) return draft;
+  const session = report.sessions[0], done = session.days.filter(d => d.status === 'done');
+  return { ...draft, summary: {
+    status: done.length === session.days.length ? 'done' : done.length ? 'partial' : session.days.every(d => d.status === 'not_done') ? 'not_done' : 'pending',
+    learner_count: done.length ? session.learner_count : null,
+    actual_days: null,
+    actual_hours: done.length && done.every(d => d.actual_hours != null) ? Math.round(done.reduce((n, d) => n + Number(d.actual_hours), 0) * 100) / 100 : null,
+  } };
+}
+export function validateSummary(summary, dates, today = parisToday()) {
+  if (!['pending', 'done', 'partial', 'not_done'].includes(summary.status)) throw new Error('Précisez la réalisation de la formation.');
+  const realized = ['done', 'partial'].includes(summary.status);
+  if (realized && (!dates?.length || dates.every(d => d > today) || (summary.status === 'done' && dates.some(d => d > today)))) throw new Error('Une formation future ne peut pas être déclarée réalisée. Pour une formation en cours, choisissez « Partiellement réalisée ».');
+  const result = { status: summary.status, learner_count: numberOrNull(summary.learner_count, 'Apprenants effectivement formés', 100000, true),
+    actual_days: numberOrNull(summary.actual_days, 'Durée réelle en jours', 10000), actual_hours: numberOrNull(summary.actual_hours, 'Durée réelle en heures', 240000) };
+  if (!realized && [result.learner_count, result.actual_days, result.actual_hours].some(v => v != null)) throw new Error('Confirmez la réalisation avant de renseigner les apprenants et la durée.');
+  return result;
+}
+export function summaryNeedsCompletion(summary, dates, today = parisToday()) {
+  return summary.status === 'pending' ? dates.some(d => d < today) : ['done', 'partial'].includes(summary.status) && [summary.learner_count, summary.actual_days, summary.actual_hours].some(v => v == null);
 }
 export function validateActivity(input, today = parisToday()) {
   const declared_fee = numberOrNull(input.declared_fee, 'Montant déclaré');
   if (declared_fee != null && !['HT', 'TTC'].includes(input.tax_basis)) throw new Error('Précisez HT ou TTC pour le montant déclaré.');
+  const common = { declared_fee, tax_basis: declared_fee == null ? null : input.tax_basis,
+    observations: clean(input.observations, 5000), expenses: numberOrNull(input.expenses, 'Frais'), expense_details: clean(input.expense_details, 5000),
+    kilometers: numberOrNull(input.kilometers, 'Kilométrage'), difficulties: clean(input.difficulties, 5000) };
+  if (input.summary) return { ...common, summary: validateSummary(input.summary, input.reference_dates, today) };
   if (!input.sessions?.length || input.sessions.length > 100) throw new Error('Prévoyez entre 1 et 100 sessions.');
   const ids = new Set();
-  return { declared_fee, tax_basis: declared_fee == null ? null : input.tax_basis,
-    observations: clean(input.observations, 5000), expenses: numberOrNull(input.expenses, 'Frais'), expense_details: clean(input.expense_details, 5000),
-    kilometers: numberOrNull(input.kilometers, 'Kilométrage'), difficulties: clean(input.difficulties, 5000),
+  return { ...common,
     sessions: input.sessions.map(s => {
       if (!s.id || ids.has(s.id)) throw new Error('Identifiant de session dupliqué.');
       ids.add(s.id);
@@ -74,11 +104,11 @@ export function feeLabel(fee) {
 export function calculateActivity(missions, reports, start, end, today = parisToday()) {
   const inPeriod = d => d >= start && d <= end;
   const byMission = new Map(reports.map(r => [reportKey(r), r]));
-  const result = { realized: { missions: 0, sessions: 0, completed: 0, partial: 0, ongoing: 0, days: 0, hours: 0, missingHours: 0, learners: 0, missingLearners: 0, learnersOutside: 0 },
+  const result = { realized: { missions: 0, sessions: 0, completed: 0, partial: 0, ongoing: 0, days: 0, reportedDays: 0, missingReportedDays: 0, hours: 0, missingHours: 0, learners: 0, missingLearners: 0, learnersOutside: 0 },
     future: { missions: 0, sessions: 0, days: 0, hours: 0, missingHours: 0, learners: 0, missingLearners: 0, learnersOutside: 0, fees: { HT: 0, TTC: 0 }, missingFees: 0, feesOutside: 0 }, pending: [], retained: [], options: 0 };
   const seen = new Set();
   const missionKeys = new Set(missions.map(activityKey));
-  const retained = reports.filter(r => !missionKeys.has(reportKey(r))).map(r => ({ origin: r.personal_mission_id ? 'personal' : 'organization', mission_id: r.personal_mission_id || r.mission_id, mission_title: r.sessions[0]?.formation || 'Bilan conservé', status: 'historical', dates: [], report_id: r.id }));
+  const retained = reports.filter(r => !missionKeys.has(reportKey(r))).map(r => ({ origin: r.personal_mission_id ? 'personal' : 'organization', mission_id: r.personal_mission_id || r.mission_id, mission_title: r.formation_title || r.sessions[0]?.formation || 'Bilan conservé', status: 'historical', dates: [], report_id: r.id }));
   for (const m of [...missions, ...retained]) {
     const key = activityKey(m);
     if (seen.has(key)) continue;
@@ -88,6 +118,31 @@ export function calculateActivity(missions, reports, start, end, today = parisTo
     const contractDays = (m.dates || []).map(d => d.date).sort();
     if (['accepte', 'proposition_envoyee'].includes(m.status) && contractDays.some(d => d >= today && inPeriod(d))) result.options++;
     if (!confirmed && !report) continue;
+    if (!report || report.report_mode === 'simple') {
+      const summary = report?.summary || { status: 'pending', learner_count: null, actual_days: null, actual_hours: null };
+      const refs = ['pending', 'not_done'].includes(summary.status) && !m.report_id && (m.origin === 'personal' || confirmed) && contractDays.length ? contractDays : report?.reference_dates || contractDays;
+      const anchor = report?.activity_date || refs[0];
+      const realized = ['done', 'partial'].includes(summary.status) && anchor <= today;
+      if (realized && inPeriod(anchor)) {
+        const a = result.realized;
+        a.missions++; a.sessions++;
+        if (summary.status === 'done') a.completed++; else { a.partial++; if (confirmed && contractDays.some(d => d > today)) a.ongoing++; }
+        if (summary.actual_days == null) a.missingReportedDays++; else a.reportedDays += Number(summary.actual_days);
+        if (summary.actual_hours == null) a.missingHours++; else a.hours += Number(summary.actual_hours);
+        if (summary.learner_count == null) a.missingLearners++; else a.learners += Number(summary.learner_count);
+      }
+      const upcoming = confirmed && ['pending', 'partial'].includes(summary.status) ? contractDays.filter(d => d >= today && inPeriod(d)) : [];
+      if (upcoming.length) {
+        const a = result.future;
+        a.missions++; a.sessions++; a.days += upcoming.length;
+        const fee = report?.agreed_fee || agreedFee(m, m.origin);
+        if (fee.amount == null || fee.unit !== 'mission' || !['HT', 'TTC'].includes(fee.tax_basis)) a.missingFees++;
+        else if (contractDays[0] >= today && inPeriod(contractDays[0])) a.fees[fee.tax_basis] += Number(fee.amount); else a.feesOutside++;
+      }
+      if ((realized ? inPeriod(anchor) : refs.some(inPeriod)) && summaryNeedsCompletion(summary, refs, today)) result.pending.push(m);
+      if (m.report_id && (inPeriod(anchor) || refs.some(inPeriod))) result.retained.push(m);
+      continue;
+    }
     const sessions = report?.sessions || [{ id: 'default', formation: m.formation || m.mission_title || '', learner_count: null, expected_learners: null, days: contractDays.map(date => ({ date, status: 'pending', actual_hours: null, planned_hours: null })) }];
     let hasRealized = false, hasFuture = false, missing = false;
     for (const s of sessions) {
@@ -97,7 +152,7 @@ export function calculateActivity(missions, reports, start, end, today = parisTo
       if (done.length) {
         hasRealized = true;
         const a = result.realized;
-        a.sessions++; a.days += done.length;
+        a.sessions++; a.days += done.length; a.missingReportedDays++;
         const state = sessionState(s, today);
         if (state === 'Terminée') a.completed++; else { a.partial++; if (state.startsWith('En cours')) a.ongoing++; }
         for (const d of done) { if (d.actual_hours == null) a.missingHours++; else a.hours += Number(d.actual_hours); }
@@ -125,6 +180,7 @@ export function calculateActivity(missions, reports, start, end, today = parisTo
     if (missing) result.pending.push(m);
     if (m.report_id && sessions.some(s => s.days.some(d => inPeriod(d.date)))) result.retained.push(m);
   }
+  result.realized.reportedDays = Math.round(result.realized.reportedDays * 100) / 100;
   for (const a of [result.realized, result.future]) a.hours = Math.round(a.hours * 100) / 100;
   return result;
 }

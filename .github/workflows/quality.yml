@@ -65,7 +65,7 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Run PWA browser test
-        run: npx playwright test tests/e2e/specs/05-pwa-shell.spec.js tests/e2e/specs/06-personal-missions-ui.spec.js tests/e2e/specs/08-google-calendar-ui.spec.js tests/e2e/specs/09-availability-recovery.spec.js tests/e2e/specs/10-form-tab-return.spec.js tests/e2e/specs/11-manual-revalidation.spec.js tests/e2e/specs/12-new-tab-navigation.spec.js tests/e2e/specs/13-microsoft-calendar-ui.spec.js tests/e2e/specs/14-trainer-activity.spec.js
+        run: npx playwright test tests/e2e/specs/05-pwa-shell.spec.js tests/e2e/specs/06-personal-missions-ui.spec.js tests/e2e/specs/08-google-calendar-ui.spec.js tests/e2e/specs/09-availability-recovery.spec.js tests/e2e/specs/10-form-tab-return.spec.js tests/e2e/specs/11-manual-revalidation.spec.js tests/e2e/specs/12-new-tab-navigation.spec.js tests/e2e/specs/13-microsoft-calendar-ui.spec.js tests/e2e/specs/14-trainer-activity.spec.js tests/e2e/specs/15-trainer-expenses.spec.js
 
       - name: Keep fictitious browser acceptance evidence
         if: always()
@@ -79,16 +79,16 @@ jobs:
           if-no-files-found: ignore
 
       - name: Build reviewed source archive candidate
-        if: github.event_name == 'pull_request' && github.head_ref == 'feature/v1.3.2-simple-activity'
-        run: python3 scripts/testing/archive-sprint.py HEAD Clementplane_v1.3.2_Candidate.zip
+        if: github.event_name == 'pull_request' && github.head_ref == 'feature/v1.4.0-expense-items'
+        run: python3 scripts/testing/archive-sprint.py HEAD Clementplane_v1.4.0_Candidate.zip
 
       - name: Keep source archive and checksum
-        if: github.event_name == 'pull_request' && github.head_ref == 'feature/v1.3.2-simple-activity'
+        if: github.event_name == 'pull_request' && github.head_ref == 'feature/v1.4.0-expense-items'
         uses: actions/upload-artifact@v7.0.2
         with:
-          name: v1.3.2-source-candidate
+          name: v1.4.0-source-candidate
           path: |
-            Clementplane_v1.3.2_Candidate.zip
-            Clementplane_v1.3.2_Candidate.zip.sha256
+            Clementplane_v1.4.0_Candidate.zip
+            Clementplane_v1.4.0_Candidate.zip.sha256
           retention-days: 30
           if-no-files-found: error

@@ -20,7 +20,7 @@ export async function getActivityReport(origin, missionId, trainerId) {
   const { data: report, error } = await supabase.from('trainer_activity_reports').select(reportFields).eq('trainer_id', trainerId).eq(origin === 'personal' ? 'personal_mission_id' : 'mission_id', missionId).maybeSingle();
   if (error) throw error;
   if (!report) return null;
-  const { data: privateData, error: privateError } = await supabase.from('trainer_activity_private').select('expenses,expense_details,kilometers,difficulties').eq('report_id', report.id).single();
+  const { data: privateData, error: privateError } = await supabase.from('trainer_activity_private').select('expense_items,legacy_expenses,legacy_expense_details,kilometers,difficulties').eq('report_id', report.id).single();
   if (privateError) throw privateError;
   return { report, private: privateData };
 }

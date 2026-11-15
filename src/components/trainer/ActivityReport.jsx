@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { getActivityReport, getOrganizationActivityReports, saveActivityReport } from '../../services/trainerActivityService';
 import { agreedFee, feeLabel, initialActivity, activityDraft, parisToday, sessionState } from '../../utils/trainerActivity';
+import ExpenseFields from './ExpenseFields';
 import '../../styles/trainerActivity.css';
 
 const shown = value => value == null || value === '' ? 'Non renseigné' : value;
@@ -111,10 +112,10 @@ export default function ActivityReport({ mission, origin }) {
       </fieldset>
       <fieldset className="activity-private" disabled={saving}><legend>Privé — vous uniquement</legend>
         <p>Ces informations ne sont accessibles à aucun OF et ne sont pas ajoutées aux agendas.</p>
-        <div className="activity-grid"><NumberField label="Total des frais engagés (€)" value={input.expenses} onChange={v => field('expenses', v)} />
+        <ExpenseFields rows={input.expense_items} onChange={v => field('expense_items', v)} legacyAmount={input.legacy_expenses} legacyDetails={input.legacy_expense_details} />
+        <div className="activity-grid">
           <NumberField label="Kilométrage total réel de la mission (km)" value={input.kilometers} onChange={v => field('kilometers', v)} /></div>
         <p>Incluez tous vos déplacements, allers et retours. La distance indicative de Clementplane est à vol d’oiseau ; elle ne permet pas de préremplir ce kilométrage routier. Aucune conversion en frais.</p>
-        <label>Détail des dépenses<textarea maxLength={5000} value={input.expense_details} onChange={e => field('expense_details', e.target.value)} /></label>
         <label>Difficultés rencontrées<textarea maxLength={5000} value={input.difficulties} onChange={e => field('difficulties', e.target.value)} /></label>
       </fieldset>
       <div className="activity-save"><button className="button button--primary" disabled={saving} type="submit">{saving ? 'Enregistrement…' : 'Enregistrer le bilan'}</button>

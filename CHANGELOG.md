@@ -1,3 +1,7 @@
+## [1.4.0] — candidat du 15 novembre 2026, non publié
+
+Frais privés par lignes (onze catégories, répétitions, précision obligatoire pour Autres frais), total exact en centimes et sauvegarde avec le bilan. Migration additive préservant anciennes valeurs et textes ; anciennes PWA protégées contre les écrasements. Kms, difficultés, autres champs, statistiques et agendas inchangés. Production soumise à validation explicite.
+
 ## [1.3.2] — 14 novembre 2026
 
 Bilan simplifié à un groupe, intitulé non modifiable, totaux réels (apprenants, jours et heures). Champs prévisionnels et ajout de groupes retirés. Migration additive préservant les anciens détails, protection contre les écrasements par une ancienne PWA, statistiques et aide actualisées. Publié après accord : PR #23, migration 20261114200754, Vercel READY. 367 unitaires et 49 parcours navigateur réussis.

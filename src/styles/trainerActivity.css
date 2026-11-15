@@ -29,3 +29,17 @@
 
 .activity-report button.button--primary{background:#245ce8;border-color:#245ce8;color:white}
 .activity-retained{padding:18px;border:1px solid #d6e1eb;border-radius:12px;background:white;margin:20px 0}.activity-retained li{margin:12px 0}
+
+.activity-expenses{margin:20px 0 28px}
+.activity-expense-row{padding:14px;margin:14px 0;border:1px solid #d8d2e8;border-radius:10px;background:#fff}
+.activity-expense-fields{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(100px,.6fr) minmax(0,1.2fr) auto;gap:14px;align-items:start}
+.activity-expense-fields label{margin:0}
+.activity-expense-fields button{margin-top:27px}
+.activity-expense-fields textarea{min-height:70px}
+.activity-expense-error{color:#923c28;font-size:14px;margin-bottom:0}
+.activity-expense-total{font-weight:750;font-size:18px}
+.activity-expense-legacy{border-top:1px solid #d8d2e8;padding-top:14px}
+.activity-expense-legacy summary{cursor:pointer;min-height:44px}
+.activity-expense-original{white-space:pre-wrap}
+@media(max-width:900px){.activity-expense-fields{grid-template-columns:minmax(0,1fr) minmax(100px,.6fr)}.activity-expense-fields button{align-self:end;margin:0}}
+@media(max-width:640px){.activity-expense-fields{grid-template-columns:1fr}.activity-expense-fields button{justify-self:start}}

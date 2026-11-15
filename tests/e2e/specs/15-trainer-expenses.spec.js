@@ -1,0 +1,65 @@
+import { test, expect } from '@playwright/test';
+import { fixture, id } from '../support/activity-fixture';
+for (const width of [1440, 768, 390]) test(`expense lines ${width}px — repeat, validate, save, modify, delete (API simulated)`, async ({ page }) => {
+  await page.setViewportSize({ width, height: 1000 });
+  const api = await fixture(page);
+  await page.goto(`/formateur/missions/personnelles/${id}`);
+  const expenses = page.getByRole('region', { name: 'Frais engagés', exact: true });
+  const add = () => expenses.getByRole('button', { name: '+ Ajouter une dépense', exact: true }).click();
+  const amount = n => expenses.getByLabel(`Montant de la dépense ${n} (€)`, { exact: true });
+  const category = n => expenses.getByLabel(`Catégorie de dépense ${n}`, { exact: true });
+  const total = expenses.getByLabel('Total des frais engagés', { exact: true });
+  const save = () => page.getByRole('button', { name: 'Enregistrer le bilan', exact: true }).click();
+  await add(); await category(1).selectOption('meals'); await amount(1).fill('0,10');
+  await add(); await category(2).selectOption('meals'); await amount(2).fill('0.20');
+  await add(); // empty rows do not contribute or block saving
+  await expect(total).toHaveText('0,30 €');
+  await expect(page.getByText('Modifications non enregistrées.', { exact: true })).toBeVisible();
+  for (const invalid of ['-1', 'abc', '1.234']) {
+    await amount(2).fill(invalid); await save();
+    await expect(page.getByRole('alert')).toContainText('Dépense 2'); expect(api.saved()).toBeNull();
+  }
+  await amount(2).fill('0.20'); await category(2).selectOption('other'); await save();
+  await expect(page.getByRole('alert')).toContainText('Précisez la nature');
+  await expenses.getByLabel('Précision de la dépense 2', { exact: true }).fill('Frais divers fictifs');
+  await category(2).selectOption('meals');
+  await page.getByLabel('Kilométrage total réel de la mission (km)').fill('100');
+  await page.getByLabel('Difficultés rencontrées').fill('Note confidentielle fictive');
+  api.fail(); await save(); await expect(page.getByRole('alert')).toContainText('Vos saisies sont conservées');
+  await expect(total).toHaveText('0,30 €'); await save(); await expect(page.getByText('Bilan enregistré.', { exact: true })).toBeVisible();
+  expect(api.saved().private.expense_items).toHaveLength(2); expect(api.saved().private.expenses).toBe(0.3);
+  expect(api.saved().report).not.toHaveProperty('expense_items');
+  await page.reload(); await expect(amount(1)).toHaveValue('0.10'); await expect(amount(2)).toHaveValue('0.20');
+  await page.getByLabel('Observations sur la mission (privées)').fill('Autre champ modifié'); await save();
+  await expect(page.getByText('Bilan enregistré.', { exact: true })).toBeVisible(); expect(api.saved().private.expense_items).toHaveLength(2);
+  await amount(1).fill('12.45'); await expenses.getByRole('button', { name: 'Supprimer la dépense 2', exact: true }).click();
+  await add(); await category(2).selectOption('public_transport'); await amount(2).fill('45.50');
+  await expenses.getByLabel('Précision de la dépense 2', { exact: true }).fill('Train aller-retour fictif');
+  await expect(total).toHaveText('57,95 €');
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.screenshot({ path: `test-results/expenses-${width}.png`, fullPage: true });
+  await save(); await expect(page.getByText('Bilan enregistré.', { exact: true })).toBeVisible();
+  await page.reload(); await expect(total).toHaveText('57,95 €');
+  await expenses.getByRole('button', { name: 'Supprimer la dépense 2', exact: true }).click();
+  await expenses.getByRole('button', { name: 'Supprimer la dépense 1', exact: true }).click();
+  await expect(total).toHaveText('0,00 €'); await save(); await expect(page.getByText('Bilan enregistré.', { exact: true })).toBeVisible();
+  expect(api.saved().private.expense_items).toEqual([]); expect(api.saved().private.kilometers).toBe(100);
+  expect(api.saved().private.difficulties).toBe('Note confidentielle fictive'); expect(api.sends()).toBe(0);
+});
+test('legacy text-only expense stays editable and archived without duplication (API simulated)', async ({ page }) => {
+  const api = await fixture(page);
+  const legacy = { id: '00000000-0000-4000-8000-000000000901', category: 'other', amount_cents: null, details: 'Ancien texte exact' };
+  api.seed({ report: { id: 'report', revision: 1, report_mode: 'simple', summary: { status: 'pending', learner_count: null, actual_days: null, actual_hours: null }, reference_dates: ['2026-11-01'], sessions: [], observations: '', declared_fee: null, tax_basis: null }, private: { expense_items: [legacy], legacy_expenses: null, legacy_expense_details: 'Ancien texte exact', kilometers: null, difficulties: '' } });
+  await page.goto(`/formateur/missions/personnelles/${id}`);
+  await expect(page.getByText(/Ancienne dépense sans montant/)).toBeVisible();
+  await page.getByLabel('Difficultés rencontrées').fill('Modification sans perte');
+  await page.getByRole('button', { name: 'Enregistrer le bilan', exact: true }).click();
+  await expect(page.getByText('Bilan enregistré.', { exact: true })).toBeVisible(); expect(api.saved().private.expense_items).toEqual([legacy]);
+  await page.reload(); await page.getByLabel('Montant de la dépense 1 (€)', { exact: true }).fill('25.12');
+  await page.getByRole('button', { name: 'Enregistrer le bilan', exact: true }).click();
+  await expect(page.getByText('Bilan enregistré.', { exact: true })).toBeVisible();
+  expect(api.saved().private.expense_items).toHaveLength(1); expect(api.saved().private.expense_items[0].amount_cents).toBe(2512);
+  await page.getByText('Ancienne saisie conservée', { exact: true }).click();
+  await expect(page.locator('.activity-expense-original')).toHaveText('Ancien texte exact');
+});

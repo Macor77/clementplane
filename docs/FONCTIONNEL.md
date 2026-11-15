@@ -532,3 +532,7 @@ Le tarif total déclaré (HT/TTC) est indépendant du tarif convenu photographi�
 ## Installation mobile — V1.3.1
 
 Depuis une autre adresse que `app.clementplane.fr`, le bouton « Ouvrir la version officielle » précède l’installation. Android conserve son prompt ; iPhone conserve l’aide Safari. L’aide explique le remplacement ponctuel d’une ancienne installation qui ne reçoit plus les nouveautés. Le compte et les missions enregistrées sont conservés. Le correctif ne rend pas une ancienne installation figée joignable automatiquement.
+
+
+## V1.4.0 — frais privés détaillés
+Bilan : onze catégories, plusieurs dépenses par catégorie, montant en euros et précision ; Autres frais exige une précision. Total automatique, zéro accepté, lignes vierges ignorées, valeurs négatives/non numériques refusées. Ajouter/modifier/supprimer puis Enregistrer le bilan. Anciens montants/textes conservés dans une archive privée. Kilométrage manuel indépendant, aucune indemnité automatique. Un groupe par session, autres champs et Mes statistiques inchangés. Guide : sprints/v1.4.0/GUIDE.md.

@@ -298,3 +298,7 @@ Les nouvelles installations proposées par Clementplane et les liens automatique
 
 ## V1.3.2 — Simplification validée le 14 novembre 2026
 Vincent remplace le choix de plusieurs groupes par mission : désormais une mission = une session = un groupe. Intitulé non modifiable dans le bilan, retrait effectifs/heures prévus, totaux jours/heures réels sans conversion automatique. Les anciens groupes ne sont ni fusionnés ni supprimés. Production/migration autorisées après recette. Aucun envoi de communication.
+
+
+## V1.4.0 — dépenses privées, 15 novembre 2026
+Vincent valide le candidat puis autorise sa mise en production. Choix technique : lignes JSONB dans la table privée existante, centimes entiers, total serveur et archive immuable des saisies antérieures. Ancien montant inconnu conservé comme null, jamais inventé à zéro ; protection des anciens clients. Aucun changement de Mes statistiques, des autres champs ni du principe une session = un groupe. Aucun envoi implicite. Dossier sprints/v1.4.0/.

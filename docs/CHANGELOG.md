@@ -1,6 +1,6 @@
-## [1.4.0] — candidat du 15 novembre 2026, non publié
+## [1.4.0] — publiée le 15 novembre 2026
 
-Frais privés par lignes (onze catégories, répétitions, précision obligatoire pour Autres frais), total exact en centimes et sauvegarde avec le bilan. Migration additive préservant anciennes valeurs et textes ; anciennes PWA protégées contre les écrasements. Kms, difficultés, autres champs, statistiques et agendas inchangés. Production soumise à validation explicite.
+Frais privés par lignes (onze catégories, répétitions, précision obligatoire pour Autres frais), total exact en centimes et sauvegarde avec le bilan. Migration additive préservant anciennes valeurs et textes ; anciennes PWA protégées contre les écrasements. Kms, difficultés, autres champs, statistiques et agendas inchangés. Publication autorisée par Vincent, PR #24 fusionnée, migration 20261115114709 et déploiement Vercel READY vérifiés.
 
 ## [1.3.2] — 14 novembre 2026
 

@@ -1,4 +1,4 @@
-# Recette V1.4.0 — validée sur le candidat
+# Recette V1.4.0 — validée puis publiée
 
 - 389 tests Vitest réussis, dont 20 nouveaux cas dépenses et 31 cas bilan/service.
 - ESLint : aucune erreur, deux avertissements préexistants (usePlanningAvailability et TrainerSearch).
@@ -11,5 +11,5 @@
 - Vérification agenda renforcée : le test de projection existant inclut les dépenses/archives/kms/difficultés et vérifie leur exclusion, même lorsque le partage des notes et du tarif est activé. Test ciblé réussi.
 - Audit : 12 vulnérabilités historiques (3 faibles, 9 modérées), aucune haute/critique ; aucune dépendance ajoutée.
 - Archive candidate produite par Quality : 660 fichiers et manifeste vérifiés automatiquement. La CI archive le commit de fusion de recette de la PR, pas une fusion dans main. Chaque archive contient SOURCE_COMMIT.txt et son propre checksum ; aucun tag/release de production.
-- La dernière CI de la PR #24 doit rester verte avant toute publication. Les modifications finales portent sur ce dossier, la capture complète et le test de confidentialité agenda, sans changement de logique métier.
+- CI finale du candidat [43708788416](https://github.com/Macor77/clementplane/actions/runs/43708788416) réussie sur ce996a97 : 389 unitaires, 53 parcours, toutes suites SQL, audit, build. Publication autorisée ensuite ; contrôles de production dans PRODUCTION.md. La clôture ne modifie que documentation et workflow de release.
 - Limites : pas de saisie réelle en production, pas de test matériel iOS/Android installé ni de mesure de forte concurrence PostgreSQL. Le verrou transactionnel et le mécanisme CAS existants sont conservés.

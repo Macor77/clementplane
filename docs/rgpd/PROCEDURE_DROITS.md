@@ -27,3 +27,7 @@ Microsoft (préparé) : inclure les métadonnées de connexion dans l’inventai
 
 ## V1.3 — Bilans, 12 novembre 2026
 Inclure `trainer_activity_reports` et `trainer_activity_private` dans l’inventaire, filtrés par `owner_user_id` vérifié. Pour l’OF, n’inclure que les colonnes de la table partagée sur ses `organization_id` ; jamais le privé ni une mission personnelle. Rectification dans le bilan formateur ; demandes d’effacement traitées selon le mandat et tracées. La suppression du compte Auth cascade sur les deux tables. Le retrait d’affectation conserve les réalisations déclarées. Aucun export BPF ajouté.
+
+
+## V1.4.0 — dépenses structurées, 15 novembre 2026
+Inclure expense_items (catégorie, centimes, précision), expenses calculé et les archives legacy_expenses/legacy_expense_details dans les demandes du seul propriétaire vérifié. Ces champs ne doivent jamais entrer dans un export pour l’OF. La suppression du bilan/compte couvre aussi ces colonnes par les cascades existantes. La suppression d’une ligne dans le formulaire conserve volontairement l’archive d’origine ; une demande d’effacement explicite doit tenir compte de cette archive.

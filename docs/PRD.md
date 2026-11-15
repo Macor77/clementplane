@@ -236,3 +236,7 @@ En préparation : choix facultatif Outlook personnel/Microsoft 365 professionnel
 
 ## V1.3 — Bilans et premières statistiques (préparation du 12 novembre 2026)
 Le formateur suit son activité sans imposer un compte à ses donneurs d’ordre. Missions personnelles et confiées : bilan progressif, une session par groupe, journées réalisées explicitement, durées pédagogiques réelles et effectifs agrégés. Les statistiques séparent réalisé et futur confirmé. Définition et règles : `sprints/v1.3/DESIGN.md`. Aucun BPF, facture, rentabilité, identité d’apprenant ni modification d’agenda. Mise en production non encore autorisée.
+
+
+## V1.4.0 — frais détaillés livrés le 15 novembre 2026
+Objectif : remplacer le montant global libre par des dépenses structurées réservées au formateur, sans complexifier les autres champs du bilan. Migration non destructive, total exact et confidentialité conservée. Aucune analyse financière ou modification de Mes statistiques dans ce sprint ; catégories et centimes préparent la suite. Mise en production explicitement autorisée par Vincent après recette. Dossier sprints/v1.4.0/.

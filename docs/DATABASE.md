@@ -401,3 +401,7 @@ Migrations sources : `20261112071707_trainer_activity_reports.sql`, `20261112073
 
 ## V1.3.2 — Migration appliquée le 14 novembre 2026
 Ajout de report_mode (detailed/simple), summary JSON, formation_title, reference_dates et activity_date à trainer_activity_reports. Les détails sessions existants ne sont pas modifiés par la migration. validate_summary vérifie nombres bruts, états, réalisation future et liste de champs. save_report interdit la création détaillée et l’écrasement simple par une ancienne PWA, verrouille la structure historique et conserve révisions/reprises. Source 20261114194307 ; production 20261114200754 ; recette 20261114195629. Droits/RLS et table privée inchangés. Voir sprints/v1.3.2/OPERATIONS.md.
+
+
+## V1.4.0 — dépenses détaillées, 15 novembre 2026
+Ajout expense_items JSONB, legacy_expenses numeric(10,2) et legacy_expense_details texte dans trainer_activity_private. Chaque ligne porte UUID, catégorie stable, amount_cents entier et précision ; le total expenses est calculé côté serveur. Archives d’origine non modifiables via API et exclues des totaux. amount_cents=null réservé aux lignes historiques déjà inconnues. RLS propriétaire et grants inchangés. Source 20261115110744 ; recette 20261115111417 ; production 20261115114709. RPC atomique existante, helper privé expense_total ; requêtes sans expense_items refusées. Voir sprints/v1.4.0/DESIGN.md et PRODUCTION.md.

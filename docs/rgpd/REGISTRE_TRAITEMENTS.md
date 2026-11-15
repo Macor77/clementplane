@@ -45,6 +45,6 @@ Destinataires : propriétaire ; OF commanditaire membre actif sur les seuls cham
 ## V1.3.2 — 14 novembre 2026
 Le bilan ajoute les jours réels agrégés aux heures réelles déjà collectées ; les champs prévisionnels ne sont plus proposés. Un groupe par nouveau bilan, ancien détail conservé pour les corrections et la traçabilité. Finalités, destinataires, tables, droits et conservation inchangés ; aucune identité d’apprenant ni copie vers un agenda. Notice 2026-11-12 conservée. Revue technique détaillée : sprints/v1.3.2/LEGAL_REVIEW.md.
 
-## Complément V1.4.0 — candidat non publié, 15 novembre 2026
+## Complément V1.4.0 — publié, 15 novembre 2026
 
-Le bilan privé contient des dépenses structurées : catégorie, montant en centimes et précision par ligne, total calculé par le serveur. Les montants globaux et textes antérieurs sont conservés dans une archive privée distincte, exclue des totaux. Même finalité de suivi personnel, même propriétaire, même durée de conservation et mêmes procédures d’accès/effacement que le bilan V1.3. Pas de justificatif ni nouveau destinataire ; aucune transmission OF/Google/Microsoft. Mise en production soumise à validation explicite.
+Le bilan privé contient des dépenses structurées : catégorie, montant en centimes et précision par ligne, total calculé par le serveur. Les montants globaux et textes antérieurs sont conservés dans une archive privée distincte, exclue des totaux. Même finalité de suivi personnel, même propriétaire, même durée de conservation et mêmes procédures d’accès/effacement que le bilan V1.3. Pas de justificatif ni nouveau destinataire ; aucune transmission OF/Google/Microsoft. Mise en production autorisée par Vincent et effectuée le 15 novembre 2026.

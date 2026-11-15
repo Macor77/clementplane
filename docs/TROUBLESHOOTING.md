@@ -412,3 +412,7 @@ Pour Microsoft, voir docs/sprints/outlook-calendar-sync/OPERATIONS.md : révocat
 
 ## Bilan simplifié V1.3.2
 REPORT_APP_UPDATE_REQUIRED : conserver/copier les saisies puis actualiser Clementplane. Une ancienne version ne peut ni créer un bilan détaillé ni remplacer les totaux simples. Un ancien bilan à plusieurs groupes reste corrigeable, sans ajout/suppression ; ne pas fusionner les effectifs. Un champ jours vide n’est pas déduit des dates ou des heures. Les totaux simples appartiennent à la première date de référence (première réalisation historique à la conversion). Aucun rollback frontend seul : voir sprints/v1.3.2/OPERATIONS.md.
+
+
+## V1.4.0 — saisie des frais
+Si le bilan demande une mise à jour, conserver/copier le brouillon puis actualiser l’application : une ancienne requête sans expense_items est bloquée pour empêcher la perte de dépenses. Une ligne partielle doit être complétée ou supprimée ; une ligne entièrement vierge est ignorée. Autres frais exige une précision. Le total exclut les montants invalides et les anciennes dépenses sans montant ; celles-ci sont explicitement signalées et peuvent rester lors d’une autre correction. L’archive d’origine ne s’additionne jamais aux lignes. Ne pas restaurer l’ancienne RPC ni supprimer les colonnes pour un rollback ; voir sprints/v1.4.0/OPERATIONS.md.

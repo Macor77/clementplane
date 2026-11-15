@@ -11,6 +11,7 @@ Les frais étaient déjà traités dans le bilan privé (notice 2026-11-12). La 
 | Sous-traitants, transferts, DPA | Aucun ajout ; Supabase/Vercel existants ; aucune transmission aux agendas |
 | Traceurs et télémétrie | Aucun ajout, aucune nouvelle persistance locale des dépenses |
 | Minimisation | Pas de justificatifs, dates de paiement ou bénéficiaires imposés ; précision libre facultative sauf autres frais |
+| Violation de données | Procédure existante inchangée : mêmes actifs, rôles, hébergeurs et canal ; pas de nouveau destinataire |
 | Sécurité | RLS propriétaire, validation serveur, absence de total client accepté et de nouvelle API de partage |
 
 Cette revue technique ne constitue pas un avis juridique ; les réserves historiques restent hors périmètre.

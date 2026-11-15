@@ -1,7 +1,9 @@
-# Retour au pilotage — candidat V1.4.0, 15 novembre 2026
+# Retour au pilotage — V1.4.0, 15 novembre 2026
 
-Livré au stade de validation, pas publié en production. Frais par lignes et total automatique, conservation des historiques, droits privés et sauvegarde du bilan contrôlés. PR #24 en brouillon. 389 tests unitaires et 53 parcours navigateur réussis ; SQL local et PostgreSQL de recette validés. Aide, registre et dossier de livraison actualisés.
+Frais détaillés livrés en production après validation explicite de Vincent. PR #24 fusionnée au commit 46fe8711 ; migration additive 20261115114709 ; Vercel READY sur app.clementplane.fr. Les anciens montants/textes sont conservés et les dépenses restent privées au formateur. Kms, difficultés, réalisations, statistiques et agendas préservés.
 
-Décision attendue : autorisation explicite de publier le candidat et sa migration additive. Rien n’a été fusionné ni appliqué en production. Aucun e-mail utilisateur envoyé. À la publication, une ancienne PWA doit se mettre à jour pour enregistrer le nouveau format ; les anciens montants inconnus restent à compléter si le formateur le souhaite.
+389 tests unitaires, 53 parcours navigateur, SQL local et PostgreSQL de recette réussis ; intégrité et droits contrôlés en production sans modifier les bilans réels. Documentation, aide, registre, version et release/archive complétés via le workflow du tag v1.4.0. Aucun message utilisateur envoyé.
 
-Suite produit possible : présenter les agrégations de frais dans Mes statistiques, avec choix de la période et des catégories. La structure est prête, mais cette interface reste hors périmètre et aucun nouveau sprint n’est lancé.
+Point d’usage : actualiser une ancienne PWA pour enregistrer le nouveau format. Les anciennes dépenses sans montant restent conservées et peuvent être complétées par leur auteur. Les limites de test sur appareil installé et de restauration fournisseur restent explicitement décrites dans PRODUCTION.md.
+
+Prochaine piste : statistiques de dépenses par période, catégorie et mission. La structure est prête ; définir les règles de période et les vues dans un sprint distinct. Aucun prochain sprint lancé, aucun élargissement du pilote Outlook.

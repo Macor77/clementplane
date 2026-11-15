@@ -702,3 +702,7 @@ Mutation atomique dans `activity_private.save_report`, SECURITY DEFINER avec sea
 
 ## V1.3.2 — Bilan simplifié, 14 novembre 2026
 Le formulaire utilise des totaux summary (état, apprenants, jours, heures). Les dates et l’intitulé sont contrôlés par le serveur, actualisés avant réalisation si la source reste accessible. Les anciens sessions restent archivés lors d’une conversion ; ne jamais additionner sessions et summary. Plusieurs anciens groupes gardent leur édition historique sans modification de structure. Statistiques : une date d’affectation pour les totaux simples, ancien calcul par journée conservé pour les bilans détaillés. RPC atomique et séparation des données inchangées.
+
+
+## V1.4.0 — frais par ligne
+ExpenseFields.jsx réutilise le formulaire et son indicateur de brouillon. trainerExpenses.js convertit les chiffres en centimes entiers, valide les lignes et calcule le total. Le service lit expense_items et l’archive uniquement dans la table privée. save_report recalcule expenses et conserve CAS/reprise/transaction ; aucun total reçu du client. Aucun changement des requêtes Mes statistiques ou des projections agenda. Dossier sprints/v1.4.0/.

@@ -168,3 +168,7 @@ Tests Microsoft dans tests/contracts/microsoft-*.test.js et tests/calendar/micro
 
 ## V1.3.2 — Recette du bilan simplifié
 367 unitaires et 49 parcours navigateur réussis. test:activity-sql couvre aussi simple-activity-sql.mjs : conversion historique, demi-journée, reprogrammation, ancrage, ancien client et titres/dates serveur. simple-activity-staging.sql cible exclusivement documentation-demo et annule les fixtures. Scénario 14 : 1440/390 px, sauvegarde/reprise/rechargement, un groupe, titre verrouillé, jours/heures, statistiques, OF privé/partagé et anciens groupes. Preuves et portée : sprints/v1.3.2/ACCEPTANCE.md et PRODUCTION.md.
+
+
+## V1.4.0 — dépenses privées
+389 unitaires et 53 parcours Chromium réussis. trainerExpenses.test.js : centimes, catégories, répétitions, zéro, invalides, lignes vides, historiques inconnus. trainer-expenses-sql.mjs : migration de toutes formes historiques, total serveur, listes invalides, CAS/reprise, archives, droits, agrégation future. trainer-expenses-staging.sql : PostgreSQL réel sur documentation-demo uniquement, fixtures annulées. Playwright 15 : 1440/768/390 px, validation, panne, ajout/édition/suppression/rechargement, modifications d’autres champs et reprise ancienne sans montant. Projection calendrier vérifie l’exclusion explicite des dépenses. Portée et preuves : sprints/v1.4.0/ACCEPTANCE.md et PRODUCTION.md.

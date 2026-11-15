@@ -1,6 +1,6 @@
 # V1.4.0 — dépenses privées par ligne
 
-Demande de Vincent du 15 novembre 2026. Base main a580021 (V1.3.2). Développement ciblé autorisé, production explicitement interdite sans nouvelle validation. Une mission = une session = un groupe. Statistiques, agendas et messages hors périmètre.
+Demande de Vincent du 15 novembre 2026. Base main a580021 (V1.3.2). Développement ciblé initialement autorisé sans publication ; après recette, Vincent autorise explicitement la mise en production le 15 novembre 2026. Une mission = une session = un groupe. Statistiques, agendas et messages hors périmètre.
 
 ## Architecture retenue
 

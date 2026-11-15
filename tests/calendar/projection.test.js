@@ -39,7 +39,7 @@ describe('calendar projection',()=>{
   const b=events(r)[0];expect(b.description).not.toContain('600');expect(b.description).not.toContain('NOTE PRIVÉE');expect(b.source.url).toContain('/personnelles/');expect(events({...r,status:'cancelled'})).toEqual([]);
  });
  it('never exports internal unrecognized fields and escapes HTML',()=>{
-  const [e]=events({...row,client:'<img src=x>',prix_vente:999,internal:'SECRET'});expect(e.description).toContain('&lt;img');expect(e.description).not.toContain('SECRET');expect(e.description).not.toContain('999');
+  const [e]=events({...row,client:'<img src=x>',prix_vente:999,internal:'SECRET',expense_items:[{category:'other',amount_cents:12345,details:'EXPENSE_SECRET'}],expenses:123.45,legacy_expense_details:'LEGACY_SECRET',kilometers:987.65,difficulties:'DIFFICULTY_SECRET'},{includeFee:true,includeNotes:true});expect(e.description).toContain('&lt;img');expect(JSON.stringify(e)).not.toMatch(/SECRET|12345|123\.45|987\.65/);expect(e.description).not.toContain('999');
  });
  it('aborts the entire projection on corrupt dates instead of pruning known events',()=>expect(()=>events({...row,dates:[{date:'2026-02-30'}]})).toThrow());
 });

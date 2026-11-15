@@ -37,7 +37,8 @@ for (const width of [1440, 768, 390]) test(`expense lines ${width}px — repeat,
   await expenses.getByLabel('Précision de la dépense 2', { exact: true }).fill('Train aller-retour fictif');
   await expect(total).toHaveText('57,95 €');
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  await expenses.screenshot({ path: `test-results/expenses-${width}.png` });
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.screenshot({ path: `test-results/expenses-${width}.png`, fullPage: true });
   await save(); await expect(page.getByText('Bilan enregistré.', { exact: true })).toBeVisible();
   await page.reload(); await expect(total).toHaveText('57,95 €');
   await expenses.getByRole('button', { name: 'Supprimer la dépense 2', exact: true }).click();

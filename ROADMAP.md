@@ -1,6 +1,6 @@
-## V1.4.0 en préparation — frais détaillés, 15 novembre 2026
+## V1.4.0 prête à valider — frais détaillés, 15 novembre 2026
 
-Dépenses privées par ligne, catégories et total automatique, migration conservant les anciennes saisies. Recette en cours sur branche feature/v1.4.0-expense-items. Aucune publication en production sans validation explicite ; V1.3.2 reste la version publique. Dossier : `docs/sprints/v1.4.0/` (ou `sprints/v1.4.0/` depuis docs). Mes statistiques reste inchangé ; exploitation des frais à cadrer dans un sprint ultérieur.
+Dépenses privées par ligne, catégories et total automatique, migration conservant les anciennes saisies. Recette réussie (389 unitaires, 53 parcours navigateur) ; PR #24 en brouillon, branche feature/v1.4.0-expense-items. Aucune publication en production sans validation explicite ; V1.3.2 reste la version publique. Dossier : `docs/sprints/v1.4.0/` (ou `sprints/v1.4.0/` depuis docs). Mes statistiques reste inchangé ; exploitation des frais à cadrer dans un sprint ultérieur.
 
 ## V1.3.2 publiée — simplification du bilan, 14 novembre 2026
 

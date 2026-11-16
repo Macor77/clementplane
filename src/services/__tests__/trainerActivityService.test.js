@@ -10,12 +10,12 @@ describe('activity service server confirmation and privacy',()=>{
   const query={select:vi.fn().mockReturnThis(),eq:vi.fn().mockReturnThis(),maybeSingle:vi.fn().mockResolvedValue({data:report}),single:vi.fn().mockResolvedValue({data:privateData})};mocks.from.mockReturnValue(query);
   expect(await getActivityReport('personal','mission','trainer')).toEqual({report,private:privateData});
   expect(mocks.from.mock.calls.map(c=>c[0])).toEqual(['trainer_activity_reports','trainer_activity_private']);
-  expect(query.select.mock.calls[0][0]).not.toMatch(/expense|kilometer|difficult/);
+  expect(query.select.mock.calls[0][0]).toContain('partial_attendance');expect(query.select.mock.calls[0][0]).not.toMatch(/expense|kilometer|difficult/);
   expect(query.select.mock.calls[1][0]).toBe('expense_items,legacy_expenses,legacy_expense_details,kilometers,difficulties');
  });
  it('never selects private expense columns or tables for an organization',async()=>{
   const query={select:vi.fn().mockReturnThis(),eq:vi.fn().mockReturnThis(),order:vi.fn().mockReturnThis(),range:vi.fn().mockResolvedValue({data:[]})};mocks.from.mockReturnValue(query);
-  await getOrganizationActivityReports('mission');expect(mocks.from).toHaveBeenCalledExactlyOnceWith('trainer_activity_reports');expect(query.select.mock.calls[0][0]).not.toMatch(/expense|kilometer|difficult/);
+  await getOrganizationActivityReports('mission');expect(mocks.from).toHaveBeenCalledExactlyOnceWith('trainer_activity_reports');expect(query.select.mock.calls[0][0]).toContain('partial_attendance');expect(query.select.mock.calls[0][0]).not.toMatch(/expense|kilometer|difficult/);
  });
  it('never returns a false success when confirmation is missing',async()=>{mocks.rpc.mockResolvedValue({data:null,error:null});await expect(saveActivityReport('personal','id',null,'mutation',input())).rejects.toThrow(/Confirmation serveur absente/);});
  it('keeps revision and stable retry id; sends only validated editable fields',async()=>{mocks.rpc.mockResolvedValue({data:{report:{revision:2}},error:null});await saveActivityReport('organization','id',1,'retry-id',{...input(),owner_user_id:'forged',agreed_fee:123,formation_title:'Forged',sessions:[{}]});expect(mocks.rpc).toHaveBeenCalledWith('save_trainer_activity_report',expect.objectContaining({p_revision:1,p_mutation_id:'retry-id',p_origin:'organization'}));expect(mocks.rpc.mock.calls[0][1].p_data).not.toHaveProperty('owner_user_id');expect(mocks.rpc.mock.calls[0][1].p_data).not.toHaveProperty('agreed_fee');expect(mocks.rpc.mock.calls[0][1].p_data).not.toHaveProperty('sessions');expect(mocks.rpc.mock.calls[0][1].p_data).not.toHaveProperty('formation_title');});

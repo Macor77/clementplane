@@ -1,3 +1,4 @@
+import { validatePartialAttendance } from './partialAttendance';
 import { expenseDraft, validateExpenses } from './trainerExpenses';
 export function parisToday() {
   return new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
@@ -21,11 +22,11 @@ export function newActivitySession(mission, withDates = true) {
 }
 export function initialActivity(mission, origin) {
   const fee = origin === 'personal' && mission.fee_unit === 'mission' ? mission.fee : null;
-  return { declared_fee: fee ?? null, tax_basis: fee == null ? null : 'HT', observations: '', expense_items: [], kilometers: null, difficulties: '', summary: { status: 'pending', learner_count: null, actual_days: null, actual_hours: null }, reference_dates: (mission.dates || []).map(d => d.date).sort() };
+  return { declared_fee: fee ?? null, tax_basis: fee == null ? null : 'HT', observations: '', expense_items: [], partial_attendance: [], kilometers: null, difficulties: '', summary: { status: 'pending', learner_count: null, actual_days: null, actual_hours: null }, reference_dates: (mission.dates || []).map(d => d.date).sort() };
 }
 // Single historical group can be corrected with totals; never infer full days from dates.
 export function activityDraft(report, privateData = {}, mission = {}) {
-  const draft = { ...report, ...privateData, expense_items: expenseDraft(privateData.expense_items) };
+  const draft = { ...report, ...privateData, expense_items: expenseDraft(privateData.expense_items), partial_attendance: report.partial_attendance || [] };
   if (report.report_mode === 'simple') {
     if (['pending', 'not_done'].includes(report.summary.status) && !mission.retained && (mission.origin === 'personal' || mission.status === 'affecte') && mission.dates?.length) draft.reference_dates = mission.dates.map(d => d.date).sort();
     return draft;
@@ -57,10 +58,14 @@ export function validateActivity(input, today = parisToday()) {
   const common = { declared_fee, tax_basis: declared_fee == null ? null : input.tax_basis,
     observations: clean(input.observations, 5000), expense_items: validateExpenses(input.expense_items),
     kilometers: numberOrNull(input.kilometers, 'Kilométrage'), difficulties: clean(input.difficulties, 5000) };
-  if (input.summary) return { ...common, summary: validateSummary(input.summary, input.reference_dates, today) };
+  if (input.summary) {
+    const summary = validateSummary(input.summary, input.reference_dates, today);
+    return { ...common, summary, partial_attendance: validatePartialAttendance(input.partial_attendance, summary) };
+  }
+  if (input.partial_attendance?.length) throw new Error('Le détail des participations partielles est disponible dans les bilans à un seul groupe.');
   if (!input.sessions?.length || input.sessions.length > 100) throw new Error('Prévoyez entre 1 et 100 sessions.');
   const ids = new Set();
-  return { ...common,
+  return { ...common, partial_attendance: [],
     sessions: input.sessions.map(s => {
       if (!s.id || ids.has(s.id)) throw new Error('Identifiant de session dupliqué.');
       ids.add(s.id);

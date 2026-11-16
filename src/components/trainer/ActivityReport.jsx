@@ -3,6 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import { getActivityReport, getOrganizationActivityReports, saveActivityReport } from '../../services/trainerActivityService';
 import { agreedFee, feeLabel, initialActivity, activityDraft, parisToday, sessionState } from '../../utils/trainerActivity';
 import ExpenseFields from './ExpenseFields';
+import PartialAttendanceFields, { PartialAttendanceReadOnly } from './PartialAttendanceFields';
 import '../../styles/trainerActivity.css';
 
 const shown = value => value == null || value === '' ? 'Non renseigné' : value;
@@ -23,6 +24,7 @@ export default function ActivityReport({ mission, origin }) {
   const [input, setInput] = useState(null);
   const [report, setReport] = useState(null);
   const [error, setError] = useState('');
+  const [saveAttempts, setSaveAttempts] = useState(0);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [dirty, setDirty] = useState(false);
@@ -54,7 +56,7 @@ export default function ActivityReport({ mission, origin }) {
   const session = (index, next) => change({ ...input, sessions: input.sessions.map((s, i) => i === index ? next : s) });
   async function save(e) {
     e.preventDefault(); if (busy.current) return;
-    busy.current = true; setSaving(true); setError(''); setSaved(false);
+    busy.current = true; setSaving(true); setError(''); setSaved(false); setSaveAttempts(n => n + 1);
     mutation.current ||= crypto.randomUUID();
     try {
       const result = await saveActivityReport(origin, missionId, report?.revision ?? null, mutation.current, input);
@@ -93,6 +95,8 @@ export default function ActivityReport({ mission, origin }) {
             <NumberField label="Durée réellement animée (heures)" value={input.summary.actual_hours} max={240000} disabled={!['done', 'partial'].includes(input.summary.status)} onChange={v => field('summary', { ...input.summary, actual_hours: v })} />
           </div>
           <p>Indiquez les totaux pour ce groupe, par exemple 2 jours et 14 heures, ou 0,5 jour et 3 heures. Aucune conversion automatique. Comptez chaque apprenant une seule fois, sans saisir son identité.</p>
+          <p>Le nombre d’apprenants effectivement formés inclut les personnes partiellement formées.</p>
+          <PartialAttendanceFields rows={input.partial_attendance} onChange={v => field('partial_attendance', v)} realized={['done', 'partial'].includes(input.summary.status)} error={error} saveAttempts={saveAttempts} />
           {report?.report_mode === 'detailed' && <p>L’ancien détail sera conservé. Vérifiez les totaux et renseignez le nombre de jours réellement animés avant d’enregistrer.</p>}
         </fieldset> : <><p>Ce bilan historique comporte plusieurs groupes. Leur détail est conservé pour permettre les corrections sans regrouper les effectifs.</p>
         {input.sessions.map((s, i) => <fieldset className="activity-session" key={s.id}>
@@ -137,7 +141,7 @@ export function OrganizationActivityReports({ missionId }) {
     {rows.map(r => <article key={r.id} className="activity-session"><h3>Bilan de {r.trainer_name || 'Formateur'}</h3><FeeNotice source={r.agreed_fee} input={r} /><p>Tarif total déclaré : <strong>{r.declared_fee == null ? 'Non renseigné' : `${r.declared_fee} € ${r.tax_basis}`}</strong></p><p>Observations : {shown(r.observations)}</p>
       <h4>{r.formation_title || r.sessions[0]?.formation || 'Formation non renseignée'}</h4>
       {r.report_mode === 'simple' ? <><p>{summaryLabels[r.summary.status]} · Apprenants effectivement formés : {shown(r.summary.learner_count)}</p>
-        <p>Durée réellement animée : {shown(r.summary.actual_days)} jours · {shown(r.summary.actual_hours)} heures</p></> : r.sessions.map((s, i) => <section key={s.id}><h4>Groupe historique {i + 1} · {s.formation || 'Formation non renseignée'} {s.group_label && `· ${s.group_label}`}</h4><p>{sessionState(s)} · Apprenants effectivement formés : {shown(s.learner_count)}</p><ul>{s.days.map(d => <li key={d.date}>{d.date} · {dayLabels[d.status]} · Durée réelle : {shown(d.actual_hours)}{d.actual_hours != null && ' h'}</li>)}</ul></section>)}
+        <p>Durée réellement animée : {shown(r.summary.actual_days)} jours · {shown(r.summary.actual_hours)} heures</p><PartialAttendanceReadOnly rows={r.partial_attendance} /></> : r.sessions.map((s, i) => <section key={s.id}><h4>Groupe historique {i + 1} · {s.formation || 'Formation non renseignée'} {s.group_label && `· ${s.group_label}`}</h4><p>{sessionState(s)} · Apprenants effectivement formés : {shown(s.learner_count)}</p><ul>{s.days.map(d => <li key={d.date}>{d.date} · {dayLabels[d.status]} · Durée réelle : {shown(d.actual_hours)}{d.actual_hours != null && ' h'}</li>)}</ul></section>)}
       <p>Dernière modification : {new Date(r.updated_at).toLocaleString('fr-FR')}</p></article>)}
   </section>;
 }

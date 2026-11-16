@@ -302,3 +302,8 @@ Vincent remplace le choix de plusieurs groupes par mission : désormais une miss
 
 ## V1.4.0 — dépenses privées, 15 novembre 2026
 Vincent valide le candidat puis autorise sa mise en production. Choix technique : lignes JSONB dans la table privée existante, centimes entiers, total serveur et archive immuable des saisies antérieures. Ancien montant inconnu conservé comme null, jamais inventé à zéro ; protection des anciens clients. Aucun changement de Mes statistiques, des autres champs ni du principe une session = un groupe. Aucun envoi implicite. Dossier sprints/v1.4.0/.
+
+
+## V1.5.0 candidate — 16 novembre 2026
+
+Vincent confirme « Inclus dans le total » le 16 novembre : les lignes de participation partielle sont un sous-ensemble du total existant, jamais additionnées. Jours/heures indépendants, sans conversion ; pas d’heures-stagiaires calculées. Les anciens bilans multigroupes restent modifiables selon leur structure historique ; le nouveau détail vise les bilans à un groupe.

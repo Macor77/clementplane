@@ -1,6 +1,6 @@
 # V1.6.0 — Décomptes séparés, 16 novembre 2026
 
-Vincent remplace la décision « inclus dans le total » par deux saisies distinctes. Exemple : trois personnes ayant suivi toute la formation et une personne ayant suivi une heure donnent 3 entièrement formées, 1 partiellement formée et 4 participants. Une session reste un groupe. Le développement est autorisé ; la publication de cette nouvelle version attend une validation distincte de celle de V1.5.1.
+Vincent remplace la décision « inclus dans le total » par deux saisies distinctes. Exemple : trois personnes ayant suivi toute la formation et une personne ayant suivi une heure donnent 3 entièrement formées, 1 partiellement formée et 4 participants. Une session reste un groupe. Développement puis publication de cette nouvelle version explicitement autorisés par Vincent le 16 novembre 2026. PR #27 fusionnée ; preuves dans PRODUCTION.md.
 
 ## Contrat de données
 

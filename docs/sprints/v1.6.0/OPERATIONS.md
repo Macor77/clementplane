@@ -1,11 +1,9 @@
-# Exploitation V1.6.0 — candidate
+# Exploitation V1.6.0 — publiée
 
-Frontend uniquement : aucun SQL, RPC, RLS, fonction Edge, secret, drapeau ou fournisseur à modifier. L’API et le stockage conservent leur total inclusif. Ne pas rejouer les migrations V1.5.0 déjà appliquées. Les anciens clients restent compatibles et montrent leur ancien total inclusif avec leur ancien libellé ; actualiser l’application pour bénéficier de la nouvelle saisie séparée.
+Frontend uniquement : aucun SQL, RPC, RLS, fonction Edge, secret, drapeau ou fournisseur à modifier. L’API et le stockage conservent leur total inclusif. Ne pas rejouer les migrations V1.5.0 déjà appliquées. Les anciens clients restent compatibles et montrent leur ancien total inclusif avec leur ancien libellé ; actualiser l’application pour bénéficier de la saisie séparée.
 
-La branche est feature/v1.6.0-separate-attendance. Publication après validation de Vincent : fusionner la PR vérifiée, contrôler Quality sur main et Vercel, vérifier la version 1.6.0 sur l’origine officielle, puis finaliser la documentation, le tag et la release avec archive du commit exact. À ce stade, aucune fusion ni publication en production autorisée pour V1.6.0.
+Publication explicitement autorisée par Vincent le 16 novembre 2026. PR #27 fusionnée ; Vercel production READY et V1.6.0 servie sur l’origine officielle vérifiés. Références et contrôles dans PRODUCTION.md. Le workflow release-v1.6.0 attend Quality réussi sur le commit documentaire exact avant de créer tag, release et archive, puis vérifie le téléchargement de l’archive jointe.
 
-Retour arrière : redéployer V1.5.1. Le stockage étant identique, aucun rollback de base ou recalcul destructif ; l’ancienne interface retrouvera son décompte inclusif. Surveiller les erreurs de sauvegarde et les bilans historiques ; ne jamais soustraire deux fois les participations partielles dans le service. Aucun changement du mécanisme PWA ou du pilote Outlook.
+Retour arrière : redéployer V1.5.1. Stockage identique, aucune restauration de base ou opération destructive ; l’ancienne interface retrouve son décompte inclusif. Surveiller les erreurs de sauvegarde et les bilans historiques ; ne jamais soustraire deux fois les participations partielles dans le service. Aucun changement du mécanisme PWA ou du pilote Outlook.
 
-## Références de la candidate
-
-[PR #27](https://github.com/Macor77/clementplane/pull/27), [Quality 43873670898](https://github.com/Macor77/clementplane/actions/runs/43873670898). Commit applicatif 280a2746ec02bbbbf293ea47328a420b6bd41afc. Preview dpl_CQ9kNPCXwutLdeui4iaDdNHryLvQ READY ; contrôle HTTP limité à la protection Vercel, aucune recette réelle utilisateur sur cette URL. Complément documentaire sans différence applicative. Aucun tag ou release finale à ce stade.
+Recette : Quality 43873670898 et 43874641015, 413 tests unitaires/contrats et 67 parcours navigateur, captures fictives examinées ; contrôles SQL/RLS PGlite réussis. Portée : API simulée et mobile émulé, production contrôlée sans écriture de données réelles. Pas de recette sur smartphone physique/PWA installée dans cette livraison.

@@ -1,4 +1,4 @@
-## V1.6.0 candidate — décomptes séparés
+## V1.6.0 publiée — décomptes séparés
 
 Scénario navigateur 18 (ordinateur/mobile, API simulée) : relecture de l’ancien total 4 avec 1 partiel en 3 complets, sauvegarde/rechargement, zéro complet, ajout/suppression, statistiques et lecture OF sans privé. Historique détaillé préservé pour une observation et conversion explicite. Unitaires : mapping bidirectionnel, durées inconnues, périodes, statuts non réalisés historiques. PGlite vérifie le contrat RPC inclusif et les permissions existantes. Résultats et limites : sprints/v1.6.0/ACCEPTANCE.md.
 

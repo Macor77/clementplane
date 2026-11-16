@@ -1,25 +1,27 @@
-# V1.6.0 — Candidate vérifiée, 16 novembre 2026
+# V1.6.0 — Clôture de livraison, 16 novembre 2026
 
-**Non clôturé — validation et production restantes.** Correction développée et vérifiée dans la [PR #27](https://github.com/Macor77/clementplane/pull/27), en brouillon. Commit applicatif **280a2746ec02bbbbf293ea47328a420b6bd41afc**, version technique/lock/UI 1.6.0. L’accord de production V1.5.1 a été exécuté ; cette nouvelle version attend sa propre validation. Aucune migration.
+Deux décomptes distincts (entièrement formés / partiellement formés), total des participants calculé, aides/lecture OF/statistiques cohérentes. Publication explicitement autorisée par Vincent le 16 novembre. [PR #27](https://github.com/Macor77/clementplane/pull/27) fusionnée : **3e92d588537d3fe0df1279dd6824fdede734c252**. Version package/lock/UI 1.6.0. Aucun changement de schéma ou de permissions. Le tag v1.6.0 vise le commit documentaire de clôture, de code applicatif identique.
 
-| Exigence | État et preuve, 16 novembre 2026 | Reste |
+| Obligation | Résultat et preuve, 16 novembre 2026 | Portée / suite |
 |---|---|---|
-| Deux décomptes + total | Vérifié : formulaire, OF et statistiques ; DESIGN, scénarios 14–18 | Publication |
-| Compatibilité et zéro complet | Vérifié : 413 tests/61 fichiers, SQL PGlite et navigateur | Aucun recalcul destructif |
-| Historique détaillé | Vérifié : conservation sur modification étrangère, classification explicite et statuts non réalisés ; revue indépendante résolue | Aucune anomalie restante identifiée |
-| Mobile et aides | Vérifié : 67 parcours, 1440/768/390 px selon scénarios ; quatre captures examinées | Appareil/PWA physique non testé |
-| Supabase et confidentialité | SQL/RLS/RPC inchangés ; tests PGlite/contrats réussis, preuve V1.5.0 applicable au déploiement existant | Aucune opération hébergée nécessaire |
-| Statistiques | Complets/partiels/total séparés, heures et périodes conservées | Aucun export BPF livré |
-| Qualité | Quality 43873670898 réussi, toutes étapes ; ACCEPTANCE | 2 warnings Hooks, gros bundle, 12 vulnérabilités faibles/modérées préexistants |
-| Documentation | README, fonctionnel, architecture, base, décisions, tests, dépannage, exploitation et guide actualisés | Statut final après livraison |
-| Légal/RGPD | LEGAL_REVIEW : aucune modification nécessaire motivée | Aucun contrat externe certifié |
-| Roadmap/changelog/version | Candidate identifiée, historique conservé, version 1.6.0 | Statut de publication après accord |
-| FAQ/tutoriels/évolutions/landing | COMMUNICATION, GUIDE, discoverContent ; captures fictives archivées | Aide BPF laissée au futur |
-| GitHub/preview | PR #27 brouillon, preview Vercel READY sur le bon commit | Preview protégée, aucun parcours connecté réel prétendu |
-| Production | V1.5.1 maintenue ; aucune fusion ou opération de production V1.6.0 | Validation utilisateur, fusion et vérifications de production |
-| Archive | Candidate téléchargée, ZIP/707 entrées/manifeste/SHA-256 vérifiés ; ACCEPTANCE | Archive finale du commit de livraison |
-| Tag/release | Non réalisés, livraison non autorisée à ce stade | Créer après accord et vérifications de production |
-| Communication | Aide intégrée et notes suffisantes, aucun envoi | Aucun envoi autorisé ou prévu |
+| Périmètre et réalisation | Vérifié : DESIGN et scénarios 14–18, complet/partiel/total séparés | Une session reste un groupe, pas de BPF automatique |
+| Anciens bilans / durées | Vérifié : conversion 4 inclusifs vers 3 + 1, sauvegarde inverse, zéro complet et durées inconnues | Historique détaillé non reclassé lors d’une modification étrangère |
+| Sauvegarde / non-régression | Vérifié : 413 tests unitaires/contrats et 67 parcours navigateur | Rechargement, ajout/suppression, frais/km/difficultés préservés |
+| Mobile / aides / OF | Vérifié : 1440/768/390 px selon scénarios ; quatre captures examinées | API simulée, mobile émulé ; pas de smartphone/PWA physique |
+| Supabase et confidentialité | Code SQL/RLS/RPC inchangé ; suites PGlite et contrats réussis ; preuve de déploiement V1.5.0 applicable | Aucune migration ni opération hébergée nécessaire |
+| Revue | Revue indépendante terminée, anomalies historiques corrigées et retestées | Aucun point concret restant identifié |
+| Qualité | Quality candidate 43873670898 et 43874641015 réussis ; main 43876479305 ; Quality requis sur le commit exact avant release | 2 warnings Hooks, gros bundle et 12 vulnérabilités faibles/modérées préexistants |
+| Production/version | Vérifié : dpl_3Lz7f98q6DZLzVoQeNJt9dQ4A65X READY, HTTP 200 et bundle V1.6.0 | PRODUCTION.md ; aucun parcours connecté réel prétendu |
+| Documentation | README, fonctionnel, architecture, base, décisions, tests, dépannage, exploitation et guide actualisés | Historique daté conservé |
+| Légal/RGPD | LEGAL_REVIEW : aucune modification nécessaire motivée pour chaque obligation | Pas de nouvelle collecte ou de contrats externes certifiés |
+| Roadmap/changelog/version | Racine/docs cohérents, version 1.6.0 | Futur BPF laissé au pilotage |
+| Découvrir/FAQ/tutoriels/captures | Aides/FAQ/tutoriels OF/formateur actualisés et captures fictives archivées | Landing inchangée, aucune nouvelle promesse |
+| GitHub/tag/archive/release | PR fusionnée ; workflow release-v1.6.0 sur le SHA de clôture après Quality | ZIP/manifeste et téléchargement vérifiés par le workflow avant clôture finale |
+| Communication | Aide intégrée et notes suffisantes ; aucun e-mail ni message envoyé | Aucun envoi prévu |
 | Pilotage | RETOUR_PILOTAGE actualisé | Aucun sprint suivant démarré |
 
-Portée exacte : tests locaux et navigateur CI avec API simulée, mobile émulé. Aucun nouveau parcours métier ni écriture en production. Le complément documentaire de recette conserve le code applicatif testé. La production reste V1.5.1 jusqu’à validation et publication effective.
+Verdict : **clôturé** lorsque le workflow de release du commit est réussi, le tag concordant et les pièces jointes vérifiées. Ce contrôle est requis avant le compte rendu final ; une intention de publication ne vaut pas preuve.
+
+Limites : navigateur avec API simulée, mobile émulé et production vérifiée sans écriture métier réelle. Aucun smartphone/PWA physique ni restauration fournisseur testé. Durées individuelles conservées, sans export ni déclaration BPF. Aucun changement du pilote Outlook.
+
+[Release v1.6.0](https://github.com/Macor77/clementplane/releases/tag/v1.6.0). Détails : PRODUCTION, ACCEPTANCE, OPERATIONS, DESIGN, GUIDE, LEGAL_REVIEW et COMMUNICATION.

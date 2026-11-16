@@ -1,6 +1,6 @@
-## V1.6.0 candidate — décomptes séparés, 16 novembre 2026
+## V1.6.0 publiée — décomptes séparés, 16 novembre 2026
 
-Apprenants entièrement formés et partiellement formés saisis et affichés séparément ; total des participants calculé à part et statistiques cohérentes. Anciennes données conservées sans migration : le contrat de stockage reste inclusif, la saisie applique la conversion. Correction vérifiée : 413 tests unitaires/contrats et 67 parcours navigateur réussis, [PR #27](https://github.com/Macor77/clementplane/pull/27) en brouillon. Preuves dans `docs/sprints/v1.6.0/` (ou `sprints/v1.6.0/` depuis docs). Non publiée ; production V1.5.1 inchangée. La décision de saisie séparée remplace l’inclusion décrite dans les versions historiques ci-dessous.
+Apprenants entièrement formés et partiellement formés saisis et affichés séparément ; total des participants calculé à part et statistiques cohérentes. Anciennes données conservées sans migration. Publication explicitement validée par Vincent : [PR #27](https://github.com/Macor77/clementplane/pull/27) fusionnée, Vercel production READY et V1.6.0 servie sur app.clementplane.fr. 413 tests unitaires/contrats et 67 parcours navigateur réussis ; captures contrôlées. Preuves : `docs/sprints/v1.6.0/` (ou `sprints/v1.6.0/` depuis docs). Cette saisie séparée remplace l’inclusion décrite dans les versions historiques ci-dessous.
 
 ## V1.5.1 publiée — bilan compact et aides contextuelles, 16 novembre 2026
 
@@ -45,7 +45,7 @@ Elle centralise notamment :
 
 ## Version actuelle
 
-**Production V1.5.1 — Bilan compact et aides contextuelles. Candidate V1.6.0 — Décomptes séparés.**
+**Production V1.6.0 — Apprenants entièrement et partiellement formés.**
 
 Un groupe par session, intitulé verrouillé et durées réelles en jours/heures. [État V1.6.0](docs/sprints/v1.6.0/CLOSURE.md).
 

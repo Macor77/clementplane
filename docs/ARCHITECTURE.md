@@ -1,4 +1,4 @@
-## V1.6.0 candidate — frontière brouillon/API
+## V1.6.0 publiée — frontière brouillon/API
 
 Le brouillon du bilan porte un effectif entièrement formé exclusif. activityDraft soustrait partial_attendance du total inclusif persistant ; validateActivity réadditionne avant le RPC. Les objets source ne sont pas mutés. Statistiques et lecture OF dérivent les deux effectifs depuis les données persistantes. Un ancien bilan détaillé n’est reclassé qu’après une saisie explicite ; les autres modifications préservent ses sessions. Voir sprints/v1.6.0/DESIGN.md.
 

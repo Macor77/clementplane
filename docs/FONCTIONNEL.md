@@ -1,3 +1,7 @@
+## V1.6.0 candidate — apprenants entièrement et partiellement formés
+
+Le champ principal compte seulement les personnes ayant suivi toute la formation. Les autres sont saisis dans le volet partiel, une ligne par durée individuelle. Total des participants = entièrement + partiellement formés. Zéro complet est autorisé. Les statistiques et la lecture OF reprennent cette séparation ; les heures animées restent celles du formateur. Les anciens bilans détaillés sans répartition conservent leur total historique. Pas de BPF automatique. Voir sprints/v1.6.0/GUIDE.md.
+
 > **Mise à jour du 27 octobre 2026 : navigation multi-onglets publiée en production.** PR #18 fusionnée, déploiement Vercel READY sur clementplane.fr. Preuves et périmètre : `docs/sprints/new-tab-navigation/DEPLOYMENT.md`. Les mentions « préparée, non publiée » ci-dessous décrivent l’étape antérieure.
 
 # FONCTIONNEL — Clementplane

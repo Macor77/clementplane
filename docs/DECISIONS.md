@@ -313,3 +313,7 @@ Vincent confirme « Inclus dans le total » le 16 novembre : les lignes de parti
 Alléger la saisie sans supprimer l’information : boutons « ? » par rubrique et pour le kilométrage, fenêtre modale native, présentation basse sur mobile. Les libellés, unités, mentions de visibilité, comptage des apprenants, erreurs et avertissements liés aux données restent directs. Aucun champ ni règle de calcul ne change ; aucune migration. Le volet des présences partielles et la consultation OF conservent leur fonctionnement.
 
 Publication V1.5.1 autorisée explicitement le 16 novembre : « Vas-y. Tu peux mettre en production. » PR #26 fusionnée ; aucune migration, opération Supabase ou communication externe. Détails de preuve dans sprints/v1.5.1/PRODUCTION.md.
+
+## V1.6.0 — Décision de Vincent, 16 novembre 2026
+
+Les personnes partiellement formées sont exclues du champ principal, renommé Apprenants entièrement formés. Deux décomptes indépendants et total dérivé. Cette décision remplace la demande antérieure d’inclusion. Compatibilité technique : stockage inclusif conservé, projection à la lecture/sauvegarde, aucune migration. Les bilans détaillés sans répartition restent historiques tant que le formateur ne précise pas les effectifs. Les durées individuelles préparent une évolution ultérieure, sans livrer un export BPF. Développement autorisé ; production de la nouvelle candidate à valider.

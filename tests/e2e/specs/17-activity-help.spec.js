@@ -11,7 +11,7 @@ for (const width of [1440, 768, 390]) test(`activity help ${width}px — guidanc
   await page.goto(`/formateur/missions/personnelles/${id}`);
   const panel = page.locator('#bilan');
   await expect(panel.getByText('Privé — vous uniquement', { exact: true })).toHaveCount(2);
-  await expect(panel.getByText('Le nombre d’apprenants effectivement formés inclut les personnes partiellement formées.', { exact: true })).toBeVisible();
+  await expect(panel.getByText('Les apprenants partiellement formés sont comptés séparément.', { exact: true })).toBeVisible();
   await expect(panel).not.toContainText('Une mission correspond à une session');
   await expect(panel).not.toContainText('La distance indicative');
   await expect(panel).not.toContainText('Le bilan ne modifie pas le contrat');
@@ -20,7 +20,7 @@ for (const width of [1440, 768, 390]) test(`activity help ${width}px — guidanc
   const sections = [
     ['Bilan de la mission', ['une session et un seul groupe', 'une ou plusieurs journées', 'Les champs vides restent « Non renseigné »']],
     ['Bilan personnel et tarif déclaré', ['Ce bilan reste privé, même si le donneur d’ordre figure dans Mes OF.', 'Aucun e-mail ni notification n’est envoyé.', 'Le bilan ne modifie pas le contrat et ne vaut ni facture ni acceptation du montant par l’OF.']],
-    ['Réalisation de la formation', ['2 jours et 14 heures', '0,5 jour et 3 heures', 'Aucune conversion automatique.', 'Comptez chaque apprenant une seule fois, sans saisir son identité.', 'inclut les personnes partiellement formées']],
+    ['Réalisation de la formation', ['2 jours et 14 heures', '0,5 jour et 3 heures', 'Aucune conversion automatique.', 'Comptez chaque personne une seule fois, sans saisir son identité.', 'comprend uniquement les personnes ayant suivi toute la formation']],
     ['Confidentialité des informations privées', ['Ces informations ne sont accessibles à aucun OF et ne sont pas ajoutées aux agendas.', 'Vos dépenses, votre kilométrage réel et vos difficultés restent accessibles uniquement par vous.']],
     ['Frais engagés', ['Ajoutez vos dépenses, puis enregistrez le bilan.', 'Une même catégorie peut être utilisée plusieurs fois.', 'sauf pour « Autres frais »', 'Le total est calculé automatiquement', 'Les lignes entièrement vides ne sont pas comptabilisées.']],
     ['Kilométrage réel', ['Incluez tous vos déplacements, allers et retours.', 'La distance indicative de Clementplane est à vol d’oiseau', 'ne permet pas de préremplir ce kilométrage routier', 'Aucune conversion en frais.']],
@@ -51,7 +51,7 @@ for (const width of [1440, 768, 390]) test(`activity help ${width}px — guidanc
   expect(await page.evaluate(() => document.body.style.overflow)).toBe('');
 
   await page.getByRole('combobox', { name: 'Formation réalisée', exact: true }).selectOption('done');
-  await page.getByLabel('Apprenants effectivement formés', { exact: true }).fill('4');
+  await page.getByLabel('Apprenants entièrement formés', { exact: true }).fill('4');
   await page.getByLabel('Durée réellement animée (jours)', { exact: true }).fill('0.5');
   await page.getByLabel('Durée réellement animée (heures)', { exact: true }).fill('3');
   await page.getByLabel('Observations sur la mission (privées)').fill('Observation fictive conservée');
@@ -68,7 +68,7 @@ for (const width of [1440, 768, 390]) test(`activity help ${width}px — guidanc
   await partial.getByLabel('Durée suivie en heures — ligne 1').fill('1');
   await help(page, 'Apprenants partiellement formés').click();
   const modal = dialog(page, 'Apprenants partiellement formés');
-  for (const text of ['Ne les ajoutez pas une deuxième fois.', 'Une ligne regroupe les personnes ayant suivi la même durée.', '1 apprenant pendant 1 heure, puis 3 apprenants pendant 3 heures.', 'sans la multiplier par l’effectif.', 'sans conversion automatique.', 'Au moins une durée est nécessaire pour chaque ligne.', 'Ces durées ne s’ajoutent pas au temps animé par le formateur.']) await expect(modal).toContainText(text);
+  for (const text of ['Ces personnes ne sont pas incluses dans le nombre d’apprenants entièrement formés.', 'Une ligne regroupe les personnes ayant suivi la même durée.', '1 apprenant pendant 1 heure, puis 3 apprenants pendant 3 heures.', 'sans la multiplier par l’effectif.', 'sans conversion automatique.', 'Au moins une durée est nécessaire pour chaque ligne.', 'Ces durées ne s’ajoutent pas au temps animé par le formateur.']) await expect(modal).toContainText(text);
   await page.screenshot({ path: `test-results/activity-help-${width}.png` });
   // Native modal keeps keyboard navigation inside the help, including scrollable text.
   await page.keyboard.press('Tab'); await expect(modal.locator('.activity-help-body')).toBeFocused();
@@ -85,7 +85,7 @@ for (const width of [1440, 768, 390]) test(`activity help ${width}px — guidanc
   await expect(page.getByRole('alert')).toBeVisible();
   await page.getByRole('button', { name: 'Enregistrer le bilan', exact: true }).click();
   await expect(page.getByText('Bilan enregistré.', { exact: true })).toBeVisible();
-  expect(api.saved().report.summary.learner_count).toBe(4);
+  expect(api.saved().report.summary.learner_count).toBe(5);
   expect(api.saved().report.partial_attendance[0].actual_hours).toBe(1);
   expect(api.saved().report.observations).toBe('Observation fictive conservée');
   expect(api.saved().private.expenses).toBe(12.5);

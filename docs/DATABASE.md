@@ -1,3 +1,7 @@
+## V1.6.0 candidate — aucun changement de schéma
+
+summary.learner_count reste le total inclusif dans les tables et RPC. partial_attendance conserve son contrat existant. Seule la frontière de formulaire convertit l’effectif entièrement formé ; ne pas soustraire ces lignes côté SQL ni migrer les anciens totaux. Les RLS et protections des anciens clients sont inchangées. Anciennes sessions conservées lors de la conversion historique existante. Voir sprints/v1.6.0/DESIGN.md.
+
 # DATABASE — Clementplane
 
 Version : 0.20

@@ -1,3 +1,7 @@
+## V1.6.0 candidate — décomptes séparés, 16 novembre 2026
+
+Apprenants entièrement formés et partiellement formés saisis et affichés séparément ; total des participants calculé à part et statistiques cohérentes. Anciennes données conservées sans migration : le contrat de stockage reste inclusif, la saisie applique la conversion. Correction développée, tests/recette suivis dans `docs/sprints/v1.6.0/` (ou `sprints/v1.6.0/` depuis docs). Non publiée ; production V1.5.1 inchangée. La décision de saisie séparée remplace l’inclusion décrite dans les versions historiques ci-dessous.
+
 ## V1.5.1 publiée — bilan compact et aides contextuelles, 16 novembre 2026
 
 Les boutons « ? » conservent toutes les explications dans une fenêtre adaptée au mobile. Intitulés, unités, confidentialité et inclusion des apprenants partiels restent visibles. Publication explicitement autorisée par Vincent : PR #26 fusionnée, Vercel production READY et V1.5.1 servie sur app.clementplane.fr. 406 tests unitaires et 63 parcours navigateur réussis ; captures contrôlées. Aucun changement métier ou de permissions, aucune migration. Dossier : `docs/sprints/v1.5.1/` (ou `sprints/v1.5.1/` depuis docs).
@@ -41,9 +45,9 @@ Elle centralise notamment :
 
 ## Version actuelle
 
-**V1.3.2 — Bilan formateur simplifié (14 novembre 2026)**
+**Production V1.5.1 — Bilan compact et aides contextuelles. Candidate V1.6.0 — Décomptes séparés.**
 
-Un groupe par mission, intitulé verrouillé et totaux réels en jours/heures. Installation officielle V1.3.1 conservée. [Clôture V1.3.2](docs/sprints/v1.3.2/CLOSURE.md).
+Un groupe par session, intitulé verrouillé et durées réelles en jours/heures. [État V1.6.0](docs/sprints/v1.6.0/CLOSURE.md).
 
 Clementplane peut désormais être installé sur Android et iPhone/iPad et lancé depuis l’écran d’accueil comme une application.
 

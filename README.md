@@ -1,6 +1,6 @@
 ## V1.5.0 candidate — apprenants partiellement formés, 16 novembre 2026
 
-Volet fermé par défaut, lignes par effectif/durée, incluses dans le total existant sans double comptage. Développement sur `feature/v1.5.0-partial-attendance`, sans mise en production. Migration additive testée localement ; application à la base de démonstration suspendue après refus du contrôle automatique (autorisation explicite de cet environnement demandée). État et preuves : `docs/sprints/v1.5.0/` (ou `sprints/v1.5.0/` depuis docs). V1.4.0 demeure la version de production.
+Volet fermé par défaut, lignes par effectif/durée, incluses dans le total existant sans double comptage. Développement sur `feature/v1.5.0-partial-attendance`, sans mise en production. Migration additive appliquée à la base de démonstration après accord explicite de Vincent ; recette PostgreSQL hébergée et contrôles RLS réussis le 16 novembre. Publication en production en attente de validation. État et preuves : `docs/sprints/v1.5.0/` (ou `sprints/v1.5.0/` depuis docs). V1.4.0 demeure la version de production.
 
 ## V1.4.0 publiée — frais détaillés, 15 novembre 2026
 

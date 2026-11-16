@@ -1,3 +1,7 @@
+## V1.5.0 candidate — apprenants partiellement formés, 16 novembre 2026
+
+Volet fermé par défaut, lignes par effectif/durée, incluses dans le total existant sans double comptage. Développement sur `feature/v1.5.0-partial-attendance`, sans mise en production. Migration additive testée localement ; application à la base de démonstration suspendue après refus du contrôle automatique (autorisation explicite de cet environnement demandée). État et preuves : `docs/sprints/v1.5.0/` (ou `sprints/v1.5.0/` depuis docs). V1.4.0 demeure la version de production.
+
 ## [1.4.0] — publiée le 15 novembre 2026
 
 Frais privés par lignes (onze catégories, répétitions, précision obligatoire pour Autres frais), total exact en centimes et sauvegarde avec le bilan. Migration additive préservant anciennes valeurs et textes ; anciennes PWA protégées contre les écrasements. Kms, difficultés, autres champs, statistiques et agendas inchangés. Publication autorisée par Vincent, PR #24 fusionnée, migration 20261115114709 et déploiement Vercel READY vérifiés.

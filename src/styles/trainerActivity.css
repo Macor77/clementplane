@@ -43,3 +43,12 @@
 .activity-expense-original{white-space:pre-wrap}
 @media(max-width:900px){.activity-expense-fields{grid-template-columns:minmax(0,1fr) minmax(100px,.6fr)}.activity-expense-fields button{align-self:end;margin:0}}
 @media(max-width:640px){.activity-expense-fields{grid-template-columns:1fr}.activity-expense-fields button{justify-self:start}}
+
+.activity-partial-attendance{margin-top:20px;border:1px solid #bdd2e7;border-radius:10px;background:#fff;padding:12px 14px}
+.activity-partial-attendance>summary{font-weight:700;cursor:pointer;min-height:44px;align-content:center;line-height:1.5}
+.activity-partial-row{border-top:1px solid #d8e2ec;padding:16px 0}
+.activity-partial-fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) auto;gap:12px;align-items:end}
+.activity-partial-fields label{margin:0}.activity-partial-fields button{align-self:end}
+.activity-partial-attendance li{margin:10px 0;line-height:1.5}
+@media(max-width:900px){.activity-partial-fields{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:640px){.activity-partial-fields{grid-template-columns:1fr}.activity-partial-fields button{justify-self:start}.activity-partial-attendance{padding:10px}}

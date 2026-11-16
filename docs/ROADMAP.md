@@ -1,3 +1,7 @@
+## V1.5.0 candidate — apprenants partiellement formés, 16 novembre 2026
+
+Volet fermé par défaut, lignes par effectif/durée, incluses dans le total existant sans double comptage. Développement sur `feature/v1.5.0-partial-attendance`, sans mise en production. Migration additive testée localement ; application à la base de démonstration suspendue après refus du contrôle automatique (autorisation explicite de cet environnement demandée). État et preuves : `docs/sprints/v1.5.0/` (ou `sprints/v1.5.0/` depuis docs). V1.4.0 demeure la version de production.
+
 ## V1.4.0 publiée — frais détaillés, 15 novembre 2026
 
 Dépenses privées par ligne, onze catégories et total automatique. Anciens montants et textes conservés. Publiée après validation de Vincent : PR #24 fusionnée, migration appliquée, Vercel production READY. Recette : 389 unitaires et 53 parcours navigateur. Dossier : `docs/sprints/v1.4.0/` (ou `sprints/v1.4.0/` depuis docs). Mes statistiques reste inchangé ; exploitation des frais à cadrer dans un sprint ultérieur.

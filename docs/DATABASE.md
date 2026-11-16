@@ -405,3 +405,8 @@ Ajout de report_mode (detailed/simple), summary JSON, formation_title, reference
 
 ## V1.4.0 — dépenses détaillées, 15 novembre 2026
 Ajout expense_items JSONB, legacy_expenses numeric(10,2) et legacy_expense_details texte dans trainer_activity_private. Chaque ligne porte UUID, catégorie stable, amount_cents entier et précision ; le total expenses est calculé côté serveur. Archives d’origine non modifiables via API et exclues des totaux. amount_cents=null réservé aux lignes historiques déjà inconnues. RLS propriétaire et grants inchangés. Source 20261115110744 ; recette 20261115111417 ; production 20261115114709. RPC atomique existante, helper privé expense_total ; requêtes sans expense_items refusées. Voir sprints/v1.4.0/DESIGN.md et PRODUCTION.md.
+
+
+## V1.5.0 candidate — 16 novembre 2026
+
+Migration source `20261116065258_partial_trainer_attendance.sql` : colonne JSONB `trainer_activity_reports.partial_attendance`, non nulle, défaut `[]`, validation privée serveur et évolution de save_report. Lignes `{id, learner_count, actual_days, actual_hours}`. Une ligne exige count positif et au moins une durée positive, deux décimales maximum ; somme <= summary.learner_count. Les anciens comptes et sessions restent intacts. Migration non appliquée sur bases hébergées à ce stade.

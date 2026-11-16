@@ -172,3 +172,8 @@ Tests Microsoft dans tests/contracts/microsoft-*.test.js et tests/calendar/micro
 
 ## V1.4.0 — dépenses privées
 389 unitaires et 53 parcours Chromium réussis. trainerExpenses.test.js : centimes, catégories, répétitions, zéro, invalides, lignes vides, historiques inconnus. trainer-expenses-sql.mjs : migration de toutes formes historiques, total serveur, listes invalides, CAS/reprise, archives, droits, agrégation future. trainer-expenses-staging.sql : PostgreSQL réel sur documentation-demo uniquement, fixtures annulées. Playwright 15 : 1440/768/390 px, validation, panne, ajout/édition/suppression/rechargement, modifications d’autres champs et reprise ancienne sans montant. Projection calendrier vérifie l’exclusion explicite des dépenses. Portée et preuves : sprints/v1.4.0/ACCEPTANCE.md et PRODUCTION.md.
+
+
+## V1.5.0 candidate — 16 novembre 2026
+
+V1.5.0 : `src/utils/__tests__/partialAttendance.test.js`, `scripts/testing/partial-attendance-sql.mjs`, `tests/e2e/specs/16-partial-attendance.spec.js`. Tests sous-ensemble, durées, migration additive, anciens clients, confidentialité, réseau, responsive et statistiques. Distinction local PostgreSQL/PGlite, navigateur API simulée et recette Supabase hébergée dans `sprints/v1.5.0/ACCEPTANCE.md`.

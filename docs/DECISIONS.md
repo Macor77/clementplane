@@ -307,3 +307,7 @@ Vincent valide le candidat puis autorise sa mise en production. Choix technique 
 ## V1.5.0 publiée — 16 novembre 2026
 
 Vincent confirme « Inclus dans le total » le 16 novembre : les lignes de participation partielle sont un sous-ensemble du total existant, jamais additionnées. Jours/heures indépendants, sans conversion ; pas d’heures-stagiaires calculées. Les anciens bilans multigroupes restent modifiables selon leur structure historique ; le nouveau détail vise les bilans à un groupe.
+
+## V1.5.1 — Aide contextuelle du bilan, 16 novembre 2026
+
+Alléger la saisie sans supprimer l’information : boutons « ? » par rubrique et pour le kilométrage, fenêtre modale native, présentation basse sur mobile. Les libellés, unités, mentions de visibilité, comptage des apprenants, erreurs et avertissements liés aux données restent directs. Aucun champ ni règle de calcul ne change ; aucune migration. Le volet des présences partielles et la consultation OF conservent leur fonctionnement.

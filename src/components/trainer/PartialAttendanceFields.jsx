@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { newPartialAttendance, partialLearnerTotal } from '../../utils/partialAttendance';
+import ActivityHelp from './ActivityHelp';
 
 export default function PartialAttendanceFields({ rows, onChange, realized, error, saveAttempts }) {
   const details = useRef(null);
@@ -8,8 +9,13 @@ export default function PartialAttendanceFields({ rows, onChange, realized, erro
   const update = (index, key, value) => onChange(rows.map((row, i) => i === index ? { ...row, [key]: value } : row));
   return <details className="activity-partial-attendance" ref={details}>
     <summary>Apprenants partiellement formés{total > 0 && <span> · {total}</span>}</summary>
-    <p>Ces apprenants sont déjà inclus dans le nombre total d’apprenants effectivement formés. Ne les ajoutez pas une deuxième fois.</p>
-    <p>Une ligne regroupe les personnes ayant suivi la même durée. Par exemple : 1 apprenant pendant 1 heure, puis 3 apprenants pendant 3 heures. Indiquez la durée suivie par chaque personne de la ligne, sans la multiplier par l’effectif.</p>
+    <div className="activity-help-heading"><p className="activity-essential-note">Déjà inclus dans le total des apprenants.</p>
+      <ActivityHelp title="Apprenants partiellement formés">
+        <p>Ces apprenants sont déjà inclus dans le nombre total d’apprenants effectivement formés. Ne les ajoutez pas une deuxième fois.</p>
+        <p>Une ligne regroupe les personnes ayant suivi la même durée. Par exemple : 1 apprenant pendant 1 heure, puis 3 apprenants pendant 3 heures. Indiquez la durée suivie par chaque personne de la ligne, sans la multiplier par l’effectif.</p>
+        <p>Renseignez les jours et les heures connus, sans conversion automatique. Au moins une durée est nécessaire pour chaque ligne. Ces durées ne s’ajoutent pas au temps animé par le formateur.</p>
+      </ActivityHelp>
+    </div>
     {!realized && <p>Confirmez la réalisation de la formation pour compléter ce détail. Les lignes déjà saisies restent conservées ; retirez-les si la formation n’a pas eu lieu.</p>}
     {rows.map((row, index) => <div className="activity-partial-row" role="group" aria-label={`Participation partielle ${index + 1}`} key={row.id}>
       <div className="activity-partial-fields">
@@ -20,7 +26,6 @@ export default function PartialAttendanceFields({ rows, onChange, realized, erro
       </div>
     </div>)}
     <button type="button" disabled={!realized} onClick={() => onChange([...rows, newPartialAttendance()])}>+ Ajouter une ligne</button>
-    <p>Renseignez les jours et les heures connus, sans conversion automatique. Au moins une durée est nécessaire pour chaque ligne. Ces durées ne s’ajoutent pas au temps animé par le formateur.</p>
     {total > 0 && <p><strong>{total} apprenant{total > 1 ? 's' : ''} partiellement formé{total > 1 ? 's' : ''}</strong>, inclus dans le total.</p>}
   </details>;
 }

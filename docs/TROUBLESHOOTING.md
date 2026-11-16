@@ -421,3 +421,8 @@ Si le bilan demande une mise à jour, conserver/copier le brouillon puis actuali
 ## V1.5.0 publiée — 16 novembre 2026
 
 Si le détail partiel dépasse le nombre total, corriger l’effectif global ou les lignes : ne pas les additionner au total. Une ligne incomplète bloque la sauvegarde et ouvre le volet. Une ancienne application ne peut plus sauvegarder un bilan contenant ce détail ; conserver les saisies puis actualiser. Ne pas retirer la colonne pour revenir au frontend V1.4.
+
+
+## V1.5.1 candidate — aides contextuelles, 16 novembre 2026
+
+Les explications sont accessibles via « ? ». Fermer l’aide (bouton, Echap ou fond) conserve le brouillon ; le texte défile dans la fenêtre si nécessaire. La fermeture ne sauvegarde pas : utiliser Enregistrer le bilan puis attendre la confirmation. Aucune migration ou opération Supabase pour ce changement ; retour au frontend V1.5.0 possible sans restaurer les données.

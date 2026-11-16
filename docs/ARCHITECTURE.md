@@ -708,6 +708,6 @@ Le formulaire utilise des totaux summary (état, apprenants, jours, heures). Les
 ExpenseFields.jsx réutilise le formulaire et son indicateur de brouillon. trainerExpenses.js convertit les chiffres en centimes entiers, valide les lignes et calcule le total. Le service lit expense_items et l’archive uniquement dans la table privée. save_report recalcule expenses et conserve CAS/reprise/transaction ; aucun total reçu du client. Aucun changement des requêtes Mes statistiques ou des projections agenda. Dossier sprints/v1.4.0/.
 
 
-## V1.5.0 candidate — 16 novembre 2026
+## V1.5.0 publiée — 16 novembre 2026
 
 `partial_attendance` est un tableau JSONB partagé dans le bilan existant, sauvegardé atomiquement par la RPC avec les champs privés séparés. Aucun nouveau endpoint, groupe, événement calendrier ni calcul de statistiques. Validation client et serveur, UUID de ligne, contrôle des révisions et retries existants conservés.

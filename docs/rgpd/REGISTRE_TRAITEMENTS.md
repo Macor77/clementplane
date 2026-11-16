@@ -50,6 +50,6 @@ Le bilan ajoute les jours réels agrégés aux heures réelles déjà collectée
 Le bilan privé contient des dépenses structurées : catégorie, montant en centimes et précision par ligne, total calculé par le serveur. Les montants globaux et textes antérieurs sont conservés dans une archive privée distincte, exclue des totaux. Même finalité de suivi personnel, même propriétaire, même durée de conservation et mêmes procédures d’accès/effacement que le bilan V1.3. Pas de justificatif ni nouveau destinataire ; aucune transmission OF/Google/Microsoft. Mise en production autorisée par Vincent et effectuée le 15 novembre 2026.
 
 
-## V1.5.0 candidate — 16 novembre 2026
+## V1.5.0 publiée — 16 novembre 2026
 
 Les effectifs/durées de participation partielle précisent la réalisation déjà traitée. Aucun nom d’apprenant collecté. Mêmes finalités et destinataires que le bilan : formateur propriétaire, OF commanditaire en lecture seule pour sa mission ; mission personnelle privée. Frais, kilomètres et difficultés toujours privés. Aucune transmission calendrier ni nouveau sous-traitant.

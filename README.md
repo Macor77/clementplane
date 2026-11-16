@@ -1,6 +1,6 @@
-## V1.5.0 candidate — apprenants partiellement formés, 16 novembre 2026
+## V1.5.0 publiée — apprenants partiellement formés, 16 novembre 2026
 
-Volet fermé par défaut, lignes par effectif/durée, incluses dans le total existant sans double comptage. Développement sur `feature/v1.5.0-partial-attendance`, sans mise en production. Migration additive appliquée à la base de démonstration après accord explicite de Vincent ; recette PostgreSQL hébergée et contrôles RLS réussis le 16 novembre. Publication en production en attente de validation. État et preuves : `docs/sprints/v1.5.0/` (ou `sprints/v1.5.0/` depuis docs). V1.4.0 demeure la version de production.
+Volet fermé par défaut, lignes par effectif et durée, incluses dans le total existant sans double comptage. Publiée après accord explicite de Vincent : PR #25 fusionnée, migration production `20261116095526`, Vercel READY et version V1.5.0 servie sur app.clementplane.fr. Recette : 406 tests unitaires, 58 parcours navigateur et PostgreSQL/RLS réel en démonstration. Dossier et preuves : `docs/sprints/v1.5.0/` (ou `sprints/v1.5.0/` depuis docs). Statistiques et données privées préservées ; aucune nouvelle complexité de groupes.
 
 ## V1.4.0 publiée — frais détaillés, 15 novembre 2026
 

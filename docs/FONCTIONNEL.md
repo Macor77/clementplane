@@ -538,6 +538,6 @@ Depuis une autre adresse que `app.clementplane.fr`, le bouton « Ouvrir la versi
 Bilan : onze catégories, plusieurs dépenses par catégorie, montant en euros et précision ; Autres frais exige une précision. Total automatique, zéro accepté, lignes vierges ignorées, valeurs négatives/non numériques refusées. Ajouter/modifier/supprimer puis Enregistrer le bilan. Anciens montants/textes conservés dans une archive privée. Kilométrage manuel indépendant, aucune indemnité automatique. Un groupe par session, autres champs et Mes statistiques inchangés. Guide : sprints/v1.4.0/GUIDE.md.
 
 
-## V1.5.0 candidate — 16 novembre 2026
+## V1.5.0 publiée — 16 novembre 2026
 
 Dans Réalisation de la formation, le volet Apprenants partiellement formés est fermé par défaut. Ajout/suppression de lignes ; effectif entier positif et durée en jours et/ou heures (au moins une unité connue). Le sous-total ne dépasse pas l’effectif total. Sauvegarde avec le bilan et indicateur de modifications existants. Partage et droits identiques à la réalisation.

@@ -1,7 +1,7 @@
-# Retour pilotage — candidate V1.5.0
+# Retour pilotage — V1.5.0 publiée, 16 novembre 2026
 
-Résultat prévu : volet facultatif et replié, lignes effectif/jours/heures, sous-ensemble du total confirmé par Vincent. Une session reste un groupe ; statistiques et champs privés préservés.
+Volet facultatif replié, lignes effectif/jours/heures, personnes incluses dans le total confirmé par Vincent. Une session reste un groupe ; statistiques et champs privés préservés.
 
-État : développé, revue sans blocage, CI verte : 406 unitaires, 58 parcours navigateur, suites SQL, build et archive candidate vérifiée. PR #25 en brouillon. Non publié, non clôturé. Migration demo et recette PostgreSQL/RLS réussies après autorisation explicite le 16 novembre. Aucune donnée fictive conservée. Production reste V1.4.0.
+Production autorisée et livrée : PR #25, fusion 9cad9cb3881afcaad5892b4541899282e26242a1 ; migration 20261116095526 ; Vercel READY et asset V1.5.0 vérifiés. Trois bilans conservés à l’identique. 406 unitaires et 58 parcours navigateur, SQL/RLS réel en démonstration, contrôle production non destructif. Archive/tag/release du commit exact finalisés par workflow après Quality ; verdict CLOSURE.md conditionné à son succès constaté.
 
-Suite : décision de publication, puis migration production, déploiement et clôture dans le mandat autorisé. Aucun prochain sprint lancé ; exploitation statistique des dépenses reste à cadrer ultérieurement.
+Aucun mail envoyé ni pilote Outlook élargi. Aucun nouveau sprint lancé. Piste à cadrer séparément : exploitation des dépenses dans Mes statistiques, puis export/BPF. Observer la complétude des bilans et retours d’usage ; aucune automatisation créée.

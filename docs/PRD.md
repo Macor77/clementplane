@@ -242,6 +242,6 @@ Le formateur suit son activité sans imposer un compte à ses donneurs d’ordre
 Objectif : remplacer le montant global libre par des dépenses structurées réservées au formateur, sans complexifier les autres champs du bilan. Migration non destructive, total exact et confidentialité conservée. Aucune analyse financière ou modification de Mes statistiques dans ce sprint ; catégories et centimes préparent la suite. Mise en production explicitement autorisée par Vincent après recette. Dossier sprints/v1.4.0/.
 
 
-## V1.5.0 candidate — 16 novembre 2026
+## V1.5.0 publiée — 16 novembre 2026
 
 Les personnes partiellement formées font partie du total effectivement formé. Le formateur peut les détailler par effectif et durée dans un volet replié. Une mission reste une session et un groupe.

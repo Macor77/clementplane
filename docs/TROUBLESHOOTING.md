@@ -418,6 +418,6 @@ REPORT_APP_UPDATE_REQUIRED : conserver/copier les saisies puis actualiser Clemen
 Si le bilan demande une mise à jour, conserver/copier le brouillon puis actualiser l’application : une ancienne requête sans expense_items est bloquée pour empêcher la perte de dépenses. Une ligne partielle doit être complétée ou supprimée ; une ligne entièrement vierge est ignorée. Autres frais exige une précision. Le total exclut les montants invalides et les anciennes dépenses sans montant ; celles-ci sont explicitement signalées et peuvent rester lors d’une autre correction. L’archive d’origine ne s’additionne jamais aux lignes. Ne pas restaurer l’ancienne RPC ni supprimer les colonnes pour un rollback ; voir sprints/v1.4.0/OPERATIONS.md.
 
 
-## V1.5.0 candidate — 16 novembre 2026
+## V1.5.0 publiée — 16 novembre 2026
 
 Si le détail partiel dépasse le nombre total, corriger l’effectif global ou les lignes : ne pas les additionner au total. Une ligne incomplète bloque la sauvegarde et ouvre le volet. Une ancienne application ne peut plus sauvegarder un bilan contenant ce détail ; conserver les saisies puis actualiser. Ne pas retirer la colonne pour revenir au frontend V1.4.

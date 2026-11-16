@@ -19,6 +19,13 @@ export function partialLearnerTotal(rows = []) {
     return /^\d+$/.test(value) && Number.isSafeInteger(number) && number > 0 && number <= 100000 ? sum + number : sum;
   }, 0);
 }
+// Persisted learner_count remains the inclusive total for existing reports/clients.
+// The editable form presents complete and partial attendance as separate counts.
+export function fullyTrainedCount(total, rows = []) {
+  if (blank(total)) return null;
+  const complete = Number(total) - partialLearnerTotal(rows);
+  return Number.isSafeInteger(complete) && complete >= 0 ? complete : null;
+}
 export function validatePartialAttendance(rows = [], summary) {
   if (!Array.isArray(rows)) fail('liste invalide.');
   const ids = new Set();
@@ -39,8 +46,8 @@ export function validatePartialAttendance(rows = [], summary) {
   });
   if (result.length) {
     if (!summary || !['done', 'partial'].includes(summary.status)) fail('confirmez la réalisation de la formation, ou retirez ces lignes si elle n’a pas eu lieu.');
-    if (summary.learner_count == null) fail('renseignez d’abord le nombre total d’apprenants effectivement formés.');
-    if (partialLearnerTotal(result) > summary.learner_count) fail('le détail ne peut pas dépasser le nombre total d’apprenants effectivement formés.');
+    if (blank(summary.learner_count)) fail('renseignez le nombre d’apprenants entièrement formés, ou 0 si aucun n’a suivi toute la formation.');
+    if (partialLearnerTotal(result) + Number(summary.learner_count) > 100000) fail('le total des participants ne peut pas dépasser 100 000.');
   }
   return result;
 }

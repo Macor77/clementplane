@@ -67,6 +67,15 @@ const unrelated=await save('personal',uuid(52),1,{...data,partial_attendance:row
 assert.deepEqual(unrelated.report.partial_attendance,rows);assert.deepEqual(unrelated.private.expense_items,data.expense_items);assert.equal(unrelated.private.kilometers,99);
 const changed=await save('personal',uuid(52),2,{...data,partial_attendance:[row(801,{learner_count:2,actual_hours:2})]},uuid(76));assert.equal(changed.report.partial_attendance.length,1);assert.equal(changed.report.partial_attendance[0].actual_hours,2);
 const removed=await save('personal',uuid(52),3,{...data,partial_attendance:[]},uuid(77));assert.deepEqual(removed.report.partial_attendance,[]);assert.equal(removed.private.expenses,12.5);
+// V1.6 separates the form counts but preserves this inclusive wire contract.
+// Client conversion is covered by partialAttendance.test.js and browser scenario 18.
+const separateWire={...data,summary:{status:'done',learner_count:4,actual_days:0.5,actual_hours:3.5},partial_attendance:[row(803)]};
+const split=await save('personal',uuid(53),null,separateWire,uuid(91));
+assert.equal(split.report.summary.learner_count,4);assert.equal(split.report.partial_attendance[0].learner_count,1);
+const allPartial=await save('personal',uuid(53),1,{...separateWire,partial_attendance:[row(803,{learner_count:4})]},uuid(92));
+assert.equal(allPartial.report.summary.learner_count,4);assert.equal(allPartial.report.partial_attendance[0].learner_count,4);
+const noPartial=await save('personal',uuid(53),2,{...separateWire,summary:{...separateWire.summary,learner_count:3},partial_attendance:[]},uuid(93));
+assert.equal(noPartial.report.summary.learner_count,3);assert.deepEqual(noPartial.private.expense_items,data.expense_items);
 // Old multiple-group reports remain editable with their frozen structure.
 const {summary:ignored,...common}=data;void ignored;
 await assert.rejects(()=>save('organization',uuid(31),1,{...common,sessions:multi.report.sessions,partial_attendance:rows},uuid(72)),/PARTIAL_ATTENDANCE_REQUIRES_SIMPLE/);

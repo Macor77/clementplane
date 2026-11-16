@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { fixture, id } from '../support/activity-fixture';
-for (const width of [1440, 768, 390]) test(`partial attendance ${width}px — included total, persistence, edit/delete (API simulated)`, async ({ page }) => {
+for (const width of [1440, 768, 390]) test(`partial attendance ${width}px — separate counts, persistence, edit/delete (API simulated)`, async ({ page }) => {
   await page.setViewportSize({ width, height: 1000 });
   await page.clock.setFixedTime(new Date('2026-11-16T10:00:00Z'));
   const api = await fixture(page);
@@ -17,7 +17,7 @@ for (const width of [1440, 768, 390]) test(`partial attendance ${width}px — in
   await expect(details).toHaveAttribute('open', '');
   await expect(details.getByRole('button', { name: '+ Ajouter une ligne', exact: true })).toBeDisabled();
   await page.getByRole('combobox', { name: 'Formation réalisée', exact: true }).selectOption('done');
-  await page.getByLabel('Apprenants effectivement formés', { exact: true }).fill('10');
+  await page.getByLabel('Apprenants entièrement formés', { exact: true }).fill('10');
   await page.getByLabel('Durée réellement animée (jours)', { exact: true }).fill('1');
   await page.getByLabel('Durée réellement animée (heures)', { exact: true }).fill('7');
   await add(); await count(1).fill('1'); await hours(1).fill('1');
@@ -25,7 +25,7 @@ for (const width of [1440, 768, 390]) test(`partial attendance ${width}px — in
   await add(); // completely empty row is ignored
   await expect(toggle).toContainText('4');
   await expect(page.getByText('Modifications non enregistrées.', { exact: true })).toBeVisible();
-  await count(2).fill('10'); await toggle.click(); await save();
+  await count(2).fill('100000'); await toggle.click(); await save();
   await expect(page.getByRole('alert')).toContainText('ne peut pas dépasser');
   await expect(details).toHaveAttribute('open', ''); expect(api.saved()).toBeNull();
   await toggle.click(); await save(); await expect(details).toHaveAttribute('open', '');
@@ -39,7 +39,7 @@ for (const width of [1440, 768, 390]) test(`partial attendance ${width}px — in
   api.fail(); await save(); await expect(page.getByRole('alert')).toContainText('Vos saisies sont conservées');
   await expect(count(2)).toHaveValue('3'); await save(); await expect(page.getByText('Bilan enregistré.', { exact: true })).toBeVisible();
   expect(api.saved().report.partial_attendance).toHaveLength(2);
-  expect(api.saved().report.summary.learner_count).toBe(10);
+  expect(api.saved().report.summary.learner_count).toBe(14);
   await page.reload(); await expect(toggle).toContainText('4'); await expect(details).not.toHaveAttribute('open', '');
   await toggle.click(); await expect(hours(1)).toHaveValue('1'); await expect(days(2)).toHaveValue('0.5');
   await page.getByLabel('Observations sur la mission (privées)').fill('Autre champ modifié'); await save();
@@ -48,7 +48,7 @@ for (const width of [1440, 768, 390]) test(`partial attendance ${width}px — in
   await page.screenshot({ path: `test-results/partial-attendance-${width}.png`, fullPage: true });
   await page.goto('/formateur/statistiques');
   const metric = title => page.locator('.activity-metrics article').filter({ has: page.locator('span', { hasText: title }) }).locator('strong');
-  await expect(metric('Apprenants effectivement formés')).toHaveText('10'); await expect(metric('Heures réellement animées')).toHaveText('7'); await expect(metric('Sessions')).toHaveText('1');
+  await expect(metric('Apprenants entièrement formés')).toHaveText('10'); await expect(metric('Apprenants partiellement formés')).toHaveText('4'); await expect(metric('Total des participants')).toHaveText('14'); await expect(metric('Heures réellement animées')).toHaveText('7'); await expect(metric('Sessions')).toHaveText('1');
   await page.goto(`/formateur/missions/personnelles/${id}`); await toggle.click();
   await hours(1).fill('2'); await details.getByRole('button', { name: 'Supprimer la participation partielle 2', exact: true }).click();
   await save(); await expect(page.getByText('Bilan enregistré.', { exact: true })).toBeVisible();
@@ -70,7 +70,7 @@ test('OF reads the subset without private fields or write controls (API simulate
 test('switching realization status preserves draft rows until explicitly removed (API simulated)', async ({ page }) => {
   const api = await fixture(page); await page.goto(`/formateur/missions/personnelles/${id}`);
   await page.getByRole('combobox', { name: 'Formation réalisée', exact: true }).selectOption('done');
-  await page.getByLabel('Apprenants effectivement formés', { exact: true }).fill('4');
+  await page.getByLabel('Apprenants entièrement formés', { exact: true }).fill('4');
   const details = page.locator('details.activity-partial-attendance'); await details.locator('summary').click();
   await details.getByRole('button', { name: '+ Ajouter une ligne' }).click();
   await details.getByLabel('Nombre d’apprenants partiellement formés — ligne 1').fill('1');

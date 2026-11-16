@@ -1,4 +1,4 @@
-import { validatePartialAttendance } from './partialAttendance';
+import { fullyTrainedCount, partialLearnerTotal, validatePartialAttendance } from './partialAttendance';
 import { expenseDraft, validateExpenses } from './trainerExpenses';
 export function parisToday() {
   return new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
@@ -28,23 +28,27 @@ export function initialActivity(mission, origin) {
 export function activityDraft(report, privateData = {}, mission = {}) {
   const draft = { ...report, ...privateData, expense_items: expenseDraft(privateData.expense_items), partial_attendance: report.partial_attendance || [] };
   if (report.report_mode === 'simple') {
+    draft.summary = { ...report.summary, learner_count: fullyTrainedCount(report.summary.learner_count, draft.partial_attendance) };
     if (['pending', 'not_done'].includes(report.summary.status) && !mission.retained && (mission.origin === 'personal' || mission.status === 'affecte') && mission.dates?.length) draft.reference_dates = mission.dates.map(d => d.date).sort();
     return draft;
   }
   if (report.summary || report.sessions?.length !== 1) return draft;
   const session = report.sessions[0], done = session.days.filter(d => d.status === 'done');
-  return { ...draft, summary: {
+  const summary = {
     status: done.length === session.days.length ? 'done' : done.length ? 'partial' : session.days.every(d => d.status === 'not_done') ? 'not_done' : 'pending',
-    learner_count: done.length ? session.learner_count : null,
+    learner_count: null,
     actual_days: null,
     actual_hours: done.length && done.every(d => d.actual_hours != null) ? Math.round(done.reduce((n, d) => n + Number(d.actual_hours), 0) * 100) / 100 : null,
-  } };
+  };
+  // Historical groups have no attendance breakdown. An unrelated edit must not
+  // silently turn their inclusive count into a claim of full attendance.
+  return { ...draft, summary, legacy_summary: { ...summary }, legacy_learner_count: done.length ? session.learner_count : null };
 }
 export function validateSummary(summary, dates, today = parisToday()) {
   if (!['pending', 'done', 'partial', 'not_done'].includes(summary.status)) throw new Error('Précisez la réalisation de la formation.');
   const realized = ['done', 'partial'].includes(summary.status);
   if (realized && (!dates?.length || dates.every(d => d > today) || (summary.status === 'done' && dates.some(d => d > today)))) throw new Error('Une formation future ne peut pas être déclarée réalisée. Pour une formation en cours, choisissez « Partiellement réalisée ».');
-  const result = { status: summary.status, learner_count: numberOrNull(summary.learner_count, 'Apprenants effectivement formés', 100000, true),
+  const result = { status: summary.status, learner_count: numberOrNull(summary.learner_count, 'Apprenants entièrement formés', 100000, true),
     actual_days: numberOrNull(summary.actual_days, 'Durée réelle en jours', 10000), actual_hours: numberOrNull(summary.actual_hours, 'Durée réelle en heures', 240000) };
   if (!realized && [result.learner_count, result.actual_days, result.actual_hours].some(v => v != null)) throw new Error('Confirmez la réalisation avant de renseigner les apprenants et la durée.');
   return result;
@@ -60,7 +64,15 @@ export function validateActivity(input, today = parisToday()) {
     kilometers: numberOrNull(input.kilometers, 'Kilométrage'), difficulties: clean(input.difficulties, 5000) };
   if (input.summary) {
     const summary = validateSummary(input.summary, input.reference_dates, today);
-    return { ...common, summary, partial_attendance: validatePartialAttendance(input.partial_attendance, summary) };
+    const partial_attendance = validatePartialAttendance(input.partial_attendance, summary);
+    if (input.report_mode === 'detailed' && input.legacy_summary && summary.learner_count == null) {
+      if (['status', 'actual_days', 'actual_hours'].every(key => summary[key] === input.legacy_summary[key])) {
+        return validateActivity({ ...input, summary: null, partial_attendance }, today);
+      }
+      if (['done', 'partial'].includes(summary.status)) throw new Error('Pour modifier la réalisation de ce bilan historique, renseignez les apprenants entièrement formés (0 si aucun), puis les présences partielles si nécessaire. L’ancien effectif est conservé.');
+    }
+    // The API keeps its historical inclusive total; never change persisted semantics.
+    return { ...common, summary: { ...summary, learner_count: summary.learner_count == null ? null : summary.learner_count + partialLearnerTotal(partial_attendance) }, partial_attendance };
   }
   if (input.partial_attendance?.length) throw new Error('Le détail des participations partielles est disponible dans les bilans à un seul groupe.');
   if (!input.sessions?.length || input.sessions.length > 100) throw new Error('Prévoyez entre 1 et 100 sessions.');
@@ -110,7 +122,7 @@ export function feeLabel(fee) {
 export function calculateActivity(missions, reports, start, end, today = parisToday()) {
   const inPeriod = d => d >= start && d <= end;
   const byMission = new Map(reports.map(r => [reportKey(r), r]));
-  const result = { realized: { missions: 0, sessions: 0, completed: 0, partial: 0, ongoing: 0, days: 0, reportedDays: 0, missingReportedDays: 0, hours: 0, missingHours: 0, learners: 0, missingLearners: 0, learnersOutside: 0 },
+  const result = { realized: { missions: 0, sessions: 0, completed: 0, partial: 0, ongoing: 0, days: 0, reportedDays: 0, missingReportedDays: 0, hours: 0, missingHours: 0, learners: 0, fullyTrainedLearners: 0, partialLearners: 0, historicalLearners: 0, missingLearners: 0, learnersOutside: 0 },
     future: { missions: 0, sessions: 0, days: 0, hours: 0, missingHours: 0, learners: 0, missingLearners: 0, learnersOutside: 0, fees: { HT: 0, TTC: 0 }, missingFees: 0, feesOutside: 0 }, pending: [], retained: [], options: 0 };
   const seen = new Set();
   const missionKeys = new Set(missions.map(activityKey));
@@ -136,6 +148,8 @@ export function calculateActivity(missions, reports, start, end, today = parisTo
         if (summary.actual_days == null) a.missingReportedDays++; else a.reportedDays += Number(summary.actual_days);
         if (summary.actual_hours == null) a.missingHours++; else a.hours += Number(summary.actual_hours);
         if (summary.learner_count == null) a.missingLearners++; else a.learners += Number(summary.learner_count);
+        a.fullyTrainedLearners += fullyTrainedCount(summary.learner_count, report.partial_attendance) ?? 0;
+        a.partialLearners += partialLearnerTotal(report.partial_attendance);
       }
       const upcoming = confirmed && ['pending', 'partial'].includes(summary.status) ? contractDays.filter(d => d >= today && inPeriod(d)) : [];
       if (upcoming.length) {
@@ -162,7 +176,7 @@ export function calculateActivity(missions, reports, start, end, today = parisTo
         const state = sessionState(s, today);
         if (state === 'Terminée') a.completed++; else { a.partial++; if (state.startsWith('En cours')) a.ongoing++; }
         for (const d of done) { if (d.actual_hours == null) a.missingHours++; else a.hours += Number(d.actual_hours); }
-        if (inPeriod(allDone[0].date)) { if (s.learner_count == null) a.missingLearners++; else a.learners += Number(s.learner_count); } else a.learnersOutside++;
+        if (inPeriod(allDone[0].date)) { if (s.learner_count == null) a.missingLearners++; else { a.learners += Number(s.learner_count); a.historicalLearners += Number(s.learner_count); } } else a.learnersOutside++;
       }
       if (upcoming.length) {
         hasFuture = true;

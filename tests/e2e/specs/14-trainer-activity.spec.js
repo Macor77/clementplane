@@ -12,7 +12,7 @@ for(const width of [1440,390]) test(`trainer activity ${width}px — simple tota
   await page.getByRole('combobox',{name:'Formation réalisée',exact:true}).selectOption('done');
   await page.getByLabel('Durée réellement animée (jours)',{exact:true}).fill('0.5');
   await page.getByLabel('Durée réellement animée (heures)',{exact:true}).fill('3');
-  await page.getByLabel('Apprenants effectivement formés',{exact:true}).fill('10');
+  await page.getByLabel('Apprenants entièrement formés',{exact:true}).fill('10');
   await page.getByLabel('Kilométrage total réel de la mission (km)').fill('42.5');
   await expect(page.getByLabel('Total des frais engagés',{exact:true})).toHaveText('0,00 €');
   await page.getByLabel('Difficultés rencontrées').fill('Note privée fictive');
@@ -29,7 +29,7 @@ for(const width of [1440,390]) test(`trainer activity ${width}px — simple tota
   await page.screenshot({path:`test-results/activity-form-${width}.png`,fullPage:true});
   await page.goto('/formateur/statistiques');
   const metric=title=>page.locator('.activity-metrics article').filter({has:page.locator('span',{hasText:title})}).locator('strong');
-  await expect(metric('Heures réellement animées')).toHaveText('3');await expect(metric('Apprenants effectivement formés')).toHaveText('10');await expect(metric('Jours réellement animés')).toHaveText('0.5');await expect(metric('Sessions')).toHaveText('1');
+  await expect(metric('Heures réellement animées')).toHaveText('3');await expect(metric('Apprenants entièrement formés')).toHaveText('10');await expect(metric('Jours réellement animés')).toHaveText('0.5');await expect(metric('Sessions')).toHaveText('1');
   await expect(page.getByRole('heading',{name:'À compléter · 0 mission(s)'})).toBeVisible();
   await page.screenshot({path:`test-results/activity-statistics-${width}.png`,fullPage:true});
   await page.getByRole('button',{name:'Activité à venir',exact:true}).click();await expect(metric('Missions')).toHaveText('0');
@@ -55,7 +55,7 @@ test('completed retained report opens and remains editable after assignment disa
   await expect(page.getByRole('heading',{name:'Bilans conservés · 1'})).toBeVisible();
   await page.getByRole('link',{name:'SST fictive conservée',exact:true}).click();
   await expect(page.getByRole('heading',{name:'Bilan conservé',exact:true})).toBeVisible();
-  await expect(page.getByLabel('Durée réellement animée (heures)',{exact:true})).toHaveValue('7');await expect(page.getByLabel('Durée réellement animée (jours)',{exact:true})).toHaveValue('');await page.getByLabel('Durée réellement animée (jours)',{exact:true}).fill('1');await page.getByLabel('Observations partagées avec l’OF').fill('Correction historique fictive');await page.getByRole('button',{name:'Enregistrer le bilan'}).click();await expect(page.getByText('Bilan enregistré.',{exact:true})).toBeVisible();
+  await expect(page.getByLabel('Durée réellement animée (heures)',{exact:true})).toHaveValue('7');await expect(page.getByLabel('Durée réellement animée (jours)',{exact:true})).toHaveValue('');await page.getByLabel('Durée réellement animée (jours)',{exact:true}).fill('1');await page.getByLabel('Apprenants entièrement formés',{exact:true}).fill('10');await page.getByLabel('Observations partagées avec l’OF').fill('Correction historique fictive');await page.getByRole('button',{name:'Enregistrer le bilan'}).click();await expect(page.getByText('Bilan enregistré.',{exact:true})).toBeVisible();
   expect(api.saved().report.observations).toBe('Correction historique fictive');expect(api.sends()).toBe(0);
 });
 

@@ -5,6 +5,7 @@ import { agreedFee, feeLabel, initialActivity, activityDraft, parisToday, sessio
 import ExpenseFields from './ExpenseFields';
 import PartialAttendanceFields, { PartialAttendanceReadOnly } from './PartialAttendanceFields';
 import ActivityHelp from './ActivityHelp';
+import { fullyTrainedCount, partialLearnerTotal } from '../../utils/partialAttendance';
 import '../../styles/trainerActivity.css';
 
 const shown = value => value == null || value === '' ? 'Non renseigné' : value;
@@ -96,20 +97,21 @@ export default function ActivityReport({ mission, origin }) {
         <p>Formation : <strong>{report?.formation_title || mission.formation || mission.mission_title || 'Formation non renseignée'}</strong></p>
         <p>Dates de référence : {(input.reference_dates || mission.dates?.map(d => d.date) || []).join(' · ') || 'Non renseignées'}</p>
         {input.summary ? <fieldset className="activity-session"><legend><span>Réalisation de la formation</span>
-          <ActivityHelp title="Réalisation de la formation"><p>Indiquez les totaux pour ce groupe, par exemple 2 jours et 14 heures, ou 0,5 jour et 3 heures. Aucune conversion automatique.</p><p>Comptez chaque apprenant une seule fois, sans saisir son identité. Le nombre d’apprenants effectivement formés inclut les personnes partiellement formées.</p></ActivityHelp>
+          <ActivityHelp title="Réalisation de la formation"><p>Indiquez les durées réellement animées pour ce groupe, par exemple 2 jours et 14 heures, ou 0,5 jour et 3 heures. Aucune conversion automatique.</p><p>Le champ « Apprenants entièrement formés » comprend uniquement les personnes ayant suivi toute la formation. Renseignez séparément les présences partielles dans le volet prévu. Comptez chaque personne une seule fois, sans saisir son identité.</p><p>Le total des participants additionne les deux décomptes. Pour les bilans existants, vérifiez que toutes les présences partielles ont bien été détaillées.</p></ActivityHelp>
         </legend>
           <label>Formation réalisée<select value={input.summary.status} onChange={e => field('summary', { ...input.summary, status: e.target.value,
             ...(!['done', 'partial'].includes(e.target.value) ? { learner_count: null, actual_days: null, actual_hours: null } : {}) })}>
             {Object.entries(summaryLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
           </select></label>
           <div className="activity-grid">
-            <NumberField label="Apprenants effectivement formés" value={input.summary.learner_count} integer max={100000} disabled={!['done', 'partial'].includes(input.summary.status)} onChange={v => field('summary', { ...input.summary, learner_count: v })} />
+            <NumberField label="Apprenants entièrement formés" value={input.summary.learner_count} integer max={100000} disabled={!['done', 'partial'].includes(input.summary.status)} onChange={v => field('summary', { ...input.summary, learner_count: v })} />
             <NumberField label="Durée réellement animée (jours)" value={input.summary.actual_days} max={10000} disabled={!['done', 'partial'].includes(input.summary.status)} onChange={v => field('summary', { ...input.summary, actual_days: v })} />
             <NumberField label="Durée réellement animée (heures)" value={input.summary.actual_hours} max={240000} disabled={!['done', 'partial'].includes(input.summary.status)} onChange={v => field('summary', { ...input.summary, actual_hours: v })} />
           </div>
-          <p className="activity-essential-note">Le nombre d’apprenants effectivement formés inclut les personnes partiellement formées.</p>
+          <p className="activity-essential-note">Les apprenants partiellement formés sont comptés séparément.</p>
           <PartialAttendanceFields rows={input.partial_attendance} onChange={v => field('partial_attendance', v)} realized={['done', 'partial'].includes(input.summary.status)} error={error} saveAttempts={saveAttempts} />
-          {report?.report_mode === 'detailed' && <p>L’ancien détail sera conservé. Vérifiez les totaux et renseignez le nombre de jours réellement animés avant d’enregistrer.</p>}
+          {input.summary.learner_count != null && input.summary.learner_count !== '' && <p className="activity-participant-total">Total des participants : <output aria-label="Total des participants" aria-live="polite">{Number(input.summary.learner_count) + partialLearnerTotal(input.partial_attendance)}</output></p>}
+          {report?.report_mode === 'detailed' && <p>Ancien total : {shown(input.legacy_learner_count)} participant(s), sans répartition des présences. Pour préciser ou modifier la réalisation, renseignez les apprenants entièrement formés et les présences partielles. Les autres modifications conservent l’ancien décompte.</p>}
         </fieldset> : <><p>Ce bilan historique comporte plusieurs groupes. Leur détail est conservé pour permettre les corrections sans regrouper les effectifs.</p>
         {input.sessions.map((s, i) => <fieldset className="activity-session" key={s.id}>
           <legend>Groupe historique {i + 1} · {sessionState(s)}</legend>
@@ -152,7 +154,7 @@ export function OrganizationActivityReports({ missionId }) {
     {loading && <p role="status">Chargement…</p>}{error && <p role="alert">{error}</p>}{!loading && !error && !rows.length && <p>Aucun bilan enregistré pour cette mission.</p>}
     {rows.map(r => <article key={r.id} className="activity-session"><h3>Bilan de {r.trainer_name || 'Formateur'}</h3><FeeNotice source={r.agreed_fee} input={r} /><p>Tarif total déclaré : <strong>{r.declared_fee == null ? 'Non renseigné' : `${r.declared_fee} € ${r.tax_basis}`}</strong></p><p>Observations : {shown(r.observations)}</p>
       <h4>{r.formation_title || r.sessions[0]?.formation || 'Formation non renseignée'}</h4>
-      {r.report_mode === 'simple' ? <><p>{summaryLabels[r.summary.status]} · Apprenants effectivement formés : {shown(r.summary.learner_count)}</p>
+      {r.report_mode === 'simple' ? <><p>{summaryLabels[r.summary.status]} · Apprenants entièrement formés : {shown(fullyTrainedCount(r.summary.learner_count, r.partial_attendance))}</p><p>Total des participants : {shown(r.summary.learner_count)}</p>
         <p>Durée réellement animée : {shown(r.summary.actual_days)} jours · {shown(r.summary.actual_hours)} heures</p><PartialAttendanceReadOnly rows={r.partial_attendance} /></> : r.sessions.map((s, i) => <section key={s.id}><h4>Groupe historique {i + 1} · {s.formation || 'Formation non renseignée'} {s.group_label && `· ${s.group_label}`}</h4><p>{sessionState(s)} · Apprenants effectivement formés : {shown(s.learner_count)}</p><ul>{s.days.map(d => <li key={d.date}>{d.date} · {dayLabels[d.status]} · Durée réelle : {shown(d.actual_hours)}{d.actual_hours != null && ' h'}</li>)}</ul></section>)}
       <p>Dernière modification : {new Date(r.updated_at).toLocaleString('fr-FR')}</p></article>)}
   </section>;

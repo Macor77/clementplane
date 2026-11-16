@@ -1,3 +1,7 @@
+## V1.6.0 candidate — comprendre les effectifs
+
+Si le champ entièrement formé diminue à l’ouverture d’un ancien bilan simple, les lignes partielles ont été retirées de l’ancien total ; aucune personne n’est supprimée. Vérifier le total des participants et la complétude des lignes partielles. Si un ancien bilan détaillé affiche un effectif complet vide, son total est historique sans répartition : saisir explicitement complet/partiel pour le préciser ; les autres modifications conservent l’ancien total. Une ancienne PWA conserve son interface inclusive : actualiser pour la nouvelle saisie. Aucun SQL de conversion n’est nécessaire.
+
 # Clementplane — Guide de dépannage
 
 Ce document regroupe les procédures de dépannage déjà rencontrées et validées pendant le développement de Clementplane.

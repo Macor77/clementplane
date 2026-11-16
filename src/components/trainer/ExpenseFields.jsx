@@ -1,12 +1,14 @@
 import { EXPENSE_CATEGORIES, MAX_EXPENSE_CENTS, expenseError, expenseTotal, formatExpenseCents, newExpense } from '../../utils/trainerExpenses';
+import ActivityHelp from './ActivityHelp';
 
 export default function ExpenseFields({ rows, onChange, legacyAmount, legacyDetails }) {
   const update = (index, values) => onChange(rows.map((row, i) => i === index ? { ...row, ...values } : row));
   const total = expenseTotal(rows);
   const incomplete = rows.some(row => expenseError(row) || (row.legacyMissingAmount && !row.amount.trim()));
   return <section className="activity-expenses" aria-label="Frais engagés">
-    <h3>Frais engagés</h3>
-    <p>Ajoutez vos dépenses, puis enregistrez le bilan. Une même catégorie peut être utilisée plusieurs fois.</p>
+    <div className="activity-help-heading"><h3>Frais engagés</h3>
+      <ActivityHelp title="Frais engagés"><p>Ajoutez vos dépenses, puis enregistrez le bilan. Une même catégorie peut être utilisée plusieurs fois.</p><p>La précision est facultative, sauf pour « Autres frais ». Le total est calculé automatiquement et peut être de 0 €. Les lignes entièrement vides ne sont pas comptabilisées.</p><p>Renseignez des montants positifs ou nuls, avec au maximum deux décimales. Aucun justificatif n’est demandé.</p></ActivityHelp>
+    </div>
     {!rows.length && <p>Aucune dépense renseignée.</p>}
     {rows.map((row, index) => {
       const error = expenseError(row), errorId = `expense-${row.id}-error`;

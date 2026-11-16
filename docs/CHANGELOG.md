@@ -1,3 +1,7 @@
+## V1.5.1 candidate validée — bilan compact et aides contextuelles, 16 novembre 2026
+
+Les explications restent disponibles via les boutons « ? », avec une fenêtre adaptée au mobile. Intitulés, unités, confidentialité et inclusion des apprenants partiellement formés restent visibles. Aucun changement des données, calculs ou permissions ; aucune migration. Candidate testée : 406 tests unitaires et 63 parcours navigateur réussis, captures mobile/tablette/ordinateur contrôlées. PR #26 en brouillon ; publication en production en attente de validation. Dossier : `docs/sprints/v1.5.1/` (ou `sprints/v1.5.1/` depuis docs).
+
 ## V1.5.0 publiée — apprenants partiellement formés, 16 novembre 2026
 
 Volet fermé par défaut, lignes par effectif et durée, incluses dans le total existant sans double comptage. Publiée après accord explicite de Vincent : PR #25 fusionnée, migration production `20261116095526`, Vercel READY et version V1.5.0 servie sur app.clementplane.fr. Recette : 406 tests unitaires, 58 parcours navigateur et PostgreSQL/RLS réel en démonstration. Dossier et preuves : `docs/sprints/v1.5.0/` (ou `sprints/v1.5.0/` depuis docs). Statistiques et données privées préservées ; aucune nouvelle complexité de groupes.

@@ -711,3 +711,8 @@ ExpenseFields.jsx réutilise le formulaire et son indicateur de brouillon. train
 ## V1.5.0 publiée — 16 novembre 2026
 
 `partial_attendance` est un tableau JSONB partagé dans le bilan existant, sauvegardé atomiquement par la RPC avec les champs privés séparés. Aucun nouveau endpoint, groupe, événement calendrier ni calcul de statistiques. Validation client et serveur, UUID de ligne, contrôle des révisions et retries existants conservés.
+
+
+## V1.5.1 candidate — aides contextuelles, 16 novembre 2026
+
+`ActivityHelp.jsx` centralise un dialog natif dans un portail hors formulaire, sans nouveau service ni dépendance. État local indépendant du brouillon ; fond inerte, focus restitué, défilement restauré à la fermeture/démontage. Présentation basse mobile, centrée desktop. API et schéma inchangés.

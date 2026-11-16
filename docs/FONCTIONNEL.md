@@ -541,3 +541,8 @@ Bilan : onze catégories, plusieurs dépenses par catégorie, montant en euros e
 ## V1.5.0 publiée — 16 novembre 2026
 
 Dans Réalisation de la formation, le volet Apprenants partiellement formés est fermé par défaut. Ajout/suppression de lignes ; effectif entier positif et durée en jours et/ou heures (au moins une unité connue). Le sous-total ne dépasse pas l’effectif total. Sauvegarde avec le bilan et indicateur de modifications existants. Partage et droits identiques à la réalisation.
+
+
+## V1.5.1 candidate — aides contextuelles, 16 novembre 2026
+
+Les boutons « ? » ouvrent les explications du bilan dans une fenêtre refermable ; le mobile affiche cette aide en bas de l’écran. Intitulés, unités, confidentialité et inclusion des apprenants partiels restent visibles. Les aides n’enregistrent ni ne modifient la saisie. Guide : sprints/v1.5.1/GUIDE.md.

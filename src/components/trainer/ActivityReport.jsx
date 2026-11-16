@@ -1,22 +1,28 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { getActivityReport, getOrganizationActivityReports, saveActivityReport } from '../../services/trainerActivityService';
 import { agreedFee, feeLabel, initialActivity, activityDraft, parisToday, sessionState } from '../../utils/trainerActivity';
 import ExpenseFields from './ExpenseFields';
 import PartialAttendanceFields, { PartialAttendanceReadOnly } from './PartialAttendanceFields';
+import ActivityHelp from './ActivityHelp';
 import '../../styles/trainerActivity.css';
 
 const shown = value => value == null || value === '' ? 'Non renseigné' : value;
 const summaryLabels = { pending: 'À renseigner', done: 'Réalisée', partial: 'Partiellement réalisée', not_done: 'Non réalisée' };
 const dayLabels = { pending: 'À renseigner', done: 'Réalisée', not_done: 'Non réalisée' };
-function NumberField({ label, value, onChange, integer = false, max = 99999999.99, disabled = false }) {
+function NumberField({ label, value, onChange, integer = false, max = 99999999.99, disabled = false, help }) {
+  const id = useId();
+  if (help) return <div className="activity-field-with-help">
+    <div className="activity-help-heading"><label htmlFor={id}>{label}</label>{help}</div>
+    <input id={id} type="number" inputMode={integer ? 'numeric' : 'decimal'} min="0" max={max} step={integer ? '1' : '0.01'} value={value ?? ''} onChange={e => onChange(e.target.value)} disabled={disabled} />
+  </div>;
   return <label>{label}<input type="number" inputMode={integer ? 'numeric' : 'decimal'} min="0" max={max} step={integer ? '1' : '0.01'} value={value ?? ''} onChange={e => onChange(e.target.value)} disabled={disabled} /></label>;
 }
-function FeeNotice({ source, input }) {
+function FeeNotice({ source, input, showExplanation = true }) {
   const comparable = source?.amount != null && source.unit === 'mission' && source.tax_basis === input.tax_basis && input.declared_fee != null && input.declared_fee !== '';
   return <><p>Tarif convenu conservé : <strong>{feeLabel(source)}</strong></p>
     {input.declared_fee != null && input.declared_fee !== '' && <p className="activity-notice">{comparable ? (Number(source.amount) !== Number(input.declared_fee) ? `Le montant déclaré diffère du tarif convenu (${Number(input.declared_fee) - Number(source.amount)} € ${input.tax_basis}).` : 'Le montant déclaré correspond au tarif convenu.') : 'La comparaison nécessite la même unité et la même base HT/TTC. Aucun montant n’est converti automatiquement.'}</p>}
-    <p>Le bilan ne modifie pas le contrat et ne vaut ni facture ni acceptation du montant par l’OF.</p></>;
+    {showExplanation && <p>Le bilan ne modifie pas le contrat et ne vaut ni facture ni acceptation du montant par l’OF.</p>}</>;
 }
 export default function ActivityReport({ mission, origin }) {
   const { trainerProfile } = useAuth();
@@ -66,17 +72,22 @@ export default function ActivityReport({ mission, origin }) {
   const privateMission = origin === 'personal';
   const source = report?.agreed_fee || agreedFee(mission, origin);
   return <section className="activity-report" id="bilan" aria-labelledby="activity-title">
-    <h2 id="activity-title">Bilan de la mission</h2>
-    <p>Une mission correspond à une session et un seul groupe, sur une ou plusieurs journées. Les champs vides restent « Non renseigné ».</p>
+    <div className="activity-help-heading activity-report-heading"><h2 id="activity-title">Bilan de la mission</h2>
+      <ActivityHelp title="Bilan de la mission"><p>Une mission correspond à une session et un seul groupe, sur une ou plusieurs journées. Les champs vides restent « Non renseigné ».</p><p>Les aides « ? » expliquent les champs. Enregistrez vos saisies avec « Enregistrer le bilan ».</p></ActivityHelp>
+    </div>
     {loading && <p role="status">Chargement du bilan…</p>}
     {error && <p className="activity-error" role="alert">{error}</p>}
     {!loading && !input && <button type="button" onClick={() => setReload(v => v + 1)}>Réessayer le chargement</button>}
     {!loading && input && !privateMission && mission.status !== 'affecte' && !report && <p>Aucun bilan enregistré. La création du bilan sera disponible après confirmation de l’affectation.</p>}
     {!loading && input && (privateMission || mission.status === 'affecte' || report) && <form onSubmit={save}>
       <fieldset disabled={saving}>
-        <legend>{privateMission ? 'Privé — vous uniquement' : 'Visible par l’OF commanditaire'}</legend>
-        <p>{privateMission ? 'Ce bilan reste privé, même si le donneur d’ordre figure dans Mes OF.' : 'Les informations de cette section sont consultables par l’OF dès l’enregistrement réussi. Lui seul peut les consulter avec vous ; il ne peut pas les modifier.'} Aucun e-mail ni notification n’est envoyé.</p>
-        <FeeNotice source={source} input={input} />
+        <legend><span>{privateMission ? 'Privé — vous uniquement' : 'Visible par l’OF commanditaire'}</span>
+          <ActivityHelp title={privateMission ? 'Bilan personnel et tarif déclaré' : 'Partage et tarif déclaré'}>
+            <p>{privateMission ? 'Ce bilan reste privé, même si le donneur d’ordre figure dans Mes OF.' : 'Les informations de cette section sont consultables par l’OF dès l’enregistrement réussi. Lui seul peut les consulter avec vous ; il ne peut pas les modifier.'} Aucun e-mail ni notification n’est envoyé.</p>
+            <p>Le bilan ne modifie pas le contrat et ne vaut ni facture ni acceptation du montant par l’OF.</p>
+          </ActivityHelp>
+        </legend>
+        <FeeNotice source={source} input={input} showExplanation={false} />
         <div className="activity-grid">
           <NumberField label="Tarif total déclaré (€)" value={input.declared_fee} onChange={v => field('declared_fee', v)} />
           <label>Base du montant déclaré<select value={input.tax_basis || ''} onChange={e => field('tax_basis', e.target.value || null)}><option value="">À préciser</option><option>HT</option><option>TTC</option></select></label>
@@ -84,7 +95,9 @@ export default function ActivityReport({ mission, origin }) {
         <label>{privateMission ? 'Observations sur la mission (privées)' : 'Observations partagées avec l’OF'}<textarea maxLength={5000} value={input.observations} onChange={e => field('observations', e.target.value)} /></label>
         <p>Formation : <strong>{report?.formation_title || mission.formation || mission.mission_title || 'Formation non renseignée'}</strong></p>
         <p>Dates de référence : {(input.reference_dates || mission.dates?.map(d => d.date) || []).join(' · ') || 'Non renseignées'}</p>
-        {input.summary ? <fieldset className="activity-session"><legend>Réalisation de la formation</legend>
+        {input.summary ? <fieldset className="activity-session"><legend><span>Réalisation de la formation</span>
+          <ActivityHelp title="Réalisation de la formation"><p>Indiquez les totaux pour ce groupe, par exemple 2 jours et 14 heures, ou 0,5 jour et 3 heures. Aucune conversion automatique.</p><p>Comptez chaque apprenant une seule fois, sans saisir son identité. Le nombre d’apprenants effectivement formés inclut les personnes partiellement formées.</p></ActivityHelp>
+        </legend>
           <label>Formation réalisée<select value={input.summary.status} onChange={e => field('summary', { ...input.summary, status: e.target.value,
             ...(!['done', 'partial'].includes(e.target.value) ? { learner_count: null, actual_days: null, actual_hours: null } : {}) })}>
             {Object.entries(summaryLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
@@ -94,8 +107,7 @@ export default function ActivityReport({ mission, origin }) {
             <NumberField label="Durée réellement animée (jours)" value={input.summary.actual_days} max={10000} disabled={!['done', 'partial'].includes(input.summary.status)} onChange={v => field('summary', { ...input.summary, actual_days: v })} />
             <NumberField label="Durée réellement animée (heures)" value={input.summary.actual_hours} max={240000} disabled={!['done', 'partial'].includes(input.summary.status)} onChange={v => field('summary', { ...input.summary, actual_hours: v })} />
           </div>
-          <p>Indiquez les totaux pour ce groupe, par exemple 2 jours et 14 heures, ou 0,5 jour et 3 heures. Aucune conversion automatique. Comptez chaque apprenant une seule fois, sans saisir son identité.</p>
-          <p>Le nombre d’apprenants effectivement formés inclut les personnes partiellement formées.</p>
+          <p className="activity-essential-note">Le nombre d’apprenants effectivement formés inclut les personnes partiellement formées.</p>
           <PartialAttendanceFields rows={input.partial_attendance} onChange={v => field('partial_attendance', v)} realized={['done', 'partial'].includes(input.summary.status)} error={error} saveAttempts={saveAttempts} />
           {report?.report_mode === 'detailed' && <p>L’ancien détail sera conservé. Vérifiez les totaux et renseignez le nombre de jours réellement animés avant d’enregistrer.</p>}
         </fieldset> : <><p>Ce bilan historique comporte plusieurs groupes. Leur détail est conservé pour permettre les corrections sans regrouper les effectifs.</p>
@@ -114,12 +126,12 @@ export default function ActivityReport({ mission, origin }) {
           })}
         </fieldset>)}</>}
       </fieldset>
-      <fieldset className="activity-private" disabled={saving}><legend>Privé — vous uniquement</legend>
-        <p>Ces informations ne sont accessibles à aucun OF et ne sont pas ajoutées aux agendas.</p>
+      <fieldset className="activity-private" disabled={saving}><legend><span>Privé — vous uniquement</span>
+        <ActivityHelp title="Confidentialité des informations privées"><p>Ces informations ne sont accessibles à aucun OF et ne sont pas ajoutées aux agendas.</p><p>Vos dépenses, votre kilométrage réel et vos difficultés restent accessibles uniquement par vous.</p></ActivityHelp>
+      </legend>
         <ExpenseFields rows={input.expense_items} onChange={v => field('expense_items', v)} legacyAmount={input.legacy_expenses} legacyDetails={input.legacy_expense_details} />
         <div className="activity-grid">
-          <NumberField label="Kilométrage total réel de la mission (km)" value={input.kilometers} onChange={v => field('kilometers', v)} /></div>
-        <p>Incluez tous vos déplacements, allers et retours. La distance indicative de Clementplane est à vol d’oiseau ; elle ne permet pas de préremplir ce kilométrage routier. Aucune conversion en frais.</p>
+          <NumberField label="Kilométrage total réel de la mission (km)" value={input.kilometers} onChange={v => field('kilometers', v)} help={<ActivityHelp title="Kilométrage réel"><p>Incluez tous vos déplacements, allers et retours.</p><p>La distance indicative de Clementplane est à vol d’oiseau ; elle ne permet pas de préremplir ce kilométrage routier. Aucune conversion en frais.</p></ActivityHelp>} /></div>
         <label>Difficultés rencontrées<textarea maxLength={5000} value={input.difficulties} onChange={e => field('difficulties', e.target.value)} /></label>
       </fieldset>
       <div className="activity-save"><button className="button button--primary" disabled={saving} type="submit">{saving ? 'Enregistrement…' : 'Enregistrer le bilan'}</button>

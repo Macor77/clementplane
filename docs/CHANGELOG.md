@@ -1,6 +1,6 @@
-## V1.5.1 candidate validée — bilan compact et aides contextuelles, 16 novembre 2026
+## V1.5.1 publiée — bilan compact et aides contextuelles, 16 novembre 2026
 
-Les explications restent disponibles via les boutons « ? », avec une fenêtre adaptée au mobile. Intitulés, unités, confidentialité et inclusion des apprenants partiellement formés restent visibles. Aucun changement des données, calculs ou permissions ; aucune migration. Candidate testée : 406 tests unitaires et 63 parcours navigateur réussis, captures mobile/tablette/ordinateur contrôlées. PR #26 en brouillon ; publication en production en attente de validation. Dossier : `docs/sprints/v1.5.1/` (ou `sprints/v1.5.1/` depuis docs).
+Les boutons « ? » conservent toutes les explications dans une fenêtre adaptée au mobile. Intitulés, unités, confidentialité et inclusion des apprenants partiels restent visibles. Publication explicitement autorisée par Vincent : PR #26 fusionnée, Vercel production READY et V1.5.1 servie sur app.clementplane.fr. 406 tests unitaires et 63 parcours navigateur réussis ; captures contrôlées. Aucun changement métier ou de permissions, aucune migration. Dossier : `docs/sprints/v1.5.1/` (ou `sprints/v1.5.1/` depuis docs).
 
 ## V1.5.0 publiée — apprenants partiellement formés, 16 novembre 2026
 

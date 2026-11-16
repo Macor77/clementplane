@@ -1,6 +1,6 @@
 # Recette V1.5.1 — validée le 16 novembre 2026
 
-Commit applicatif : `873d3ffde95f253b14c0f68c6898bc01a0a44f97`. PR [#26](https://github.com/Macor77/clementplane/pull/26), brouillon. [Quality 43857208016](https://github.com/Macor77/clementplane/actions/runs/43857208016), job `133264432989`, réussi. Exécution sur merge synthétique `933a65030c795501d3d0485e0fc26f8e5568defc` avec base main `86832b7`.
+Commit applicatif : `873d3ffde95f253b14c0f68c6898bc01a0a44f97`. PR [#26](https://github.com/Macor77/clementplane/pull/26), candidate initialement en brouillon, puis fusionnée après autorisation. [Quality 43857208016](https://github.com/Macor77/clementplane/actions/runs/43857208016), job `133264432989`, réussi. Exécution sur merge synthétique `933a65030c795501d3d0485e0fc26f8e5568defc` avec base main `86832b7`.
 
 | Exigence | Résultat et preuve |
 |---|---|
@@ -31,3 +31,9 @@ API simulée pour les essais navigateur ; les suites SQL utilisent PGlite. Aucun
 Artifact `14221970731` : `Clementplane_v1.5.1_Candidate.zip`, 692 entrées. SHA-256 `4f289eb0db0deb871e00b7595f241360ede2f0feaeff216bcbccee7a1b61b772`. ZIP téléchargé, ouverture et chaque entrée du MANIFEST.sha256 vérifiées ; SOURCE_COMMIT confirme le merge synthétique `933a65030c795501d3d0485e0fc26f8e5568defc`. Archive de recette initiale ; les compléments documentaires suivants ne changent pas l’application. Archive finale de release après publication autorisée.
 
 Deux captures de ce run sont également conservées dans `assets/bilan-mobile.png` et `assets/aide-mobile.png`, sans modification de l’image.
+
+## Validation finale et publication autorisée
+
+Quality de la candidate documentaire `87471bb4c8ff3ee65492d4bc464c20fd398f7255` : [43858430263](https://github.com/Macor77/clementplane/actions/runs/43858430263), 406 unitaires et 63 navigateur réussis. Archive candidate finale téléchargée et vérifiée : artifact `14222227130`, 695 entrées, SHA-256 `7fac7666d07d8b5a9fe10686b89f20160ac7e72f0b1267fd2c6df974a799806f`, merge synthétique `934d6d295d90af404642a1718a6076d5359ae777`. Aucun changement applicatif après la première recette.
+
+Publication autorisée le 16 novembre, PR #26 fusionnée : `92a94bf6d8c7221983e22741a1106c8c86305e6b`, arbre identique à la candidate (`bad0521aa28c86a162b8c10bf22b6285d11be4bf`). Contrôle main [43867762939](https://github.com/Macor77/clementplane/actions/runs/43867762939). Preuves de version servie et portée exacte : PRODUCTION.md. Le contrôle final du commit documentaire de clôture conditionne la release.

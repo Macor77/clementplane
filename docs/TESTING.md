@@ -179,6 +179,6 @@ Tests Microsoft dans tests/contracts/microsoft-*.test.js et tests/calendar/micro
 V1.5.0 : `src/utils/__tests__/partialAttendance.test.js`, `scripts/testing/partial-attendance-sql.mjs`, `tests/e2e/specs/16-partial-attendance.spec.js`. Tests sous-ensemble, durées, migration additive, anciens clients, confidentialité, réseau, responsive et statistiques. Distinction local PostgreSQL/PGlite, navigateur API simulée et recette Supabase hébergée dans `sprints/v1.5.0/ACCEPTANCE.md`.
 
 
-## V1.5.1 candidate — aides contextuelles, 16 novembre 2026
+## V1.5.1 publiée — aides contextuelles, 16 novembre 2026
 
 Quality 43857208016 : 406 unitaires, 63 parcours navigateur et suites SQL/RLS réussis. Le scénario 17 couvre aides complètes, clavier/Echap/fond/focus, état propre et modifié, erreurs, sauvegarde/rechargement, confidentialité, 1440/768/390 px et tactile 390×480. Captures contrôlées ; aucune recette sur appareil physique revendiquée. Détails : sprints/v1.5.1/ACCEPTANCE.md.

@@ -1,23 +1,26 @@
-# V1.5.1 — Candidate validée, non clôturé : production à valider
+# V1.5.1 — Clôture de livraison, 16 novembre 2026
 
-État au 16 novembre 2026. Développement autorisé, réalisé et testé. La V1.5.0 demeure la version de production. PR [#26](https://github.com/Macor77/clementplane/pull/26), maintenue en brouillon. Commit applicatif `873d3ffde95f253b14c0f68c6898bc01a0a44f97`.
+Bilan compact avec aides « ? », toutes les explications conservées, labels/unités/confidentialité et inclusion des apprenants partiels visibles. Publication explicitement autorisée par Vincent. PR #26 fusionnée : `92a94bf6d8c7221983e22741a1106c8c86305e6b`. Version 1.5.1 dans package/lock/UI. Le tag v1.5.1 vise le commit documentaire de clôture, de code applicatif identique.
 
-| Obligation | État / preuve / action restante |
-|---|---|
-| Périmètre et conception | Vérifié : DESIGN.md, aides contextuelles avec contenu conservé, mentions essentielles directes |
-| Développement | Vérifié : branche feature/v1.5.1-activity-help, commit applicatif et revue indépendante sans anomalie importante |
-| Recette, CI, accessibilité/mobile | Vérifié : ACCEPTANCE.md ; Quality 43857208016, 406 unitaires, 63 navigateur, captures contrôlées |
-| Supabase | Preuve antérieure applicable V1.5.0 et suites SQL/RLS réussies : aucun changement schéma/API/RLS ; aucune migration ni opération hébergée nécessaire |
-| Production | À faire après validation de Vincent : fusion, contrôle Vercel/version et disponibilité ; preview READY protégée, aucune recette live revendiquée |
-| Documentation fonctionnelle / architecture / base / dépannage | Vérifié : GUIDE.md, OPERATIONS.md et docs de référence actualisés ; modèle de données inchangé |
-| Impact légal | Vérifié : LEGAL_REVIEW.md, aucune modification des traitements ni nouvelle acceptation |
-| Roadmap / changelog / décisions | Vérifié : racine et docs identifient la candidate, historique conservé |
-| Version technique/UI | Vérifié dans les sources et le build : 1.5.1 / V1.5.1 ; production reste V1.5.0 |
-| GitHub | Code poussé et PR brouillon #26 ; fusion en attente de validation, aucune approbation GitHub inventée |
-| Tag / release | À faire après validation et livraison ; aucun tag historique déplacé |
-| Archive | Vérifié : candidate Quality téléchargée, ZIP/manifeste/provenance contrôlés dans ACCEPTANCE.md ; archive de release finale après livraison |
-| Découvrir / FAQ / tutoriels / captures / landing / évolutions | Vérifié : COMMUNICATION.md ; FAQ et tutoriel actualisés, captures fictives contrôlées, pas de nouvelle promesse commerciale |
-| Communication utilisateurs | Non applicable justifié : amélioration directement accessible, e-mail inutile ; aucun envoi |
-| Pilotage | Vérifié : RETOUR_PILOTAGE.md ; clôture finale après livraison |
+| Obligation | Résultat / preuve | Portée et reste |
+|---|---|---|
+| Périmètre et réalisation | Vérifié : DESIGN et diff applicatif, explications conservées | Aucune modification métier, une session = un groupe |
+| Aide, clavier et mobile | Vérifié : scénario 17, fermeture bouton/Echap/fond, focus et défilement | 1440/768/390 px et tactile 390×480 ; captures fictives examinées |
+| Sauvegarde et données | Vérifié : état propre/modifié, erreurs, conservation et rechargement | 406 unitaires et 63 navigateur, API simulée |
+| Frais, partiels, statistiques et OF | Vérifié : scénarios 14–16 et suites de non-régression | Consultation OF sans champs privés ni nouveaux boutons |
+| Supabase et permissions | Preuve V1.5.0 applicable, code inchangé et suites SQL/RLS réussies | Aucune migration, opération hébergée ou nouveau traitement |
+| Qualité/CI | Quality candidate 43858430263 et main 43867762939 ; exact commit avant release | Deux warnings Hooks, gros bundle et 12 vulnérabilités faibles/modérées préexistants |
+| Production et version | Vérifié : Vercel dpl_FELzSwNNBxridUZDaVuLfZfqVtCJ READY et HTTP 200 V1.5.1 | PRODUCTION.md ; contrôle sans écriture de données réelles |
+| Documentation | README, fonctionnel, architecture, décisions, tests, dépannage, guide/exploitation actualisés | Modèle de base inchangé, aucune nouvelle documentation SQL nécessaire |
+| Légal/RGPD | LEGAL_REVIEW : aucun nouveau traitement, destinataire, traceur ou sous-traitant | Aucune modification de document ou acceptation juridique nécessaire |
+| Roadmap/changelog/version | Racine/docs synchronisés et historique conservé | Pas de prochain sprint démarré |
+| Découvrir / FAQ / tutos / captures | Guide et FAQ intégrés actualisés ; captures réelles avec données fictives archivées | Landing et évolutions envisagées inchangées, aucune promesse nouvelle |
+| GitHub / tag / archive / release | PR fusionnée ; workflow release-v1.5.1 conditionné à Quality du commit exact | ZIP/manifeste puis téléchargement et vérification requis |
+| Communication | Aide intégrée et notes suffisantes pour cette amélioration | Aucun e-mail ni message envoyé |
+| Pilotage | RETOUR_PILOTAGE à jour | Prochaine priorité laissée au pilotage |
 
-Restant : accord pour publier cette évolution, puis fusion/déploiement, contrôle de production et finalisation du tag/release/archive. Aucun besoin d’intervention dans Supabase.
+Verdict : **clôturé** lorsque le workflow de release du commit est réussi et les pièces jointes vérifiées. Ce contrôle est requis avant le compte rendu final ; une intention de publication ne vaut pas preuve.
+
+Limites : tests navigateur avec API simulée et mobile émulé ; production contrôlée sans parcours connecté réel. Aucun smartphone/PWA physique ni restauration fournisseur testé. Aucun changement de service worker, traitement des données ou pilote Outlook.
+
+[PR #26](https://github.com/Macor77/clementplane/pull/26) · [Release v1.5.1](https://github.com/Macor77/clementplane/releases/tag/v1.5.1). Détails : DESIGN, ACCEPTANCE, OPERATIONS, PRODUCTION, GUIDE, LEGAL_REVIEW, COMMUNICATION.

@@ -12,3 +12,5 @@ Les bilans simples déjà enregistrés sont relus à partir de leur ancien total
 Mes statistiques affiche les deux décomptes et leur total pour la période choisie. Les effectifs historiques non répartis sont signalés. Ces statistiques ne constituent pas une déclaration BPF.
 
 Pour une mission OF, la réalisation est visible par son commanditaire ; les dépenses, kilomètres et difficultés restent privés. Une mission personnelle reste privée. Aucun envoi d’e-mail ou ajout d’agenda n’est déclenché.
+
+Captures de l’interface de recette, données fictives : [bilan mobile](assets/bilan-mobile.png) et [statistiques mobiles](assets/statistiques-mobile.png).

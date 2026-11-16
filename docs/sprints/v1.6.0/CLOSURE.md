@@ -1,23 +1,25 @@
-# V1.6.0 — Candidate, 16 novembre 2026
+# V1.6.0 — Candidate vérifiée, 16 novembre 2026
 
-**Non clôturé — validation et production restantes.** Développement de la séparation des effectifs autorisé. L’accord de production V1.5.1 a été exécuté ; il ne constitue pas une validation de cette nouvelle version. Version technique/lock/UI : 1.6.0. Aucune migration.
+**Non clôturé — validation et production restantes.** Correction développée et vérifiée dans la [PR #27](https://github.com/Macor77/clementplane/pull/27), en brouillon. Commit applicatif **280a2746ec02bbbbf293ea47328a420b6bd41afc**, version technique/lock/UI 1.6.0. L’accord de production V1.5.1 a été exécuté ; cette nouvelle version attend sa propre validation. Aucune migration.
 
 | Exigence | État et preuve, 16 novembre 2026 | Reste |
 |---|---|---|
-| Deux décomptes + total | Développé, DESIGN et tests unitaires | Recette CI navigateur |
-| Compatibilité et zéro complet | Vérifié localement, 413 tests/61 fichiers et PGlite | CI complète |
-| Historique détaillé | Conservation sur modification étrangère, classification explicite ; revue indépendante résolue | Recette navigateur |
-| Mobile, aides, OF | Scénarios 14–18 préparés, API simulée | Captures CI à examiner |
-| Supabase et confidentialité | Code SQL/RLS/RPC inchangé ; tests locaux réussis, preuve V1.5.0 applicable au déploiement existant | Aucune opération hébergée nécessaire |
+| Deux décomptes + total | Vérifié : formulaire, OF et statistiques ; DESIGN, scénarios 14–18 | Publication |
+| Compatibilité et zéro complet | Vérifié : 413 tests/61 fichiers, SQL PGlite et navigateur | Aucun recalcul destructif |
+| Historique détaillé | Vérifié : conservation sur modification étrangère, classification explicite et statuts non réalisés ; revue indépendante résolue | Aucune anomalie restante identifiée |
+| Mobile et aides | Vérifié : 67 parcours, 1440/768/390 px selon scénarios ; quatre captures examinées | Appareil/PWA physique non testé |
+| Supabase et confidentialité | SQL/RLS/RPC inchangés ; tests PGlite/contrats réussis, preuve V1.5.0 applicable au déploiement existant | Aucune opération hébergée nécessaire |
 | Statistiques | Complets/partiels/total séparés, heures et périodes conservées | Aucun export BPF livré |
-| Qualité | Build et unitaires réussis ; 2 warnings Hooks préexistants | Audit et Quality CI |
-| Documentation | README, fonctionnel, architecture, base, décisions, tests, dépannage, exploitation actualisés | Preuves CI à inscrire |
-| Légal/RGPD | LEGAL_REVIEW : aucun changement nécessaire motivé | Aucun nouveau contrat à certifier |
-| Roadmap/changelog/version | Candidate identifiée, historique conservé, version 1.6.0 | Statut de publication à actualiser après accord |
-| FAQ/tutoriels/évolutions/landing | COMMUNICATION, GUIDE, src/content/discoverContent.js | Captures fictives |
-| GitHub/production | Branche de travail ; pas de fusion ou production | PR brouillon, puis validation utilisateur |
-| Tag/archive/release | Archive candidate prévue dans Quality | Archive à contrôler ; tag/release définitifs après livraison |
+| Qualité | Quality 43873670898 réussi, toutes étapes ; ACCEPTANCE | 2 warnings Hooks, gros bundle, 12 vulnérabilités faibles/modérées préexistants |
+| Documentation | README, fonctionnel, architecture, base, décisions, tests, dépannage, exploitation et guide actualisés | Statut final après livraison |
+| Légal/RGPD | LEGAL_REVIEW : aucune modification nécessaire motivée | Aucun contrat externe certifié |
+| Roadmap/changelog/version | Candidate identifiée, historique conservé, version 1.6.0 | Statut de publication après accord |
+| FAQ/tutoriels/évolutions/landing | COMMUNICATION, GUIDE, discoverContent ; captures fictives archivées | Aide BPF laissée au futur |
+| GitHub/preview | PR #27 brouillon, preview Vercel READY sur le bon commit | Preview protégée, aucun parcours connecté réel prétendu |
+| Production | V1.5.1 maintenue ; aucune fusion ou opération de production V1.6.0 | Validation utilisateur, fusion et vérifications de production |
+| Archive | Candidate téléchargée, ZIP/707 entrées/manifeste/SHA-256 vérifiés ; ACCEPTANCE | Archive finale du commit de livraison |
+| Tag/release | Non réalisés, livraison non autorisée à ce stade | Créer après accord et vérifications de production |
 | Communication | Aide intégrée et notes suffisantes, aucun envoi | Aucun envoi autorisé ou prévu |
-| Pilotage | RETOUR_PILOTAGE | Aucun sprint suivant démarré |
+| Pilotage | RETOUR_PILOTAGE actualisé | Aucun sprint suivant démarré |
 
-Portée : tests locaux et navigateur CI à API simulée, mobile émulé. Aucun test sur appareil physique ni nouveau parcours métier en production. L’application de production reste V1.5.1 jusqu’à validation et publication effective.
+Portée exacte : tests locaux et navigateur CI avec API simulée, mobile émulé. Aucun nouveau parcours métier ni écriture en production. Le complément documentaire de recette conserve le code applicatif testé. La production reste V1.5.1 jusqu’à validation et publication effective.

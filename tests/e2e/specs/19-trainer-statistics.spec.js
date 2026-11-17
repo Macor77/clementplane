@@ -62,6 +62,14 @@ for (const width of [320, 390, 768, 1440]) test(`statistics ${width}px — reali
   await expect(page.getByRole('heading', { name: 'Mes statistiques', exact: true })).toBeInViewport();
   await page.screenshot({ path: `test-results/statistics-dashboard-${width}.png`, fullPage: true });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  // A page can fit horizontally while each long word is broken into fragments.
+  expect(await page.locator('.statistics-counts .statistics-metric-heading > span').evaluateAll(labels => labels.flatMap(label => {
+    const text = label.firstChild;
+    return [...text.textContent.matchAll(/\p{L}{5,}/gu)].filter(match => {
+      const range = document.createRange(); range.setStart(text, match.index); range.setEnd(text, match.index + match[0].length);
+      return range.getClientRects().length > 1;
+    }).map(match => match[0]);
+  }))).toEqual([]);
   expect(api.queries().every(query => query.includes('owner_user_id=eq.20000000-0000-0000-0000-000000000001') && !/kilometer|difficult/.test(query))).toBe(true);
   expect(api.sends()).toBe(0);
 });

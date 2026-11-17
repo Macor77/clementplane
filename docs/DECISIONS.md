@@ -317,3 +317,7 @@ Publication V1.5.1 autorisée explicitement le 16 novembre : « Vas-y. Tu peux m
 ## V1.6.0 — Décision de Vincent, 16 novembre 2026
 
 Les personnes partiellement formées sont exclues du champ principal, renommé Apprenants entièrement formés. Deux décomptes indépendants et total dérivé. Cette décision remplace la demande antérieure d’inclusion. Compatibilité technique : stockage inclusif conservé, projection à la lecture/sauvegarde, aucune migration. Les bilans détaillés sans répartition restent historiques tant que le formateur ne précise pas les effectifs. Les durées individuelles préparent une évolution ultérieure, sans livrer un export BPF. Développement puis production explicitement validés par Vincent le 16 novembre 2026 (« Je valide. Tu peux mettre en production. »). PR #27 fusionnée, Vercel et version officielle vérifiés ; preuves dans sprints/v1.6.0/PRODUCTION.md.
+
+## V1.7.0 — Décision de Vincent, 17 novembre 2026
+
+Vincent valide les améliorations mobiles proposées et autorise leur développement. Le CA représente les formations réalisées, pas les encaissements. HT et TTC restent séparés ; les frais privés sont consultables par catégorie puis mission. Les chiffres manquants sont signalés, la liste des bilans incomplets montre leur date de fin. Périodes/filtres, évolution/comparaison et objectif mensuel facultatif complètent la lecture. Développement V1.7.0 autorisé ; aucune autorisation de production de cette version à ce stade. La décision ne modifie ni une session = un groupe ni la séparation des présences complètes et partielles.

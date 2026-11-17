@@ -1,3 +1,7 @@
+## V1.7.0 candidate — agrégation privée des statistiques
+
+TrainerActivity utilise trainerStatistics (calculs purs) au-dessus de calculateActivity, qui conserve les règles historiques. Les lectures paginées des bilans et des expense_items sont séparées, avec filtres trainer_id/owner_user_id. Aucun champ kilomètres/difficultés demandé. Les montants privés ne traversent pas le service OF. Changement de compte : remontage de la page et abandon des réponses précédentes. Erreur de frais : aucun faux total affiché. Objectif : service isolé et erreur non bloquante pour les statistiques, dialogue natif et aides existantes réutilisées. Aucun nouveau paquet ni appel calendrier.
+
 ## V1.6.0 publiée — frontière brouillon/API
 
 Le brouillon du bilan porte un effectif entièrement formé exclusif. activityDraft soustrait partial_attendance du total inclusif persistant ; validateActivity réadditionne avant le RPC. Les objets source ne sont pas mutés. Statistiques et lecture OF dérivent les deux effectifs depuis les données persistantes. Un ancien bilan détaillé n’est reclassé qu’après une saisie explicite ; les autres modifications préservent ses sessions. Voir sprints/v1.6.0/DESIGN.md.

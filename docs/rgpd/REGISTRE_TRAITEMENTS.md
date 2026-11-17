@@ -53,3 +53,7 @@ Le bilan privé contient des dépenses structurées : catégorie, montant en cen
 ## V1.5.0 publiée — 16 novembre 2026
 
 Les effectifs/durées de participation partielle précisent la réalisation déjà traitée. Aucun nom d’apprenant collecté. Mêmes finalités et destinataires que le bilan : formateur propriétaire, OF commanditaire en lecture seule pour sa mission ; mission personnelle privée. Frais, kilomètres et difficultés toujours privés. Aucune transmission calendrier ni nouveau sous-traitant.
+
+## V1.7.0 candidate — objectif d'activité personnel
+
+Préférence facultative : identifiant du propriétaire, mois, indicateur (sessions/jours/CA HT ou TTC) et cible. Finalité : suivi personnel demandé par le formateur, dans l'exécution du service. Accès réservé au propriétaire disposant d'un profil formateur ; hébergement Supabase existant, aucun nouveau destinataire. Suppression à la demande dans l'interface et en cascade à la suppression du compte. Aucun lien à l'agenda ou à une campagne. La visualisation des dépenses réutilise les données privées existantes, sans collecte de justificatifs ni d'autres données.

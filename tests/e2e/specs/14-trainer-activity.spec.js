@@ -29,8 +29,8 @@ for(const width of [1440,390]) test(`trainer activity ${width}px — simple tota
   await page.screenshot({path:`test-results/activity-form-${width}.png`,fullPage:true});
   await page.goto('/formateur/statistiques');
   const metric=title=>page.locator('.activity-metrics article').filter({has:page.locator('span',{hasText:title})}).locator('strong');
-  await expect(metric('Heures réellement animées')).toHaveText('3');await expect(metric('Apprenants entièrement formés')).toHaveText('10');await expect(metric('Jours réellement animés')).toHaveText('0.5');await expect(metric('Sessions')).toHaveText('1');
-  await expect(page.getByRole('heading',{name:'À compléter · 0 mission(s)'})).toBeVisible();
+  await expect(metric('Heures réellement animées')).toHaveText('3');await expect(metric('Apprenants entièrement formés')).toHaveText('10');await expect(metric('Jours réellement animés')).toHaveText('0,5');await expect(metric('Sessions')).toHaveText('1');
+  await expect(page.getByRole('heading',{name:'À compléter · 0'})).toBeVisible();
   await page.screenshot({path:`test-results/activity-statistics-${width}.png`,fullPage:true});
   await page.getByRole('button',{name:'Activité à venir',exact:true}).click();await expect(metric('Missions')).toHaveText('0');
   await expect(page.locator('.activity-metrics')).not.toContainText(/Heures|Apprenants|Participations/);expect(api.sends()).toBe(0);
@@ -51,9 +51,10 @@ test('organization sees read-only report and never requests private endpoint (AP
 test('completed retained report opens and remains editable after assignment disappears (API simulated)',async({page})=>{
   await page.clock.setFixedTime(new Date('2026-11-12T10:00:00Z'));const api=await fixture(page,'organization');
   api.seed({report:{id:'report',trainer_name:'Alex Démo',mission_id:id,revision:1,agreed_fee:{amount:700},declared_fee:null,tax_basis:null,observations:'Bilan historique fictif',report_mode:'detailed',formation_title:'SST fictive conservée',reference_dates:['2026-11-01'],activity_date:'2026-11-01',sessions:[{id:'00000000-0000-4000-8000-000000000061',formation:'SST fictive conservée',group_label:'',learner_count:10,expected_learners:null,days:[{date:'2026-11-01',status:'done',actual_hours:7,planned_hours:null}]}],updated_at:'2026-11-12T09:00:00Z'},private:{expense_items:[],expenses:null,kilometers:null,expense_details:'',difficulties:''}});api.retain();
-  await page.goto('/formateur/statistiques');await expect(page.getByRole('heading',{name:'À compléter · 0 mission(s)'})).toBeVisible();
+  await page.goto('/formateur/statistiques');await expect(page.getByRole('heading',{name:'À compléter · 1'})).toBeVisible();
   await expect(page.getByRole('heading',{name:'Bilans conservés · 1'})).toBeVisible();
-  await page.getByRole('link',{name:'SST fictive conservée',exact:true}).click();
+  await page.locator('.activity-retained summary').click();
+  await page.locator('.activity-retained').getByRole('link',{name:/SST fictive conservée/}).click();
   await expect(page.getByRole('heading',{name:'Bilan conservé',exact:true})).toBeVisible();
   await expect(page.getByLabel('Durée réellement animée (heures)',{exact:true})).toHaveValue('7');await expect(page.getByLabel('Durée réellement animée (jours)',{exact:true})).toHaveValue('');await page.getByLabel('Durée réellement animée (jours)',{exact:true}).fill('1');await page.getByLabel('Apprenants entièrement formés',{exact:true}).fill('10');await page.getByLabel('Observations partagées avec l’OF').fill('Correction historique fictive');await page.getByRole('button',{name:'Enregistrer le bilan'}).click();await expect(page.getByText('Bilan enregistré.',{exact:true})).toBeVisible();
   expect(api.saved().report.observations).toBe('Correction historique fictive');expect(api.sends()).toBe(0);

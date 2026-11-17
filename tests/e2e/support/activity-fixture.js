@@ -20,7 +20,8 @@ export async function fixture(page, origin='personal', organization=false) {
     else if(path.endsWith('/missions'))data=ofMission;
     else if(path.endsWith('/is_platform_admin'))data=false;
     else if(path.endsWith('/trainer_activity_reports'))data=url.searchParams.has('trainer_id') && (url.searchParams.has('id')||url.searchParams.has('personal_mission_id')||url.searchParams.has('mission_id'))?saved?.report||null:saved?[saved.report]:[];
-    else if(path.endsWith('/trainer_activity_private')){privateReads++;data=saved?.private;}
+    else if(path.endsWith('/trainer_activity_private')){privateReads++;data=url.searchParams.has('report_id')?saved?.private:(saved?[{report_id:saved.report.id,...saved.private}]:[]);}
+    else if(path.endsWith('/trainer_activity_goals'))data=null;
     else if(path.endsWith('/save_trainer_activity_report')){
       if(fail){fail=false;return route.fulfill({status:503,contentType:'application/json',body:JSON.stringify({message:'network failure'})});}
       const x=req.postDataJSON();const {expense_items,kilometers,difficulties,...shared}=x.p_data;

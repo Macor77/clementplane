@@ -17,3 +17,7 @@ Le graphique et sa comparaison suivent les filtres. Un objectif personnel facult
 - **Pourquoi les apprenants sont-ils séparés ?** Les personnes entièrement et partiellement formées sont deux décomptes distincts ; leur somme est le total des participants.
 - **Pourquoi les chiffres historiques diffèrent-ils ?** Les anciens bilans détaillés conservent leurs heures par date ; les effectifs et le montant sont rattachés à la première réalisation. Le graphique de sessions compte chaque groupe à sa première réalisation pour ne pas le répéter.
 - **Est-ce un BPF ?** Non : les durées individuelles restent conservées dans les bilans, sans export ni déclaration réglementaire automatique.
+
+## Captures de recette fictives
+
+Les vues mobile, tablette et ordinateur dans `assets/` proviennent de la vraie application, avec des réponses API simulées et des données entièrement fictives. Voir la recette pour le commit et les limites de validation.

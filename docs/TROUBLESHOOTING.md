@@ -1,4 +1,4 @@
-## V1.7.0 candidate — statistiques
+## V1.7.0 publiée — statistiques
 
 CA incomplet : ouvrir le compteur de montants à renseigner ; seuls les montants déclarés des bilans réalisés, avec HT/TTC connus, sont totalisés. Frais à zéro : aucun frais déclaré, pas une preuve d'absence de frais réels. Erreur de chargement : Réessayer recharge les sources sans afficher un faux zéro. Objectif indisponible : vérifier la migration ciblée et ses politiques ; le reste des statistiques reste lisible. Après échec d'enregistrement d'objectif, corriger ou cliquer de nouveau Enregistrer ; ne pas recharger la page avant d'avoir conservé la saisie.
 

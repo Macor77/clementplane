@@ -1,4 +1,4 @@
-## V1.7.0 candidate — agrégation privée des statistiques
+## V1.7.0 publiée — agrégation privée des statistiques
 
 TrainerActivity utilise trainerStatistics (calculs purs) au-dessus de calculateActivity, qui conserve les règles historiques. Les lectures paginées des bilans et des expense_items sont séparées, avec filtres trainer_id/owner_user_id. Aucun champ kilomètres/difficultés demandé. Les montants privés ne traversent pas le service OF. Changement de compte : remontage de la page et abandon des réponses précédentes. Erreur de frais : aucun faux total affiché. Objectif : service isolé et erreur non bloquante pour les statistiques, dialogue natif et aides existantes réutilisées. Aucun nouveau paquet ni appel calendrier.
 

@@ -1,6 +1,6 @@
-## V1.7.0 candidate — objectifs mensuels privés
+## V1.7.0 publiée — objectifs mensuels privés
 
-Migration additive `20261117134215_trainer_statistics_goals.sql` (préparée, non appliquée en production). Table `trainer_activity_goals` : clé propriétaire/mois, indicateur, cible numérique positive à deux décimales (entier pour sessions). FK auth.users avec cascade. RLS SELECT/INSERT/UPDATE/DELETE réservée au propriétaire disposant d'un profil formateur, WITH CHECK pour empêcher une attribution à autrui. Grants authenticated minimaux, aucun accès anon, aucun trigger métier. Aucune modification des tables de bilan/frais ni des anciennes données. Retour arrière : ancien frontend, table et données conservées.
+Migration additive `20261117134215_trainer_statistics_goals.sql` (appliquée en production le 17 novembre sous 20261117142308 ; correspondance source conservée dans PRODUCTION.md). Table `trainer_activity_goals` : clé propriétaire/mois, indicateur, cible numérique positive à deux décimales (entier pour sessions). FK auth.users avec cascade. RLS SELECT/INSERT/UPDATE/DELETE réservée au propriétaire disposant d'un profil formateur, WITH CHECK pour empêcher une attribution à autrui. Grants authenticated minimaux, aucun accès anon, aucun trigger métier. Aucune modification des tables de bilan/frais ni des anciennes données. Retour arrière : ancien frontend, table et données conservées.
 
 ## V1.6.0 publiée — aucun changement de schéma
 

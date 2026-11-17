@@ -1,3 +1,5 @@
+> État courant, 17 novembre 2026 : développement et production explicitement validés par Vincent. PR #28 fusionnée, migration appliquée, Vercel et version officielle vérifiés. Les mentions de gel ci-dessous décrivent l’étape de cadrage antérieure ; PRODUCTION.md et CLOSURE.md font foi pour la livraison.
+
 # V1.7.0 — Statistiques formateur sur mobile
 
 ## Goal / validation

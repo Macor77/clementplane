@@ -321,3 +321,7 @@ Les personnes partiellement formées sont exclues du champ principal, renommé A
 ## V1.7.0 — Décision de Vincent, 17 novembre 2026
 
 Vincent valide les améliorations mobiles proposées et autorise leur développement. Le CA représente les formations réalisées, pas les encaissements. HT et TTC restent séparés ; les frais privés sont consultables par catégorie puis mission. Les chiffres manquants sont signalés, la liste des bilans incomplets montre leur date de fin. Périodes/filtres, évolution/comparaison et objectif mensuel facultatif complètent la lecture. Développement V1.7.0 autorisé ; aucune autorisation de production de cette version à ce stade. La décision ne modifie ni une session = un groupe ni la séparation des présences complètes et partielles.
+
+## V1.7.0 — Production autorisée, 17 novembre 2026
+
+Après livraison de la candidate, Vincent confirme : « Je valide. Tu peux mettre en production. » Cette autorisation lève le gel de publication de V1.7.0. PR #28 fusionnée avec SHA attendu b3f3144 ; migration des objectifs appliquée seule sous 20261117142308, droits et contraintes vérifiés. Vercel READY sur le SHA de fusion 0ed5582 ; version officielle et service worker contrôlés. Tag/release/ZIP réalisés depuis le commit documentaire exact après Quality, sans envoi de nouveautés.

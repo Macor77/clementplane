@@ -1,6 +1,6 @@
-# Exploitation V1.7.0
+# Exploitation V1.7.0 — publiée le 17 novembre 2026
 
-## Déploiement futur, après validation explicite
+## Procédure appliquée après validation explicite
 1. Vérifier la PR, son SHA et sa CI, puis sauvegarde fournisseur et état de la migration ciblée.
 2. Appliquer uniquement `20261117134215_trainer_statistics_goals.sql` à l'environnement validé via l'outil de migration. Ne pas lancer un db push global : historique ancien divergent.
 3. Contrôler la table, ses quatre politiques propriétaire/formateur et ses grants. Aucun objectif prérempli, aucun historique de bilan modifié.
@@ -14,3 +14,7 @@ Revenir au frontend V1.6.0 suffit ; conserver la table additive et les éventuel
 
 ## Validation
 `npm test`, `npm run lint`, `npm run test:activity-sql`, build avec configuration de test, parcours Playwright 14–19 et suite Quality existante. Objectifs testés : create/update/delete/reload, propriétaire, autre formateur, OF, anonyme, falsification du propriétaire, contraintes et cascade.
+
+Migration source 20261117134215 → version distante 20261117142308, même nom trainer_statistics_goals. Ne pas rejouer la source sous prétexte que son horodatage diffère. Aucune migration ancienne, fonction Edge ou configuration d’agenda modifiée.
+
+Les outils exposés ne donnent pas accès à l’inventaire de sauvegardes fournisseur ; aucun état de sauvegarde/restauration n’est prétendu. Le risque a été limité par une migration transactionnelle créant uniquement une table absente, sans écriture dans les données existantes. Le repli frontend conserve les objectifs créés.

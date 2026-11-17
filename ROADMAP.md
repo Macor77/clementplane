@@ -1,3 +1,7 @@
+## V1.7.0 publiée — statistiques sur mobile, 17 novembre 2026
+
+CA des formations réalisées (HT/TTC séparés), frais privés par catégorie et dépense, chiffres consultables par mission, aides « ? », périodes/filtres, évolution/comparaison, bilans à compléter avec date de fin et objectif mensuel facultatif. Publication explicitement validée par Vincent : PR #28 fusionnée, migration des objectifs appliquée en production, Vercel READY et V1.7.0 vérifiée sur app.clementplane.fr. 424 tests unitaires/contrats et 74 parcours navigateur réussis ; captures fictives contrôlées. Dossier : `docs/sprints/v1.7.0/` (ou `sprints/v1.7.0/` depuis docs). Aucun e-mail envoyé.
+
 ## V1.6.0 publiée — décomptes séparés, 16 novembre 2026
 
 Apprenants entièrement formés et partiellement formés saisis et affichés séparément ; total des participants calculé à part et statistiques cohérentes. Anciennes données conservées sans migration. Publication explicitement validée par Vincent : [PR #27](https://github.com/Macor77/clementplane/pull/27) fusionnée, Vercel production READY et V1.6.0 servie sur app.clementplane.fr. 413 tests unitaires/contrats et 67 parcours navigateur réussis ; captures contrôlées. Preuves : `docs/sprints/v1.6.0/` (ou `sprints/v1.6.0/` depuis docs). Cette saisie séparée remplace l’inclusion décrite dans les versions historiques ci-dessous.

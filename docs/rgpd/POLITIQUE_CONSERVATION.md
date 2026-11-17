@@ -34,3 +34,7 @@ Microsoft (non activé) : state valable 10 minutes, supprimé à consommation/no
 
 ## V1.3 — Bilans, 12 novembre 2026
 Bilans partagés et privés conservés pendant la vie du compte pour son historique professionnel. Suppression en cascade du compte Auth, de la mission source ou de la fiche formateur. Désaffectation et annulation ne valent pas effacement. Aucun archivage comptable ni obligation BPF promise. Pas de copie dans Google/Microsoft/Brevo. Les champs libres doivent rester minimaux et sans identités d’apprenants.
+
+## V1.7.0 — Objectifs personnels, 17 novembre 2026
+
+Les objectifs mensuels sont conservés pendant la vie du compte comme préférence de suivi personnel. Chaque objectif peut être supprimé dans l’interface ; suppression en cascade du compte Auth. Aucun archivage comptable imposé ni copie externe. La conservation des autres bilans et dépenses reste inchangée.

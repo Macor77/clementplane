@@ -1,6 +1,6 @@
-## V1.7.0 candidate — statistiques sur mobile, 17 novembre 2026
+## V1.7.0 publiée — statistiques sur mobile, 17 novembre 2026
 
-CA des formations réalisées (HT/TTC séparés), frais privés détaillés par catégorie, chiffres consultables par mission, périodes rapides, filtres, évolution/comparaison, bilans à compléter avec date de fin et objectif mensuel privé. Développement validé par Vincent ; version candidate, non publiée. Une migration additive crée uniquement la table des objectifs. Dossier : `docs/sprints/v1.7.0/` (ou `sprints/v1.7.0/` depuis docs). La production reste V1.6.0.
+CA des formations réalisées (HT/TTC séparés), frais privés par catégorie et dépense, chiffres consultables par mission, aides « ? », périodes/filtres, évolution/comparaison, bilans à compléter avec date de fin et objectif mensuel facultatif. Publication explicitement validée par Vincent : PR #28 fusionnée, migration des objectifs appliquée en production, Vercel READY et V1.7.0 vérifiée sur app.clementplane.fr. 424 tests unitaires/contrats et 74 parcours navigateur réussis ; captures fictives contrôlées. Dossier : `docs/sprints/v1.7.0/` (ou `sprints/v1.7.0/` depuis docs). Aucun e-mail envoyé.
 
 ## V1.6.0 publiée — décomptes séparés, 16 novembre 2026
 

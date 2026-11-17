@@ -1,4 +1,4 @@
-## V1.7.0 candidate — statistiques mobile
+## V1.7.0 publiée — statistiques mobile
 
 Scénario 19 : CA réalisé HT/TTC, frais et catégories répétées, aides et focus, listes à compléter datées, filtres/périodes/comparaison, objectif sauvegardé/rechargé/supprimé, erreurs réseau. Formats 320/390/768/1440 px. Tests unitaires de centimes/périodes/historique et services ; script trainer-statistics-sql.mjs pour contraintes et RLS. API navigateur simulée et PostgreSQL PGlite réels distingués ; résultats définitifs dans sprints/v1.7.0/ACCEPTANCE.md. Aucun téléphone physique ou parcours Auth/PostgREST hébergé prétendu.
 

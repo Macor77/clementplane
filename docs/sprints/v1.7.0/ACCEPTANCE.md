@@ -26,3 +26,9 @@ Tests navigateur avec API simulée ; PostgreSQL embarqué PGlite pour les politi
 ## Archives et preuves
 
 Artifact navigateur final 14336122664, ZIP vérifié SHA-256 `fc64901113e62d96cc724695eb0094509e69c85638823d1b78de5d327c13369c` ; huit captures fictives extraites dans assets/. Archive CI applicative : artifact 14335713391, ZIP sources interne SHA-256 `de012b94e1e05563f3799225cdd9b61f6b38a3fcab67d83730b05d686fd79086` (preuve journal CI). L’archive finale du dossier est régénérée depuis le commit de documentation avec scripts/testing/archive-sprint.py ; son manifeste lie chaque fichier à son checksum et son SOURCE_COMMIT au commit livré.
+
+## Mise en production autorisée — 17 novembre 2026
+
+Quality du dossier b3f3144 : run 44101852870, job 134103673932, succès avant fusion. Migration hébergée 20261117142308 appliquée : RLS activée, quatre politiques propriétaire/formateur, contraintes et grants minimaux vérifiés par introspection. Lecture sous rôle authenticated sans identité : aucune ligne visible ; accès anon SELECT interdit. Aucun test d’écriture métier ni de restauration fournisseur en production. Les tests de mutation et de rôles complets restent ceux exécutés dans PGlite ; aucune recette Auth/PostgREST connectée réelle prétendue.
+
+Déploiement Vercel de fusion READY, routes publiques de shell et service worker vérifiés ; détails et empreinte dans PRODUCTION.md. Aucun changement applicatif dans le commit documentaire de release.

@@ -31,3 +31,7 @@ Inclure `trainer_activity_reports` et `trainer_activity_private` dans l’invent
 
 ## V1.4.0 — dépenses structurées, 15 novembre 2026
 Inclure expense_items (catégorie, centimes, précision), expenses calculé et les archives legacy_expenses/legacy_expense_details dans les demandes du seul propriétaire vérifié. Ces champs ne doivent jamais entrer dans un export pour l’OF. La suppression du bilan/compte couvre aussi ces colonnes par les cascades existantes. La suppression d’une ligne dans le formulaire conserve volontairement l’archive d’origine ; une demande d’effacement explicite doit tenir compte de cette archive.
+
+## V1.7.0 — Objectifs personnels, 17 novembre 2026
+
+Inclure trainer_activity_goals (mois, indicateur, cible) dans les demandes du propriétaire dont l’identité a été vérifiée, en filtrant par owner_user_id. Ne jamais transmettre les objectifs à un OF ou un autre formateur. Rectification/suppression disponibles dans Mes statistiques ; suppression du compte Auth en cascade. Aucun nouvel export automatique ajouté.

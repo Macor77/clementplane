@@ -1,6 +1,6 @@
-## V1.7.0 candidate — lecture des statistiques
+## V1.7.0 publiée — lecture des statistiques
 
-La page formateur commence par CA réalisé et frais privés, avec détails accessibles au toucher. Les informations explicatives passent dans les boutons « ? ». Périodes rapides, filtres OF/formation, apprenants complets/partiels séparés, évolution et comparaison, bilans incomplets avec date de fin. L'objectif personnel est facultatif, mensuel et indépendant des filtres. Règles, limites et guide : sprints/v1.7.0/GUIDE.md. Version non publiée.
+La page formateur commence par CA réalisé et frais privés, avec détails accessibles au toucher. Les informations explicatives passent dans les boutons « ? ». Périodes rapides, filtres OF/formation, apprenants complets/partiels séparés, évolution et comparaison, bilans incomplets avec date de fin. L'objectif personnel est facultatif, mensuel et indépendant des filtres. Règles, limites et guide : sprints/v1.7.0/GUIDE.md. Publication validée le 17 novembre 2026 ; voir sprints/v1.7.0/PRODUCTION.md.
 
 ## V1.6.0 publiée — apprenants entièrement et partiellement formés
 

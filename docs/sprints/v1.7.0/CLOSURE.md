@@ -1,23 +1,25 @@
-# V1.7.0 — Livraison candidate, 17 novembre 2026
+# V1.7.0 — Clôture de livraison, 17 novembre 2026
 
-Le développement demandé est prêt à valider dans la [PR #28](https://github.com/Macor77/clementplane/pull/28), conservée en brouillon. **La mise en production de V1.7.0 n'est pas autorisée à ce stade.** Aucun déploiement de production ni migration hébergée effectué. La version officielle reste V1.6.0.
+Statistiques formateur mobiles : CA réalisé HT/TTC, frais privés par catégorie/dépense, chiffres consultables par mission, aides « ? », périodes/filtres, évolution/comparaison, fins de session et objectif mensuel facultatif. Production explicitement autorisée par Vincent et PR #28 fusionnée. Version package/lock/UI 1.7.0 ; une migration additive d’objectifs, sans modification des anciens bilans.
 
-Le CA représente les formations réalisées et les montants déclarés, HT/TTC séparés. La page mobile propose frais privés par catégorie/dépense, chiffres consultables par mission, aides « ? », périodes et filtres, évolution/comparaison, bilans à compléter avec fin de session et objectif mensuel facultatif.
-
-| Obligation | Résultat / preuve | Limite ou suite |
+| Obligation | Résultat et preuve | Portée / suite |
 |---|---|---|
-| Périmètre et règles | Plan, GUIDE et calculs testés | Aucun bénéfice, encaissement ou BPF automatique |
-| Calculs / compatibilité | 424 unitaires/contrats passent | Ancrages historiques et décomptes de présence conservés |
-| Mobile / navigation | 74 parcours Chromium, 320/390/768/1440 px, aides, focus, détails et objectifs | API simulée, pas de téléphone physique |
-| Confidentialité | RLS PGlite exécutée, requête privée propriétaire séparée, aucun champ kilomètres/difficultés chargé | Auth/PostgREST hébergés non testés pour cette version |
-| Migration | 20261117134215_trainer_statistics_goals.sql additive, quatre politiques et contraintes testées | À appliquer après validation, projet de démonstration non exposé par le connecteur |
-| Revue indépendante | REVIEW : défaut de retry objectif corrigé, garde de dialogue ajoutée | Aucun point important restant identifié |
-| Qualité | Quality 44100541684 sur code applicatif 7b65df3 ; tout passe | Deux warnings Hooks, taille bundle et dépendances faibles/modérées préexistants |
-| Documentation / légal | Architecture, base, fonctionnel, dépannage, registre, guide et FAQ actualisés | Aucun nouveau sous-traitant ni permission OAuth |
-| Captures / archive | Huit captures fictives issues de CI ; manifeste de sources et checksum générés | Vérification archive avant compte rendu final |
-| GitHub / version | PR #28, package/lock/UI 1.7.0 | Pas de merge, tag ou release production |
-| Communication / pilotage | COMMUNICATION et RETOUR_PILOTAGE | Aucun e-mail envoyé, aucun sprint suivant lancé |
+| Périmètre | Vérifié : plan, GUIDE, scénarios 19 | Une session = un groupe ; ni bénéfice, paiement ni BPF automatique |
+| Développement / historique | Vérifié : code 7b65df3, PR #28, fusion 0ed5582 | Présences, ancrages et archives conservés |
+| Recette / qualité | 424 unitaires/contrats, 74 parcours navigateur et suites SQL passent ; Quality 44101852870 | Deux warnings Hooks, taille bundle et dépendances faibles/modérées préexistants |
+| Mobile / aides | Captures 320/390/768/1440 px, aides, focus, listes et objectifs vérifiés | API simulée et mobile émulé ; pas d’appareil physique |
+| Supabase | Migration distante 20261117142308, schéma/RLS/grants réels vérifiés | Pas de mutation métier de test en production ni de test Auth/PostgREST connecté |
+| Revue | REVIEW : reprise objectif et dialogue corrigés | Aucun point important restant identifié |
+| Production | Vercel READY sur SHA fusion, alias officiels, V1.7.0 et SW contrôlés | PRODUCTION.md ; contrôle identique requis après commit documentaire |
+| Documentation / légal | README, fonctionnel, architecture, base, tests, décisions, exploitation, registre, conservation, droits et matrice légale actualisés | Revue technique ; contrats externes non réaudités |
+| Roadmap / changelog / version | Racine et docs synchronisés, 1.7.0 | Aide BPF reste au pilotage |
+| Découvrir / FAQ / tutoriels | Aide embarquée et FAQ actualisées, huit captures fictives archivées | Landing inchangée, promesses existantes compatibles |
+| GitHub / tag / archive / release | PR fusionnée ; release-v1.7.0 après Quality du SHA exact, ZIP téléchargé et vérifié par workflow | Clôture finale subordonnée au succès vérifié du workflow et à la concordance du tag |
+| Communication | Aide et notes suffisantes ; aucun e-mail envoyé | Aucun envoi prévu sans demande explicite |
+| Pilotage | RETOUR_PILOTAGE actualisé | Aucun sprint suivant lancé |
 
-Le code applicatif final est `7b65df3daaa933573d5267b8b47f6fee25c44b26`. Le dernier commit du dossier ne change que documentation et captures. La PR conserve le statut du contrôle Quality associé au commit courant. Les sources sont archivables de manière reproductible par le script fourni ; aucun secret ni cache n'est inclus.
+Verdict : **clôturé** lorsque le workflow release-v1.7.0 a réussi, le tag concorde et les pièces jointes ont été vérifiées. Ces contrôles doivent être observés avant le compte rendu utilisateur, jamais déduits d’une simple intention.
 
-L'autorisation future de production permettra d'appliquer la seule migration d'objectifs, de publier, de vérifier la version servie, puis de clôturer la release. Le repli garde les données et revient au frontend précédent ; voir OPERATIONS.md.
+La release https://github.com/Macor77/clementplane/releases/tag/v1.7.0 porte l’archive du commit exact. La comparaison applicative au SHA de fusion doit être vide. Une publication documentaire ne rejoue pas la migration et conserve les données.
+
+Limites qualifiées : tests fonctionnels avec API simulée, RLS PGlite et introspection de production ; pas de téléphone/PWA physique, ni restauration fournisseur ou parcours connecté réel. Aucun élargissement du pilote Outlook, aucun envoi aux partenaires.

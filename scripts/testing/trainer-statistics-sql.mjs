@@ -1,0 +1,33 @@
+import { PGlite } from '@electric-sql/pglite';
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+const db = new PGlite();
+const uuid = n => `00000000-0000-4000-8000-${String(n).padStart(12, '0')}`;
+await db.exec(`create role authenticated; create role anon; create schema auth;
+create table auth.users(id uuid primary key);
+create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;
+grant usage on schema public,auth to authenticated,anon;
+create table public.trainers(id uuid primary key,user_id uuid);
+create function public.current_trainer_profile_id() returns uuid language sql stable security definer set search_path=public as $$select id from public.trainers where user_id=auth.uid() limit 1$$;
+insert into auth.users values ('${uuid(1)}'),('${uuid(2)}'),('${uuid(3)}');
+insert into trainers values ('${uuid(11)}','${uuid(1)}'),('${uuid(12)}','${uuid(2)}');`);
+await db.exec(fs.readFileSync('supabase/migrations/20261117134215_trainer_statistics_goals.sql', 'utf8'));
+const login = async n => db.exec(`reset role; set role authenticated; select set_config('request.jwt.claim.sub','${uuid(n)}',false);`);
+const insert = (owner, metric = 'sessions', target = 10, month = '2026-11-01') => db.query('insert into trainer_activity_goals(owner_user_id,month,metric,target) values ($1,$2,$3,$4)', [uuid(owner), month, metric, target]);
+await login(1); await insert(1);
+await db.query("insert into trainer_activity_goals values ($1,'2026-11-01','days',2.5) on conflict (owner_user_id,month) do update set metric=excluded.metric,target=excluded.target", [uuid(1)]);
+assert.equal(Number((await db.query('select target from trainer_activity_goals')).rows[0].target), 2.5);
+for (const [metric, target, month] of [['sessions', 1.5, '2026-12-01'], ['days', 0, '2026-12-01'], ['days', -1, '2026-12-01'], ['revenue_ht', 'NaN', '2026-12-01'], ['days', 1.111, '2026-12-01'], ['bogus', 5, '2026-12-01'], ['days', 1, '2026-12-02']]) await assert.rejects(() => insert(1, metric, target, month));
+await assert.rejects(() => db.query('update trainer_activity_goals set owner_user_id=$1', [uuid(2)]));
+for (const user of [2, 3]) {
+  await login(user); assert.equal((await db.query('select * from trainer_activity_goals')).rows.length, 0);
+  assert.equal((await db.query('update trainer_activity_goals set target=900 returning *')).rows.length, 0);
+  assert.equal((await db.query('delete from trainer_activity_goals returning *')).rows.length, 0);
+  await assert.rejects(() => insert(1));
+}
+await login(3); await assert.rejects(() => insert(3));
+await db.exec('reset role;set role anon'); await assert.rejects(() => db.query('select * from trainer_activity_goals')); await assert.rejects(() => insert(1));
+await login(1); assert.equal((await db.query('delete from trainer_activity_goals returning *')).rows.length, 1); await insert(1);
+await db.exec(`reset role;delete from auth.users where id='${uuid(1)}'`); assert.equal((await db.query('select * from trainer_activity_goals')).rows.length, 0);
+assert.equal((await db.query("select count(*)::int n from pg_trigger where tgrelid='public.trainer_activity_goals'::regclass and not tgisinternal")).rows[0].n, 0);
+await db.close(); console.log('PASS statistics goals SQL: constraints, upsert, delete, owner/other trainer/OF/anon RLS, ownership forgery, cascade, no calendar trigger.');

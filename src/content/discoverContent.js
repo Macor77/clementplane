@@ -1,9 +1,9 @@
 const microsoftCalendarVisible = import.meta.env?.VITE_MICROSOFT_CALENDAR_ENABLED === 'true' && import.meta.env?.VITE_MICROSOFT_CALENDAR_PILOT !== 'true';
 
-export const FORMPLANE_VERSION = 'V1.6.0';
+export const FORMPLANE_VERSION = 'V1.7.0';
 
 export const discoverFeatures = [
-  { title: 'Suivre les formations réalisées et à venir', kicker: 'Une mission, une session, un groupe', description: 'Le formateur confirme ses réalisations, renseigne les jours, heures et décomptes séparés des apprenants entièrement et partiellement formés et consulte ses premières statistiques. Ses dépenses, kilomètres et difficultés restent privés ; l’OF commanditaire consulte uniquement le bilan partagé.', audiences: ['trainer', 'organization'] },
+  { title: 'Suivre les formations réalisées et à venir', kicker: 'Une mission, une session, un groupe', description: 'Le formateur confirme ses réalisations, renseigne les jours, heures et décomptes séparés des apprenants entièrement et partiellement formés et consulte ses statistiques sur mobile : CA réalisé, frais par catégorie, évolution et objectif personnel. Ses dépenses, kilomètres et difficultés restent privés ; l’OF commanditaire consulte uniquement le bilan partagé.', audiences: ['trainer', 'organization'] },
   {
     title: 'Un planning partagé, toujours à jour',
     kicker: 'Moins de messages, plus de visibilité',

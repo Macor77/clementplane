@@ -15,6 +15,11 @@ export async function getMyActivityReports(trainerId) {
   if (!trainerId) throw new Error('Profil formateur indisponible.');
   return allRows(() => supabase.from('trainer_activity_reports').select(reportFields).eq('trainer_id', trainerId).order('id'));
 }
+// Separate owner-only query: organization report readers must never use this path.
+export async function getMyActivityExpenses(ownerUserId) {
+  if (!ownerUserId) throw new Error('Connexion formateur indisponible.');
+  return allRows(() => supabase.from('trainer_activity_private').select('report_id,expense_items').eq('owner_user_id', ownerUserId).order('report_id'));
+}
 export async function getActivityReport(origin, missionId, trainerId) {
   if (!trainerId) throw new Error('Profil formateur indisponible.');
   const { data: report, error } = await supabase.from('trainer_activity_reports').select(reportFields).eq('trainer_id', trainerId).eq(origin === 'personal' ? 'personal_mission_id' : 'mission_id', missionId).maybeSingle();
@@ -43,7 +48,7 @@ export async function saveActivityReport(origin, missionId, revision, mutationId
 export async function getActivityMissions() {
   const [organization, personal] = await Promise.all([
     allRows(() => supabase.rpc('get_my_mission_proposals').order('mission_id')),
-    allRows(() => supabase.from('trainer_personal_missions').select('id,title,formation,dates,fee,fee_unit,status').order('id')),
+    allRows(() => supabase.from('trainer_personal_missions').select('id,title,formation,client_name,dates,fee,fee_unit,status').order('id')),
   ]);
   return [...organization.map(m => ({ ...m, origin: 'organization' })), ...personal.map(personalMissionToAgenda)];
 }

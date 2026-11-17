@@ -33,7 +33,7 @@ for (const width of [1440, 390]) test(`separate attendance ${width}px — old to
   await expect(metric('Apprenants entièrement formés')).toHaveText('3');
   await expect(metric('Apprenants partiellement formés')).toHaveText('1');
   await expect(metric('Total des participants')).toHaveText('4');
-  await expect(metric('Heures réellement animées')).toHaveText('3.5');
+  await expect(metric('Heures réellement animées')).toHaveText('3,5');
   await expect(metric('Sessions')).toHaveText('1');
   await page.screenshot({ path: `test-results/separate-statistics-${width}.png`, fullPage: true });
   await page.goto(url); await details.locator('summary').click();

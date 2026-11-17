@@ -1,3 +1,7 @@
+## V1.7.0 candidate — lecture des statistiques
+
+La page formateur commence par CA réalisé et frais privés, avec détails accessibles au toucher. Les informations explicatives passent dans les boutons « ? ». Périodes rapides, filtres OF/formation, apprenants complets/partiels séparés, évolution et comparaison, bilans incomplets avec date de fin. L'objectif personnel est facultatif, mensuel et indépendant des filtres. Règles, limites et guide : sprints/v1.7.0/GUIDE.md. Version non publiée.
+
 ## V1.6.0 publiée — apprenants entièrement et partiellement formés
 
 Le champ principal compte seulement les personnes ayant suivi toute la formation. Les autres sont saisis dans le volet partiel, une ligne par durée individuelle. Total des participants = entièrement + partiellement formés. Zéro complet est autorisé. Les statistiques et la lecture OF reprennent cette séparation ; les heures animées restent celles du formateur. Les anciens bilans détaillés sans répartition conservent leur total historique. Pas de BPF automatique. Voir sprints/v1.6.0/GUIDE.md.

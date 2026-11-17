@@ -1,3 +1,7 @@
+## V1.7.0 candidate — objectifs mensuels privés
+
+Migration additive `20261117134215_trainer_statistics_goals.sql` (préparée, non appliquée en production). Table `trainer_activity_goals` : clé propriétaire/mois, indicateur, cible numérique positive à deux décimales (entier pour sessions). FK auth.users avec cascade. RLS SELECT/INSERT/UPDATE/DELETE réservée au propriétaire disposant d'un profil formateur, WITH CHECK pour empêcher une attribution à autrui. Grants authenticated minimaux, aucun accès anon, aucun trigger métier. Aucune modification des tables de bilan/frais ni des anciennes données. Retour arrière : ancien frontend, table et données conservées.
+
 ## V1.6.0 publiée — aucun changement de schéma
 
 summary.learner_count reste le total inclusif dans les tables et RPC. partial_attendance conserve son contrat existant. Seule la frontière de formulaire convertit l’effectif entièrement formé ; ne pas soustraire ces lignes côté SQL ni migrer les anciens totaux. Les RLS et protections des anciens clients sont inchangées. Anciennes sessions conservées lors de la conversion historique existante. Voir sprints/v1.6.0/DESIGN.md.

@@ -1,3 +1,7 @@
+## V1.7.0 candidate — statistiques mobile
+
+Scénario 19 : CA réalisé HT/TTC, frais et catégories répétées, aides et focus, listes à compléter datées, filtres/périodes/comparaison, objectif sauvegardé/rechargé/supprimé, erreurs réseau. Formats 320/390/768/1440 px. Tests unitaires de centimes/périodes/historique et services ; script trainer-statistics-sql.mjs pour contraintes et RLS. API navigateur simulée et PostgreSQL PGlite réels distingués ; résultats définitifs dans sprints/v1.7.0/ACCEPTANCE.md. Aucun téléphone physique ou parcours Auth/PostgREST hébergé prétendu.
+
 ## V1.6.0 publiée — décomptes séparés
 
 Scénario navigateur 18 (ordinateur/mobile, API simulée) : relecture de l’ancien total 4 avec 1 partiel en 3 complets, sauvegarde/rechargement, zéro complet, ajout/suppression, statistiques et lecture OF sans privé. Historique détaillé préservé pour une observation et conversion explicite. Unitaires : mapping bidirectionnel, durées inconnues, périodes, statuts non réalisés historiques. PGlite vérifie le contrat RPC inclusif et les permissions existantes. Résultats et limites : sprints/v1.6.0/ACCEPTANCE.md.

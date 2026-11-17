@@ -58,6 +58,8 @@ for (const width of [320, 390, 768, 1440]) test(`statistics ${width}px — reali
   await expect(pending.locator('li').first()).toContainText('Durée en heures'); await expect(pending.locator('li').first()).toContainText('Montant');
   await pending.getByRole('button', { name: 'Tout voir (7)' }).click(); await expect(pending.locator('li')).toHaveCount(7);
   await pending.getByRole('button', { name: 'Réduire la liste' }).click();
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await expect(page.getByRole('heading', { name: 'Mes statistiques', exact: true })).toBeInViewport();
   await page.screenshot({ path: `test-results/statistics-dashboard-${width}.png`, fullPage: true });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   expect(api.queries().every(query => query.includes('owner_user_id=eq.20000000-0000-0000-0000-000000000001') && !/kilometer|difficult/.test(query))).toBe(true);

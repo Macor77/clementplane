@@ -1,3 +1,7 @@
+## V1.7.0 candidate — statistiques
+
+CA incomplet : ouvrir le compteur de montants à renseigner ; seuls les montants déclarés des bilans réalisés, avec HT/TTC connus, sont totalisés. Frais à zéro : aucun frais déclaré, pas une preuve d'absence de frais réels. Erreur de chargement : Réessayer recharge les sources sans afficher un faux zéro. Objectif indisponible : vérifier la migration ciblée et ses politiques ; le reste des statistiques reste lisible. Après échec d'enregistrement d'objectif, corriger ou cliquer de nouveau Enregistrer ; ne pas recharger la page avant d'avoir conservé la saisie.
+
 ## V1.6.0 publiée — comprendre les effectifs
 
 Si le champ entièrement formé diminue à l’ouverture d’un ancien bilan simple, les lignes partielles ont été retirées de l’ancien total ; aucune personne n’est supprimée. Vérifier le total des participants et la complétude des lignes partielles. Si un ancien bilan détaillé affiche un effectif complet vide, son total est historique sans répartition : saisir explicitement complet/partiel pour le préciser ; les autres modifications conservent l’ancien total. Une ancienne PWA conserve son interface inclusive : actualiser pour la nouvelle saisie. Aucun SQL de conversion n’est nécessaire.

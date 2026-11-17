@@ -21,10 +21,10 @@ Confidentialité propriétaire à tous les étages. Ne jamais charger difficult�
 
 ## Execution ledger
 1. Isolation et baseline : worktree feature/v1.7.0-mobile-statistics depuis 185e8e8 ; 413 tests passent.
-2. Tests calculs financiers/périodes/confidentialité puis utilitaire et services : à réaliser.
-3. Interface mobile, détails, graphiques, aides : à réaliser.
-4. Objectif privé, migration et tests RLS : à réaliser.
-5. Tests navigateur, suite complète, revue indépendante, corrections : à réaliser.
-6. Documentation, commit, PR brouillon et archive candidate vérifiée : à réaliser.
+2. Tests et utilitaires/services : réalisés ; 424 unitaires/contrats et toutes les suites activity SQL réussis.
+3. Interface mobile, détails, graphiques, aides : réalisés ; 74 parcours navigateur réussis au premier candidat. Ajustement visuel 320 px en vérification.
+4. Objectif privé et migration : réalisés, RLS PGlite vérifiée. Projet de démonstration non exposé par le connecteur actuel ; migration hébergée non appliquée. Schéma et politiques de production inspectés en lecture seule.
+5. Revue indépendante terminée, défaut de retry objectif corrigé ; suite finale sur dernier commit requise.
+6. PR brouillon #28 créée ; documentation actualisée ; archive candidate CI à vérifier après contrôle final.
 
 Exécution native, une revue indépendante finale. Ledger manuel (outils de suivi du skill non exposés dans cet environnement). Les choix de périmètre ci-dessus appliquent la validation existante sans nouvelle boucle de confirmation.

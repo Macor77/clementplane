@@ -19,9 +19,42 @@ ClamAV recommande au moins 3 Gio de RAM sur Linux. Pour héberger API, validateu
 5. Faire un dépôt fictif suivi d’un téléchargement et de plusieurs pages d’aperçu. Examiner le flux en ouvrant un partage OF et un partage invité, puis après changement de rôle, remplacement, révocation et suppression. Vérifier que les journaux des fournisseurs et le cache de la PWA ne contiennent aucun document, note, code ou lien d’accès. Désactiver les aperçus Brevo pour l’expéditeur, vérifier le suivi/réécriture de liens et la conservation des journaux, sans modifier incidemment les autres expéditeurs. Vérifier DKIM et l’expéditeur contact@clementplane.fr.
 6. Pour l’ouverture, attester MFA, quotas/coûts, contrats, restauration, recette et revue de sécurité. L’autorisation de fusion/déploiement est distincte de celle d’ouvrir le service. L’API et le front sont fermés par défaut. Le tag final, l’archive et la release sont liés au SHA effectivement validé après ce point.
 
+## Enveloppe validée pour la recette et le passage en production
+
+Décision de Vincent du 18 novembre 2026. Garder une cible de **8 Go de RAM** pendant le développement et lors de la préparation de production. Les limites documentaires et la capacité disque sont distinctes de la mémoire vive. Ne pas activer d’augmentation automatique payante.
+
+Pour cette recette uniquement, utiliser une **instance OVHcloud Discovery d2-8 en France**, en facturation horaire, **48 heures maximum et 5 € TTC au total**. Le catalogue affiche 0,0372 € HT/h pour l’instance et 0,0027 € HT/h pour une IPv4 publique, soit environ 2,30 € TTC pour 48 h à TVA 20 %. Vérifier le prix du projet, les conditions d’activation et la disponibilité dans la région française choisie avant création. Inclure toute ressource facturée dans le plafond.
+
+Consigner l’heure de création, les identifiants des seules ressources de recette et l’échéance. Programmer depuis l’extérieur de l’instance la suppression avant la fin des 48 heures, en gardant une marge pour contrôler la libération de l’IPv4 et de tout volume réservé. Vérifier le projet et la consommation finale. Un simple arrêt du système ne vaut pas suppression des ressources.
+
+Avant d’ouvrir en production, mesurer le pic pendant les dépôts concurrents et le rechargement des signatures, vérifier la réception des alertes et présenter le coût mensuel réel. Tout abonnement de production, dépassement du plafond ou augmentation de capacité requiert un accord budgétaire distinct.
+
+[Tarifs OVHcloud](https://www.ovhcloud.com/fr/public-cloud/prices/) · [Facturation IPv4 et stockage](https://blog.ovhcloud.com/fr/posts/public-cloud-pricing-model-update-2026/)
+
+## Surveillance mémoire de la recette
+
+Le serveur de 8 Go doit prévenir l’opérateur avant saturation. Sur le nouvel hôte Linux, Monit mesure toutes les minutes la RAM utilisée sur l’ensemble de la machine, y compris les conteneurs. Sur Debian, sa mesure utilise la mémoire disponible du noyau, cache récupérable compris. Les seuils portent sur la mémoire utilisable détectée au démarrage.
+
+| Seuil atteint | Notification opérateur |
+|---|---|
+| 70 % sur cinq relevés consécutifs | Préalerte, environ 5,6 Go utilisés sur 8. Comparer la consommation au repos, pendant un dépôt fictif et pendant la mise à jour des signatures. |
+| 90 % dès un relevé | Alerte critique, environ 7,2 Go utilisés sur 8. Suspendre les tests de charge et identifier le processus concerné. Vérifier aussi la limite propre à clamd. |
+| Trois relevés sous un seuil précédemment franchi | Message de rétablissement pour ce seuil. La préalerte peut rester ouverte après la fin d’une alerte critique. |
+
+Le dispositif s’exécute sur l’hôte. Il fonctionne navigateur fermé et ne lit aucun fichier documentaire. Les messages contiennent la mesure, l’état et l’heure. Monit traite chaque franchissement et met les alertes non transmises en file locale bornée. Un serveur complètement arrêté ne peut pas émettre cette alerte locale. Le dimensionnement reste une décision de l’opérateur.
+
+**Installation sur une machine Debian de recette neuve**
+
+1. Installer les paquets Debian `monit` et `ca-certificates`. Conserver la configuration d’origine avant d’installer le profil dédié. Sur une machine déjà supervisée, intégrer les règles au service existant.
+2. Depuis le dépôt, installer `services/dossier/monitoring/monitrc` dans `/etc/monit/monitrc` (root, mode 0600). Créer `/etc/monit/clementplane/` (0700), y copier `services/dossier/monitoring/mail.conf.example` sous le nom `mail.conf` (0600). Renseigner localement le relais Brevo de Clementplane, sa clé SMTP dédiée et la boîte autorisée de l’opérateur. Autoriser le SMTPS sortant vers ce seul relais (port 465). Vérifier l’expéditeur avant l’essai.
+3. Exécuter `sudo monit -t`, puis `sudo systemctl enable monit && sudo systemctl restart monit`. Contrôler `systemctl is-active monit` puis `journalctl -t monit`. Aucun port entrant ni tableau de bord public n’est nécessaire.
+4. Pour vérifier la réception sur la machine louée, utiliser temporairement un seuil inférieur à sa consommation au repos et une seule boîte de recette autorisée. Relever l’heure du message dans la boîte, rétablir le fichier de référence, relancer le service et contrôler les seuils actifs. Vérifier le démarrage automatique après redémarrage. Supprimer les alertes de test de la file avant de changer de destinataire. Aucune réception sur OVHcloud n’a encore été observée.
+
+[Configuration Monit](../../../services/dossier/monitoring/monitrc) · [Manuel Monit](https://mmonit.com/monit/documentation/monit.html)
+
 ## Exploitation et retour arrière
 
-- Surveiller uniquement des compteurs de refus, erreurs, files, latence, occupation disque et âge des signatures. Alerter sur arrêt du worker, retard de maintenance, envois en sending/unknown, 503 répétés, seuils 70/90 % et dernier succès de sauvegarde. Un rejet d’envoi définitif doit être visible à l’opérateur. Un 429 est réessayé avec délai croissant. Après un délai réseau ambigu ou un crash, rapprocher l’identifiant technique chez Brevo avant tout renvoi. Retenter via un nouveau partage ou le renvoi contrôlé du partage actif. « Accepté » signifie prise en charge par Brevo.
+- Surveiller uniquement des compteurs de refus, erreurs, files, latence, occupation disque, mémoire et âge des signatures. Alerter sur arrêt du worker, retard de maintenance, envois en sending/unknown, 503 répétés, seuils 70/90 % et dernier succès de sauvegarde. Un rejet d’envoi définitif doit être visible à l’opérateur. Un 429 est réessayé avec délai croissant. Après un délai réseau ambigu ou un crash, rapprocher l’identifiant technique chez Brevo avant tout renvoi. Retenter via un nouveau partage ou le renvoi contrôlé du partage actif. « Accepté » signifie prise en charge par Brevo.
 - Le worker fonctionne hors navigateur. Le rappel J−30 est éligible jusqu’à J−8, le rappel J−7 jusqu’à J−1. Un délai manqué avant la saisie de la date n’est jamais créé rétroactivement. La date, la version et les droits sont relus avant traitement. Une date expirée coupe le partage seulement s’il s’agit de la date de fin d’accès.
 - Choisir une clé de chiffrement distincte de la clé HMAC. Pour une rotation AES, ajouter d’abord une nouvelle clé, la désigner pour les nouveaux dépôts puis rechiffrer les anciennes lignes dans une opération contrôlée avant de retirer une clé. Garder les clés des sauvegardes encore restaurables dans un coffre distinct. En cas de compromission, fermer l’API et le worker, révoquer sessions/invitations, examiner les événements minimaux et activer la procédure d’incident.
 - Une révocation ou une expiration bloque la prochaine requête, y compris avec un ticket invité existant. Aucun lien de téléchargement n’est émis. Une réponse déjà en cours, un aperçu déjà rendu ou une copie téléchargée ne peut pas être repris.

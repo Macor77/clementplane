@@ -330,3 +330,7 @@ Après livraison de la candidate, Vincent confirme : « Je valide. Tu peux mettr
 ## Dossier professionnel · candidate du 18 novembre 2026
 
 Les pièces sont déposées par le propriétaire, jamais par un OF pour le compte du formateur. Accès invités isolés et aucun lien de fichier. [Motifs et limites](sprints/v1.8.0/AUDIT.md).
+
+## Dossier professionnel · hébergement de recette et limite de capacité (18 novembre 2026)
+
+Cible de 8 Go de RAM à conserver en développement et pour préparer la production. Recette OVHcloud d2-8 en France à l’heure, pour 48 heures au plus et dans un budget total de 5 € TTC. Avant la mise en production, vérifier les pics et les alertes à 70 % et 90 %, chiffrer le coût récurrent et obtenir l’accord de Vincent. [Seuils, récupération et fin de facturation](sprints/v1.8.0/OPERATIONS.md).

@@ -333,4 +333,4 @@ Les pièces sont déposées par le propriétaire, jamais par un OF pour le compt
 
 ## Dossier professionnel · hébergement de recette et limite de capacité (18 novembre 2026)
 
-Cible de 8 Go de RAM à conserver en développement et pour préparer la production. Recette OVHcloud d2-8 en France à l’heure, pour 48 heures au plus et dans un budget total de 5 € TTC. Avant la mise en production, vérifier les pics et les alertes à 70 % et 90 %, chiffrer le coût récurrent et obtenir l’accord de Vincent. [Seuils, récupération et fin de facturation](sprints/v1.8.0/OPERATIONS.md).
+Cible de 8 Go de RAM à conserver en développement et pour préparer la production. La location temporaire OVHcloud d2-8 envisagée pour 48 heures et 5 € TTC est suspendue par décision du 18 novembre. Vérifier le stock du VPS-2 Linux en France le vendredi 20 novembre et rendre compte à Vincent avant toute commande. Avant la mise en production, vérifier les pics et les alertes à 70 % et 90 %, chiffrer le coût récurrent et obtenir l’accord de Vincent. [Seuils, récupération et fin de facturation](sprints/v1.8.0/OPERATIONS.md).

@@ -34,6 +34,7 @@ os.environ.update(
 )
 import api
 import core
+import owner
 import worker
 
 
@@ -655,6 +656,72 @@ class DossierTest(unittest.TestCase):
         )
         self.assertEqual(self.req("overview").json()["documents"], [])
 
+    def test_scanner_outage_and_retry(self):
+        missing_socket = str(Path(self.tmp.name) / "offline.sock")
+        with (
+            patch.dict(os.environ, DOSSIER_SCANNER_SOCKET=missing_socket),
+            patch("api.scan_file", owner.scan_file),
+        ):
+            self.req("upload", self.b, status=503)
+            self.assertEqual(self.req("overview").json()["documents"], [])
+
+        self.req("upload", self.b)
+        self.req("upload", self.b)
+        self.assertEqual(len(self.req("overview").json()["documents"]), 1)
+        share = self.share()
+        target = {
+            "org": str(self.org),
+            "share": share,
+            "doc": self.doc,
+            "version": self.version,
+            "download": True,
+        }
+        new_version = str(uuid4())
+        new_bytes = image_sample("PNG")
+        replacement = {
+            **self.b,
+            "request": new_version,
+            "previous": self.version,
+            "file": base64.b64encode(new_bytes).decode(),
+            "recipients": [share],
+            "notify": [share],
+        }
+        with (
+            patch.dict(os.environ, DOSSIER_SCANNER_SOCKET=missing_socket),
+            patch("api.scan_file", owner.scan_file),
+        ):
+            self.req("upload", replacement, status=503)
+            self.assertEqual(
+                self.req("file", target, self.of).content,
+                base64.b64decode(self.b["file"]),
+            )
+            self.req("file", {**target, "version": new_version}, self.of, 404)
+            self.assertEqual(self.req("history", {"doc": self.doc}).json(), [])
+            self.assertFalse(
+                self.admin.execute(
+                    "select 1 from dossier.mail where owner_id=%s and kind='replacement'",
+                    (self.owner,),
+                ).fetchall()
+            )
+
+        self.req("upload", replacement)
+        self.req("upload", replacement)
+        self.req("file", target, self.of, 404)
+        self.assertTrue(
+            self.req(
+                "file", {**target, "version": new_version}, self.of
+            ).content.startswith(b"\x89PNG")
+        )
+        history = self.req("history", {"doc": self.doc}).json()
+        self.assertEqual([v["version_id"] for v in history], [self.version])
+        self.assertEqual(
+            self.admin.execute(
+                "select count(*) from dossier.mail where owner_id=%s and kind='replacement'",
+                (self.owner,),
+            ).fetchone()[0],
+            1,
+        )
+
     def test_permissions_and_fail_closed(self):
         for role in ("anon", "authenticated", "service_role"):
             self.assertFalse(
@@ -663,11 +730,10 @@ class DossierTest(unittest.TestCase):
                 ).fetchone()[0]
             )
         with patch.dict(os.environ, DOSSIER_ENABLED="0"):
-            self.req("overview", status=404)
+            for action in api.ACTIONS:
+                with self.subTest(action=action):
+                    self.req(action, status=404)
         self.req("overview", user="absent", status=401)
-        with patch("api.scan_file", side_effect=HTTPException(503)):
-            self.req("upload", self.b, status=503)
-        self.assertEqual(self.req("overview").json()["documents"], [])
         with core.database() as db:
             db.execute("select count(*) from documents")
             with self.assertRaises(psycopg.errors.InsufficientPrivilege):

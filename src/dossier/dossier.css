@@ -1,0 +1,17 @@
+.dos { max-width: 56rem; margin: 0 auto; padding: clamp(.8rem,3vw,2rem); color: #14283d; font: inherit; overflow-wrap: anywhere }
+.dos h1,.dos h2,.dos h3,.dos p { margin: .4em 0 .65em }
+.dos section,.dos>form { background:white; border:1px solid #d3dfe2; border-radius:14px; margin:1rem 0; padding:clamp(.8rem,3vw,1.5rem) }
+.dos header,.dos-actions { display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.65rem }
+.dos-actions { justify-content:flex-start;margin:.65rem 0 }
+.dos button,.dos summary { cursor:pointer;font:inherit;min-height:44px;color:#14534e;background:#f1f7f6;border:1px solid #a9c4be;border-radius:8px;padding:.55rem .85rem }
+.dos button:disabled {opacity:.55;cursor:default}
+.dos header>button,.dos form button:first-of-type {background:#15564e;color:white}
+.dos-list {list-style:none;padding:0;margin:0}
+.dos-list>li {border-top:1px solid #d9e1e5;padding:1rem 0}
+.dos small {display:block;color:#40586b;margin:.35rem 0}
+.dos label {display:block;margin:.7rem 0}
+.dos input:not([type=checkbox]),.dos select,.dos textarea {display:block;width:100%;max-width:35rem;box-sizing:border-box;padding:.7rem;font:inherit;border:1px solid #98acb8;border-radius:6px;background:white}
+.dos fieldset {border:0;padding:0;min-width:0}
+.dos [role=alert] {color:#942527}
+.dos iframe,.dos-preview {width:100%;border:0}.dos iframe {min-height:22rem}
+.dos-guest {font:1rem/1.5 system-ui,sans-serif;max-width:40rem}.dos-guest>header {padding:1rem;background:#10243c;border-radius:10px}

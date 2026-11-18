@@ -27,7 +27,8 @@ export const PWA_OPTIONS = {
   workbox: {
     navigateFallback: '/index.html',
     // Workbox matches pathname + search: OAuth returns include code/state or error.
-    navigateFallbackDenylist: [/^\/microsoft-calendar-callback\.html(?:\?|$)/,/^\/google-calendar-callback\.html(?:\?|$)/,/^\/tutorials\/pdf\//],
+    globIgnores: ['**/dossier-invite.html'],
+    navigateFallbackDenylist: [/^\/(?:dossier-invite\.html|formateur\/dossier|dossiers-recus)(?:[/?]|$)/,/^\/microsoft-calendar-callback\.html(?:\?|$)/,/^\/google-calendar-callback\.html(?:\?|$)/,/^\/tutorials\/pdf\//],
     cleanupOutdatedCaches: true,
     globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
     runtimeCaching: [],

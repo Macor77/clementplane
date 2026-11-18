@@ -55,6 +55,8 @@ import { trackProductEvent } from './services/productAnalyticsService';
 
 import './App.css';
 
+import { OrganizationDossiers } from './dossier/Dossier';
+import { enabled as dossierEnabled } from './dossier/client';
 const ACTIVE_SPACE_KEY = 'timeforma_active_space';
 
 const navigationItems = [
@@ -117,6 +119,7 @@ function isTrainerPersonalPath(pathname) {
   return (
     pathname === '/formateur/espace' ||
     pathname === '/formateur/statistiques' ||
+    pathname === '/formateur/dossier' ||
     pathname.startsWith('/formateur/bilans/') ||
     pathname === '/formateur/propositions' ||
     pathname === '/formateur/missions' ||
@@ -132,12 +135,15 @@ function isTrainerPersonalPath(pathname) {
 }
 
 function OrganizationApp() {
+  const { organizationRole } = useAuth();
+  const items = dossierEnabled && ['owner','admin','manager'].includes(organizationRole)
+    ? [...navigationItems, { to: '/dossiers-recus', label: 'Dossiers reçus', icon: '▤' }] : navigationItems;
   return (
     <RequireOrganization>
       <div className="app-shell">
         <MobileNavigation
           spaceLabel="Espace organisme de formation"
-          navigationItems={navigationItems}
+          navigationItems={items}
           footer={<UserCard />}
         />
 
@@ -158,7 +164,7 @@ function OrganizationApp() {
             className="app-nav"
             aria-label="Navigation principale"
           >
-            {navigationItems.map((item) => (
+            {items.map((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}
@@ -190,6 +196,7 @@ function OrganizationApp() {
 
         <main className="app-main">
           <Routes>
+            {dossierEnabled && <Route path="/dossiers-recus" element={<OrganizationDossiers />} />}
             <Route
               path="/"
               element={<Dashboard />}

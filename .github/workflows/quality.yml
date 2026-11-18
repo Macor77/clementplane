@@ -19,6 +19,8 @@ jobs:
     env:
       VITE_SUPABASE_URL: https://example.supabase.co
       VITE_SUPABASE_ANON_KEY: ci-test-anon-key
+      VITE_DOSSIER_ENABLED: 'true'
+      VITE_DOSSIER_API: https://dossier.example.invalid
       VITE_GOOGLE_CALENDAR_ENABLED: true
       VITE_MICROSOFT_CALENDAR_ENABLED: true
     steps:
@@ -55,6 +57,15 @@ jobs:
       - name: Test trainer activity SQL and privacy
         run: npm run test:activity-sql
 
+      - name: Prepare isolated dossier integration tests
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Verify dossier permissions and lifecycle on a disposable PostgreSQL instance
+        run: |
+          python -m pip install -r services/dossier/requirements.txt -r services/dossier/requirements-validator.txt pgserver==0.1.4
+          python services/dossier/tests/acceptance.py
+
       - name: Audit production dependencies
         run: npm audit --audit-level=high
 
@@ -65,7 +76,7 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Run PWA browser test
-        run: npx playwright test tests/e2e/specs/05-pwa-shell.spec.js tests/e2e/specs/06-personal-missions-ui.spec.js tests/e2e/specs/08-google-calendar-ui.spec.js tests/e2e/specs/09-availability-recovery.spec.js tests/e2e/specs/10-form-tab-return.spec.js tests/e2e/specs/11-manual-revalidation.spec.js tests/e2e/specs/12-new-tab-navigation.spec.js tests/e2e/specs/13-microsoft-calendar-ui.spec.js tests/e2e/specs/14-trainer-activity.spec.js tests/e2e/specs/15-trainer-expenses.spec.js tests/e2e/specs/16-partial-attendance.spec.js tests/e2e/specs/17-activity-help.spec.js tests/e2e/specs/18-separate-attendance.spec.js tests/e2e/specs/19-trainer-statistics.spec.js
+        run: npx playwright test tests/e2e/specs/05-pwa-shell.spec.js tests/e2e/specs/06-personal-missions-ui.spec.js tests/e2e/specs/08-google-calendar-ui.spec.js tests/e2e/specs/09-availability-recovery.spec.js tests/e2e/specs/10-form-tab-return.spec.js tests/e2e/specs/11-manual-revalidation.spec.js tests/e2e/specs/12-new-tab-navigation.spec.js tests/e2e/specs/13-microsoft-calendar-ui.spec.js tests/e2e/specs/14-trainer-activity.spec.js tests/e2e/specs/15-trainer-expenses.spec.js tests/e2e/specs/16-partial-attendance.spec.js tests/e2e/specs/17-activity-help.spec.js tests/e2e/specs/18-separate-attendance.spec.js tests/e2e/specs/19-trainer-statistics.spec.js tests/e2e/specs/20-professional-dossier.spec.js
 
       - name: Keep fictitious browser acceptance evidence
         if: always()

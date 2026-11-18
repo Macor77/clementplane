@@ -724,3 +724,8 @@ ExpenseFields.jsx réutilise le formulaire et son indicateur de brouillon. train
 ## V1.5.1 publiée — aides contextuelles, 16 novembre 2026
 
 `ActivityHelp.jsx` centralise un dialog natif dans un portail hors formulaire, sans nouveau service ni dépendance. État local indépendant du brouillon ; fond inerte, focus restitué, défilement restauré à la fermeture/démontage. Présentation basse mobile, centrée desktop. API et schéma inchangés.
+
+
+## Dossier professionnel · candidate du 18 novembre 2026
+
+Un service indépendant vérifie Auth, les partages et le scan avant tout stockage PostgreSQL privé. Le worker gère rappels, envois et purges. [Architecture V1.8.0](sprints/v1.8.0/OPERATIONS.md).

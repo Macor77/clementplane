@@ -190,3 +190,8 @@ V1.5.0 : `src/utils/__tests__/partialAttendance.test.js`, `scripts/testing/parti
 ## V1.5.1 publiée — aides contextuelles, 16 novembre 2026
 
 Quality 43857208016 : 406 unitaires, 63 parcours navigateur et suites SQL/RLS réussis. Le scénario 17 couvre aides complètes, clavier/Echap/fond/focus, état propre et modifié, erreurs, sauvegarde/rechargement, confidentialité, 1440/768/390 px et tactile 390×480. Captures contrôlées ; aucune recette sur appareil physique revendiquée. Détails : sprints/v1.5.1/ACCEPTANCE.md.
+
+
+## Dossier professionnel · candidate du 18 novembre 2026
+
+V1.8.0 prépare des scénarios PostgreSQL, validation de fichiers et parcours mobiles. [Portée et exécution](sprints/v1.8.0/ACCEPTANCE.md).

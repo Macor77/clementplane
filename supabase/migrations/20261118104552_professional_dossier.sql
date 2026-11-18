@@ -14,17 +14,18 @@ create table dossier.versions (
  id uuid primary key, doc_id uuid not null references dossier.documents on delete cascade,
  kind text not null check(kind in ('cv','nda','sirene','rc','urssaf','habilitation','diplome','qualiopi','autre')),
  title text not null check(length(trim(title)) between 1 and 140),
- issued date, expiry date, expiry_mode text not null check(expiry_mode in ('dated','none','unknown')),
+ issued date, expiry_set_on date not null default (now() at time zone 'Europe/Paris')::date, expiry date, expiry_mode text not null check(expiry_mode in ('dated','none','unknown')),
  note text not null default '' check(length(note)<=2000),
  mime text not null check(mime in ('application/pdf','image/jpeg','image/png')),
- bytes bytea not null check(octet_length(bytes) between 1 and 5242880),
+ key_id text not null check(length(key_id) between 1 and 64),
+ bytes bytea not null check(octet_length(bytes) between 29 and 5242908),
  created_at timestamptz not null default now(), retired_at timestamptz,
  check ((expiry_mode='dated') = (expiry is not null)), unique(doc_id,id)
 );
 alter table dossier.documents add foreign key(id,current_version) references dossier.versions(doc_id,id) deferrable initially deferred;
 create table dossier.shares (
  id uuid primary key, owner_id uuid not null references auth.users on delete cascade,
- org_id uuid references public.organizations on delete cascade, email text,
+ org_id uuid references public.organizations on delete cascade, org_name text, email text,
  ends date, revoked_at timestamptz, created_at timestamptz not null default now(),
  check ((org_id is null) <> (email is null)), check(email is null or ends is not null),
  unique(id,owner_id)
@@ -47,7 +48,7 @@ create table dossier.sessions (
 );
 create table dossier.events (
  id bigint generated always as identity primary key, owner_id uuid not null references auth.users on delete cascade,
- action text not null, share_id uuid, doc_id uuid, at timestamptz not null default now()
+ action text not null, actor_id uuid references auth.users on delete set null, share_id uuid, doc_id uuid, at timestamptz not null default now()
 );
 create table dossier.mail (
  id uuid primary key default gen_random_uuid(), unique_key text not null unique,

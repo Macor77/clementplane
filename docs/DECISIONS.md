@@ -325,3 +325,8 @@ Vincent valide les améliorations mobiles proposées et autorise leur développe
 ## V1.7.0 — Production autorisée, 17 novembre 2026
 
 Après livraison de la candidate, Vincent confirme : « Je valide. Tu peux mettre en production. » Cette autorisation lève le gel de publication de V1.7.0. PR #28 fusionnée avec SHA attendu b3f3144 ; migration des objectifs appliquée seule sous 20261117142308, droits et contraintes vérifiés. Vercel READY sur le SHA de fusion 0ed5582 ; version officielle et service worker contrôlés. Tag/release/ZIP réalisés depuis le commit documentaire exact après Quality, sans envoi de nouveautés.
+
+
+## Dossier professionnel · candidate du 18 novembre 2026
+
+Les pièces sont déposées par le propriétaire, jamais par un OF pour le compte du formateur. Accès invités isolés et aucun lien de fichier. [Motifs et limites](sprints/v1.8.0/AUDIT.md).

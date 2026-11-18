@@ -35,3 +35,6 @@ Inclure expense_items (catégorie, centimes, précision), expenses calculé et l
 ## V1.7.0 — Objectifs personnels, 17 novembre 2026
 
 Inclure trainer_activity_goals (mois, indicateur, cible) dans les demandes du propriétaire dont l’identité a été vérifiée, en filtrant par owner_user_id. Ne jamais transmettre les objectifs à un OF ou un autre formateur. Rectification/suppression disponibles dans Mes statistiques ; suppression du compte Auth en cascade. Aucun nouvel export automatique ajouté.
+
+### Dossier professionnel · V1.8.0 candidate
+Identifier le responsable concerné (formateur, OF pour ses copies, exploitant pour ses propres traitements). Exécuter la demande dans le périmètre de la personne vérifiée. Pour un formateur, inclure fichiers courants et historiques disponibles, notes, échéances, partages et traces le concernant, en protégeant les droits des tiers. Pour un invité, identifier les partages par adresse vérifiée, sans communiquer d’autres dossiers. Proposer le téléchargement ou une remise par canal sécurisé. Ne pas joindre un dossier de tiers par e-mail. Révocation et effacement répondent à deux demandes différentes. Consigner les suppressions à respecter en cas de restauration.

@@ -1,3 +1,7 @@
+## 18 novembre 2026 · V1.8.0 en préparation
+
+Dossier professionnel privé du formateur, échéances et partages sélectifs aux OF ou invités. PR #29 en brouillon. Production V1.7.0. Les contrôles Outlook conservent leur suivi distinct. [État du sprint](docs/sprints/v1.8.0/CLOSURE.md)
+
 ## V1.7.0 publiée — statistiques sur mobile, 17 novembre 2026
 
 CA des formations réalisées (HT/TTC séparés), frais privés par catégorie et dépense, chiffres consultables par mission, aides « ? », périodes/filtres, évolution/comparaison, bilans à compléter avec date de fin et objectif mensuel facultatif. Publication explicitement validée par Vincent : PR #28 fusionnée, migration des objectifs appliquée en production, Vercel READY et V1.7.0 vérifiée sur app.clementplane.fr. 424 tests unitaires/contrats et 74 parcours navigateur réussis ; captures fictives contrôlées. Dossier : `docs/sprints/v1.7.0/` (ou `sprints/v1.7.0/` depuis docs). Aucun e-mail envoyé.

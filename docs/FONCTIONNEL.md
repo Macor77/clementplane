@@ -554,3 +554,8 @@ Dans Réalisation de la formation, le volet Apprenants partiellement formés est
 ## V1.5.1 publiée — aides contextuelles, 16 novembre 2026
 
 Les boutons « ? » ouvrent les explications du bilan dans une fenêtre refermable ; le mobile affiche cette aide en bas de l’écran. Intitulés, unités, confidentialité et inclusion des apprenants partiels restent visibles. Les aides n’enregistrent ni ne modifient la saisie. Guide : sprints/v1.5.1/GUIDE.md.
+
+
+## Dossier professionnel · candidate du 18 novembre 2026
+
+Le seul déposant est le formateur propriétaire. Les OF et invités ont un accès sélectif en consultation et téléchargement, selon le [guide V1.8.0](sprints/v1.8.0/GUIDE.md).

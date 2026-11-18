@@ -434,3 +434,8 @@ Si le détail partiel dépasse le nombre total, corriger l’effectif global ou 
 ## V1.5.1 publiée — aides contextuelles, 16 novembre 2026
 
 Les explications sont accessibles via « ? ». Fermer l’aide (bouton, Echap ou fond) conserve le brouillon ; le texte défile dans la fenêtre si nécessaire. La fermeture ne sauvegarde pas : utiliser Enregistrer le bilan puis attendre la confirmation. Aucune migration ou opération Supabase pour ce changement ; retour au frontend V1.5.0 possible sans restaurer les données.
+
+
+## Dossier professionnel · candidate du 18 novembre 2026
+
+Un refus de scan ou une panne d’analyse bloque le dépôt. Vérifier l’état du scanner et des signatures. Un 409 au remplacement demande une nouvelle vérification des destinataires. [Procédures de reprise](sprints/v1.8.0/OPERATIONS.md).

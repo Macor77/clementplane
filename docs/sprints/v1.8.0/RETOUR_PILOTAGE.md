@@ -6,7 +6,7 @@
 
 Le VPS FirstHeberg accueille l’API documentaire privée, le validateur et l’antivirus. La recette des dépôts fictifs est passée sur cet hôte. Le parcours navigateur a ensuite réussi sur une instance Supabase Auth isolée avec trois comptes fictifs. Le propriétaire a retrouvé et téléchargé sa pièce. Le deuxième formateur a vu son dossier vide. L’administrateur a dû valider son second facteur pour accéder au dossier. La réception des courriels et des alertes de supervision sur l’infrastructure cible reste à vérifier. [Résultats des deux recettes](ACCEPTANCE.md)
 
-**Prochaine décision.** Vérifier la distribution de l’invitation et du code par Brevo à la seule boîte de l’opérateur, avec une pièce fictive. La préparation du partage invité a réussi dans le test isolé. Avant ouverture, attester la sauvegarde de la base et des clés, la réception des alertes mémoire et les réglages de confidentialité du prestataire de messagerie. Le contrôle npm de la candidate ne signale plus d’alerte élevée. [Constats de mise en service](ACCEPTANCE.md)
+Le 20 novembre, les deux messages de test Brevo ont été reçus dans Gmail. Le lien et le code reçus ont servi à vérifier le téléchargement et la révocation dans la recette privée. Le prochain contrôle de messagerie porte sur l’envoi automatique depuis le worker du VPS et l’ouverture du lien HTTPS depuis un appareil externe. Avant ouverture, attester la sauvegarde de la base et des clés, la réception des alertes mémoire et les réglages de confidentialité du prestataire de messagerie. Le contrôle npm de la candidate ne signale plus d’alerte élevée. [Constats de mise en service](ACCEPTANCE.md)
 
 ## Point du 18 novembre 2026
 

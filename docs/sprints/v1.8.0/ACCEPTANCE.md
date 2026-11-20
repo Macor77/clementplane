@@ -2,6 +2,12 @@
 
 Données fictives uniquement. Chaque niveau de vérification ci-dessous est à lire dans son environnement. Les fichiers de tests sont dans services/dossier/tests, les scénarios Playwright 20 et 21 de tests/e2e/specs et la configuration Quality.
 
+## Réception réelle du partage invité · 20 novembre 2026
+
+L’opérateur a autorisé un envoi de test par Brevo à sa seule boîte. Le worker d’une base de recette temporaire a composé l’invitation et le code pour une pièce fictive. L’envoi a utilisé la fonction de test du compte Brevo de Clementplane. Brevo a marqué les deux messages livrés. Gmail les a reçus dans la boîte de réception à 16 h 57 et 17 h 00, heure de Paris.
+
+Le lien extrait du premier message a permis de demander le code au service privé. Le code extrait du second a ouvert la session invitée. L’API a listé une seule des deux pièces présentes et rendu un PDF identique à celui déposé. Après révocation, une nouvelle demande de téléchargement a renvoyé 404. L’instance a été arrêtée. Le lien fonctionnait sur la boucle locale de recette. L’envoi automatique par le worker du VPS et le parcours HTTPS depuis un appareil externe restent à vérifier.
+
 ## Préparation du partage invité et de la mise en service · 20 novembre 2026
 
 - Le test `test_guest_follows_mailed_invitation_and_code` a suivi le lien et le code issus du contenu réellement composé par le worker. Le transport HTTP vers Brevo a été remplacé par un collecteur local. Une seule invitation et un seul code ont été présentés pour l’adresse fictive autorisée. Le partage vers une deuxième adresse est resté en attente. Le bénéficiaire a téléchargé la seule pièce sélectionnée, dont les octets ont été comparés à l’original. La révocation a immédiatement coupé son accès. Aucun courriel n’a quitté le test.

@@ -642,6 +642,25 @@ class DossierTest(unittest.TestCase):
             self.assertIsNone(worker.message(db, jobs[0]))
 
     @unittest.skipUnless(
+        os.getenv("DOSSIER_REAL_SCANNER") == "1", "requires a live ClamAV daemon"
+    )
+    def test_official_eicar_rejected_before_storage(self):
+        import asyncio
+        from scanner import clamd
+
+        marker = (
+            b"X5O!P%@AP[4\\PZX54(P^)7CC)7}$"
+            b"EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*"
+        )
+        verdict = asyncio.run(asyncio.wait_for(clamd(b"INSTREAM", marker), 15))
+        self.assertIn(b"eicar", verdict.lower())
+        self.assertTrue(verdict.endswith(b" FOUND"))
+        self.req(
+            "upload", {**self.b, "file": base64.b64encode(marker).decode()}, status=422
+        )
+        self.assertEqual(self.req("overview").json()["documents"], [])
+
+    @unittest.skipUnless(
         os.getenv("DOSSIER_REAL_SCANNER") == "1"
         and os.getenv("DOSSIER_TEST_SIGNATURE") == "1",
         "requires isolated benign AV test signature",

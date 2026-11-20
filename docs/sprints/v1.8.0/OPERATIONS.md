@@ -19,6 +19,21 @@ ClamAV recommande au moins 3 Gio de RAM sur Linux. Pour héberger API, validateu
 5. Faire un dépôt fictif suivi d’un téléchargement et de plusieurs pages d’aperçu. Examiner le flux en ouvrant un partage OF et un partage invité, puis après changement de rôle, remplacement, révocation et suppression. Vérifier que les journaux des fournisseurs et le cache de la PWA ne contiennent aucun document, note, code ou lien d’accès. Désactiver les aperçus Brevo pour l’expéditeur, vérifier le suivi/réécriture de liens et la conservation des journaux, sans modifier incidemment les autres expéditeurs. Vérifier DKIM et l’expéditeur contact@clementplane.fr.
 6. Pour l’ouverture, attester MFA, quotas/coûts, contrats, restauration, recette et revue de sécurité. L’autorisation de fusion/déploiement est distincte de celle d’ouvrir le service. L’API et le front sont fermés par défaut. Le tag final, l’archive et la release sont liés au SHA effectivement validé après ce point.
 
+### Recette privée sur un hôte qui exécute déjà ClamAV
+
+Depuis `services/dossier`, utiliser le projet Compose du moteur existant pour reprendre son volume de sockets. Pour l’hôte de recette, ce projet est `clementplane-antivirus`. Le profil `recette` lance le client de test et PostgreSQL dans un conteneur éphémère sans réseau externe. Les pièces, les identités et les clés de chiffrement sont générées pour le test. Le service de validation et ClamAV communiquent par sockets Unix. L’API liée à la boucle locale peut rester fermée pendant les essais.
+
+Sur cet hôte, fournir à `DOSSIER_API_ENV_FILE` le chemin absolu d’un fichier hors du dépôt contenant `DOSSIER_WEB_ORIGIN=https://recette.example.invalid` et `DOSSIER_ENABLED=0`. Pointer `DOSSIER_WORKER_ENV_FILE` sur un fichier vide hors du dépôt. Le worker reste arrêté. Vérifier que le projet, son volume de sockets et le service `clamd` correspondent à l’installation attendue avant de démarrer les deux services.
+
+```bash
+dc=(docker compose -p clementplane-antivirus -f compose.yaml -f compose.recette.yaml)
+"${dc[@]}" up -d --build --no-deps validator api
+"${dc[@]}" --profile recette build recette
+"${dc[@]}" --profile recette run --no-deps --rm recette
+```
+
+Le résultat détaille les scénarios terminés et omis. Le témoin EICAR utilise les signatures officielles. Le test supplémentaire avec un PNG marqué est conditionné à une signature de laboratoire distincte. Contrôler aussi que l’API de l’hôte répond 404 à un POST sur `http://127.0.0.1:8260/v1/upload` et que le moteur et le validateur ne publient aucun port.
+
 ## Enveloppe validée pour la recette et le passage en production
 
 Décision de Vincent du 18 novembre 2026. Garder une cible de **8 Go de RAM** pendant le développement et lors de la préparation de production. Les limites documentaires et la capacité disque sont distinctes de la mémoire vive. Ne pas activer d’augmentation automatique payante.

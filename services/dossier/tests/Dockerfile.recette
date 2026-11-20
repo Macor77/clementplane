@@ -1,0 +1,4 @@
+FROM dossier_validator
+USER root
+RUN python -m pip install --no-cache-dir pgserver==0.1.4
+USER 10001:10001

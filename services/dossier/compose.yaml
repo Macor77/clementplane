@@ -6,7 +6,7 @@ x-hardened: &hardened
   security_opt: [no-new-privileges:true]
   ulimits:
     core: 0
-  tmpfs: [/tmp:rw,noexec,nosuid,nodev,size=128m]
+  tmpfs: ["/tmp:rw,noexec,nosuid,nodev,size=128m"]
 services:
   signatures:
     <<: *hardened

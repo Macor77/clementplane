@@ -4,6 +4,7 @@ import base64
 import io
 import json
 import os
+import re
 import socket
 import subprocess
 import sys
@@ -12,8 +13,10 @@ import unittest
 from datetime import timedelta
 from pathlib import Path
 from unittest.mock import patch
+from urllib.parse import urlsplit
 from uuid import uuid4
 
+import httpx
 import pikepdf
 import psycopg
 from fastapi import HTTPException
@@ -364,6 +367,84 @@ class DossierTest(unittest.TestCase):
             (self.of,),
         )
         self.req("file", {**target, "version": ver3}, self.of, 404)
+
+    def test_guest_follows_mailed_invitation_and_code(self):
+        # Only the provider transport is intercepted in the worker. Open the
+        # invitation and use the code from its messages as an anonymous guest.
+        self.admin.execute(
+            "update dossier.mail set state='held' where owner_id<>%s", (self.owner,)
+        )
+        self.req("upload", self.b)
+        self.req("upload", {
+            **self.b, "doc": str(uuid4()), "request": str(uuid4()),
+            "title": "Autre pièce privée",
+        })
+        allowed = self.share(guest=True)
+        blocked = self.share(guest=True)
+        mailbox = allowed + "@example.invalid"
+
+        def guest(action, body, status=200):
+            response = self.client.post("/v1/" + action, json=body)
+            self.assertEqual(response.status_code, status, action)
+            return response
+
+        def check_message(call, subject):
+            self.assertEqual(call.args, ("https://api.brevo.com/v3/smtp/email",))
+            envelope = call.kwargs["json"]
+            self.assertEqual(envelope["sender"]["email"], "contact@clementplane.fr")
+            self.assertEqual(envelope["to"], [{"email": mailbox}])
+            self.assertTrue({"cc", "bcc", "attachment"}.isdisjoint(envelope))
+            self.assertEqual(envelope["subject"], subject)
+            self.assertNotIn(self.b["title"], envelope["textContent"])
+            self.assertNotIn(self.b["note"], envelope["textContent"])
+            return envelope["textContent"]
+
+        settings = {
+            "DOSSIER_MAIL_MODE": "test",
+            "DOSSIER_TEST_MAILBOXES": mailbox,
+            "BREVO_API_KEY": "fixture",
+        }
+        with patch.dict(os.environ, settings), patch(
+            "worker.httpx.post", return_value=httpx.Response(201)
+        ) as transport:
+            while worker.process_one():
+                pass
+            self.assertEqual(transport.call_count, 1)
+            invitation = check_message(
+                transport.call_args, "Invitation à consulter un dossier professionnel"
+            )
+            url = urlsplit(invitation.splitlines()[-1])
+            self.assertEqual(
+                url._replace(fragment="").geturl(),
+                os.environ["DOSSIER_WEB_ORIGIN"] + "/dossier-invite.html",
+            )
+            self.assertTrue(url.fragment)
+            link = {"link": url.fragment}
+            guest("guest-list", link, 403)
+            guest("request-code", link)
+            self.assertTrue(worker.process_one())
+            self.assertFalse(worker.process_one())
+            self.assertEqual(transport.call_count, 2)
+            message = check_message(transport.call_args, "Votre code Clementplane")
+            codes = re.findall(r"\b[0-9]{8}\b", message)
+            self.assertEqual(len(codes), 1)
+            self.assertNotIn(url.fragment, message)
+            ticket = guest("verify-code", {**link, "code": codes[0]}).json()
+            rows = guest("guest-list", ticket).json()
+            self.assertEqual([row["id"] for row in rows], [self.doc])
+            self.assertNotIn("note", rows[0])
+            target = {**ticket, "doc": self.doc, "version": self.version, "download": True}
+            self.assertEqual(
+                guest("guest-file", target).content, base64.b64decode(self.b["file"])
+            )
+            self.req("revoke", {"share": allowed})
+            guest("guest-file", target, 404)
+            self.assertFalse(worker.process_one())
+            self.assertEqual(transport.call_count, 2)
+        blocked_job = self.admin.execute(
+            "select state from dossier.mail where share_id=%s", (blocked,)
+        ).fetchone()
+        self.assertEqual(blocked_job, ("held",))
 
     def test_guest_expiration_and_revocation(self):
         self.req("upload", self.b)

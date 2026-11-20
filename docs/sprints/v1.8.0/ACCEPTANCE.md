@@ -2,6 +2,13 @@
 
 Données fictives uniquement. Chaque niveau de vérification ci-dessous est à lire dans son environnement. Les fichiers de tests sont dans services/dossier/tests, les scénarios Playwright 20 et 21 de tests/e2e/specs et la configuration Quality.
 
+## Préparation du partage invité et de la mise en service · 20 novembre 2026
+
+- Le test `test_guest_follows_mailed_invitation_and_code` a suivi le lien et le code issus du contenu réellement composé par le worker. Le transport HTTP vers Brevo a été remplacé par un collecteur local. Une seule invitation et un seul code ont été présentés pour l’adresse fictive autorisée. Le partage vers une deuxième adresse est resté en attente. Le bénéficiaire a téléchargé la seule pièce sélectionnée, dont les octets ont été comparés à l’original. La révocation a immédiatement coupé son accès. Aucun courriel n’a quitté le test.
+- Expéditeur historique vérifié dans Gmail sur un courriel Clementplane du 4 septembre 2026. Les résultats d’authentification consignés par Gmail indiquent SPF, DKIM et DMARC réussis. La réception d’une invitation et de son code par le nouveau service documentaire reste à vérifier avec la boîte autorisée. Le réglage des aperçus et de la conservation Brevo reste à contrôler dans le compte.
+- L’espace client FirstHeberg indique un VPS en ligne à Valenciennes 1 et aucune sauvegarde disponible pour cette machine. Il indique aussi que son service SMTP exige la certification du compte. La portée de cette restriction sur le relais externe au port 465 reste à tester. Le worker documentaire utilise l’API HTTPS de Brevo. Les alertes mémoire utilisent SMTP.
+- Le contrôle en lecture seule de la base Supabase de production à 16 h 35 (Paris) confirme l’absence du schéma documentaire. La sauvegarde distante de la base et celle des clés conservées séparément doivent être attestées avant ouverture. La liste des sauvegardes Supabase demande une connexion au tableau de bord.
+
 ## Parcours navigateur du 20 novembre 2026 à 16 h 03, heure de Paris
 
 Deux scénarios Playwright ont réussi en 5,3 secondes avec Chromium 149 sur la candidate `654b7e2`. La recette a utilisé une instance Supabase Auth 2.197.0 auto-hébergée temporaire, PostgREST 14.18, PostgreSQL 16.2 et l’API documentaire de la branche. ClamAV 1.5.5 a chargé la base officielle 28188 du 19 novembre. La page de connexion a obtenu les sessions par mot de passe auprès de Supabase Auth. Aucun jeton de session ni aucune réponse d’API n’a été injecté dans le navigateur.

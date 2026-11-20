@@ -15,3 +15,11 @@ RUN pip install --no-cache-dir -r requirements-validator.txt
 COPY scanner.py validator.py ./
 USER 10001:10001
 CMD ["python","-m","uvicorn","scanner:app","--uds","/run/dossier/validator.sock","--no-access-log"]
+
+FROM validator AS recette
+USER root
+RUN python -m pip install --no-cache-dir pgserver==0.1.4
+USER 10001:10001
+
+# Keep the validator as the default image for callers without a target.
+FROM validator AS runtime

@@ -2,6 +2,12 @@
 
 Données fictives uniquement. Chaque niveau de vérification ci-dessous est à lire dans son environnement. Les fichiers de tests sont dans services/dossier/tests, les scénarios Playwright 20 et 21 de tests/e2e/specs et la configuration Quality.
 
+## Partage invité en HTTPS sur mobile simulé · 20 novembre 2026
+
+Chromium a ouvert l’invitation sur un écran de 390 px via Nginx 1.26.3 et l’API documentaire. Le test utilisait un certificat local approuvé pour cette exécution, PostgreSQL temporaire et deux pièces fictives. Le worker a composé l’invitation et le code. Un collecteur local a reçu les messages à la place de Brevo. Le navigateur a affiché la seule pièce partagée et téléchargé un PDF dont l’empreinte SHA-256 correspond à l’original. Après révocation par le propriétaire, un second téléchargement depuis la même page a reçu une réponse 404.
+
+La page et les requêtes du parcours sont restées sur une seule origine. Les requêtes vers le dépôt, le dossier du propriétaire et le service worker ont reçu 404. La limite de taille, le refus d’une origine étrangère, la réponse de pré-vérification CORS et les en-têtes de cache ont été contrôlés. Cet essai a utilisé la boucle locale. La vérification suivante porte sur un certificat public et la réception de l’invitation et du code envoyés automatiquement depuis FirstHeberg.
+
 ## Réception réelle du partage invité · 20 novembre 2026
 
 L’opérateur a autorisé un envoi de test par Brevo à sa seule boîte. Le worker d’une base de recette temporaire a composé l’invitation et le code pour une pièce fictive. L’envoi a utilisé la fonction de test du compte Brevo de Clementplane. Brevo a marqué les deux messages livrés. Gmail les a reçus dans la boîte de réception à 16 h 57 et 17 h 00, heure de Paris.

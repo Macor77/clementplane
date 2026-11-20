@@ -36,6 +36,25 @@ dc=(docker compose -p clementplane-antivirus -f compose.yaml -f compose.recette.
 
 Le résultat détaille les scénarios terminés et omis. Le témoin EICAR utilise les signatures officielles. Le test supplémentaire avec un PNG marqué est conditionné à une signature de laboratoire distincte. Contrôler aussi que l’API de l’hôte répond 404 à un POST sur `http://127.0.0.1:8260/v1/upload` et que le moteur et le validateur ne publient aucun port.
 
+### Essai HTTPS depuis un téléphone sur le VPS de recette
+
+Utiliser le nom DNS du VPS FirstHeberg et un certificat public valide pour ce nom. Le serveur HTTPS sert une copie dédiée de la page invitée. Construire depuis la racine du dépôt, avec une origine identique pour la page, l’API et les liens des courriels. Le répertoire de sortie doit être neuf et réservé à cette page.
+
+```bash
+VITE_DOSSIER_ENABLED=true VITE_DOSSIER_API="https://${DOSSIER_GUEST_HOST}" \
+  npm exec -- vite build --config services/dossier/recette/vite.guest.config.mjs \
+  --outDir "$DOSSIER_GUEST_ROOT"
+```
+
+Renseigner le nom d’hôte, l’adresse d’écoute et les chemins absolus du certificat, de sa clé et du répertoire compilé. Rendre le modèle avec la liste explicite de variables ci-dessous pour conserver les variables internes de Nginx. Charger le résultat dans le contexte `http` après validation avec `nginx -t`.
+
+```bash
+envsubst '${DOSSIER_HTTPS_LISTEN} ${DOSSIER_GUEST_HOST} ${DOSSIER_TLS_CERT} ${DOSSIER_TLS_KEY} ${DOSSIER_GUEST_ROOT}' \
+  < services/dossier/recette/nginx-guest.conf.template > "$DOSSIER_RENDERED_CONF"
+```
+
+Le proxy relaie cinq actions invitées vers la boucle locale. Le formulaire de dépôt, les routes du propriétaire et la base restent privés. Vérifier le certificat depuis l’extérieur avant de créer le partage. Utiliser la base de recette isolée, une pièce fictive, le mode de messagerie `test` et une seule adresse autorisée. Fournir au worker son accès Brevo par la configuration privée du serveur. Créer le partage une seule fois, rapprocher l’invitation des journaux de livraison puis demander le code une seule fois depuis la page. En fin de test, révoquer le partage, vérifier le refus d’un nouveau téléchargement, arrêter le worker de recette et retirer l’entrée HTTPS temporaire.
+
 ## Enveloppe validée pour la recette et le passage en production
 
 Décision de Vincent du 18 novembre 2026. Garder une cible de **8 Go de RAM** pendant le développement et lors de la préparation de production. Les limites documentaires et la capacité disque sont distinctes de la mémoire vive. Ne pas activer d’augmentation automatique payante.

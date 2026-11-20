@@ -1,6 +1,24 @@
 # Matrice de recette du dossier professionnel
 
-Données fictives uniquement. Chaque niveau de vérification ci-dessous est à lire dans son environnement. Les fichiers de tests sont dans services/dossier/tests, tests/e2e/specs/20-professional-dossier.spec.js et la configuration Quality.
+Données fictives uniquement. Chaque niveau de vérification ci-dessous est à lire dans son environnement. Les fichiers de tests sont dans services/dossier/tests, les scénarios Playwright 20 et 21 de tests/e2e/specs et la configuration Quality.
+
+## Parcours navigateur du 20 novembre 2026 à 16 h 03, heure de Paris
+
+Deux scénarios Playwright ont réussi en 5,3 secondes avec Chromium 149 sur la candidate `654b7e2`. La recette a utilisé une instance Supabase Auth 2.197.0 auto-hébergée temporaire, PostgREST 14.18, PostgreSQL 16.2 et l’API documentaire de la branche. ClamAV 1.5.5 a chargé la base officielle 28188 du 19 novembre. La page de connexion a obtenu les sessions par mot de passe auprès de Supabase Auth. Aucun jeton de session ni aucune réponse d’API n’a été injecté dans le navigateur.
+
+| Parcours | Observation |
+|---|---|
+| Formateur propriétaire | Depuis la page du dossier, redirection vers la connexion puis retour au dossier. Dépôt d’un PNG fictif de 4 × 4 pixels, état privé après actualisation, aperçu décodé aux dimensions attendues, téléchargement au nom du document avec en-tête PNG et dimensions vérifiés. Dans un nouveau navigateur isolé, la pièce est réapparue après une nouvelle connexion. |
+| Second formateur | Connexion indépendante dans un autre contexte du navigateur. Le dossier affichait l’état vide et la pièce du premier formateur était absente. |
+| Formateur également administrateur de la plateforme | Dossier bloqué après le mot de passe. Enregistrement du facteur TOTP depuis l’écran de Clementplane, validation du code et accès au dossier après actualisation. PostgreSQL a confirmé un facteur vérifié et une session de niveau AAL2. |
+
+Le contrôle final en base a compté trois utilisateurs distincts avec session, une pièce, une version et zéro entrée dans la file de courriels. La base utilisait les migrations Auth et la migration documentaire de la branche, avec les tables de profils et de rattachements nécessaires à ces parcours. Les services de recette communiquaient par boucle locale. La liaison sur le VPS par sockets Unix a été vérifiée séparément à 15 h 42. Le projet Supabase Cloud de production et le VPS n’ont reçu aucun compte ni document de cette recette. [Capture du dossier du propriétaire](assets/dossier-recette-connectee.webp)
+
+### Rejouer le parcours connecté
+
+Utiliser une préproduction isolée avec trois identités fictives de formateur. Le deuxième dossier doit être vide et le troisième compte doit également être administrateur de plateforme, avec un facteur TOTP encore à inscrire. Compiler la candidate avec `VITE_DOSSIER_ENABLED=true`, l’URL de cette API documentaire et les paramètres publics de cette instance Supabase. Servir le frontend sur `http://127.0.0.1:4173` et désactiver l’envoi de courriels.
+
+Fournir `DOSSIER_BROWSER_FIXTURE=1` et les variables `DOSSIER_TEST_OWNER_EMAIL`, `DOSSIER_TEST_OWNER_PASSWORD`, avec les mêmes suffixes pour `DOSSIER_TEST_OTHER` et `DOSSIER_TEST_ADMIN`. Exécuter `npx playwright test 21-professional-dossier-connected --retries=0` puis détruire l’instance et ses comptes de recette. Les traces et vidéos sont désactivées pour ce scénario.
 
 ## Recette hébergée du 20 novembre 2026
 
@@ -10,7 +28,7 @@ Hôte français de 8 Go, code applicatif `e522efe94be9484776250a7649e42ebb357c16
 |---|---|
 | Moteur permanent, signatures officielles | Dix scénarios réussis. Le fichier EICAR a été identifié par ClamAV et son dépôt refusé avant enregistrement. Les PDF, JPEG et PNG sains ont été acceptés. Les tests de panne ont retourné 503 et conservé la version précédente. Deux tentatives identiques après reprise ont produit une seule nouvelle version. |
 | Deuxième moteur éphémère sur le même hôte | Onze scénarios réussis en 23,928 s. Une copie des bases officielles, enrichie d’une signature de laboratoire, a également permis de refuser un PNG valide et marqué. Les volumes et les services de ce test ont été supprimés. |
-| Dépendances métier | Les scénarios appellent les routes FastAPI avec un PostgreSQL temporaire et des identités fictives. L’authentification distante est simulée et l’envoi d’e-mails est désactivé. Le parcours depuis le navigateur avec un compte Supabase de recette reste à valider. |
+| Dépendances métier | Les scénarios appellent les routes FastAPI avec un PostgreSQL temporaire et des identités fictives. L’authentification distante est simulée et l’envoi d’e-mails est désactivé. Le parcours depuis le navigateur a ensuite été vérifié dans l’instance isolée décrite ci-dessus. |
 
 Les journaux de test ont signalé des avertissements Python sur des sockets lors de la simulation de panne. Les assertions de refus et de reprise sont passées. Le contrôle Quality a réussi sur le commit applicatif testé.
 

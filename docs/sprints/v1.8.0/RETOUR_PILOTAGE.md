@@ -4,7 +4,7 @@
 
 ## Point du 20 novembre 2026
 
-Le VPS FirstHeberg accueille l’API documentaire privée, le validateur et l’antivirus. La recette des dépôts fictifs est passée sur cet hôte. La prochaine vérification du parcours utilisateur porte sur un compte Supabase de préproduction depuis le navigateur. Les contrôles MFA, Brevo et de supervision restent ouverts. [Résultats de la recette hébergée](ACCEPTANCE.md)
+Le VPS FirstHeberg accueille l’API documentaire privée, le validateur et l’antivirus. La recette des dépôts fictifs est passée sur cet hôte. Le parcours navigateur a ensuite réussi sur une instance Supabase Auth isolée avec trois comptes fictifs. Le propriétaire a retrouvé et téléchargé sa pièce. Le deuxième formateur a vu son dossier vide. L’administrateur a dû valider son second facteur pour accéder au dossier. La réception des courriels et des alertes de supervision sur l’infrastructure cible reste à vérifier. [Résultats des deux recettes](ACCEPTANCE.md)
 
 ## Point du 18 novembre 2026
 

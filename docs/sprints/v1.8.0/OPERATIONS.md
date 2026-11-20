@@ -1,5 +1,7 @@
 # Préparation de livraison · V1.8.0
 
+Au 20 novembre 2026, le serveur FirstHeberg de 8 Go exécute l’API sur la boucle locale, le validateur, ClamAV et FreshClam. Les estimations OVHcloud ci-dessous retracent la préparation du 18 novembre. [Tests sur le serveur](ACCEPTANCE.md)
+
 ## Architecture et limites
 
 Le navigateur Clementplane parle en HTTPS à l’API documentaire. Le front Vercel ne transporte pas les octets. Le lien invité arrive sur dossier-invite.html sans initialiser Supabase Auth. Le fragment est retiré de la barre d’adresse. Le service vérifie les utilisateurs auprès de l’Auth de Clementplane et recoupe le session_id en base. L’OF sélectionné doit correspondre à une adhésion active dont le rôle figure dans dossier.managers. Le formateur peut posséder un deuxième rôle OF et reste limité à ses propres dépôts.
@@ -8,7 +10,7 @@ PDF passifs lisibles, JPEG et PNG simples. Maximum 5 Mio à l’entrée et aprè
 
 Le projet n’avait aucun bucket. Pour le pilote limité, les fichiers chiffrés sont dans un schéma PostgreSQL privé. Attribution, chiffrement, version courante, historique et mise en file sont atomiques. La limite globale représente 6,25 % de 8 Gio à titre d’ordre de grandeur, hors index, WAL, espace récupérable et snapshots. La base mesurait 309 MB. Le forfait Pro annonce 8 GB de disque inclus et 0,125 USD/GB/mois au-delà sur gp3. La taille exacte allouée, le trafic sortant et la facture agrégée restent à vérifier. Le quota applicatif ne plafonne pas la facture fournisseur. [Tarification Supabase](https://supabase.com/docs/guides/platform/manage-your-usage/disk-size)
 
-ClamAV recommande au moins 3 Gio de RAM sur Linux. Pour héberger API, validateur et antivirus avec marge de rechargement des signatures, enveloppe de 8 Go. Exemple chiffré, VPS-2 8 Go OVHcloud affiché à partir de 7,21 € HT/mois, prix et site exacts à confirmer à la commande. Exploitation, sauvegarde des clés, éventuels dépassements de trafic et quotas Brevo sont distincts. Un hôte UE existant convenablement dimensionné évite l’abonnement supplémentaire. Aucun service souscrit. [ClamAV](https://docs.clamav.net/Introduction.html) · [Configurateur OVHcloud](https://www.ovhcloud.com/fr/vps/configurator/)
+ClamAV recommande au moins 3 Gio de RAM sur Linux. Pour héberger API, validateur et antivirus avec marge de rechargement des signatures, enveloppe de 8 Go. Exemple chiffré, VPS-2 8 Go OVHcloud affiché à partir de 7,21 € HT/mois, prix et site exacts à confirmer à la commande. Exploitation, sauvegarde des clés, éventuels dépassements de trafic et quotas Brevo sont distincts. Un hôte UE existant convenablement dimensionné évite l’abonnement supplémentaire. Au 18 novembre, aucun service souscrit. [ClamAV](https://docs.clamav.net/Introduction.html) · [Configurateur OVHcloud](https://www.ovhcloud.com/fr/vps/configurator/)
 
 ## Mise en recette puis livraison
 

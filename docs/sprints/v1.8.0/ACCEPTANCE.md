@@ -1,6 +1,20 @@
-# Matrice de recette du 18 novembre 2026
+# Matrice de recette du dossier professionnel
 
 Données fictives uniquement. Chaque niveau de vérification ci-dessous est à lire dans son environnement. Les fichiers de tests sont dans services/dossier/tests, tests/e2e/specs/20-professional-dossier.spec.js et la configuration Quality.
+
+## Recette hébergée du 20 novembre 2026
+
+Hôte français de 8 Go, code applicatif `e522efe94be9484776250a7649e42ebb357c1626`. L’API locale a transmis une image PNG fictive au validateur et reçu un PNG de 78 octets. Le validateur et ClamAV communiquent par sockets Unix. À 15 h 42, heure de Paris, le service de dépôt fermé répondait HTTP 404 et l’API écoutait uniquement sur la boucle locale.
+
+| Environnement | Résultat observé |
+|---|---|
+| Moteur permanent, signatures officielles | Dix scénarios réussis. Le fichier EICAR a été identifié par ClamAV et son dépôt refusé avant enregistrement. Les PDF, JPEG et PNG sains ont été acceptés. Les tests de panne ont retourné 503 et conservé la version précédente. Deux tentatives identiques après reprise ont produit une seule nouvelle version. |
+| Deuxième moteur éphémère sur le même hôte | Onze scénarios réussis en 23,928 s. Une copie des bases officielles, enrichie d’une signature de laboratoire, a également permis de refuser un PNG valide et marqué. Les volumes et les services de ce test ont été supprimés. |
+| Dépendances métier | Les scénarios appellent les routes FastAPI avec un PostgreSQL temporaire et des identités fictives. L’authentification distante est simulée et l’envoi d’e-mails est désactivé. Le parcours depuis le navigateur avec un compte Supabase de recette reste à valider. |
+
+Les journaux de test ont signalé des avertissements Python sur des sockets lors de la simulation de panne. Les assertions de refus et de reprise sont passées. Le contrôle Quality a réussi sur le commit applicatif testé.
+
+## Recette du 18 novembre 2026
 
 | Exigence | État et environnement | Preuve et limite |
 |---|---|---|

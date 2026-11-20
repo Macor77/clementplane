@@ -1,6 +1,8 @@
 # Dossier professionnel du formateur · V1.8.0
 
-**Non clôturé — éléments restants.** Le code, les migrations, les tests et la préparation de livraison sont proposés en PR #29, branche feature/trainer-professional-dossier. Aucun document réel confié au service, envoi e-mail réel, achat ni opération de production au cours du sprint. État initial réel vérifié sur main c822db5c1d4154de333570c7e253bd49d0a3ddaf et Vercel dpl_8ouwBHyZP4byDea9YGg4TDiCcDok, V1.7.0. Le frontend de la candidate est désactivé par défaut.
+**Non clôturé — éléments restants.** Le code, les migrations, les tests et la préparation de livraison sont proposés en PR #29, branche feature/trainer-professional-dossier. Au point du 18 novembre, aucun document réel, envoi d’e-mail, achat ou déploiement de production n’avait été engagé pour ce sprint. État initial réel vérifié sur main c822db5c1d4154de333570c7e253bd49d0a3ddaf et Vercel dpl_8ouwBHyZP4byDea9YGg4TDiCcDok, V1.7.0. Le frontend de la candidate est désactivé par défaut.
+
+Le 20 novembre, la liaison entre l’API, le validateur et ClamAV a été vérifiée sur le VPS FirstHeberg. Le dépôt public reste fermé. [Résultats et limites de la recette hébergée](ACCEPTANCE.md)
 
 | Obligation | État au 18 novembre 2026 |
 |---|---|

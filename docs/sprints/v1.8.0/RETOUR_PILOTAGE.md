@@ -4,7 +4,7 @@
 
 ## Préparation du passage en production · 21 novembre 2026
 
-Le [projet d’annexe destiné au formateur](ANNEXE_DOSSIER_PROFESSIONNEL.md) est rédigé. Les [points à valider pour son adoption](LEGAL_REVIEW.md) portent notamment sur l’accord de FirstHeberg, les conditions applicables des prestataires et la preuve d’acceptation des comptes existants. Le contrôle en lecture seule de Supabase a retrouvé les dépendances des deux migrations. Leurs empreintes, l’ordre de livraison et les contrôles sur l’environnement final sont consignés dans la [préparation opérationnelle](OPERATIONS.md). La copie des clés sur Dropbox est identique à la source. Son déchiffrement avec la phrase de Vincent doit être confirmé sur son poste.
+Le [projet d’annexe destiné au formateur](ANNEXE_DOSSIER_PROFESSIONNEL.md) est rédigé. Les [points à valider pour son adoption](LEGAL_REVIEW.md) portent notamment sur l’accord de FirstHeberg, les conditions applicables des prestataires et la preuve d’acceptation des comptes existants. Le contrôle en lecture seule de Supabase a retrouvé les dépendances des deux migrations. Leurs empreintes, l’ordre de livraison et les contrôles sur l’environnement final sont consignés dans la [préparation opérationnelle](OPERATIONS.md). Le 21 novembre, Vincent a ouvert sur son poste la copie des clés récupérée depuis Dropbox. L’outil a déchiffré la pièce témoin et validé sa signature HMAC. L’empreinte affichée correspond à celle de l’archive conservée.
 
 ## Partage vérifié sur le VPS FirstHeberg · 21 novembre 2026
 

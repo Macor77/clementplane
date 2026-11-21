@@ -6,6 +6,8 @@
 
 Vincent a ouvert et téléchargé le PDF reçu sur son téléphone en 5G après l’envoi depuis FirstHeberg. Sur la candidate, deux comptes fictifs authentifiés ont ensuite permis de vérifier le partage vers un OF et la perte d’accès immédiate à la révocation. Une restauration en base isolée a restitué la pièce à l’identique avec une clé récupérée séparément. Supabase affiche sept sauvegardes physiques. La plus récente précède la migration du dossier.
 
+La surveillance mémoire tourne sur le VPS avec le démarrage automatique activé. Le VPS a établi une connexion TLS vérifiée au relais Brevo.
+
 Avant l’ouverture, vérifier le parcours sur la configuration hébergée retenue, la garde hors VPS des clés, la réception d’une alerte mémoire depuis le VPS et le comportement du suivi dans un e-mail Brevo après décision sur le réglage du compte. Le serveur de messagerie de FirstHeberg a rejeté la demande d’accord de sous-traitance du 21 novembre pour destinataire inconnu. Le même jour à 11 h 33, heure de Paris, Gmail a confirmé un nouvel envoi à l’adresse de contact général. La prise en charge par l’hébergeur reste à confirmer. [Résultats de recette](ACCEPTANCE.md)
 
 ## Point du 20 novembre 2026

@@ -116,7 +116,7 @@ test('un OF connecté peut télécharger la pièce partagée puis perd cet accè
     };
     const original = await getBytes(page, entry);
     await page.getByRole('button', { name: 'Nouveau partage' }).click();
-    await expect(page.getByLabel('Organisme', { exact: true })).toBeVisible();
+    await expect(page.getByRole('combobox', { name: 'Organisme', exact: true })).toBeVisible();
     await page.getByRole('checkbox', { name: title }).check();
     await page.getByRole('button', { name: 'Vérifier le partage' }).click();
     await page.getByRole('button', { name: 'Confirmer et inviter' }).click();

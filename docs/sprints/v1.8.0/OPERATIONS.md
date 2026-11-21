@@ -96,6 +96,17 @@ Le dispositif s’exécute sur l’hôte. Il fonctionne navigateur fermé et ne 
 
 [Configuration Monit](../../../services/dossier/monitoring/monitrc) · [Manuel Monit](https://mmonit.com/monit/documentation/monit.html)
 
+## Copie indépendante des clés
+
+Vincent a choisi une archive OpenPGP chiffrée dans le Dropbox professionnel et une phrase de passe conservée séparément. Le fichier dont le nom commence par `TEST-recuperation-cles` contient des clés de recette. Il ne peut déchiffrer aucune pièce réelle.
+
+Lors de la préparation de l’environnement réel :
+
+1. Dans le contexte privé de l’API documentaire, sélectionner uniquement `DOSSIER_CURRENT_KEY_ID`, `DOSSIER_FILE_KEYS` (toutes les générations encore nécessaires) et `DOSSIER_HMAC_KEY`. Exclure les mots de passe SQL, les clés de messagerie et les pièces. Éviter toute commande qui affiche l’environnement dans le terminal.
+2. Utiliser GnuPG en chiffrement symétrique AES-256 avec protection d’intégrité et sortie ASCII. Saisir la phrase dans la fenêtre privée de GnuPG. La conserver dans un coffre indépendant accessible à Vincent en cas de perte du VPS. Transférer uniquement le fichier chiffré dans le dossier Dropbox convenu, sous un nom daté propre à la production.
+3. Depuis un environnement distinct, récupérer l’archive depuis Dropbox, comparer son SHA-256 puis la déchiffrer en privé. Vérifier l’identifiant courant, la relecture d’une pièce témoin par génération et un résultat HMAC de test, sans consigner de secret. Noter la date, le nom d’archive et le résultat dans le suivi d’exploitation.
+4. Refaire cette copie après une rotation. Garder la génération précédente tant qu’une sauvegarde restaurable l’utilise. Lors d’une reprise de la base, appliquer la procédure de révocation et de purge ci-dessous avant la réouverture.
+
 ## Exploitation et retour arrière
 
 - Surveiller uniquement des compteurs de refus, erreurs, files, latence, occupation disque, mémoire et âge des signatures. Alerter sur arrêt du worker, retard de maintenance, envois en sending/unknown, 503 répétés, seuils 70/90 % et dernier succès de sauvegarde. Un rejet d’envoi définitif doit être visible à l’opérateur. Un 429 est réessayé avec délai croissant. Après un délai réseau ambigu ou un crash, rapprocher l’identifiant technique chez Brevo avant tout renvoi. Retenter via un nouveau partage ou le renvoi contrôlé du partage actif. « Accepté » signifie prise en charge par Brevo.

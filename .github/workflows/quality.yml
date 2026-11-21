@@ -72,12 +72,12 @@ jobs:
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
 
-      - name: Run PWA browser test
-        run: npx playwright test tests/e2e/specs/05-pwa-shell.spec.js tests/e2e/specs/06-personal-missions-ui.spec.js tests/e2e/specs/08-google-calendar-ui.spec.js tests/e2e/specs/09-availability-recovery.spec.js tests/e2e/specs/10-form-tab-return.spec.js tests/e2e/specs/11-manual-revalidation.spec.js tests/e2e/specs/12-new-tab-navigation.spec.js tests/e2e/specs/13-microsoft-calendar-ui.spec.js tests/e2e/specs/14-trainer-activity.spec.js tests/e2e/specs/15-trainer-expenses.spec.js tests/e2e/specs/16-partial-attendance.spec.js tests/e2e/specs/17-activity-help.spec.js tests/e2e/specs/18-separate-attendance.spec.js tests/e2e/specs/19-trainer-statistics.spec.js tests/e2e/specs/20-professional-dossier.spec.js
-
       - name: Verify connected organization sharing and revocation on a disposable stack
         if: github.event_name == 'pull_request' && github.head_ref == 'feature/trainer-professional-dossier'
         run: python services/dossier/tests/organization_browser.py
+
+      - name: Run PWA browser test
+        run: npx playwright test tests/e2e/specs/05-pwa-shell.spec.js tests/e2e/specs/06-personal-missions-ui.spec.js tests/e2e/specs/08-google-calendar-ui.spec.js tests/e2e/specs/09-availability-recovery.spec.js tests/e2e/specs/10-form-tab-return.spec.js tests/e2e/specs/11-manual-revalidation.spec.js tests/e2e/specs/12-new-tab-navigation.spec.js tests/e2e/specs/13-microsoft-calendar-ui.spec.js tests/e2e/specs/14-trainer-activity.spec.js tests/e2e/specs/15-trainer-expenses.spec.js tests/e2e/specs/16-partial-attendance.spec.js tests/e2e/specs/17-activity-help.spec.js tests/e2e/specs/18-separate-attendance.spec.js tests/e2e/specs/19-trainer-statistics.spec.js tests/e2e/specs/20-professional-dossier.spec.js
 
       - name: Audit production dependencies
         run: npm audit --audit-level=high

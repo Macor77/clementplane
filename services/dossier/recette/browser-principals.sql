@@ -33,3 +33,11 @@ create policy linked on organizations for select to authenticated using(exists(
     select 1 from organization_members m where m.organization_id=organizations.id and m.user_id=fixture_user_id() and m.status='active'));
 create policy self on platform_admins for select to authenticated using(user_id=fixture_user_id());
 grant select on profiles,trainers,organization_members,organizations,platform_admins to authenticated;
+
+-- The organization's login flow checks for unclaimed profiles with its verified email.
+create function public.get_my_trainer_claim_candidates() returns setof public.trainers
+language sql stable as $$
+    select * from trainers where user_id is null and email =
+       (current_setting('request.jwt.claims',true)::jsonb->>'email')
+$$;
+grant execute on function public.get_my_trainer_claim_candidates() to authenticated;

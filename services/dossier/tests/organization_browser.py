@@ -59,6 +59,7 @@ def serve_local(stack, app):
 def browser_accounts(gateway, db):
     credentials = {}
     users = {}
+    manager_headers = {}
     with httpx.Client(trust_env=False, timeout=15) as http:
         for role in ("OWNER", "OF"):
             email = f"recette-{uuid4().hex}@example.com"
@@ -66,7 +67,10 @@ def browser_accounts(gateway, db):
             response = http.post(gateway + "/auth/v1/signup", json={"email": email, "password": password})
             if response.status_code != 200:
                 raise RuntimeError(f"Création du compte fictif {role} : HTTP {response.status_code}")
-            users[role] = response.json()["user"]["id"]
+            signup = response.json()
+            users[role] = signup["user"]["id"]
+            if role == "OF":
+                manager_headers["Authorization"] = "Bearer " + signup["access_token"]
             credentials[f"DOSSIER_TEST_{role}_EMAIL"] = email
             credentials[f"DOSSIER_TEST_{role}_PASSWORD"] = password
     owner, manager = users["OWNER"], users["OF"]
@@ -77,6 +81,21 @@ def browser_accounts(gateway, db):
         db.execute("insert into organizations(id,name,status) values (%s,'OF de recette','active')", (org,))
         db.execute("insert into organization_members(id,user_id,organization_id,status,role) values(%s,%s,%s,'active','manager')", (uuid4(), manager, org))
         db.execute("insert into organization_trainers values(%s,%s)", (owner, org))
+    # Check the actual PostgREST projection used by the UI before starting Chromium.
+    projections = {
+        "profiles": {"select": "*", "id": "eq." + manager},
+        "trainers": {"select": "id,prenom,nom,email,telephone,ville,code_postal,statut", "user_id": "eq." + manager},
+        "organization_members": {"select": "id,role,status,joined_at,organization:organizations(id,name,legal_name,slug,logo_url,status)",
+                                 "user_id": "eq." + manager, "status": "eq.active"},
+    }
+    with httpx.Client(trust_env=False, timeout=10, headers=manager_headers) as client:
+        for relation, query in projections.items():
+            response = client.get(gateway + "/rest/v1/" + relation, params=query)
+            if not response.is_success:
+                error = response.json()
+                raise RuntimeError(f"PostgREST {relation} HTTP {response.status_code}: {error.get('code')} {error.get('message')}")
+            if relation == "organization_members":
+                assert len(response.json()) == 1 and response.json()[0]["organization"]["id"] == str(org), "Rattachement OF absent de PostgREST"
     return credentials
 
 

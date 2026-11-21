@@ -2,6 +2,12 @@
 
 Données fictives uniquement. Chaque niveau de vérification ci-dessous est à lire dans son environnement. Les fichiers de tests sont dans services/dossier/tests, les scénarios Playwright 20 et 21 de tests/e2e/specs et la configuration Quality.
 
+## Préparation du partage sur FirstHeberg · 21 novembre 2026
+
+La page invitée a été compilée sur le VPS de Valenciennes. L’API de l’essai utilise le port 18260 de la boucle locale et sa propre base PostgreSQL temporaire. Le service de préparation a fait contrôler un PDF fictif par le validateur et ClamAV avant de le chiffrer et de créer un seul partage. La file a ensuite indiqué une invitation en attente. Le worker d’envoi était arrêté et aucune demande de code n’avait été effectuée.
+
+Le certificat public émis par Let’s Encrypt correspond au nom DNS du VPS. Après son obtention, le service de certification a été arrêté et le port 443 n’avait plus de service en écoute. À ce stade, il reste à ouvrir temporairement la page invitée, à configurer la clé de messagerie restreinte et à vérifier depuis un appareil externe la remise de l’invitation, du code et du document.
+
 ## Partage invité en HTTPS sur mobile simulé · 20 novembre 2026
 
 Chromium a ouvert l’invitation sur un écran de 390 px via Nginx 1.26.3 et l’API documentaire. Le test utilisait un certificat local approuvé pour cette exécution, PostgreSQL temporaire et deux pièces fictives. Le worker a composé l’invitation et le code. Un collecteur local a reçu les messages à la place de Brevo. Le navigateur a affiché la seule pièce partagée et téléchargé un PDF dont l’empreinte SHA-256 correspond à l’original. Après révocation par le propriétaire, un second téléchargement depuis la même page a reçu une réponse 404.

@@ -2,6 +2,16 @@
 
 Données fictives uniquement. Chaque niveau de vérification ci-dessous est à lire dans son environnement. Les fichiers de tests sont dans services/dossier/tests, les scénarios Playwright 20 et 21 de tests/e2e/specs et la configuration Quality.
 
+## Partage et révocation sur le VPS FirstHeberg · 21 novembre 2026
+
+Vincent a exécuté sur le VPS le scénario Chromium de la candidate `92f17bf` avec deux comptes fictifs et le validateur antivirus de l’hôte. Le contrôle préalable du validateur a accepté l’image PNG témoin. Le scénario a ensuite vérifié les étapes suivantes.
+
+1. Le gestionnaire de l’organisme s’est connecté et a trouvé sa boîte de réception vide.
+2. Le formateur a déposé la pièce, téléchargé sa version de référence et accordé l’accès à l’organisme. Le téléchargement de l’organisme contenait les mêmes octets.
+3. Le formateur a révoqué le partage. Depuis l’onglet déjà ouvert de l’organisme, une nouvelle demande de téléchargement a reçu HTTP 404. Après actualisation, la boîte de réception était vide.
+
+Le journal PowerShell transmis par Vincent indique un scénario réussi en 9,9 s (11,9 s pour l’exécution Playwright), puis l’arrêt et la suppression de l’environnement temporaire. La vérification finale du script a confirmé un partage révoqué en base et zéro message en cours d’envoi ou accepté. Les comptes, la base et les clés étaient propres à cet essai isolé.
+
 ## Essais de confidentialité et de reprise du 21 novembre 2026
 
 - **Brevo.** Choix relus sur le compte Clementplane : consentement par contact activé, suivi si consentement inconnu désactivé. Le filtre de la fiche de la boîte utilisée pour le test a confirmé que son consentement était non renseigné. Le test unitaire du worker vérifie son champ destinataire `contactPixelTrackingConsent: false`. Le message d’essai envoyé depuis l’éditeur Brevo a été reçu à 12 h 38 min 05 s, heure de Paris. L’HTML soumis comportait un lien vers l’accueil public, sans image. Le MIME reçu contenait une image distante et un lien réécrit sur le domaine de suivi. Aucune ressource n’a été appelée lors de cette inspection. L’éditeur ne permet pas de fournir le champ par destinataire du worker. Le comportement de l’invitation du dossier après le changement demande une vérification distincte.

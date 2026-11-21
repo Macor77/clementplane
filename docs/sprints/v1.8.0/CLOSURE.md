@@ -4,7 +4,7 @@
 
 Le 20 novembre, la liaison entre l’API, le validateur et ClamAV a été vérifiée sur le VPS FirstHeberg. Dans une instance temporaire distincte, trois comptes Supabase Auth ont servi à vérifier le dépôt privé, la reconnexion et le second facteur administrateur depuis Chromium. Le dépôt public reste fermé. [Résultats et périmètre des deux recettes](ACCEPTANCE.md)
 
-Au 21 novembre, le partage et la révocation pour un OF sont vérifiés dans un navigateur avec deux comptes fictifs. La récupération des clés fictives depuis le Dropbox professionnel et la réception de l’alerte RAM du VPS ont réussi. Le suivi individuel dans une invitation envoyée par l’API, la copie des clés réelles et l’annexe de sous-traitance FirstHeberg restent ouverts. La branche candidate reste en brouillon. [Point de pilotage](RETOUR_PILOTAGE.md)
+Le 21 novembre, Vincent a vérifié sur le VPS FirstHeberg le partage et la révocation dans Chromium avec deux comptes fictifs et le validateur antivirus du serveur. Le téléchargement était identique avant révocation. La tentative suivante, depuis le même onglet, a reçu HTTP 404. La récupération des clés fictives depuis le Dropbox professionnel et la réception de l’alerte RAM du VPS ont réussi. Le suivi individuel dans une invitation envoyée par l’API, la copie des clés réelles et l’annexe de sous-traitance FirstHeberg restent ouverts. La branche candidate reste en brouillon. [Point de pilotage](RETOUR_PILOTAGE.md)
 
 | Obligation | État au 18 novembre 2026 |
 |---|---|

@@ -2,6 +2,12 @@
 
 **Sprint non clôturé.** La V1.8.0 candidate est sur la PR #29 en brouillon. La production observée reste la V1.7.0. La clarification de Vincent réserve toute intégration ou modification des pièces au formateur propriétaire. Le rôle de l’OF est limité à la consultation et au téléchargement de la sélection partagée.
 
+## Partage vérifié sur le VPS FirstHeberg · 21 novembre 2026
+
+Le test exécuté par Vincent a réuni Chromium, les comptes fictifs du formateur et de l’organisme, et le validateur antivirus du VPS. Le fichier reçu était identique à celui téléchargé par le formateur. Dès la révocation, une nouvelle tentative de téléchargement dans l’onglet de l’organisme a reçu HTTP 404. L’environnement temporaire a été supprimé.
+
+Pour préparer l’ouverture, il reste notamment à vérifier le suivi dans une invitation réellement envoyée par l’API après le changement de réglage Brevo, à mettre à l’abri les clés de production et à obtenir l’annexe de sous-traitance demandée à FirstHeberg. [Preuve et périmètre du test](ACCEPTANCE.md)
+
 ## Confidentialité et récupération du 21 novembre 2026
 
 Vincent a choisi un suivi Brevo limité aux contacts consentants et une archive de clés chiffrée dans son Dropbox professionnel, avec la phrase de passe conservée séparément. Les deux réglages Brevo ont été enregistrés puis relus. Le consentement de la boîte d’essai était non renseigné. À 12 h 38 min 05 s, heure de Paris, Gmail a reçu l’unique essai envoyé par l’éditeur de modèles. Le HTML d’origine contenait un lien direct vers l’accueil et aucune image. Dans le MIME reçu, le lien passe par le domaine de redirection Brevo et une image distante a été ajoutée. Cela ne permet pas de conclure à une mesure individuelle ni de valider l’envoi du worker, qui utilise l’API et transmet explicitement le refus de suivi. Le modèle de recette est inactif.

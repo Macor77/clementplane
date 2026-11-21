@@ -7,7 +7,7 @@ Version : 29/08/2026. Vérifier au moins annuellement les DPA, sous-traitants ul
 | Supabase | PostgreSQL, Auth, Edge Functions | projet Clementplane en eu-north-1, Stockholm (Suède) ; autres opérations du fournisseur selon DPA | conserver DPA et liste des subprocessors |
 | Vercel | hébergement/déploiement web | fournisseur américain ; transferts éventuels hors EEE encadrés contractuellement | conserver DPA/SCC applicables et vérifier le plan contractuel utilisé |
 | Brevo | e-mails transactionnels et nouveautés | infrastructure annoncée en UE ; vérifier sous-traitants du fournisseur | conserver DPA et liste des subprocessors |
-| FirstHeberg | VPS du dossier professionnel, API privée, validation des pièces et antivirus | VPS à Valenciennes. Lieux d’accès du support et sous-traitants éventuels à confirmer. | Accord applicable au VPS demandé à FirstHeberg le 21 novembre 2026. Réponse attendue. |
+| FirstHeberg | VPS du dossier professionnel, API privée, validation des pièces et antivirus | VPS à Valenciennes. Lieux d’accès du support et sous-traitants éventuels à confirmer. | Le 21 novembre 2026, le serveur de messagerie a rejeté la demande adressée à la boîte RGPD publiée (550 5.1.1, destinataire inconnu). Les [CGV](https://www.firstheberg.com/fr/cgv) indiquent aussi une adresse de contact général. Accord applicable à obtenir. |
 | Google Workspace | messagerie et outils de communication | traitements selon configuration et CDPA Google | conserver CDPA et liste des subprocessors |
 
 Pour les données traitées par Clementplane pour le compte d’un OF, prévoir dans le cadre contractuel les clauses nécessaires au titre de l’article 28 RGPD lorsque Clementplane agit comme sous-traitant.

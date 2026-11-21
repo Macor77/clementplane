@@ -1,4 +1,6 @@
 import base64
+import os
+import re
 from datetime import timedelta
 import httpx
 from fastapi import HTTPException
@@ -28,6 +30,17 @@ MAX_OWNER_BYTES = 64 << 20
 MAX_TOTAL_BYTES = 512 << 20
 
 
+def agreement_status(db, uid):
+    fingerprint = os.getenv("DOSSIER_AGREEMENT_SHA256", "")
+    if not re.fullmatch("[0-9a-f]{64}", fingerprint):
+        return {"sha256": None, "accepted_at": None}
+    receipt = db.execute(
+        "select accepted_at from agreement_acceptances where user_id=%s and document_sha256=%s",
+        (uid, fingerprint),
+    ).fetchone()
+    return {"sha256": fingerprint, "accepted_at": receipt["accepted_at"] if receipt else None}
+
+
 def overview(db, uid):
     docs = db.execute(
         f"""select d.id,{META},v.note from documents d join versions v
@@ -50,7 +63,8 @@ def overview(db, uid):
         and m.expiry >= (now() at time zone 'Europe/Paris')::date order by m.expiry,m.days_before""",
         (uid,),
     ).fetchall()
-    return dict(documents=docs, shares=shares, partners=partners, reminders=reminders)
+    return dict(documents=docs, shares=shares, partners=partners, reminders=reminders,
+                agreement=agreement_status(db, uid))
 
 
 def scan_file(body):
@@ -218,6 +232,15 @@ def owner_action(db, uid, action, b):
     one(db, "select user_id from trainer_accounts where user_id=%s", (uid,))
     if action == "overview":
         return overview(db, uid)
+    if action == "accept-agreement":
+        status = agreement_status(db, uid)
+        if not status["sha256"] or b.get("sha256") != status["sha256"] or b.get("accepted") is not True:
+            raise HTTPException(409, "L’annexe a changé ou reste à publier. Actualisez le dossier.")
+        db.execute(
+            "insert into agreement_acceptances(user_id,document_sha256) values(%s,%s) on conflict do nothing",
+            (uid, status["sha256"]),
+        )
+        return agreement_status(db, uid)
     if action == "share":
         return share(db, uid, b)
     lock_owner(db, uid)

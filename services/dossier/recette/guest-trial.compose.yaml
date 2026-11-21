@@ -10,7 +10,8 @@ services:
     volumes:
       - ./guest-principals.sql:/docker-entrypoint-initdb.d/01-principals.sql:ro
       - ../../../supabase/migrations/20261118104552_professional_dossier.sql:/docker-entrypoint-initdb.d/02-dossier.sql:ro
-      - ./guest-runtime.sql:/docker-entrypoint-initdb.d/03-runtime.sql:ro
+      - ../../../supabase/migrations/20261121173000_dossier_agreements.sql:/docker-entrypoint-initdb.d/03-agreements.sql:ro
+      - ./guest-runtime.sql:/docker-entrypoint-initdb.d/04-runtime.sql:ro
     healthcheck:
       test: [CMD-SHELL, "pg_isready -h 127.0.0.1 -U postgres -d guest_trial"]
       interval: 3s

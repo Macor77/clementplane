@@ -1,5 +1,10 @@
 import { test, expect } from '@playwright/test';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
 import { fixture } from '../support/activity-fixture';
+const agreementDigest = createHash('sha256')
+  .update(readFileSync('docs/sprints/v1.8.0/ANNEXE_DOSSIER_PROFESSIONNEL.md'))
+  .digest('hex');
 const api = 'https://dossier.example.invalid/v1/';
 for (const width of [390, 1440])
   test(`dossier formateur et reprise · ${width}px · API simulée`, async ({
@@ -15,10 +20,15 @@ for (const width of [390, 1440])
       expiry_mode: 'unknown',
       note: 'Note fictive',
     };
-    const data = { documents: [doc], partners: [], shares: [], reminders: [] };
+    const data = { agreement: { sha256: agreementDigest, accepted_at: null }, documents: [doc], partners: [], shares: [], reminders: [] };
     const posts = [];
     await page.route(api + '**', async (route) => {
       const action = route.request().url().split('/').pop();
+      if (action === 'accept-agreement') {
+        expect(route.request().postDataJSON()).toEqual({ accepted: true, sha256: agreementDigest });
+        data.agreement.accepted_at = '2026-11-21T18:00:00Z';
+        return route.fulfill({ json: data.agreement });
+      }
       if (action === 'upload') {
         posts.push(route.request().postDataJSON());
         if (posts.length === 1) return route.abort('failed');
@@ -31,6 +41,14 @@ for (const width of [390, 1440])
     ).toBeVisible();
     await expect(page.getByText('Échéance à renseigner · Privé')).toBeVisible();
     await page.getByRole('button', { name: 'Déposer un document' }).click();
+    await expect(page.getByLabel(/Fichier PDF/)).toHaveCount(0);
+    await page.getByText('Lire l’annexe de traitement des données', { exact: true }).click();
+    await expect(page.getByRole('heading', { name: '1. Parties et instructions' })).toBeVisible();
+    await page.getByRole('button', { name: 'Annuler' }).click();
+    expect(data.agreement.accepted_at).toBeNull();
+    expect(posts).toHaveLength(0);
+    await page.getByRole('button', { name: 'Déposer un document' }).click();
+    await page.getByRole('button', { name: 'J’accepte l’annexe du dossier professionnel' }).click();
     await page.getByLabel('Intitulé').fill('Diplôme fictif');
     await page
       .getByLabel(/Fichier PDF/)
@@ -68,6 +86,30 @@ for (const width of [390, 1440])
     await page.evaluate(() => window.scrollTo(0, 0));
     await page.screenshot({ path: `test-results/dossier-recap-${width}.png` });
   });
+test('un texte absent ou différent empêche un nouveau dépôt', async ({ page }) => {
+  await fixture(page);
+  let digest = null;
+  const writes = [];
+  await page.route(api + '**', async (route) => {
+    const action = route.request().url().split('/').pop();
+    if (action !== 'overview') writes.push(action);
+    return route.fulfill({ json: {
+      agreement: { sha256: digest, accepted_at: null },
+      documents: [], partners: [], shares: [], reminders: [],
+    } });
+  });
+  for (const version of [null, 'b'.repeat(64)]) {
+    digest = version;
+    await page.goto('/formateur/dossier');
+    await page.getByRole('button', { name: 'Déposer un document' }).click();
+    await expect(page.getByText(version ? /La version de l’annexe a changé/ : /après la publication/)).toBeVisible();
+    await expect(page.getByRole('button', { name: /J’accepte/ })).toHaveCount(0);
+    await expect(page.getByLabel(/Fichier PDF/)).toHaveCount(0);
+    await page.getByRole('button', { name: 'Annuler' }).click();
+  }
+  expect(writes).toEqual([]);
+});
+
 test('invité isolé, octets hors cache et aucun accès OF en écriture · API simulée', async ({
   page,
 }) => {

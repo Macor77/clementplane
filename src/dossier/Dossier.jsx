@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import DocumentForm from './DocumentForm';
+import DossierAgreement from './DossierAgreement';
 import Sharing from './Sharing';
 import Files from './Files';
 import AccountFactor from './AccountFactor';
@@ -200,6 +201,12 @@ export function Dossier() {
             }
             cancel={() => setForm(null)}
           />
+        ) : form && form.mode !== 'edit' && !data.agreement?.accepted_at ? (
+          <DossierAgreement
+            agreement={data.agreement}
+            onAccepted={(agreement) => setData((current) => ({ ...current, agreement }))}
+            cancel={() => setForm(null)}
+          />
         ) : form ? (
           <DocumentForm
             mode={form.mode}
@@ -210,6 +217,9 @@ export function Dossier() {
           />
         ) : (
           <>
+            {data.agreement?.accepted_at && (
+              <DossierAgreement agreement={data.agreement} />
+            )}
             {data.reminders.length > 0 && (
               <section>
                 <h2>Rappels d’échéance</h2>

@@ -43,6 +43,7 @@ Les objectifs mensuels sont conservés pendant la vie du compte comme préféren
 
 | Donnée | Durée, déclencheur et sortie |
 |---|---|
+| Accord du déposant sur l’annexe | Identifiant du compte, empreinte du texte et horodatage serveur. Chaque reçu est conservé pendant la vie du compte et supprimé avec celui-ci. |
 | Pièce courante, informations et note | Tant que le compte et le document sont conservés par le formateur. Un document expiré reste accessible aux seuls destinataires d’un partage actif. |
 | Versions remplacées | Propriétaire uniquement. Purge automatique après 30 jours à compter du remplacement, sous supervision du worker. |
 | Suppression d’une pièce ou du compte Auth | Suppression transactionnelle en base active, historique et relations compris. Les téléchargements déjà réalisés par les OF relèvent de leur propre conservation. |

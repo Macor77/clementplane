@@ -1,5 +1,6 @@
 """Run the connected organization scenario on a fresh, loopback-only Docker Compose stack."""
 import base64
+import hashlib
 import json
 import os
 import secrets
@@ -121,9 +122,11 @@ def run(stack):
     conn = dict(host="127.0.0.1", port=db_port, dbname="postgres")
     db = stack.enter_context(psycopg.connect(**conn, user="postgres", password="browser-fixture-only", autocommit=True))
     db.execute((ROOT / "supabase/migrations/20261118104552_professional_dossier.sql").read_text())
+    db.execute((ROOT / "supabase/migrations/20261121173000_dossier_agreements.sql").read_text())
     db.execute("create role browser_runtime login password 'fixture-app'; grant dossier_runtime to browser_runtime")
     creds = browser_accounts(gateway, db)
     os.environ.update(
+        DOSSIER_AGREEMENT_SHA256=hashlib.sha256((ROOT / "docs/sprints/v1.8.0/ANNEXE_DOSSIER_PROFESSIONNEL.md").read_bytes()).hexdigest(),
         DOSSIER_ENABLED="1", DOSSIER_MAIL_MODE="off", DOSSIER_WEB_ORIGIN="http://127.0.0.1:4173",
         DOSSIER_CURRENT_KEY_ID="fixture", DOSSIER_FILE_KEYS=json.dumps({"fixture": base64.b64encode(secrets.token_bytes(32)).decode()}),
         DOSSIER_HMAC_KEY=secrets.token_hex(32), SUPABASE_URL=gateway, SUPABASE_PUBLISHABLE_KEY="browser-fixture",
@@ -150,6 +153,10 @@ def run(stack):
         browser = dict(frontend, **creds, DOSSIER_BROWSER_FIXTURE="1", DOSSIER_TEST_PREVIEW_DIR=site)
         subprocess.run([str(ROOT / "node_modules/.bin/playwright"), "test", "21-professional-dossier-connected",
                         "--grep", "un OF connecté", "--retries=0"], cwd=ROOT, env=browser, check=True)
+    receipts = db.execute(
+        "select u.email, a.document_sha256 from dossier.agreement_acceptances a join auth.users u on u.id=a.user_id"
+    ).fetchall()
+    assert receipts == [(creds["DOSSIER_TEST_OWNER_EMAIL"], os.environ["DOSSIER_AGREEMENT_SHA256"])]
     assert db.execute("select count(*) from dossier.today_shares where state='revoked'").fetchone()[0] == 1
     assert db.execute("select count(*) from dossier.mail where state in ('accepted','sending')").fetchone()[0] == 0
 

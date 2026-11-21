@@ -34,6 +34,7 @@ os.environ.update(
     DOSSIER_FILE_KEYS=json.dumps({"test": base64.b64encode(os.urandom(32)).decode()}),
     DOSSIER_HMAC_KEY="fictitious-test-only-" + str(uuid4()),
     DOSSIER_MAIL_MODE="off",
+    DOSSIER_AGREEMENT_SHA256="a" * 64,
 )
 import api
 import core
@@ -126,6 +127,7 @@ class DossierTest(unittest.TestCase):
                 (ROOT / "supabase/migrations").glob("*professional_dossier.sql")
             ).read_text()
         )
+        cls.admin.execute((ROOT / "supabase/migrations/20261121173000_dossier_agreements.sql").read_text())
         cls.admin.execute(
             "create role dossier_test_login login; grant dossier_runtime to dossier_test_login"
         )
@@ -195,6 +197,8 @@ class DossierTest(unittest.TestCase):
         )
         mock.start()
         self.addCleanup(mock.stop)
+        # Existing lifecycle scenarios start with a synthetic owner's recorded agreement.
+        self.req("accept-agreement", {"accepted": True, "sha256": os.environ["DOSSIER_AGREEMENT_SHA256"]})
         self.doc = str(uuid4())
         self.version = str(uuid4())
         self.b = dict(
@@ -234,6 +238,40 @@ class DossierTest(unittest.TestCase):
         self.req("share", b)
         self.req("share", b)
         return sid
+
+    def test_versioned_agreement_before_first_upload(self):
+        current = os.environ["DOSSIER_AGREEMENT_SHA256"]
+        agreement = {"accepted": True, "sha256": current}
+        user = self.other
+        self.assertIsNone(self.req("overview", user=user).json()["agreement"]["accepted_at"])
+        with patch("api.scan_file") as scan:
+            self.req("upload", self.b, user, 428)
+            scan.assert_not_called()
+        self.req("accept-agreement", agreement, self.of, 404)
+        self.req("accept-agreement", {**agreement, "accepted": False}, user, 409)
+        self.req("accept-agreement", {**agreement, "sha256": "b" * 64}, user, 409)
+        self.assertIsNone(self.req("overview", user=user).json()["agreement"]["accepted_at"])
+        receipt = self.req("accept-agreement", agreement, user).json()
+        self.assertEqual(receipt["sha256"], current)
+        self.assertTrue(receipt["accepted_at"])
+        self.assertEqual(receipt, self.req("accept-agreement", agreement, user).json())
+        self.assertEqual(receipt, self.req("overview", user=user).json()["agreement"])
+        self.req("upload", self.b, user)
+        with patch.dict(os.environ, DOSSIER_AGREEMENT_SHA256="c" * 64):
+            overview = self.req("overview", user=user).json()
+            self.assertEqual(len(overview["documents"]), 1)
+            self.assertIsNone(overview["agreement"]["accepted_at"])
+            self.req("upload", {**self.b, "doc": str(uuid4()), "request": str(uuid4())}, user, 428)
+            self.req("accept-agreement", agreement, user, 409)
+        with patch.dict(os.environ, DOSSIER_AGREEMENT_SHA256=""):
+            self.assertIsNone(self.req("overview", user=user).json()["agreement"]["sha256"])
+            self.req("accept-agreement", agreement, user, 409)
+            self.req("upload", {**self.b, "doc": str(uuid4()), "request": str(uuid4())}, user, 428)
+        with core.database() as db:
+            for permission in ("UPDATE", "DELETE"):
+                row = db.execute("select has_table_privilege(current_user,'dossier.agreement_acceptances',%s) as allowed",
+                                 (permission,)).fetchone()
+                self.assertFalse(row["allowed"])
 
     def test_upload_and_owner_controls(self):
         self.req("upload", self.b, self.of, 404)
@@ -284,6 +322,7 @@ class DossierTest(unittest.TestCase):
                     actor,
                     404,
                 )
+        self.req("accept-agreement", {"accepted": True, "sha256": os.environ["DOSSIER_AGREEMENT_SHA256"]}, self.other)
         self.req(
             "upload",
             {

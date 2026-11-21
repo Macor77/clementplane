@@ -9,7 +9,7 @@ from starlette.concurrency import run_in_threadpool
 from starlette.middleware.cors import CORSMiddleware
 from core import scanner_client
 from core import MAX, check_login, database, fields, fixed_window, identity, one, uuid
-from owner import owner_action, save_version, scan_file
+from owner import agreement_status, owner_action, save_version, scan_file
 from access import challenge, contents, file_content, inbox, verify
 
 app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
@@ -33,6 +33,7 @@ HEADERS = {
 GUEST = {"request-code", "verify-code", "guest-list", "guest-file", "guest-close"}
 ACTIONS = GUEST | {
     "overview",
+    "accept-agreement",
     "inbox",
     "contents",
     "file",
@@ -75,6 +76,8 @@ def dispatch(action, b, bearer):
             ).fetchone()
             if previous:
                 return {"id": b["doc"]}
+            if not agreement_status(db, uid)["accepted_at"]:
+                raise HTTPException(428, "Actualisez le dossier et acceptez l’annexe avant de déposer une pièce.")
             fixed_window(db, "uploads/" + str(uid), 24, 3600)
         scanned = scan_file(b)
         with database() as db:

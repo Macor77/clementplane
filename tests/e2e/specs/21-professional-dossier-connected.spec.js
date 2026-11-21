@@ -10,6 +10,15 @@ const dossier = '/formateur/dossier';
 test.use({ trace: 'off', video: 'off', screenshot: 'off' });
 test.skip(process.env.DOSSIER_BROWSER_FIXTURE !== '1', 'Instance de recette isolée requise.');
 
+async function openDeposit(page) {
+  await page.getByRole('button', { name: 'Déposer un document' }).click();
+  const accept = page.getByRole('button', { name: 'J’accepte l’annexe du dossier professionnel' });
+  const file = page.getByLabel(/Fichier PDF/);
+  await expect(accept.or(file)).toBeVisible();
+  if (await accept.isVisible()) await accept.click();
+  await expect(file).toBeVisible();
+}
+
 function account(name) {
   const email = process.env['DOSSIER_TEST_' + name + '_EMAIL'];
   const password = process.env['DOSSIER_TEST_' + name + '_PASSWORD'];
@@ -37,7 +46,7 @@ async function login(page, name, destination = dossier) {
 test('connexion, dépôt, consultation et séparation de deux dossiers', async ({ page, browser, baseURL }, testInfo) => {
   const title = 'Attestation de recette ' + randomUUID().slice(0, 8);
   await login(page, 'OWNER');
-  await page.getByRole('button', { name: 'Déposer un document' }).click();
+  await openDeposit(page);
   await page.getByLabel('Intitulé').fill(title);
   await page.getByLabel(/Fichier PDF/).setInputFiles({
     name: 'temoin.png', mimeType: 'image/png', buffer: png,
@@ -96,7 +105,7 @@ test('un OF connecté peut télécharger la pièce partagée puis perd cet accè
     await expect(emptyInbox).toBeVisible();
 
     await login(page, 'OWNER');
-    await page.getByRole('button', { name: 'Déposer un document' }).click();
+    await openDeposit(page);
     await page.getByLabel('Intitulé').fill(title);
     await page.getByLabel(/Fichier PDF/).setInputFiles({
       name: 'temoin.png', mimeType: 'image/png', buffer: png,

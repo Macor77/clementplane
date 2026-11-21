@@ -2,6 +2,10 @@
 
 **Sprint non clôturé.** La V1.8.0 candidate est sur la PR #29 en brouillon. La production observée reste la V1.7.0. La clarification de Vincent réserve toute intégration ou modification des pièces au formateur propriétaire. Le rôle de l’OF est limité à la consultation et au téléchargement de la sélection partagée.
 
+## Préparation du passage en production · 21 novembre 2026
+
+Le [projet d’annexe destiné au formateur](ANNEXE_DOSSIER_PROFESSIONNEL.md) est rédigé. Les [points à valider pour son adoption](LEGAL_REVIEW.md) portent notamment sur l’accord de FirstHeberg, les conditions applicables des prestataires et la preuve d’acceptation des comptes existants. Le contrôle en lecture seule de Supabase a retrouvé les dépendances des deux migrations. Leurs empreintes, l’ordre de livraison et les contrôles sur l’environnement final sont consignés dans la [préparation opérationnelle](OPERATIONS.md). La copie des clés sur Dropbox est identique à la source. Son déchiffrement avec la phrase de Vincent doit être confirmé sur son poste.
+
 ## Partage vérifié sur le VPS FirstHeberg · 21 novembre 2026
 
 Le test exécuté par Vincent a réuni Chromium, les comptes fictifs du formateur et de l’organisme, et le validateur antivirus du VPS. Le fichier reçu était identique à celui téléchargé par le formateur. Dès la révocation, une nouvelle tentative de téléchargement dans l’onglet de l’organisme a reçu HTTP 404. L’environnement temporaire a été supprimé.

@@ -1,5 +1,18 @@
 # Préparation de livraison · V1.8.0
 
+## Préparation de l’ouverture sur FirstHeberg · 21 novembre 2026
+
+La version en production est la V1.7.0. La livraison de la V1.8.0 se prépare depuis la PR 29. Le contrôle en lecture seule des catalogues de la base de production a retrouvé les 29 colonnes référencées ou nécessaires aux deux migrations, la fonction d’enregistrement des acceptations et son déclencheur actif. Le schéma et le rôle documentaires sont absents. L’historique des migrations ne contient ni la migration documentaire ni celle de la notice. La répétition sur deux bases isolées a couvert les deux migrations candidates. Le test d’inscription a accepté les versions prévues, actuelles et antérieures, et rejeté les versions inconnues ou l’absence de prise de connaissance. La suite documentaire sur PostgreSQL temporaire a exécuté 11 scénarios avec succès, dont le contrôle des accès, la révocation, la panne du scanner et la reprise. Les deux scénarios dépendant d’un antivirus réel n’ont pas été exécutés dans cette répétition. Les essais antérieurs sur le VPS sont consignés séparément.
+
+| Ordre de livraison | Migration candidate | SHA-256 du fichier contrôlé |
+|---|---|---|
+| 1 | `20261118104552_professional_dossier.sql` | `59337514932b60f18b903951c213a8a185cf8a83dd369ce3c493f827a7068dc6` |
+| 2 | `20261118111329_dossier_legal_notice.sql` | `5515fe2c234b2cc92ef4b456920be08ecdf5eaee38ea8ba425739fab9f25bcdb` |
+
+Avant la bascule, comparer de nouveau ces empreintes et l’historique, relever la dernière sauvegarde Supabase utilisable et confirmer la récupération locale de la copie des clés. Le contrôle de catalogue ne fournit aucune preuve des privilèges qu’aura le futur compte de service. Préparer les accès de production et le certificat définitif, avec des secrets distincts de la recette. Les contrôles de privilèges, de capacité et d’alertes portent sur la configuration réellement retenue. La preuve d’une restauration de données fictives et le détail des alertes déjà reçues figurent dans [la recette](ACCEPTANCE.md).
+
+Après accord de mise en service, appliquer les migrations ciblées dans l’ordre indiqué et vérifier leur inscription dans l’historique. Livrer les services et l’interface avec l’ouverture publique désactivée. Sur la configuration finale sous accès restreint, exécuter le parcours sur une pièce fictive, observer la charge pendant des dépôts concurrents et un rechargement des signatures, puis vérifier le refus après révocation. Ouvrir ensuite le périmètre autorisé avec les conditions adoptées. Si un contrôle échoue, suivre le retour arrière décrit ci-dessous en préservant les données et les clés.
+
 Au 20 novembre 2026, le serveur FirstHeberg de 8 Go exécute l’API sur la boucle locale, le validateur, ClamAV et FreshClam. Les estimations OVHcloud ci-dessous retracent la préparation du 18 novembre. [Tests sur le serveur](ACCEPTANCE.md)
 
 ## Architecture et limites

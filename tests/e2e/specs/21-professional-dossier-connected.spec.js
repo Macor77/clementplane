@@ -17,9 +17,9 @@ function account(name) {
   return { email, password };
 }
 
-async function login(page, name) {
+async function login(page, name, destination = dossier) {
   const { email, password } = account(name);
-  await page.goto(dossier);
+  await page.goto(destination);
   await expect(page).toHaveURL(/\/connexion(?:\?|$)/);
   await page.locator('input[type=email]').fill(email);
   await page.locator('input[autocomplete=current-password]').fill(password);
@@ -31,7 +31,7 @@ async function login(page, name) {
   });
   await page.getByRole('button', { name: 'Se connecter' }).click();
   expect((await tokenResponse).status()).toBe(200);
-  await expect(page).toHaveURL(/\/formateur\/dossier(?:\?|$)/);
+  await expect(page).toHaveURL((url) => url.pathname === destination);
 }
 
 test('connexion, dépôt, consultation et séparation de deux dossiers', async ({ page, browser, baseURL }, testInfo) => {
@@ -81,6 +81,67 @@ test('connexion, dépôt, consultation et séparation de deux dossiers', async (
     await expect(second.getByRole('heading', { name: title })).toHaveCount(0);
   } finally {
     await other.close();
+  }
+});
+
+test('un OF connecté peut télécharger la pièce partagée puis perd cet accès dès la révocation', async ({ page, browser, baseURL }) => {
+  test.skip(!process.env.DOSSIER_TEST_OF_EMAIL, 'Compte gestionnaire OF de recette requis.');
+  const inbox = '/dossiers-recus';
+  const title = 'Pièce pour organisme ' + randomUUID().slice(0, 8);
+  const recipientContext = await browser.newContext({ baseURL });
+  try {
+    const recipient = await recipientContext.newPage();
+    await login(recipient, 'OF', inbox);
+    const emptyInbox = recipient.getByText('Aucun dossier partagé avec votre organisme.');
+    await expect(emptyInbox).toBeVisible();
+
+    await login(page, 'OWNER');
+    await page.getByRole('button', { name: 'Déposer un document' }).click();
+    await page.getByLabel('Intitulé').fill(title);
+    await page.getByLabel(/Fichier PDF/).setInputFiles({
+      name: 'temoin.png', mimeType: 'image/png', buffer: png,
+    });
+    await page.getByRole('button', { name: 'Enregistrer', exact: true }).click();
+    await expect(page.getByText('Document enregistré.')).toBeVisible();
+    const entry = page.getByRole('listitem').filter({ has: page.getByRole('heading', { name: title }) });
+    await entry.getByText('Gérer le document').click();
+    const getBytes = async (tab, row) => {
+      const pending = tab.waitForEvent('download');
+      await row.getByRole('button', { name: 'Télécharger' }).click();
+      const download = await pending;
+      expect(download.suggestedFilename()).toBe(title + '.png');
+      const chunks = [];
+      for await (const chunk of await download.createReadStream()) chunks.push(chunk);
+      return Buffer.concat(chunks);
+    };
+    const original = await getBytes(page, entry);
+    await page.getByRole('button', { name: 'Nouveau partage' }).click();
+    await expect(page.getByLabel('Organisme', { exact: true })).toBeVisible();
+    await page.getByRole('checkbox', { name: title }).check();
+    await page.getByRole('button', { name: 'Vérifier le partage' }).click();
+    await page.getByRole('button', { name: 'Confirmer et inviter' }).click();
+    const share = page.getByRole('listitem').filter({ hasText: title })
+      .filter({ has: page.getByText('Gérer cet accès') });
+    await expect(share).toBeVisible();
+
+    await recipient.reload();
+    await recipient.getByRole('button', { name: 'Voir les documents' }).click();
+    const received = recipient.getByRole('listitem').filter({ hasText: title });
+    expect(await getBytes(recipient, received)).toEqual(original);
+
+    await share.getByText('Gérer cet accès').click();
+    page.once('dialog', (dialog) => dialog.accept());
+    await share.getByRole('button', { name: 'Révoquer' }).click();
+    await expect(page.getByText('Accès mis à jour.')).toBeVisible();
+    const freshRequest = recipient.waitForResponse((res) =>
+      res.request().method() === 'POST' && new URL(res.url()).pathname === '/v1/file');
+    await received.getByRole('button', { name: 'Télécharger' }).click();
+    expect((await freshRequest).status()).toBe(404);
+    await expect(recipient.getByRole('alert')).toBeVisible();
+    await recipient.reload();
+    await expect(emptyInbox).toBeVisible();
+  } finally {
+    await recipientContext.close();
   }
 });
 

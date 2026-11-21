@@ -2,6 +2,12 @@
 
 **Sprint non clôturé.** La V1.8.0 candidate est sur la PR #29 en brouillon. La production observée reste la V1.7.0. La clarification de Vincent réserve toute intégration ou modification des pièces au formateur propriétaire. Le rôle de l’OF est limité à la consultation et au téléchargement de la sélection partagée.
 
+## Confidentialité et récupération du 21 novembre 2026
+
+Vincent a choisi un suivi Brevo limité aux contacts consentants et une archive de clés chiffrée dans son Dropbox professionnel, avec la phrase de passe conservée séparément. Les deux réglages Brevo ont été enregistrés puis relus. À 12 h 38 min 05 s, heure de Paris, Gmail a reçu l’unique essai envoyé par l’éditeur de modèles. Le HTML d’origine contenait un lien direct vers l’accueil et aucune image. Dans le MIME reçu, le lien passe par le domaine de redirection Brevo et une image distante a été ajoutée. Cela ne permet pas de conclure à une mesure individuelle ni de valider l’envoi du worker, qui utilise l’API et transmet explicitement le refus de suivi. Le modèle de recette est inactif.
+
+Une archive OpenPGP de clés fictives a été récupérée depuis le dossier Clementplane du Dropbox professionnel. Son empreinte correspondait à l’original. La mauvaise phrase a été refusée. La bonne a permis de relire deux PDF chiffrés avec deux générations de clés et de vérifier la clé HMAC. La création et la mise à l’abri des clés réelles restent à effectuer lors de la préparation de production.
+
 ## Point du 21 novembre 2026
 
 Vincent a ouvert et téléchargé le PDF reçu sur son téléphone en 5G après l’envoi depuis FirstHeberg. Sur la candidate, deux comptes fictifs authentifiés ont ensuite permis de vérifier le partage vers un OF et la perte d’accès immédiate à la révocation. Une restauration en base isolée a restitué la pièce à l’identique avec une clé récupérée séparément. Supabase affiche sept sauvegardes physiques. La plus récente précède la migration du dossier.

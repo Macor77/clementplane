@@ -2,6 +2,11 @@
 
 Données fictives uniquement. Chaque niveau de vérification ci-dessous est à lire dans son environnement. Les fichiers de tests sont dans services/dossier/tests, les scénarios Playwright 20 et 21 de tests/e2e/specs et la configuration Quality.
 
+## Essais de confidentialité et de reprise du 21 novembre 2026
+
+- **Brevo.** Choix relus sur le compte Clementplane : consentement par contact activé, suivi si consentement inconnu désactivé. Le test unitaire du worker vérifie son champ destinataire `contactPixelTrackingConsent: false`. Le message d’essai envoyé depuis l’éditeur Brevo a été reçu à 12 h 38 min 05 s, heure de Paris. L’HTML soumis comportait un lien vers l’accueil public, sans image. Le MIME reçu contenait une image distante et un lien réécrit sur le domaine de suivi. Aucune ressource n’a été appelée lors de cette inspection. L’éditeur ne permet pas de fournir le champ par destinataire du worker. Le comportement de l’invitation du dossier après le changement demande une vérification distincte.
+- **Récupération depuis Dropbox.** L’archive fictive OpenPGP de 537 octets a été déposée dans le Dropbox professionnel, puis relue par son identifiant de fichier. Les deux SHA-256 de l’archive valent `4154c480debbc79e8fddabf373798d720190bc3ef184b0059d12a1d0dffde90e`. Deux générations de clés AES et une clé HMAC fictives ont été extraites avec la phrase indépendante. Pour chaque génération, le déchiffrement applicatif a rendu le même SHA-256 que le PDF original. La mauvaise phrase a échoué. La phrase de recette et les clés en clair ne figurent pas dans l’archive publique du code. Aucune clé de production n’a été créée par l’essai.
+
 ## Sauvegarde, accès OF et messagerie · 21 novembre 2026
 
 | Contrôle | Résultat observé |
@@ -62,6 +67,10 @@ Le contrôle final en base a compté trois utilisateurs distincts avec session, 
 Utiliser une préproduction isolée avec trois identités fictives de formateur. Le deuxième dossier doit être vide et le troisième compte doit également être administrateur de plateforme, avec un facteur TOTP encore à inscrire. Compiler la candidate avec `VITE_DOSSIER_ENABLED=true`, l’URL de cette API documentaire et les paramètres publics de cette instance Supabase. Servir le frontend sur `http://127.0.0.1:4173` et désactiver l’envoi de courriels.
 
 Fournir `DOSSIER_BROWSER_FIXTURE=1` et les variables `DOSSIER_TEST_OWNER_EMAIL`, `DOSSIER_TEST_OWNER_PASSWORD`, avec les mêmes suffixes pour `DOSSIER_TEST_OTHER` et `DOSSIER_TEST_ADMIN`. Exécuter `npx playwright test 21-professional-dossier-connected --retries=0` puis détruire l’instance et ses comptes de recette. Les traces et vidéos sont désactivées pour ce scénario.
+
+### Partage vers un organisme connecté
+
+Depuis un checkout de recette, avec Docker Compose, les dépendances de développement du projet, Chromium Playwright et les dépendances Python du dossier, exécuter `python services/dossier/tests/organization_browser.py`. Le script crée puis retire un projet Compose dédié sur la boucle locale. GoTrue, PostgREST, PostgreSQL et l’API réelle servent deux comptes fictifs. Le navigateur passe par les écrans de connexion, de dépôt, de partage, de gestion du dossier reçu et de révocation. Le téléchargement doit être identique à celui du propriétaire puis retourner 404 depuis l’onglet OF déjà ouvert. Aucun worker e-mail ne démarre. En CI, le parseur de fichier fonctionne avec un adaptateur local. Sur une machine qui donne accès à la socket privée du validateur, définir `DOSSIER_SCANNER_SOCKET` pour utiliser la chaîne de scan de cette machine. Le schéma synthétique fournit les profils et rattachements indispensables au parcours.
 
 ## Recette hébergée du 20 novembre 2026
 

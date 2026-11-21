@@ -46,11 +46,11 @@ VITE_DOSSIER_ENABLED=true VITE_DOSSIER_API="https://${DOSSIER_GUEST_HOST}" \
   --outDir "$DOSSIER_GUEST_ROOT"
 ```
 
-Renseigner le nom d’hôte, l’adresse d’écoute et les chemins absolus du certificat, de sa clé et du répertoire compilé. Rendre le modèle avec la liste explicite de variables ci-dessous pour conserver les variables internes de Nginx. Charger le résultat dans le contexte `http` après validation avec `nginx -t`.
+Renseigner le nom d’hôte, l’adresse d’écoute et les chemins absolus du certificat, de sa clé et du répertoire compilé. Pour une configuration manuelle, inclure dans `DOSSIER_HTTPS_EXTRA_LISTEN` une directive `listen [adresse]:443 ssl;` par adresse IPv6 publiée pour cet hôte. Laisser cette variable vide pour un essai sur la seule boucle locale IPv4. Rendre le modèle avec la liste explicite de variables ci-dessous pour conserver les variables internes de Nginx. Charger le résultat dans le contexte `http` après validation avec `nginx -t`.
 
 ```bash
 export DOSSIER_API_PORT="${DOSSIER_API_PORT:-8260}"
-envsubst '${DOSSIER_API_PORT} ${DOSSIER_HTTPS_LISTEN} ${DOSSIER_GUEST_HOST} ${DOSSIER_TLS_CERT} ${DOSSIER_TLS_KEY} ${DOSSIER_GUEST_ROOT}' \
+envsubst '${DOSSIER_API_PORT} ${DOSSIER_HTTPS_LISTEN} ${DOSSIER_HTTPS_EXTRA_LISTEN} ${DOSSIER_GUEST_HOST} ${DOSSIER_TLS_CERT} ${DOSSIER_TLS_KEY} ${DOSSIER_GUEST_ROOT}' \
   < services/dossier/recette/nginx-guest.conf.template > "$DOSSIER_RENDERED_CONF"
 ```
 

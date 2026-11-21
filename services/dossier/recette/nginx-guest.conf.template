@@ -3,6 +3,7 @@ limit_req_zone $binary_remote_addr zone=dossier_guest:1m rate=5r/s;
 
 server {
     listen ${DOSSIER_HTTPS_LISTEN} ssl;
+    ${DOSSIER_HTTPS_EXTRA_LISTEN}
     server_name ${DOSSIER_GUEST_HOST};
     ssl_certificate ${DOSSIER_TLS_CERT};
     ssl_certificate_key ${DOSSIER_TLS_KEY};

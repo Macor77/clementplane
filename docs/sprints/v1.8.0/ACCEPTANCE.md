@@ -2,6 +2,14 @@
 
 Données fictives uniquement. Chaque niveau de vérification ci-dessous est à lire dans son environnement. Les fichiers de tests sont dans services/dossier/tests, les scénarios Playwright 20 et 21 de tests/e2e/specs et la configuration Quality.
 
+## Envoi automatique depuis FirstHeberg · 21 novembre 2026
+
+Un navigateur externe a ouvert la page invitée en HTTPS sur le VPS de Valenciennes. Sans lien nominatif, la page invitait à ouvrir l’e-mail et n’affichait aucune pièce. Le worker de l’instance isolée a envoyé une invitation pour l’unique PDF fictif. La file indiquait `invite accepted 1`. La boîte Gmail autorisée a reçu ce message à 10 h 15, heure de Paris, avec un seul destinataire et sans copie.
+
+À 10 h 24, le téléphone en 5G a affiché un délai de connexion dépassé. Le nom du VPS publiait une adresse IPv6 et Nginx écoutait uniquement en IPv4. Après ajout de l’adresse IPv6 publiée et rechargement de Nginx, deux requêtes HTTPS depuis le VPS ont obtenu HTTP 200, l’une en IPv6 et l’autre en IPv4. Le conteneur a conservé sa limite initiale d’une heure.
+
+Le destinataire a rouvert la même invitation sur son téléphone. Gmail a reçu le seul code à 10 h 28. Le journal du VPS a enregistré une consultation à 10 h 29 et un téléchargement à 10 h 30. Le destinataire a confirmé que le PDF était lisible et téléchargé. Les deux envois ont été acceptés. Le partage a ensuite été révoqué et la base de recette a renvoyé zéro session. La clé temporaire était marquée désactivée dans Brevo et sa copie a été retirée du VPS. Le contrôle local ne montrait plus d’écoute sur le port 443. Les services de cette recette ont été arrêtés.
+
 ## Préparation du partage sur FirstHeberg · 21 novembre 2026
 
 La page invitée a été compilée sur le VPS de Valenciennes. L’API de l’essai utilise le port 18260 de la boucle locale et sa propre base PostgreSQL temporaire. Le service de préparation a fait contrôler un PDF fictif par le validateur et ClamAV avant de le chiffrer et de créer un seul partage. La file a ensuite indiqué une invitation en attente. Le worker d’envoi était arrêté et aucune demande de code n’avait été effectuée.

@@ -3,6 +3,7 @@ import argparse
 import os
 from pathlib import Path
 import re
+import socket
 import subprocess
 
 HERE = Path(__file__).resolve().parent
@@ -39,7 +40,11 @@ def main():
     if not (site / "dossier-invite.html").is_file() or (site / "index.html").exists():
         raise SystemExit("Build the guest-only bundle in dist before opening.")
     template = (HERE / "nginx-guest.conf.template").read_text()
-    settings = {"HTTPS_LISTEN": "443", "API_PORT": "18260", "GUEST_HOST": host,
+    addresses = socket.getaddrinfo(host, 443, type=socket.SOCK_STREAM)
+    ipv6 = sorted({addr[0] for family, _, _, _, addr in addresses if family == socket.AF_INET6})
+    extra_listeners = "\n    ".join(f"listen [{address}]:443 ssl;" for address in ipv6)
+    settings = {"HTTPS_LISTEN": "443", "HTTPS_EXTRA_LISTEN": extra_listeners,
+                "API_PORT": "18260", "GUEST_HOST": host,
                 "TLS_CERT": "/trial/tls/server.crt", "TLS_KEY": "/trial/tls/server.key",
                 "GUEST_ROOT": "/trial/site"}
     for key, value in settings.items():

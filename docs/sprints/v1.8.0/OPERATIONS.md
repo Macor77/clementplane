@@ -100,6 +100,12 @@ Le dispositif s’exécute sur l’hôte. Il fonctionne navigateur fermé et ne 
 
 Vincent a choisi une archive OpenPGP chiffrée dans le Dropbox professionnel et une phrase de passe conservée séparément. Le fichier dont le nom commence par `TEST-recuperation-cles` contient des clés de recette. Il ne peut déchiffrer aucune pièce réelle.
 
+Pour le premier jeu de clés, Vincent dispose d’un outil HTML autonome à ouvrir localement sur son PC. Il génère une clé AES-256 et une clé HMAC indépendante. Son seul fichier de sortie est une archive OpenPGP symétrique nommée `Clementplane-cles-prod-….asc`. L’outil utilise OpenPGP.js 6.3.3 embarqué. Vincent conserve la phrase dans son gestionnaire séparé de Dropbox et dépose l’archive dans le dossier professionnel Clementplane.
+
+Le fichier déchiffré a pour format `clementplane-dossier-cles-v1`. Il contient l’identifiant courant, le dictionnaire des clés AES et la clé HMAC sous les noms attendus par l’application, ainsi que deux témoins de contrôle. À la mise en service initiale, reprendre ces valeurs dans les secrets de l’API et du service d’envoi selon les besoins de chacun. Pour un service qui dispose déjà de clés, sauvegarder les générations effectivement utilisées selon la procédure ci-dessous. L’outil de création initiale ne réalise aucune rotation.
+
+Après la synchronisation, télécharger à nouveau l’archive depuis Dropbox. La vérification locale déchiffre une pièce témoin et contrôle sa signature HMAC. Les seules informations à consigner sont le nom du fichier, son SHA-256, la date et le résultat. Le 21 novembre, le code embarqué a réussi la création et la relecture hors réseau sur clés fictives. Une phrase erronée a échoué. GnuPG a ouvert l’archive et la fonction `unseal` de la candidate a restitué le témoin. La création et la récupération de l’archive personnelle de Vincent restent à confirmer.
+
 Lors de la préparation de l’environnement réel :
 
 1. Dans le contexte privé de l’API documentaire, sélectionner uniquement `DOSSIER_CURRENT_KEY_ID`, `DOSSIER_FILE_KEYS` (toutes les générations encore nécessaires) et `DOSSIER_HMAC_KEY`. Exclure les mots de passe SQL, les clés de messagerie et les pièces. Éviter toute commande qui affiche l’environnement dans le terminal.

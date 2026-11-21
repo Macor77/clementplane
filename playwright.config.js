@@ -16,9 +16,11 @@ export default defineConfig({
     video: process.env.PLAYWRIGHT_VIDEO_OFF === '1' ? 'off' : 'retain-on-failure',
   },
   webServer: {
-    command: 'npm run preview -- --host 127.0.0.1 --port 4173',
+    command: process.env.DOSSIER_TEST_PREVIEW_DIR
+      ? 'npm run preview -- --host 127.0.0.1 --port 4173 --strictPort --outDir "$DOSSIER_TEST_PREVIEW_DIR"'
+      : 'npm run preview -- --host 127.0.0.1 --port 4173',
     url: 'http://127.0.0.1:4173',
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: !process.env.CI && !process.env.DOSSIER_TEST_PREVIEW_DIR,
   },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
 });

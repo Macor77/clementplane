@@ -1,0 +1,14 @@
+{
+    admin off
+    auto_https disable_redirects
+    persist_config off
+}
+
+{$DOSSIER_GUEST_HOST} {
+    tls {
+        issuer acme {
+            disable_http_challenge
+        }
+    }
+    respond 404
+}

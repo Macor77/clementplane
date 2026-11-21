@@ -1,0 +1,4 @@
+# Compléter en dehors du dépôt. Transmettre uniquement à la boîte de l'opérateur.
+set mailserver smtp-relay.brevo.com port 465
+    username "IDENTIFIANT_SMTP_BREVO" password "CLE_SMTP_DEDIEE" using ssl
+set alert operateur@example.invalid only on { resource }

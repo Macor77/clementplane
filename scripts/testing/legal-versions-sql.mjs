@@ -10,11 +10,12 @@ await db.exec(fs.readFileSync('supabase/migrations/20261005135703_personal_missi
 await db.exec(fs.readFileSync('supabase/migrations/20261008061224_google_calendar_privacy_notice.sql','utf8'));
 await db.exec(fs.readFileSync('supabase/migrations/20261028071102_microsoft_calendar_privacy_notice.sql','utf8'));
 await db.exec(fs.readFileSync('supabase/migrations/20261112073103_activity_privacy_notice.sql','utf8'));
-for(const version of ['2026-08-29','2026-10-05','2026-10-08','2026-10-28','2026-11-12']) {
- const meta={signup_intent:'trainer',terms_accepted:true,privacy_acknowledged:true,terms_version:LEGAL_VERSIONS.cgu,privacy_version:version};
+await db.exec(fs.readFileSync('supabase/migrations/20261118111329_dossier_legal_notice.sql','utf8'));
+for(const version of ['2026-08-29','2026-10-05','2026-10-08','2026-10-28','2026-11-12','2026-11-18']) {
+ const meta={signup_intent:'trainer',terms_accepted:true,privacy_acknowledged:true,terms_version:version==='2026-11-18'?LEGAL_VERSIONS.cgu:'2026-08-29',privacy_version:version};
  await db.query('insert into auth.users(raw_user_meta_data) values ($1)',[meta]);
 }
 const accepted=await db.query("select document_version from legal_acceptances where document_type='privacy_notice' order by document_version");
-assert.deepEqual(accepted.rows.map(r=>r.document_version),['2026-08-29','2026-10-05','2026-10-08','2026-10-28','2026-11-12']);
+assert.deepEqual(accepted.rows.map(r=>r.document_version),['2026-08-29','2026-10-05','2026-10-08','2026-10-28','2026-11-12','2026-11-18']);
 for(const [ack,version] of [[false,LEGAL_VERSIONS.privacy],[true,'invented']]) await assert.rejects(()=>db.query('insert into auth.users(raw_user_meta_data) values ($1)',[{signup_intent:'trainer',terms_accepted:true,terms_version:LEGAL_VERSIONS.cgu,privacy_acknowledged:ack,privacy_version:version}]));
 await db.close();console.log('PASS: current and cached privacy versions accepted and recorded; missing acknowledgement and unknown version refused.');

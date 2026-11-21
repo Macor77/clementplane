@@ -34,3 +34,7 @@ dist-ssr
 # Browser test artifacts (may contain authenticated state)
 test-results/
 playwright-report/
+
+# Isolated document service
+__pycache__/
+*.pyc

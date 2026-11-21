@@ -1,0 +1,66 @@
+# Include the rendered file in the existing Nginx http context.
+limit_req_zone $binary_remote_addr zone=dossier_guest:1m rate=5r/s;
+
+server {
+    listen ${DOSSIER_HTTPS_LISTEN} ssl;
+    ${DOSSIER_HTTPS_EXTRA_LISTEN}
+    server_name ${DOSSIER_GUEST_HOST};
+    ssl_certificate ${DOSSIER_TLS_CERT};
+    ssl_certificate_key ${DOSSIER_TLS_KEY};
+    ssl_protocols TLSv1.2 TLSv1.3;
+
+    root ${DOSSIER_GUEST_ROOT};
+    access_log off;
+    error_log /dev/null crit;
+    server_tokens off;
+    add_header Cache-Control "private, no-store" always;
+    add_header Referrer-Policy "no-referrer" always;
+    add_header X-Robots-Tag "noindex, nofollow" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Content-Security-Policy "default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' blob:; connect-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'" always;
+
+    if ($host != ${DOSSIER_GUEST_HOST}) { return 404; }
+    if ($args != "") { return 404; }
+
+    location = /dossier-invite.html {
+        try_files $uri =404;
+    }
+
+    location = /brand/clementplane-logo-light.svg {
+        try_files $uri =404;
+    }
+
+    location = /confidentialite {
+        return 302 https://www.clementplane.fr/confidentialite;
+    }
+
+    location ~ ^/assets/[A-Za-z0-9_.-]+\.(js|css)$ {
+        try_files $uri =404;
+    }
+
+    location ~ ^/v1/(request-code|verify-code|guest-list|guest-file|guest-close)$ {
+        if ($request_method !~ ^(POST|OPTIONS)$) { return 405; }
+        limit_req zone=dossier_guest burst=15 nodelay;
+        limit_req_status 429;
+        client_max_body_size 8k;
+        client_body_buffer_size 8k;
+        proxy_request_buffering off;
+        proxy_buffering off;
+        proxy_connect_timeout 3s;
+        proxy_send_timeout 10s;
+        proxy_read_timeout 45s;
+        proxy_pass_request_headers off;
+        proxy_set_header Host $host;
+        proxy_set_header Content-Type $content_type;
+        proxy_set_header Origin $http_origin;
+        proxy_set_header Access-Control-Request-Method $http_access_control_request_method;
+        proxy_set_header Access-Control-Request-Headers $http_access_control_request_headers;
+        proxy_hide_header Cache-Control;
+        proxy_hide_header Referrer-Policy;
+        proxy_hide_header X-Robots-Tag;
+        proxy_hide_header X-Content-Type-Options;
+        proxy_pass http://127.0.0.1:${DOSSIER_API_PORT};
+    }
+
+    location / { return 404; }
+}

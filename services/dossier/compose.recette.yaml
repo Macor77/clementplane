@@ -1,0 +1,26 @@
+# Use with compose.yaml on the scanner host. Run the fixture as a one-off job.
+services:
+  recette:
+    profiles: [recette]
+    build:
+      context: .
+      target: recette
+    network_mode: none
+    read_only: true
+    user: "10001:10001"
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    ulimits:
+      core: 0
+    tmpfs:
+      - "/tmp:rw,noexec,nosuid,nodev,mode=1777,size=512m"
+    mem_limit: 1g
+    volumes:
+      - sockets:/run/dossier:ro
+      - .:/checkout/services/dossier:ro
+      - ../../supabase/migrations:/checkout/supabase/migrations:ro
+    environment:
+      CLAMD_SOCKET: /run/dossier/clamd.sock
+      DOSSIER_SCANNER_SOCKET: /run/dossier/validator.sock
+      DOSSIER_REAL_SCANNER: "1"
+    command: [python, /checkout/services/dossier/tests/acceptance.py]

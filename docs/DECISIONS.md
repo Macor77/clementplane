@@ -325,3 +325,12 @@ Vincent valide les améliorations mobiles proposées et autorise leur développe
 ## V1.7.0 — Production autorisée, 17 novembre 2026
 
 Après livraison de la candidate, Vincent confirme : « Je valide. Tu peux mettre en production. » Cette autorisation lève le gel de publication de V1.7.0. PR #28 fusionnée avec SHA attendu b3f3144 ; migration des objectifs appliquée seule sous 20261117142308, droits et contraintes vérifiés. Vercel READY sur le SHA de fusion 0ed5582 ; version officielle et service worker contrôlés. Tag/release/ZIP réalisés depuis le commit documentaire exact après Quality, sans envoi de nouveautés.
+
+
+## Dossier professionnel · candidate du 18 novembre 2026
+
+Les pièces sont déposées par le propriétaire, jamais par un OF pour le compte du formateur. Accès invités isolés et aucun lien de fichier. [Motifs et limites](sprints/v1.8.0/AUDIT.md).
+
+## Dossier professionnel · hébergement de recette et limite de capacité (18 novembre 2026)
+
+Cible de 8 Go de RAM à conserver en développement et pour préparer la production. La location temporaire OVHcloud d2-8 envisagée pour 48 heures et 5 € TTC est suspendue par décision du 18 novembre. Vérifier le stock du VPS-2 Linux en France le vendredi 20 novembre et rendre compte à Vincent avant toute commande. Avant la mise en production, vérifier les pics et les alertes à 70 % et 90 %, chiffrer le coût récurrent et obtenir l’accord de Vincent. [Seuils, récupération et fin de facturation](sprints/v1.8.0/OPERATIONS.md).

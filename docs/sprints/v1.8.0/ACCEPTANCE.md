@@ -2,6 +2,14 @@
 
 Données fictives uniquement. Chaque niveau de vérification ci-dessous est à lire dans son environnement. Les fichiers de tests sont dans services/dossier/tests, les scénarios Playwright 20 et 21 de tests/e2e/specs et la configuration Quality.
 
+## Suivi individuel de l’invitation Brevo · 21 novembre 2026
+
+Une seule invitation fictive a été construite et envoyée par le code de la candidate, en mode test, avec un partage temporaire isolé et un seul destinataire. Le worker a transmis `contactPixelTrackingConsent: false`. Brevo a accepté l’envoi à 17 h 38 min 14 s et a enregistré la livraison deux secondes plus tard. Gmail a reçu le message portant le même identifiant. Toutes les heures sont celles de Paris.
+
+Le message reçu contenait un pixel distant de 1 × 1 pixel et un lien direct vers Clementplane. À 17 h 39 min 06 s, le chargement contrôlé du pixel a renvoyé une image GIF (HTTP 200). À 17 h 39 min 15 s, le lien de l’invitation a abouti au site Clementplane (HTTP 200), après une redirection de Clementplane vers son domaine avec `www`. Cette vérification porte sur la messagerie. Le partage fictif ne donnait accès à aucune pièce réelle.
+
+Au contrôle de 17 h 44, le journal transactionnel filtré sur l’identifiant du message et l’adresse contenait uniquement la demande d’envoi et la livraison. L’historique individuel du contact montrait également ces deux événements pour cette invitation. Aucune ouverture ni aucun clic nominatif constaté pendant l’observation. La présence du pixel reste compatible avec des statistiques agrégées. La clé API temporaire a été désactivée à la fin de l’essai. [Fonctionnement du consentement par destinataire](https://developers.brevo.com/changelog/2026/7/21)
+
 ## Partage et révocation sur le VPS FirstHeberg · 21 novembre 2026
 
 Vincent a exécuté sur le VPS le scénario Chromium de la candidate `92f17bf` avec deux comptes fictifs et le validateur antivirus de l’hôte. Le contrôle préalable du validateur a accepté l’image PNG témoin. Le scénario a ensuite vérifié les étapes suivantes.

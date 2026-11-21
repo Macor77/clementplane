@@ -6,7 +6,7 @@
 
 Le test exécuté par Vincent a réuni Chromium, les comptes fictifs du formateur et de l’organisme, et le validateur antivirus du VPS. Le fichier reçu était identique à celui téléchargé par le formateur. Dès la révocation, une nouvelle tentative de téléchargement dans l’onglet de l’organisme a reçu HTTP 404. L’environnement temporaire a été supprimé.
 
-Pour préparer l’ouverture, il reste notamment à vérifier le suivi dans une invitation réellement envoyée par l’API après le changement de réglage Brevo et à obtenir l’annexe de sous-traitance demandée à FirstHeberg. [Preuve et périmètre du test](ACCEPTANCE.md)
+Le 21 novembre à 17 h 38, le service Clementplane a envoyé une invitation fictive à la seule boîte autorisée. Après le chargement du pixel et l’ouverture du lien direct, la fiche du contact et le journal Brevo indiquaient uniquement l’envoi et la livraison au contrôle de 17 h 44. La clé de test a été désactivée. L’annexe de sous-traitance demandée à FirstHeberg reste attendue. [Preuve et périmètre du test](ACCEPTANCE.md)
 
 ## Confidentialité et récupération du 21 novembre 2026
 

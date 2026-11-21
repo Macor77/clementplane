@@ -7,7 +7,6 @@
 {$DOSSIER_GUEST_HOST} {
     tls {
         issuer acme {
-            ca https://acme-v02.api.letsencrypt.org/directory
             disable_http_challenge
         }
     }

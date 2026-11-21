@@ -49,11 +49,19 @@ VITE_DOSSIER_ENABLED=true VITE_DOSSIER_API="https://${DOSSIER_GUEST_HOST}" \
 Renseigner le nom d’hôte, l’adresse d’écoute et les chemins absolus du certificat, de sa clé et du répertoire compilé. Rendre le modèle avec la liste explicite de variables ci-dessous pour conserver les variables internes de Nginx. Charger le résultat dans le contexte `http` après validation avec `nginx -t`.
 
 ```bash
-envsubst '${DOSSIER_HTTPS_LISTEN} ${DOSSIER_GUEST_HOST} ${DOSSIER_TLS_CERT} ${DOSSIER_TLS_KEY} ${DOSSIER_GUEST_ROOT}' \
+export DOSSIER_API_PORT="${DOSSIER_API_PORT:-8260}"
+envsubst '${DOSSIER_API_PORT} ${DOSSIER_HTTPS_LISTEN} ${DOSSIER_GUEST_HOST} ${DOSSIER_TLS_CERT} ${DOSSIER_TLS_KEY} ${DOSSIER_GUEST_ROOT}' \
   < services/dossier/recette/nginx-guest.conf.template > "$DOSSIER_RENDERED_CONF"
 ```
 
 Le proxy relaie cinq actions invitées vers la boucle locale. Le formulaire de dépôt, les routes du propriétaire et la base restent privés. Vérifier le certificat depuis l’extérieur avant de créer le partage. Utiliser la base de recette isolée, une pièce fictive, le mode de messagerie `test` et une seule adresse autorisée. Fournir au worker son accès Brevo par la configuration privée du serveur. Créer le partage une seule fois, rapprocher l’invitation des journaux de livraison puis demander le code une seule fois depuis la page. En fin de test, révoquer le partage, vérifier le refus d’un nouveau téléchargement, arrêter le worker de recette et retirer l’entrée HTTPS temporaire.
+
+Pour un essai isolé sur le même hôte, le sous-répertoire `services/dossier/recette` contient le projet Compose `guest-trial.compose.yaml`. Sa base temporaire écoute sur la boucle locale de son conteneur. Seule son API est publiée sur la boucle locale du VPS, au port 18260. La base limite les envois à une invitation et un code. Le partage expire en fin de journée à Paris. L’arrêt du conteneur PostgreSQL efface les données du test.
+
+- Construire la page invitée dans `dist` à la racine de cette copie. Exporter `DOSSIER_TRIAL_DIR` vers un nouveau répertoire sous `/run`, `DOSSIER_GUEST_HOST` vers le nom public et `DOSSIER_SCANNER_VOLUME` vers le volume de sockets déjà vérifié. Depuis le sous-répertoire, lancer `python3 settings.py "$DOSSIER_TRIAL_DIR" "$DOSSIER_GUEST_HOST" "$DESTINATAIRE"`. Les fichiers privés sont créés en mode 0600.
+- Lancer les services `db` et `api` du projet. La commande `python3 gateway.py certificate` réserve le port 443 pendant trois minutes au maximum pour obtenir le certificat. Vérifier le certificat et arrêter ce conteneur par son nom `clementplane-invite-cert` avant de lancer `python3 gateway.py open`. La passerelle publique cesse de servir au bout d’une heure.
+- Une fois la page vérifiée depuis l’extérieur, exécuter `docker compose -f guest-trial.compose.yaml run --rm --no-deps seed` pour faire analyser et chiffrer le PDF fictif. Fournir la clé Brevo privée sur l’entrée standard de `docker compose -f guest-trial.compose.yaml run -T --rm --no-deps worker`, d’abord pour l’invitation puis après la demande de code. Contrôler la remise de chaque envoi dans la boîte autorisée.
+- Pour révoquer, exécuter le service opérateur `seed` avec la commande `python /trial/operate.py revoke`. Après contrôle du refus côté invité, arrêter la passerelle `clementplane-invite-https` et le projet de recette avec `docker compose -f guest-trial.compose.yaml down`. Révoquer la clé Brevo temporaire et retirer les fichiers privés du répertoire dédié à l’essai.
 
 ## Enveloppe validée pour la recette et le passage en production
 

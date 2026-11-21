@@ -58,7 +58,7 @@ server {
         proxy_hide_header Referrer-Policy;
         proxy_hide_header X-Robots-Tag;
         proxy_hide_header X-Content-Type-Options;
-        proxy_pass http://127.0.0.1:8260;
+        proxy_pass http://127.0.0.1:${DOSSIER_API_PORT};
     }
 
     location / { return 404; }

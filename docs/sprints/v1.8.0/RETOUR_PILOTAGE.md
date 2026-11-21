@@ -2,6 +2,12 @@
 
 **Sprint non clôturé.** La V1.8.0 candidate est sur la PR #29 en brouillon. La production observée reste la V1.7.0. La clarification de Vincent réserve toute intégration ou modification des pièces au formateur propriétaire. Le rôle de l’OF est limité à la consultation et au téléchargement de la sélection partagée.
 
+## Point du 21 novembre 2026
+
+Vincent a ouvert et téléchargé le PDF reçu sur son téléphone en 5G après l’envoi depuis FirstHeberg. Sur la candidate, deux comptes fictifs authentifiés ont ensuite permis de vérifier le partage vers un OF et la perte d’accès immédiate à la révocation. Une restauration en base isolée a restitué la pièce à l’identique avec une clé récupérée séparément. Supabase affiche sept sauvegardes physiques. La plus récente précède la migration du dossier.
+
+Avant l’ouverture, vérifier le parcours sur la configuration hébergée retenue, la garde hors VPS des clés, la réception d’une alerte mémoire depuis le VPS et le comportement du suivi dans un e-mail Brevo après décision sur le réglage du compte. La demande d’accord de sous-traitance a été envoyée à FirstHeberg le 21 novembre. La réponse reste attendue. [Résultats de recette](ACCEPTANCE.md)
+
 ## Point du 20 novembre 2026
 
 Le VPS FirstHeberg accueille l’API documentaire privée, le validateur et l’antivirus. La recette des dépôts fictifs est passée sur cet hôte. Le parcours navigateur a ensuite réussi sur une instance Supabase Auth isolée avec trois comptes fictifs. Le propriétaire a retrouvé et téléchargé sa pièce. Le deuxième formateur a vu son dossier vide. L’administrateur a dû valider son second facteur pour accéder au dossier. La réception des courriels et des alertes de supervision sur l’infrastructure cible reste à vérifier. [Résultats des deux recettes](ACCEPTANCE.md)

@@ -2,6 +2,16 @@
 
 Données fictives uniquement. Chaque niveau de vérification ci-dessous est à lire dans son environnement. Les fichiers de tests sont dans services/dossier/tests, les scénarios Playwright 20 et 21 de tests/e2e/specs et la configuration Quality.
 
+## Sauvegarde, accès OF et messagerie · 21 novembre 2026
+
+| Contrôle | Résultat observé |
+|---|---|
+| Sauvegardes distantes | Le tableau de bord du projet Supabase Clementplane liste sept sauvegardes physiques du 14 au 20 novembre inclus. La dernière est datée du 20 novembre à 23 h 39 min 20 s, heure de Paris. Elle précède la migration documentaire. |
+| Formateur et OF connecté | Deux utilisateurs fictifs distincts ont ouvert une session par mot de passe auprès de Supabase Auth 2.197.0 sur une instance isolée. L’API de la candidate a reçu le PDF du formateur. La boîte de l’OF était vide avant partage. Après partage, l’OF a téléchargé le fichier à l’identique. Après révocation, la boîte était vide et la même demande de téléchargement dans la même session a reçu HTTP 404. Le parseur PDF était réel. Le transport antivirus a été remplacé pour cet essai. Voir plus bas le contrôle ClamAV réalisé sur le VPS. |
+| Restauration | Un export complet de la base fictive PostgreSQL a été restauré dans une deuxième base. La pièce y était chiffrée. Le déchiffrement a échoué en l’absence de la clé requise. La clé de test récupérée dans un fichier distinct a permis de restituer le PDF avec la même empreinte SHA-256. Le partage restauré était toujours révoqué. La garde indépendante des futures clés de production et la recette sur la configuration hébergée restent à vérifier. |
+| Alerte mémoire | Monit 5.34.3 a lu la mémoire Linux. Les seuils de 70 et 90 % et les retours sous seuil ont déclenché les notifications attendues sur un relais SMTP local de test. La réception d’une alerte issue du VPS sur la boîte de l’opérateur reste à vérifier. |
+| Messagerie Brevo | Dans le compte Clementplane, la conservation des journaux transactionnels est réglée sur un mois et celle des aperçus des nouveaux messages est désactivée. L’invitation reçue contenait des images de suivi. Au moment du contrôle, le consentement par contact était désactivé. Le worker de la candidate transmet désormais `contactPixelTrackingConsent: false` pour chaque destinataire. Son effet sur l’e-mail reçu dépend du réglage du compte et reste à vérifier. [Fonctionnement du consentement par contact](https://help.brevo.com/hc/fr/articles/37113920427922) |
+
 ## Envoi automatique depuis FirstHeberg · 21 novembre 2026
 
 Un navigateur externe a ouvert la page invitée en HTTPS sur le VPS de Valenciennes. Sans lien nominatif, la page invitait à ouvrir l’e-mail et n’affichait aucune pièce. Le worker de l’instance isolée a envoyé une invitation pour l’unique PDF fictif. La file indiquait `invite accepted 1`. La boîte Gmail autorisée a reçu ce message à 10 h 15, heure de Paris, avec un seul destinataire et sans copie.

@@ -122,7 +122,7 @@ def deliver(j, payload):
             headers={"api-key": os.environ["BREVO_API_KEY"]},
             json={
                 "sender": {"email": "contact@clementplane.fr", "name": "Clementplane"},
-                "to": [{"email": address}],
+                "to": [{"email": address, "contactPixelTrackingConsent": False}],
                 "subject": subject,
                 "textContent": content,
                 "headers": {"idempotencyKey": str(j["id"])},

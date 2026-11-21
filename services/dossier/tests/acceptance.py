@@ -368,6 +368,28 @@ class DossierTest(unittest.TestCase):
         )
         self.req("file", {**target, "version": ver3}, self.of, 404)
 
+    def test_org_download_after_revocation(self):
+        self.req("upload", self.b)
+        inbox = {"org": str(self.org)}
+        self.assertEqual(self.req("inbox", inbox, self.of).json(), [])
+        share_id = self.share()
+        selected = {**inbox, "share": share_id}
+        download = {
+            **selected,
+            "doc": self.doc,
+            "version": self.version,
+            "download": True,
+        }
+        self.assertEqual(len(self.req("inbox", inbox, self.of).json()), 1)
+        self.assertEqual(
+            self.req("file", download, self.of).content,
+            base64.b64decode(self.b["file"]),
+        )
+
+        self.req("revoke", {"share": share_id})
+        self.assertEqual(self.req("inbox", inbox, self.of).json(), [])
+        self.req("file", download, self.of, 404)
+
     def test_guest_follows_mailed_invitation_and_code(self):
         # Only the provider transport is intercepted in the worker. Open the
         # invitation and use the code from its messages as an anonymous guest.
@@ -392,7 +414,9 @@ class DossierTest(unittest.TestCase):
             self.assertEqual(call.args, ("https://api.brevo.com/v3/smtp/email",))
             envelope = call.kwargs["json"]
             self.assertEqual(envelope["sender"]["email"], "contact@clementplane.fr")
-            self.assertEqual(envelope["to"], [{"email": mailbox}])
+            self.assertEqual(
+                envelope["to"], [{"email": mailbox, "contactPixelTrackingConsent": False}]
+            )
             self.assertTrue({"cc", "bcc", "attachment"}.isdisjoint(envelope))
             self.assertEqual(envelope["subject"], subject)
             self.assertNotIn(self.b["title"], envelope["textContent"])

@@ -1,0 +1,7 @@
+**
+!*.py
+!requirements*.txt
+!clamd.conf
+!freshclam.conf
+!Dockerfile
+!clam.Dockerfile

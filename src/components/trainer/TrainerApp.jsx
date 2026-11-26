@@ -21,9 +21,13 @@ import DiscoverClementplane from '../../pages/DiscoverClementplane';
 import { useAuth } from '../../context/AuthContext';
 import MobileNavigation from '../layout/MobileNavigation';
 
+import { Dossier } from '../../dossier/Dossier';
+import { enabled as dossierEnabled } from '../../dossier/client';
+
 const ACTIVE_SPACE_KEY = 'timeforma_active_space';
 
 const navigationItems = [
+  ...(dossierEnabled ? [{ to: '/formateur/dossier', label: 'Mon dossier professionnel', icon: '▤' }] : []),
   { to: '/formateur/statistiques', label: 'Mes statistiques', icon: '▥' },
   {
     to: '/formateur/espace',
@@ -242,6 +246,7 @@ export default function TrainerApp() {
       <main className="app-main">
         <GoogleCalendarInvitation />
         <Routes>
+          {dossierEnabled && <Route path="/formateur/dossier" element={<Dossier />} />}
           <Route path="/formateur/bilans/:id" element={<RetainedActivityReport />} />
           <Route path="/formateur/statistiques" element={<TrainerActivity />} />
           <Route path="/formateur/missions/nouvelle" element={<PersonalMissionForm />} />

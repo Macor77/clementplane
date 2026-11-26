@@ -5,6 +5,7 @@ import { PWA_OPTIONS } from './pwa.config.js'
 
 export default defineConfig({
   plugins: [react(), VitePWA(PWA_OPTIONS)],
+  build: { rollupOptions: { input: { app: 'index.html', guest: 'dossier-invite.html' } } },
   base: '/',
   server: {
     host: '0.0.0.0',

@@ -179,3 +179,8 @@ L’OF peut enregistrer un accord reçu hors Clementplane, même après envoi d�
 ## En préparation — Outlook / Microsoft 365
 
 Intégration facultative isolée de Google, désactivée par défaut. Non livrée : configuration Entra et recette réelle exigées avant activation. [Plan et preuves](docs/sprints/outlook-calendar-sync/PLAN.md), [configuration/exploitation](docs/sprints/outlook-calendar-sync/OPERATIONS.md).
+
+
+## Dossier professionnel · candidate du 18 novembre 2026
+
+Candidate V1.8.0 · [dossier professionnel et conditions d’ouverture](docs/sprints/v1.8.0/CLOSURE.md).

@@ -245,3 +245,8 @@ Objectif : remplacer le montant global libre par des dépenses structurées rés
 ## V1.5.0 publiée — 16 novembre 2026
 
 Les personnes partiellement formées font partie du total effectivement formé. Le formateur peut les détailler par effectif et durée dans un volet replié. Une mission reste une session et un groupe.
+
+
+## Dossier professionnel · candidate du 18 novembre 2026
+
+Candidate V1.8.0 : tenue de dossier et échéances utiles sans partenaire inscrit. PDF/photo et métadonnées manuelles. Les pièces, versions et notes suivent les droits décrits dans le [guide](sprints/v1.8.0/GUIDE.md)

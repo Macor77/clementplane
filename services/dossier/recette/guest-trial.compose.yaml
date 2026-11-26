@@ -1,0 +1,57 @@
+# One synthetic document on a disposable database. Publish only the API loopback.
+name: clementplane-invite-recette
+services:
+  db:
+    image: postgres:16-bookworm
+    env_file: ${DOSSIER_TRIAL_DIR:?}/db.env
+    command: [postgres, -c, listen_addresses=127.0.0.1, -c, log_min_error_statement=panic]
+    ports: ["127.0.0.1:18260:8260"]
+    tmpfs: ["/var/lib/postgresql/data:rw,noexec,nosuid,nodev,size=256m"]
+    volumes:
+      - ./guest-principals.sql:/docker-entrypoint-initdb.d/01-principals.sql:ro
+      - ../../../supabase/migrations/20261118104552_professional_dossier.sql:/docker-entrypoint-initdb.d/02-dossier.sql:ro
+      - ../../../supabase/migrations/20261121173000_dossier_agreements.sql:/docker-entrypoint-initdb.d/03-agreements.sql:ro
+      - ./guest-runtime.sql:/docker-entrypoint-initdb.d/04-runtime.sql:ro
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -h 127.0.0.1 -U postgres -d guest_trial"]
+      interval: 3s
+      timeout: 2s
+      retries: 30
+    mem_limit: 384m
+  api:
+    build: {context: .., target: base}
+    network_mode: service:db
+    depends_on: {db: {condition: service_healthy}}
+    command: [python, -m, uvicorn, "api:app", --host, 0.0.0.0, --port, "8260", --no-access-log]
+    env_file: ${DOSSIER_TRIAL_DIR:?}/api.env
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 256m
+    volumes: [sockets:/run/dossier:ro]
+  seed:
+    profiles: [operator]
+    build: {context: .., target: validator}
+    network_mode: service:db
+    env_file: ${DOSSIER_TRIAL_DIR:?}/api.env
+    command: [python, /trial/operate.py, seed]
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 256m
+    volumes: [sockets:/run/dossier:ro, "./operate.py:/trial/operate.py:ro"]
+  worker:
+    profiles: [operator]
+    build: {context: .., target: base}
+    network_mode: service:db
+    env_file: ${DOSSIER_TRIAL_DIR:?}/worker.env
+    command: [python, /trial/operate.py, send]
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 160m
+    volumes: ["./operate.py:/trial/operate.py:ro"]
+volumes:
+  sockets:
+    external: true
+    name: ${DOSSIER_SCANNER_VOLUME:?}

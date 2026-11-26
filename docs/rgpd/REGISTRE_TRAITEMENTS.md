@@ -57,3 +57,6 @@ Les effectifs/durées de participation partielle précisent la réalisation déj
 ## V1.7.0 candidate — objectif d'activité personnel
 
 Préférence facultative : identifiant du propriétaire, mois, indicateur (sessions/jours/CA HT ou TTC) et cible. Finalité : suivi personnel demandé par le formateur, dans l'exécution du service. Accès réservé au propriétaire disposant d'un profil formateur ; hébergement Supabase existant, aucun nouveau destinataire. Suppression à la demande dans l'interface et en cascade à la suppression du compte. Aucun lien à l'agenda ou à une campagne. La visualisation des dépenses réutilise les données privées existantes, sans collecte de justificatifs ni d'autres données.
+
+### Dossier professionnel facultatif · V1.8.0 candidate
+Pièces déposées uniquement par le formateur, notes/dates, anciennes versions et partages explicites. Destinataires habilités de l’OF ou détenteurs de la boîte invitée après code, versions courantes seulement. Finalités distinctes de tenue du dossier, transmission sur instruction et sécurité du service. Les personnes citées dans les pièces peuvent aussi être concernées. Voir [qualification des rôles et actions contractuelles](../sprints/v1.8.0/LEGAL_REVIEW.md) et la politique de conservation. Aucune extraction automatisée ni obligation de déposer un justificatif.

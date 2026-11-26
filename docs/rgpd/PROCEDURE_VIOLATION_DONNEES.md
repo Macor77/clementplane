@@ -17,3 +17,6 @@ Inclure les copies Google et accès OAuth dans le périmètre d’un incident. C
 ## Outlook / Microsoft 365 — préparation du 28 octobre 2026
 
 Microsoft (préparé) : contenir par mode disabled et suspension du seul cron Microsoft, retirer les autorisations avec le titulaire, examiner copies et partages. Ne pas extraire les tokens ni les files pg_net dans les preuves d’incident.
+
+### Documents professionnels · V1.8.0 candidate
+En cas d’accès documentaire suspect, isoler le service API et suspendre les envois. Invalider les voies d’accès concernées, préserver les traces minimales, identifier les pièces, versions, fenêtres et destinataires techniques, puis rapprocher les événements de téléchargement. Ne pas conclure à une lecture individuelle. Traiter séparément la notification au responsable client sans délai indu et les obligations de l’exploitant pour ses propres traitements. Vérifier l’état des clés et des sauvegardes avant reprise. Documenter les constatations, décisions, communications et mesures correctives selon la procédure générale.

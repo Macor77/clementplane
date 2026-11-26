@@ -38,3 +38,20 @@ Bilans partagés et privés conservés pendant la vie du compte pour son histori
 ## V1.7.0 — Objectifs personnels, 17 novembre 2026
 
 Les objectifs mensuels sont conservés pendant la vie du compte comme préférence de suivi personnel. Chaque objectif peut être supprimé dans l’interface ; suppression en cascade du compte Auth. Aucun archivage comptable imposé ni copie externe. La conservation des autres bilans et dépenses reste inchangée.
+
+## V1.8.0 candidate · dossier professionnel
+
+| Donnée | Durée, déclencheur et sortie |
+|---|---|
+| Accord du déposant sur l’annexe | Identifiant du compte, empreinte du texte et horodatage serveur. Chaque reçu est conservé pendant la vie du compte et supprimé avec celui-ci. |
+| Pièce courante, informations et note | Tant que le compte et le document sont conservés par le formateur. Un document expiré reste accessible aux seuls destinataires d’un partage actif. |
+| Versions remplacées | Propriétaire uniquement. Purge automatique après 30 jours à compter du remplacement, sous supervision du worker. |
+| Suppression d’une pièce ou du compte Auth | Suppression transactionnelle en base active, historique et relations compris. Les téléchargements déjà réalisés par les OF relèvent de leur propre conservation. |
+| Dépôt en échec ou interrompu | Aucun dépôt persistant en attente. Mémoire et répertoire temporaire d’analyse éphémère, libérés à la fin du traitement ou au redémarrage. Aucun dump des processus. |
+| Partages | Durée choisie, puis traces nominatives du partage pendant 30 jours maximum après retrait/expiration avant purge. |
+| Codes, sessions et compteurs | Code 10 minutes, session 20 minutes, compteurs périmés purgés après deux jours. Jamais de code/ticket en clair en base. |
+| Journal de partage/consultation/téléchargement | 180 jours dans la base active, supprimé plus tôt à la suppression du compte. L’événement constate une opération technique et ne démontre pas la lecture par une personne. |
+| File et statuts des e-mails | 30 jours maximum, supprimés plus tôt pour les pièces ou comptes effacés. Envois ambigus à rapprocher avant renvoi. Règles Brevo à vérifier séparément. |
+| Sauvegardes | Cible de rotation 7 jours avec le plan Pro constaté. Vérifier la configuration, les copies supplémentaires et le cycle effectif. Restauration en environnement fermé, invalidation des sessions et réapplication des effacements avant exploitation. |
+
+Exécution et contrôles détaillés dans [le dossier de livraison](../sprints/v1.8.0/OPERATIONS.md).

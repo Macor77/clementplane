@@ -1,0 +1,46 @@
+# Preparation only. Supply the operator-managed TLS reverse proxy on this host.
+x-hardened: &hardened
+  read_only: true
+  restart: unless-stopped
+  cap_drop: [ALL]
+  security_opt: [no-new-privileges:true]
+  ulimits:
+    core: 0
+  tmpfs: ["/tmp:rw,noexec,nosuid,nodev,size=128m"]
+services:
+  signatures:
+    <<: *hardened
+    build: {context: ., dockerfile: clam.Dockerfile}
+    command: [freshclam, --daemon, --config-file=/etc/clamav/freshclam.conf]
+    volumes: [signatures:/var/lib/clamav]
+  clamd:
+    <<: *hardened
+    build: {context: ., dockerfile: clam.Dockerfile}
+    command: [sh, -ec, 'for name in main daily bytecode; do test -s /var/lib/clamav/$$name.cvd || test -s /var/lib/clamav/$$name.cld; done; exec clamd --foreground=true --config-file=/etc/clamav/clamd.conf']
+    network_mode: none
+    volumes: [signatures:/var/lib/clamav:ro, sockets:/run/dossier]
+    mem_limit: 4g
+  validator:
+    <<: *hardened
+    build: {context: ., target: validator}
+    network_mode: none
+    environment: {CLAMD_SOCKET: /run/dossier/clamd.sock}
+    volumes: [sockets:/run/dossier]
+    mem_limit: 1g
+  api:
+    <<: *hardened
+    build: {context: ., target: base}
+    env_file: ${DOSSIER_API_ENV_FILE:?absolute path outside repository}
+    environment: {DOSSIER_SCANNER_SOCKET: /run/dossier/validator.sock}
+    ports: ['127.0.0.1:8260:8000']
+    volumes: [sockets:/run/dossier:ro]
+    mem_limit: 1g
+  worker:
+    <<: *hardened
+    build: {context: ., target: base}
+    env_file: ${DOSSIER_WORKER_ENV_FILE:?absolute path outside repository}
+    command: [python, worker.py]
+    mem_limit: 256m
+volumes:
+  signatures: {}
+  sockets: {}

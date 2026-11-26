@@ -418,3 +418,8 @@ Ajout expense_items JSONB, legacy_expenses numeric(10,2) et legacy_expense_detai
 ## V1.5.0 publiée — 16 novembre 2026
 
 Migration source `20261116065258_partial_trainer_attendance.sql` : colonne JSONB `trainer_activity_reports.partial_attendance`, non nulle, défaut `[]`, validation privée serveur et évolution de save_report. Lignes `{id, learner_count, actual_days, actual_hours}`. Une ligne exige count positif et au moins une durée positive, deux décimales maximum ; somme <= summary.learner_count. Les anciens comptes et sessions restent intacts. Appliquée sur documentation-demo sous `20261116095029`, recette PostgreSQL/RLS réussie le 16 novembre après accord explicite. Production : `20261116095526`, appliquée une seule fois après accord explicite le 16 novembre. Trois bilans et leurs données privées conservés à l’identique (empreintes vérifiées) ; détails partiels initialement vides. Voir sprints/v1.5.0/PRODUCTION.md.
+
+
+## Dossier professionnel · candidate du 18 novembre 2026
+
+Le schéma dossier contient pièces, versions chiffrées, partages et sélection figée, défis, sessions, événements, compteurs et file de notifications. Le rôle applicatif privé contrôle les droits métier. Aucune permission REST aux rôles Web. [Exploitation](sprints/v1.8.0/OPERATIONS.md).

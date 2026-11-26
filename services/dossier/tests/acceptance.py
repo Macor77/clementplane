@@ -10,8 +10,10 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from concurrent.futures import ThreadPoolExecutor
 from datetime import timedelta
 from pathlib import Path
+from threading import Barrier
 from unittest.mock import patch
 from urllib.parse import urlsplit
 from uuid import uuid4
@@ -56,10 +58,10 @@ def postgres_binaries():
     return Path(pgserver.__file__).parent / "pginstall/bin"
 
 
-def pdf_sample():
+def pdf_sample(pages=2):
     with pikepdf.Pdf.new() as pdf:
-        pdf.add_blank_page()
-        pdf.add_blank_page()
+        for _ in range(pages):
+            pdf.add_blank_page()
         out = io.BytesIO()
         pdf.save(out)
         return out.getvalue()
@@ -238,6 +240,74 @@ class DossierTest(unittest.TestCase):
         self.req("share", b)
         self.req("share", b)
         return sid
+
+    def simultaneous_uploads(self, first, second):
+        # Release both requests together once both files have been validated.
+        ready = Barrier(2, timeout=30)
+        scan = api.scan_file
+
+        def scan_and_wait(body):
+            result = scan(body)
+            ready.wait()
+            return result
+
+        def upload(body):
+            return self.client.post(
+                "/v1/upload", json=body,
+                headers={"Authorization": "Bearer " + str(self.owner)},
+            )
+
+        with patch("api.scan_file", side_effect=scan_and_wait), ThreadPoolExecutor(2) as pool:
+            return list(pool.map(upload, (first, second)))
+
+    def test_simultaneous_identical_deposits_store_one_version(self):
+        replies = self.simultaneous_uploads(self.b, self.b)
+        for reply in replies:
+            self.assertEqual(reply.status_code, 200)
+            self.assertEqual(reply.json()["id"], self.doc)
+        versions = self.admin.execute(
+            "select id from dossier.versions where doc_id=%s", (self.doc,)
+        ).fetchall()
+        self.assertEqual(versions, [(core.uuid(self.version),)])
+        self.assertEqual([doc["id"] for doc in self.req("overview").json()["documents"]], [self.doc])
+
+    def test_simultaneous_replacements_preserve_winner_and_notify_once(self):
+        self.req("upload", self.b)
+        share = self.share()
+        update = {**self.b, "previous": self.version, "recipients": [share], "notify": [share]}
+        choices = [
+            {**update, "request": str(uuid4()), "title": title,
+             "file": base64.b64encode(pdf_sample(pages)).decode()}
+            for title, pages in (("Attestation A", 1), ("Attestation B", 3))
+        ]
+        replies = self.simultaneous_uploads(*choices)
+        statuses = [reply.status_code for reply in replies]
+        self.assertCountEqual(statuses, [200, 409])
+        winner = choices[statuses.index(200)]
+        document, = self.req("overview").json()["documents"]
+        self.assertEqual((document["version_id"], document["title"]), (winner["request"], winner["title"]))
+        history = self.req("history", {"doc": self.doc}).json()
+        self.assertEqual([v["version_id"] for v in history], [self.version])
+        target = {"doc": self.doc, "version": winner["request"], "share": share,
+                  "org": str(self.org), "download": True}
+        actual = self.req("file", target, self.of).content
+        self.assertEqual(actual, base64.b64decode(winner["file"]))
+        self.req("upload", winner)
+        queued = self.admin.execute(
+            "select share_id, version_id from dossier.mail where owner_id=%s and kind='replacement'",
+            (self.owner,),
+        ).fetchall()
+        self.assertEqual(queued, [(core.uuid(share), core.uuid(winner["request"]))])
+
+    def test_simultaneous_deposits_respect_last_available_slot(self):
+        second = {**self.b, "request": str(uuid4()), "doc": str(uuid4())}
+        with patch.object(owner, "MAX_DOCUMENTS", 1):
+            replies = self.simultaneous_uploads(self.b, second)
+        statuses = [reply.status_code for reply in replies]
+        self.assertCountEqual(statuses, [200, 409])
+        expected = (self.b, second)[statuses.index(200)]
+        document, = self.req("overview").json()["documents"]
+        self.assertEqual((document["id"], document["version_id"]), (expected["doc"], expected["request"]))
 
     def test_versioned_agreement_before_first_upload(self):
         current = os.environ["DOSSIER_AGREEMENT_SHA256"]

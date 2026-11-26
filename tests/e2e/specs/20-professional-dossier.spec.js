@@ -31,7 +31,14 @@ for (const width of [390, 1440])
       }
       if (action === 'upload') {
         posts.push(route.request().postDataJSON());
-        if (posts.length === 1) return route.abort('failed');
+        if (posts.length === 1) {
+          data.documents.push({
+            id: posts[0].doc, version_id: posts[0].request, kind: 'diplome',
+            title: posts[0].title, expiry_mode: 'none',
+          });
+          return route.abort('failed');
+        }
+        return route.fulfill({ json: { id: posts[0].doc } });
       }
       return route.fulfill({ json: action === 'overview' ? data : {} });
     });
@@ -64,10 +71,14 @@ for (const width of [390, 1440])
       'Connexion interrompue',
     );
     await expect(page.getByLabel('Intitulé')).toHaveValue('Diplôme fictif');
+    await expect(page.getByLabel('Intitulé')).toBeDisabled();
+    await expect(page.getByLabel(/Fichier PDF/)).toBeDisabled();
+    await expect(page.getByText('Document enregistré.')).toHaveCount(0);
     await page
-      .getByRole('button', { name: 'Enregistrer', exact: true })
+      .getByRole('button', { name: 'Réessayer le même dépôt' })
       .click();
     await expect(page.getByText('Document enregistré.')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Diplôme fictif' })).toHaveCount(1);
     expect(posts[0]).toEqual(posts[1]);
     await page.getByRole('button', { name: 'Nouveau partage' }).click();
     await page
@@ -86,6 +97,40 @@ for (const width of [390, 1440])
     await page.evaluate(() => window.scrollTo(0, 0));
     await page.screenshot({ path: `test-results/dossier-recap-${width}.png` });
   });
+test('un fichier refusé peut être corrigé et une confirmation incomplète peut être vérifiée dans le dossier', async ({ page }) => {
+  await fixture(page);
+  const data = {
+    agreement: { sha256: agreementDigest, accepted_at: '2026-11-26T12:00:00Z' },
+    documents: [], partners: [], shares: [], reminders: [],
+  };
+  const uploads = [];
+  await page.route(api + '**', async (route) => {
+    if (route.request().url().endsWith('/overview')) return route.fulfill({ json: data });
+    const body = route.request().postDataJSON();
+    uploads.push(body);
+    if (uploads.length === 1)
+      return route.fulfill({ status: 422, json: { detail: 'Le fichier a été refusé.' } });
+    data.documents.push({ id: body.doc, version_id: body.request, title: body.title, kind: body.kind, expiry_mode: 'none' });
+    return route.fulfill({ json: {} });
+  });
+  await page.goto('/formateur/dossier');
+  await page.getByRole('button', { name: 'Déposer un document' }).click();
+  const picker = page.getByLabel(/Fichier PDF/);
+  await picker.setInputFiles({ name: 'a.pdf', mimeType: 'application/pdf', buffer: Buffer.from('première pièce fictive') });
+  await page.getByRole('button', { name: 'Enregistrer', exact: true }).click();
+  await expect(page.getByRole('alert')).toContainText('refusé');
+  await expect(picker).toBeEnabled();
+  await picker.setInputFiles({ name: 'b.pdf', mimeType: 'application/pdf', buffer: Buffer.from('pièce corrigée fictive') });
+  await page.getByLabel('Intitulé').fill('Attestation corrigée');
+  await page.getByRole('button', { name: 'Enregistrer', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Réessayer le même dépôt' })).toBeVisible();
+  await expect(page.getByText('Document enregistré.')).toHaveCount(0);
+  await page.getByRole('button', { name: 'Revenir au dossier' }).click();
+  await expect(page.getByRole('heading', { name: 'Attestation corrigée' })).toBeVisible();
+  expect(uploads).toHaveLength(2);
+  expect(uploads[1].file).not.toBe(uploads[0].file);
+});
+
 test('un texte absent ou différent empêche un nouveau dépôt', async ({ page }) => {
   await fixture(page);
   let digest = null;

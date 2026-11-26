@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { call, encodeFile, kinds } from './client';
+import { call, encodeFile, kinds, UploadUnconfirmedError } from './client';
 
 export default function DocumentForm({
   mode,
@@ -24,12 +24,15 @@ export default function DocumentForm({
   const [notify, setNotify] = useState(false);
   const [selected, setSelected] = useState([]);
   const [busy, setBusy] = useState(false);
+  const [pendingUpload, setPendingUpload] = useState(null);
   const [error, setError] = useState('');
   const set = (key, value) => setDraft((old) => ({ ...old, [key]: value }));
   async function save(e) {
     e.preventDefault();
+    if (busy) return;
     setBusy(true);
     setError('');
+    let upload = pendingUpload;
     try {
       const payload = {
         ...draft,
@@ -39,21 +42,26 @@ export default function DocumentForm({
       };
       let status;
       if (mode === 'edit') await call('edit', payload);
-      else
-        status = await call('upload', {
+      else {
+        upload ??= {
           ...payload,
           file: await encodeFile(file),
           recipients: recipients.map((r) => r.id),
           notify: notify ? selected : [],
-        });
+        };
+        status = await call('upload', upload);
+      }
       finish(
         status?.notifications_limited
           ? 'Document remplacé. La limite d’envoi a été atteinte pour ' +
               status.notifications_limited +
               ' destinataire(s).'
-          : 'Document enregistré.',
+          : upload?.notify.length && status?.notifications_limited == null
+            ? 'Document enregistré. L’envoi des notifications choisies reste à vérifier.'
+            : 'Document enregistré.',
       );
     } catch (err) {
+      if (err instanceof UploadUnconfirmedError) setPendingUpload(upload);
       setError(err.message);
     } finally {
       setBusy(false);
@@ -69,7 +77,7 @@ export default function DocumentForm({
             : 'Déposer un document'}
       </h2>
       {mode === 'new' && <p>Ce dépôt est privé. Vous choisirez ensuite les pièces et les destinataires à partager. <a href="/confidentialite" target="_blank" rel="noopener noreferrer">Utilisation de vos données</a></p>}
-      <fieldset disabled={busy}>
+      <fieldset disabled={busy || Boolean(pendingUpload)}>
         {mode !== 'edit' && (
           <>
             <label>
@@ -194,20 +202,22 @@ export default function DocumentForm({
               ))}
           </>
         )}
-        {error && <p role="alert">{error}</p>}
-        <div className="dos-actions">
-          <button>
-            {busy
-              ? 'Enregistrement…'
+      </fieldset>
+      {error && <p role="alert">{error}</p>}
+      <div className="dos-actions">
+        <button disabled={busy}>
+          {busy
+            ? 'Enregistrement…'
+            : pendingUpload
+              ? 'Réessayer le même dépôt'
               : mode === 'replace'
                 ? 'Confirmer le remplacement'
                 : 'Enregistrer'}
-          </button>
-          <button type="button" onClick={cancel}>
-            Annuler
-          </button>
-        </div>
-      </fieldset>
+        </button>
+        <button type="button" disabled={busy} onClick={pendingUpload ? () => finish('') : cancel}>
+          {pendingUpload ? 'Revenir au dossier' : 'Annuler'}
+        </button>
+      </div>
     </form>
   );
 }

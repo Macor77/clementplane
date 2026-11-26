@@ -2,6 +2,12 @@
 
 Données fictives uniquement. Chaque niveau de vérification ci-dessous est à lire dans son environnement. Les fichiers de tests sont dans services/dossier/tests, les scénarios Playwright 20 et 21 de tests/e2e/specs et la configuration Quality.
 
+## Reprise d’un dépôt et écritures simultanées · 26 novembre 2026
+
+Sur mobile et sur ordinateur, le scénario Chromium simule une coupure après l’enregistrement. Il contrôle la reprise avec le même fichier, les mêmes paramètres et une seule pièce affichée. Un second scénario distingue le refus explicite, qui laisse corriger le fichier, et la confirmation incomplète, qui permet de relire le dossier sans envoyer de nouveau fichier.
+
+Sur PostgreSQL temporaire, trois scénarios synchronisent deux dépôts après la validation des pièces fictives. Ils contrôlent le double envoi du même dépôt, deux remplacements concurrents de la même version et deux dépôts pour la dernière place du dossier. Le cas de remplacement vérifie les octets téléchargés par l’organisme, l’historique du formateur et l’unique notification en file. Le transport e-mail est désactivé. La mesure de la mémoire pendant le rechargement des signatures antivirus sur le VPS reste un contrôle distinct.
+
 ## Suivi individuel de l’invitation Brevo · 21 novembre 2026
 
 Une seule invitation fictive a été construite et envoyée par le code de la candidate, en mode test, avec un partage temporaire isolé et un seul destinataire. Le worker a transmis `contactPixelTrackingConsent: false`. Brevo a accepté l’envoi à 17 h 38 min 14 s et a enregistré la livraison deux secondes plus tard. Gmail a reçu le message portant le même identifiant. Toutes les heures sont celles de Paris.

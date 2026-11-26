@@ -33,6 +33,12 @@ export function expiry(doc) {
         : 'Échéance';
   return status + ' · ' + fmt(doc.expiry);
 }
+export class UploadUnconfirmedError extends Error {
+  constructor(reason) {
+    super(reason + ' Réessayez le même dépôt ou revenez au dossier pour vérifier.');
+  }
+}
+
 export async function call(action, data = {}, guest = false) {
   if (!enabled || !endpoint) throw Error('Dossier indisponible.');
   const url = new URL(endpoint);
@@ -62,19 +68,29 @@ export async function call(action, data = {}, guest = false) {
       body: JSON.stringify(data),
     });
   } catch {
+    if (action === 'upload')
+      throw new UploadUnconfirmedError('Connexion interrompue avant la confirmation.');
     throw Error(
       'Connexion interrompue. Réessayez en gardant cette page ouverte.',
     );
   }
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
+    if (action === 'upload' && (res.status === 408 || res.status >= 500))
+      throw new UploadUnconfirmedError('Le serveur n’a pas confirmé l’enregistrement.');
     throw Error(
-      typeof body.detail === 'string' && body.detail.length > 12
+      typeof body?.detail === 'string' && body.detail.length > 12
         ? body.detail
         : res.status === 429
           ? 'Trop de demandes. Réessayez ultérieurement.'
           : 'Accès indisponible ou expiré.',
     );
+  }
+  if (action === 'upload') {
+    const receipt = await res.json().catch(() => null);
+    if (!receipt?.id || receipt.id !== data.doc)
+      throw new UploadUnconfirmedError('La confirmation du dépôt est incomplète.');
+    return receipt;
   }
   return ['file', 'guest-file'].includes(action)
     ? {

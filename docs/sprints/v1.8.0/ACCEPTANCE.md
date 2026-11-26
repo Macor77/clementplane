@@ -2,6 +2,12 @@
 
 Données fictives uniquement. Chaque niveau de vérification ci-dessous est à lire dans son environnement. Les fichiers de tests sont dans services/dossier/tests, les scénarios Playwright 20 et 21 de tests/e2e/specs et la configuration Quality.
 
+## Qualification mémoire et restauration · 26 novembre 2026
+
+La recette PostgreSQL restaure une sauvegarde dans une autre base isolée. Elle vérifie par l’API que le propriétaire retrouve le PDF avec la copie séparée de la clé fictive et que l’organisme dont le partage a été révoqué reçoit toujours un refus. Un autre scénario charge simultanément deux PDF fictifs de plus de 4 Mio et compare les deux téléchargements aux originaux.
+
+Sur le VPS de recette, le programme `services/dossier/tests/vps_qualification.py` utilise le validateur et le démon ClamAV du projet Docker `clementplane-antivirus`. Il crée un conteneur de test sans réseau avec PostgreSQL temporaire. Il échantillonne la mémoire de l’hôte toutes les 200 ms, mesure le chevauchement des deux requêtes avec le rechargement attesté dans le journal du démon, teste un dépôt après rechargement et contrôle les compteurs d’arrêt mémoire. Les envois de courriel de la recette sont désactivés. Le contrôle du VPS reste à constater sur cet hôte. La restauration d’une sauvegarde de recette sur le VPS reste distincte d’une restauration depuis la sauvegarde de la configuration finale.
+
 ## Reprise d’un dépôt et écritures simultanées · 26 novembre 2026
 
 Sur mobile et sur ordinateur, le scénario Chromium simule une coupure après l’enregistrement. Il contrôle la reprise avec le même fichier, les mêmes paramètres et une seule pièce affichée. Un second scénario distingue le refus explicite, qui laisse corriger le fichier, et la confirmation incomplète, qui permet de relire le dossier sans envoyer de nouveau fichier.

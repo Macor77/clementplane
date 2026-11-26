@@ -8,6 +8,7 @@ import re
 import socket
 import subprocess
 import sys
+import time
 import tempfile
 import unittest
 from concurrent.futures import ThreadPoolExecutor
@@ -259,6 +260,51 @@ class DossierTest(unittest.TestCase):
 
         with patch("api.scan_file", side_effect=scan_and_wait), ThreadPoolExecutor(2) as pool:
             return list(pool.map(upload, (first, second)))
+
+    def test_two_large_documents_survive_parallel_uploads(self):
+        with pikepdf.Pdf.new() as pdf:
+            page = pdf.add_blank_page()
+            page.Contents = pdf.make_stream((b"% harmless fixture paddingabcdefghijklmnopqr\n" * 100000))
+            stream = io.BytesIO()
+            pdf.save(stream, compress_streams=False)
+        raw = stream.getvalue()
+        self.assertTrue(4 * 1024**2 <= len(raw) <= core.MAX)
+        payloads = [
+            {**self.b, "doc": str(uuid4()), "request": str(uuid4()),
+             "file": base64.b64encode(raw).decode(), "title": title}
+            for title in ("Fichier témoin A", "Fichier témoin B")
+        ]
+        folder = os.environ.get("DOSSIER_VPS_PROBE_DIR")
+
+        def wait_for_signal(name, seconds):
+            deadline = time.monotonic() + seconds
+            while not (Path(folder) / name).exists():
+                if time.monotonic() >= deadline:
+                    self.fail("Rechargement non observé dans le délai prévu")
+                time.sleep(0.05)
+
+        if folder:
+            control = Path(folder)
+            (control / "ready").touch()
+            wait_for_signal("go", 120)
+        start = Barrier(2, timeout=20)
+
+        def deposit(body):
+            start.wait()
+            before = time.time()
+            self.req("upload", body)
+            return [before, time.time()]
+
+        with ThreadPoolExecutor(2) as pool:
+            intervals = list(pool.map(deposit, payloads))
+        self.assertLess(max(span[0] for span in intervals), min(span[1] for span in intervals))
+        for body in payloads:
+            downloaded = self.req("file", {"doc": body["doc"], "version": body["request"], "download": True})
+            self.assertEqual(downloaded.content, raw)
+        if folder:
+            (control / "uploads.json").write_text(json.dumps({"intervals": intervals, "bytes": len(raw)}))
+            wait_for_signal("reloaded", 200)
+            self.req("upload", self.b)
 
     def test_simultaneous_identical_deposits_store_one_version(self):
         replies = self.simultaneous_uploads(self.b, self.b)
@@ -704,6 +750,18 @@ class DossierTest(unittest.TestCase):
         from psycopg import sql
 
         self.req("upload", self.b)
+        share = self.share()
+        target = {"doc": self.doc, "version": self.version, "org": str(self.org),
+                  "share": share, "download": True}
+        original = base64.b64decode(self.b["file"])
+        self.assertEqual(self.req("file", target, self.of).content, original)
+        self.req("revoke", {"share": share})
+        # Standalone copy of the disposable key, kept outside the PostgreSQL dump.
+        key_backup = Path(self.tmp.name) / ("fixture-key-" + uuid4().hex)
+        with key_backup.open("x") as out:
+            key_backup.chmod(0o600)
+            out.write(os.environ["DOSSIER_FILE_KEYS"])
+        self.addCleanup(key_backup.unlink, missing_ok=True)
         pg = postgres_binaries()
         port = str(self.admin.info.port)
         backup = Path(self.tmp.name) / "fixture.dump"
@@ -751,12 +809,17 @@ class DossierTest(unittest.TestCase):
                 "select key_id,mime,bytes from dossier.versions where id=%s",
                 (self.version,),
             ).fetchone()
-            self.assertEqual(
-                protection.unseal(
-                    row[0], self.doc, self.version, row[1], bytes(row[2])
-                ),
-                base64.b64decode(self.b["file"]),
-            )
+            envelope = bytes(row[2])
+            self.assertNotIn(original, envelope)
+            with patch.dict(os.environ, DOSSIER_FILE_KEYS="{}"):
+                with self.assertRaises(KeyError):
+                    protection.unseal(row[0], self.doc, self.version, row[1], envelope)
+                recovered_dsn = make_conninfo(os.environ["DOSSIER_DSN"], dbname=restored_name)
+                with patch.dict(os.environ, DOSSIER_DSN=recovered_dsn,
+                                DOSSIER_FILE_KEYS=key_backup.read_text()):
+                    owner_file = {"doc": self.doc, "version": self.version, "download": True}
+                    self.assertEqual(self.req("file", owner_file).content, original)
+                    self.req("file", target, self.of, 404)
             restored.execute(
                 "delete from dossier.documents where id=%s and owner_id=%s",
                 (self.doc, self.owner),
